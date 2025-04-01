@@ -30,34 +30,45 @@ const Navbar = () => {
 
   return (
     <header 
-      className={`fixed w-full z-50 transition-all duration-300 ${
-        scrolled 
-          ? 'bg-white bg-opacity-95 shadow-md py-2' 
-          : 'bg-transparent py-4'
-      }`}
+      className="fixed w-full z-50 transition-all duration-300"
     >
-      <div className="container-custom flex justify-between items-center">
+      {/* Always present backdrop with different styles based on scroll */}
+      <div className={`absolute inset-0 ${
+        scrolled 
+          ? 'bg-white shadow-md' 
+          : 'bg-black/40 backdrop-blur-sm'
+      } -z-10`}></div>
+      
+      <div className="container-custom flex justify-between items-center py-4">
         {/* Logo */}
         <Link to="/" className="z-50">
-          <h1 className="text-2xl font-serif font-bold text-primary">
+          <h1 className={`text-2xl font-serif font-bold ${scrolled ? 'text-primary' : 'text-white'}`}>
             Conscious Cafe
           </h1>
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex space-x-8">
+        <nav className="hidden md:flex items-center space-x-6">
           {navLinks.map((link) => (
             <Link 
               key={link.name} 
               to={link.path}
-              className="nav-link text-sm font-medium"
+              className={`text-sm font-medium transition-colors ${
+                scrolled 
+                  ? 'text-gray-800 hover:text-primary' 
+                  : 'text-white hover:text-white/80'
+              }`}
             >
               {link.name}
             </Link>
           ))}
           <a 
             href="/#reservation" 
-            className="btn btn-primary text-sm font-medium"
+            className={`btn text-sm font-medium ${
+              scrolled 
+                ? 'bg-primary text-white hover:bg-primary-dark' 
+                : 'bg-white text-primary hover:bg-neutral-cream'
+            }`}
           >
             Reserve a Table
           </a>
@@ -65,7 +76,7 @@ const Navbar = () => {
 
         {/* Mobile Navigation Button */}
         <button
-          className="md:hidden z-50 text-2xl"
+          className={`md:hidden z-50 text-2xl ${scrolled ? 'text-gray-800' : 'text-white'}`}
           onClick={() => setIsOpen(!isOpen)}
           aria-label="Toggle Menu"
         >
@@ -79,14 +90,14 @@ const Navbar = () => {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
-          className="absolute top-0 left-0 w-full h-screen bg-white flex flex-col md:hidden"
+          className="absolute top-0 left-0 w-full h-screen bg-black/95 backdrop-blur-md flex flex-col md:hidden"
         >
           <div className="container mx-auto px-4 pt-24 pb-12 flex flex-col items-center space-y-8">
             {navLinks.map((link) => (
               <Link
                 key={link.name}
                 to={link.path}
-                className="text-xl font-medium"
+                className="text-white text-xl font-medium hover:text-primary-light"
                 onClick={() => setIsOpen(false)}
               >
                 {link.name}
@@ -94,7 +105,7 @@ const Navbar = () => {
             ))}
             <a 
               href="/#reservation" 
-              className="btn btn-primary text-base font-medium"
+              className="btn bg-primary text-white hover:bg-primary-dark text-base font-medium mt-4"
               onClick={() => setIsOpen(false)}
             >
               Reserve a Table
