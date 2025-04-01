@@ -1,0 +1,76 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary: #4A6F2A;
+  --primary-light: #6B8E4E;
+  --primary-dark: #3A5B1E;
+  --secondary: #D6A75B;
+  --terracotta: #CD5D41;
+  --cream: #F7F4ED;
+  --sand: #E6DFD3;
+}
+
+body {
+  @apply font-sans text-gray-800 bg-neutral-cream;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5 {
+  @apply font-serif;
+}
+
+/* Custom animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 1s ease-in;
+}
+
+/* Custom classes */
+.btn {
+  @apply px-6 py-2 rounded-full transition-all duration-300;
+}
+
+.btn-primary {
+  @apply bg-primary text-white hover:bg-primary-dark;
+}
+
+.btn-outline {
+  @apply border-2 border-primary text-primary hover:bg-primary hover:text-white;
+}
+
+.section-padding {
+  @apply py-12 md:py-16 px-4;
+}
+
+.container-custom {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+/* Header styles */
+.nav-link {
+  @apply text-gray-800 hover:text-primary relative;
+}
+
+.nav-link::after {
+  @apply content-[''] absolute left-0 bottom-0 w-0 h-0.5 bg-primary transition-all duration-300 ease-in-out;
+}
+
+.nav-link:hover::after {
+  @apply w-full;
+}
+
+/* Disable scrollbar but keep functionality */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
