@@ -36,6 +36,9 @@ const ProductCard = ({ product, onAddToCart, onProductClick }) => {
       </div>
       
       <div className="product-info">
+        <div className="product-category-subtle">
+          {product.category.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+        </div>
         <h3 className="product-name">{product.name}</h3>
         <p className="product-description">{product.description}</p>
         <div className="product-price">

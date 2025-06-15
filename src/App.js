@@ -48,6 +48,11 @@ function App() {
     localStorage.setItem('consciousBakesCart', JSON.stringify(cartItems));
   }, [cartItems]);
 
+  // Scroll to top whenever location changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
   const addToCart = (product) => {
     setCartItems(prevItems => {
       const existingItem = prevItems.find(item => item.id === product.id);

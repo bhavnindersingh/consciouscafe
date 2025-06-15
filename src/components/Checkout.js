@@ -7,10 +7,14 @@ const Checkout = ({ isOpen, onClose, cartItems, onOrderComplete }) => {
     phone: '',
     email: '',
     address: '',
-    notes: ''
+    notes: '',
+    orderType: 'cafe', // 'cafe' or 'delivery'
+    tableNumber: '',
+    distance: ''
   });
 
   const [errors, setErrors] = useState({});
+  const [distanceError, setDistanceError] = useState('');
 
   const total = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
@@ -27,6 +31,9 @@ const Checkout = ({ isOpen, onClose, cartItems, onOrderComplete }) => {
         ...prev,
         [name]: ''
       }));
+    }
+    if (name === 'distance' && distanceError) {
+      setDistanceError('');
     }
   };
 
@@ -46,9 +53,30 @@ const Checkout = ({ isOpen, onClose, cartItems, onOrderComplete }) => {
     } else if (!/\S+@\S+\.\S+/.test(customerInfo.email)) {
       newErrors.email = 'Email is invalid';
     }
-    
-    if (!customerInfo.address.trim()) {
-      newErrors.address = 'Address is required';
+
+    // Order type specific validation
+    if (customerInfo.orderType === 'cafe') {
+      if (!customerInfo.tableNumber.trim()) {
+        newErrors.tableNumber = 'Table number is required';
+      }
+    } else if (customerInfo.orderType === 'delivery') {
+      if (!customerInfo.address.trim()) {
+        newErrors.address = 'Address is required';
+      }
+      
+      // Distance validation
+      const distance = parseFloat(customerInfo.distance);
+      if (!customerInfo.distance.trim() || isNaN(distance)) {
+        setDistanceError('Please enter a valid distance');
+        setErrors(newErrors);
+        return false;
+      } else if (distance > 10) {
+        setDistanceError('Delivery only available within 10 km');
+        setErrors(newErrors);
+        return false;
+      } else {
+        setDistanceError('');
+      }
     }
     
     setErrors(newErrors);
@@ -154,18 +182,86 @@ const Checkout = ({ isOpen, onClose, cartItems, onOrderComplete }) => {
                   {errors.email && <span className="error-message">{errors.email}</span>}
                 </div>
 
+                {/* Order Type Selection */}
                 <div className="form-group">
-                  <label htmlFor="address">Delivery Address *</label>
-                  <textarea
-                    id="address"
-                    name="address"
-                    value={customerInfo.address}
-                    onChange={handleInputChange}
-                    rows="3"
-                    className={errors.address ? 'error' : ''}
-                  ></textarea>
-                  {errors.address && <span className="error-message">{errors.address}</span>}
+                  <label>Order Type *</label>
+                  <div className="order-type-options">
+                    <label className="order-type-option">
+                      <input
+                        type="radio"
+                        name="orderType"
+                        value="cafe"
+                        checked={customerInfo.orderType === 'cafe'}
+                        onChange={handleInputChange}
+                      />
+                      <span>🏪 Cafe Guest</span>
+                    </label>
+                    <label className="order-type-option">
+                      <input
+                        type="radio"
+                        name="orderType"
+                        value="delivery"
+                        checked={customerInfo.orderType === 'delivery'}
+                        onChange={handleInputChange}
+                      />
+                      <span>🚚 Delivery Guest</span>
+                    </label>
+                  </div>
                 </div>
+
+                {/* Cafe Guest Fields */}
+                {customerInfo.orderType === 'cafe' && (
+                  <div className="form-group">
+                    <label htmlFor="tableNumber">Table Number *</label>
+                    <input
+                      type="text"
+                      id="tableNumber"
+                      name="tableNumber"
+                      value={customerInfo.tableNumber}
+                      onChange={handleInputChange}
+                      className={errors.tableNumber ? 'error' : ''}
+                      placeholder="Enter your table number (e.g., T1, T2, etc.)"
+                    />
+                    {errors.tableNumber && <span className="error-message">{errors.tableNumber}</span>}
+                  </div>
+                )}
+
+                {/* Delivery Guest Fields */}
+                {customerInfo.orderType === 'delivery' && (
+                  <>
+                    <div className="form-group">
+                      <label htmlFor="address">Delivery Address *</label>
+                      <textarea
+                        id="address"
+                        name="address"
+                        value={customerInfo.address}
+                        onChange={handleInputChange}
+                        rows="3"
+                        className={errors.address ? 'error' : ''}
+                        placeholder="Enter your full delivery address with landmarks"
+                      ></textarea>
+                      {errors.address && <span className="error-message">{errors.address}</span>}
+                    </div>
+                    
+                    <div className="form-group">
+                      <label htmlFor="distance">Distance from Cafe (km) *</label>
+                      <input
+                        type="number"
+                        id="distance"
+                        name="distance"
+                        value={customerInfo.distance}
+                        onChange={handleInputChange}
+                        min="0"
+                        max="10"
+                        step="0.1"
+                        className={distanceError ? 'error' : ''}
+                        placeholder="Enter distance in km (e.g., 2.5)"
+                      />
+                      {distanceError && <span className="error-message">{distanceError}</span>}
+                      <p className="distance-note">📍 Delivery only available within 10 km radius from our cafe</p>
+                    </div>
+                  </>
+                )}
 
                 <div className="form-group">
                   <label htmlFor="notes">Special Instructions (Optional)</label>
