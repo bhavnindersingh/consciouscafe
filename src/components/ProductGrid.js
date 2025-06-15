@@ -8,11 +8,11 @@ const ProductGrid = ({ products, onAddToCart, onProductClick, onCategoryChange, 
   // Use categories from props instead of defining them here
   const displayCategories = categories || [];
 
-  // Placeholder for bestSellers - replace with actual logic
-  const bestSellers = products ? products.filter(product => product.bestseller).slice(0, 4) : [];
+  // Get featured products (bestsellers)
+  const featuredProducts = products ? products.filter(product => product.bestseller).slice(0, 4) : [];
   // If no bestsellers are marked, just take the first 4 products
-  if (bestSellers.length === 0 && products) {
-    bestSellers.push(...products.slice(0, 4));
+  if (featuredProducts.length === 0 && products) {
+    featuredProducts.push(...products.slice(0, 4));
   }
 
   return (
@@ -42,20 +42,21 @@ const ProductGrid = ({ products, onAddToCart, onProductClick, onCategoryChange, 
         </div>
       </section>
 
-      {/* Best Sellers Section (or Our Favorites) */}
-      <section className="best-sellers">
+      {/* Our Favorites Section */}
+      <section className="featured-section">
         <div className="container">
-          <h2>Our Favorites</h2>
-          <p>Discover our most loved dishes and beverages, crafted with care and quality ingredients.</p>
+          <div className="section-header">
+            <h2>Our Favorites</h2>
+            <p>Discover our most loved dishes and beverages, crafted with care and quality ingredients.</p>
+          </div>
           
-          <div className="products-grid">
-            {bestSellers.map(product => (
+          <div className="featured-products-grid">
+            {featuredProducts.map(product => (
               <ProductCard
                 key={product.id}
                 product={product}
                 onAddToCart={onAddToCart}
                 onProductClick={onProductClick}
-
               />
             ))}
           </div>

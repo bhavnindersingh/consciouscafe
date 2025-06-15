@@ -106,11 +106,7 @@ const ProductDetailPage = ({ products, onAddToCart }) => {
                   {product.category.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
                 </div>
                 
-                {product.bestseller && (
-                  <div className="product-bestseller-tag">
-                    Popular Choice
-                  </div>
-                )}
+
               </div>
               
               <div className="product-price-detail">
