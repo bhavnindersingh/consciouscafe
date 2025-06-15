@@ -3,7 +3,7 @@ import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import Header from './components/Header';
 import ProductGrid from './components/ProductGrid';
 import CategoryPage from './components/CategoryPage';
-import FullMenuPage from './components/FullMenuPage';
+import FoodMenuPage from './components/FoodMenuPage';
 import ProductDetailPage from './components/ProductDetailPage';
 import Cart from './components/Cart';
 import Checkout from './components/Checkout';
@@ -159,7 +159,7 @@ function App() {
           <Route 
             path="/menu" 
             element={
-              <FullMenuPage 
+              <FoodMenuPage 
                 categories={displayCategories}
                 products={products}
                 onAddToCart={addToCart}
