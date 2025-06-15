@@ -55,6 +55,7 @@ const ProductGrid = ({ products, onAddToCart, onProductClick, onCategoryChange, 
                 product={product}
                 onAddToCart={onAddToCart}
                 onProductClick={onProductClick}
+
               />
             ))}
           </div>
