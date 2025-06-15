@@ -1,0 +1,66 @@
+graph TD;
+    A[User] -->|Input| B[Query Interface]
+    B --> C{Query Type?}
+    
+    C -->|Natural Language| D[Language Parser]
+    C -->|Direct Command| E[Syntax Validator]
+    
+    D --> F[Intent Recognition - Knowledge Base]
+    E --> G[Command Schema Check]
+    
+    F --> H[Query Generator]
+    G --> H
+    
+    H --> I[Auth Module - User Permissions]
+    
+    I --> J{Valid?}
+    J -->|Yes| K[Query Engine]
+    J -->|No| L[Error: Access Denied]
+    
+    K --> M{Data Source?}
+    M -->|Local DB| N[[Database Adapter]]
+    M -->|External API| O[API Gateway]
+    
+    N --> P[Cache Check]
+    P --> Q{Cache Hit?}
+    Q -->|Yes| R[Return Cached Data]
+    Q -->|No| S[Execute DB Query]
+    
+    O --> T[Rate Limiter]
+    T --> U[API Request]
+    U --> V{Response OK?}
+    V -->|Yes| W[Parse API Data]
+    V -->|No| X[Retry Mechanism]
+    
+    S --> Y[Data Transformer]
+    W --> Y
+    
+    Y --> Z[Data Filter - User Rules]
+    Z --> AA[Result Formatter - JSON/HTML/Text]
+    
+    AA --> AB[Output Builder]
+    R --> AB
+    
+    AB --> AC[UI Renderer or CLI Display]
+    
+    AC --> AD[User Feedback]
+    AD -->|Success| AE[Log Metrics]
+    AD -->|Failure| AF[Error Reporter]
+    
+    AE --> AG[Analytics Dashboard]
+    AF --> AG
+    AG --> AH[System Health Monitor]
+    
+    style A stroke:#666,stroke-width:2px
+    style K fill:#c9e6ff,stroke:#333,stroke-width:1px
+    style N fill:#d4f7d4,stroke:#333,stroke-width:1px
+    style O fill:#ffe8c9,stroke:#333,stroke-width:1px
+    style AA fill:#f0f0f0,stroke:#333,stroke-width:1px
+    style AB fill:#e0e0e0,stroke:#333,stroke-width:1px
+    style AC fill:#e0e0e0,stroke:#333,stroke-width:1px
+    style AD fill:#e0e0e0,stroke:#333,stroke-width:1px
+    style AE fill:#e0e0e0,stroke:#333,stroke-width:1px
+    style AF fill:#e0e0e0,stroke:#333,stroke-width:1px
+    style AG fill:#e0e0e0,stroke:#333,stroke-width:1px
+    style AH fill:#e0e0e0,stroke:#333,stroke-width:1px
+    
