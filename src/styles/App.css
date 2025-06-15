@@ -1057,6 +1057,33 @@ body {
   color: #000;
 }
 
+/* GST and Final Total Styling */
+.final-total {
+  border-top: 1px solid #e5e5e5;
+  padding-top: 8px;
+  margin-top: 8px;
+  font-weight: 600;
+}
+
+.final-total .total-label,
+.final-total .total-amount {
+  font-weight: 700;
+  color: #000;
+}
+
+.subtotal-row,
+.gst-row {
+  font-size: 13px;
+  color: #666;
+  border-bottom: none;
+  padding: 8px 0;
+}
+
+.gst-row {
+  border-bottom: 1px solid #f0f0f0;
+  margin-bottom: 8px;
+}
+
 /* Responsive adjustments for Cart */
 @media (max-width: 768px) {
   .cart-sidebar {

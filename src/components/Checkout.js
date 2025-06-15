@@ -16,7 +16,9 @@ const Checkout = ({ isOpen, onClose, cartItems, onOrderComplete }) => {
   const [errors, setErrors] = useState({});
   const [distanceError, setDistanceError] = useState('');
 
-  const total = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const gst = subtotal * 0.05; // 5% GST
+  const total = subtotal + gst;
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -130,12 +132,20 @@ const Checkout = ({ isOpen, onClose, cartItems, onOrderComplete }) => {
                 {cartItems.map(item => (
                   <div key={item.id} className="summary-item">
                     <span>{item.name} × {item.quantity}</span>
-                    <span>₹{item.price * item.quantity}</span>
+                    <span>₹{(item.price * item.quantity).toFixed(2)}</span>
                   </div>
                 ))}
+                <div className="summary-item subtotal-row">
+                  <span>Subtotal</span>
+                  <span>₹{subtotal.toFixed(2)}</span>
+                </div>
+                <div className="summary-item gst-row">
+                  <span>GST (5%)</span>
+                  <span>₹{gst.toFixed(2)}</span>
+                </div>
               </div>
               <div className="summary-total">
-                <strong>Total: ₹{total}</strong>
+                <strong>Total: ₹{total.toFixed(2)}</strong>
               </div>
             </div>
 

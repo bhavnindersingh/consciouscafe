@@ -1,7 +1,9 @@
 import React from 'react';
 
 const Cart = ({ isOpen, onClose, cartItems, onUpdateQuantity, onRemoveItem, onCheckout }) => {
-  const total = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const gst = subtotal * 0.05; // 5% GST
+  const total = subtotal + gst;
 
   if (!isOpen) return null;
 
@@ -26,7 +28,7 @@ const Cart = ({ isOpen, onClose, cartItems, onUpdateQuantity, onRemoveItem, onCh
           {cartItems.length > 0 && (
             <div className="cart-summary">
               <span className="item-count">{cartItems.length} {cartItems.length === 1 ? 'item' : 'items'}</span>
-              <span className="cart-total-preview">₹{total}</span>
+              <span className="cart-total-preview">₹{total.toFixed(2)}</span>
             </div>
           )}
         </div>
@@ -105,7 +107,15 @@ const Cart = ({ isOpen, onClose, cartItems, onUpdateQuantity, onRemoveItem, onCh
                 <div className="cart-total-section">
                   <div className="total-row">
                     <span className="total-label">Subtotal</span>
-                    <span className="total-amount">₹{total}</span>
+                    <span className="total-amount">₹{subtotal.toFixed(2)}</span>
+                  </div>
+                  <div className="total-row">
+                    <span className="total-label">GST (5%)</span>
+                    <span className="total-amount">₹{gst.toFixed(2)}</span>
+                  </div>
+                  <div className="total-row final-total">
+                    <span className="total-label">Total</span>
+                    <span className="total-amount">₹{total.toFixed(2)}</span>
                   </div>
                   <div className="total-row delivery-note">
                     <span className="delivery-text">🚚 Free delivery on orders above ₹500</span>

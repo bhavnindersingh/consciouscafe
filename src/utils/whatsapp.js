@@ -18,15 +18,21 @@ export const formatWhatsAppMessage = (cartItems, customerInfo) => {
   
   message += `🛒 *Order Details:*\n`;
   
-  let total = 0;
+  let subtotal = 0;
   cartItems.forEach((item, index) => {
     const itemTotal = item.price * item.quantity;
-    total += itemTotal;
+    subtotal += itemTotal;
     message += `${index + 1}. ${item.name}\n`;
     message += `   Qty: ${item.quantity} × ₹${item.price.toFixed(2)} = ₹${itemTotal.toFixed(2)}\n\n`;
   });
   
-  message += `💰 *Total Amount: ₹${total.toFixed(2)}*\n\n`;
+  const gst = subtotal * 0.05; // 5% GST
+  const total = subtotal + gst;
+  
+  message += `💰 *Bill Summary:*\n`;
+  message += `Subtotal: ₹${subtotal.toFixed(2)}\n`;
+  message += `GST (5%): ₹${gst.toFixed(2)}\n`;
+  message += `*Total Amount: ₹${total.toFixed(2)}*\n\n`;
   
   if (customerInfo.notes && customerInfo.notes.trim()) {
     message += `📝 *Special Instructions:*\n${customerInfo.notes}\n\n`;
