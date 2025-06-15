@@ -34,7 +34,7 @@ export const formatWhatsAppMessage = (cartItems, customerInfo) => {
   
   message += `📅 Order Date: ${new Date().toLocaleDateString()}\n`;
   message += `⏰ Order Time: ${new Date().toLocaleTimeString()}\n\n`;
-  message += `Thank you for choosing Conscious Bakes! 🙏`;
+  message += `Thank you for choosing Conscious Cafe, Kavas Conscious Living LLP! 🙏`;
   
   return {
     phone: businessPhone,

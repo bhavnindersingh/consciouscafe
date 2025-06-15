@@ -999,46 +999,25 @@ body {
   gap: 12px;
 }
 
-.checkout-btn {
-  width: 100%;
-  background: linear-gradient(135deg, #8B4B6B 0%, #A0566C 100%);
-  color: white;
-  border: none;
-  padding: 16px 24px;
-  border-radius: 12px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  transition: all 0.3s ease;
+/* Responsive adjustments for Cart */
+@media (max-width: 768px) {
+  .cart-sidebar {
+    width: 100%; /* Make cart full width on smaller mobile */
+    max-width: 400px; /* But not excessively wide */
+    border-left: none; /* Remove border when full width */
+  }
+
+  .cart-footer {
+    /* Add more padding at the bottom to avoid mobile navigation bars */
+    padding-bottom: 80px; /* Increased bottom padding */
+  }
 }
 
-.checkout-btn:hover {
-  background: linear-gradient(135deg, #7A4159 0%, #8F4F5F 100%);
-  transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(139, 75, 107, 0.3);
-}
-
-.continue-shopping-btn {
-  width: 100%;
-  background: white;
-  color: #666;
-  border: 1px solid #e5e5e5;
-  padding: 14px 24px;
-  border-radius: 12px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.continue-shopping-btn:hover {
-  background: #f8f8f8;
-  border-color: #ccc;
-  color: #000;
+@media (max-width: 480px) {
+  .cart-sidebar {
+    width: 100%; /* Full width on very small screens */
+    max-width: 100%;
+  }
 }
 
 /* Checkout Styles - ConsciousBakes Theme */
@@ -2985,7 +2964,7 @@ body {
     font-size: 13px;
   }
 
-  .product-price-detail {
+  .product-price {
     font-size: 20px;
   }
   
