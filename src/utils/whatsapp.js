@@ -1,7 +1,7 @@
 export const formatWhatsAppMessage = (cartItems, customerInfo) => {
   const businessPhone = "+918148132442"; // WhatsApp business number
   
-  let message = `🍽️*New Order from Consciouscafe.in* 🍽️ \n\n`;
+  let message = `🥗 New Order from Consciouscafe.in 🍜' \n\n`;
   message += `👤 *Customer Details:*\n`;
   message += `Name: ${customerInfo.name}\n`;
   message += `Phone: ${customerInfo.phone}\n`;
@@ -42,10 +42,18 @@ export const formatWhatsAppMessage = (cartItems, customerInfo) => {
   message += `⏰ Order Time: ${new Date().toLocaleTimeString()}\n\n`;
   message += `Thank you for choosing Conscious Cafe, Kavas Conscious Living LLP! 🙏`;
   
-  return {
-    phone: businessPhone,
-    message: encodeURIComponent(message)
-  };
+  try {
+    return {
+      phone: businessPhone,
+      message: encodeURIComponent(message)
+    };
+  } catch (error) {
+    console.error('Error formatting WhatsApp message:', error);
+    return {
+      phone: businessPhone,
+      message: ''
+    };
+  }
 };
 
 export const sendToWhatsApp = (cartItems, customerInfo) => {
