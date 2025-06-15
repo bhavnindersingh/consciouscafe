@@ -109,7 +109,7 @@ const Cart = ({ isOpen, onClose, cartItems, onUpdateQuantity, onRemoveItem, onCh
                     <span className="total-label">Subtotal</span>
                     <span className="total-amount">₹{subtotal.toFixed(2)}</span>
                   </div>
-                  <div className="total-row">
+                  <div className="total-row gst-row">
                     <span className="total-label">GST (5%)</span>
                     <span className="total-amount">₹{gst.toFixed(2)}</span>
                   </div>

@@ -997,16 +997,18 @@ body {
   color: #000;
 }
 
-.delivery-note {
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px solid #e5e5e5;
+/* GST styling */
+.total-row.gst-row {
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f0f0f0;
 }
 
-.delivery-text {
-  font-size: 12px;
-  color: #8B4B6B;
-  font-weight: 500;
+.total-row.gst-row .total-label,
+.total-row.gst-row .total-amount {
+  font-size: 13px;
+  color: #999;
+  font-weight: 400;
 }
 
 .cart-actions {
@@ -1071,8 +1073,7 @@ body {
   color: #000;
 }
 
-.subtotal-row,
-.gst-row {
+.subtotal-row {
   font-size: 13px;
   color: #666;
   border-bottom: none;
@@ -1080,8 +1081,19 @@ body {
 }
 
 .gst-row {
+  font-size: 13px;   /* Set to exactly 13px */
+  color: #999;       /* Keep the subtle gray color */
   border-bottom: 1px solid #f0f0f0;
   margin-bottom: 8px;
+  padding: 6px 0;
+  font-weight: 400;
+}
+
+/* Make GST amount match */
+.gst-row .total-amount {
+  font-size: 13px;
+  color: #999;
+  font-weight: 400;
 }
 
 /* Responsive adjustments for Cart */
@@ -3046,7 +3058,7 @@ body {
     font-size: 20px;
   }
   
-  .product-detail-description {
+  .product-detail_description {
     font-size: 13px;
   }
 
