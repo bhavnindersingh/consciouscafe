@@ -75,23 +75,73 @@ const FoodMenuPage = ({
       {/* Category Navigation */}
       <div className="category-navigation">
         <div className="container">
-          <div className="category-tabs">
+          <div className="category-tabs-horizontal">
             <button
-              className={`category-tab ${activeCategory === "all" ? "active" : ""}`}
+              className={`category-tab-horizontal ${activeCategory === "all" ? "active" : ""}`}
               onClick={() => handleCategoryChange("all")}
             >
               All Items
             </button>
-
-            {categories.map((category) => (
-              <button
-                key={category.id}
-                className={`category-tab ${activeCategory === category.id ? "active" : ""}`}
-                onClick={() => handleCategoryChange(category.id)}
-              >
-                {category.name}
-              </button>
-            ))}
+            <button
+              className={`category-tab-horizontal ${activeCategory === "toast" ? "active" : ""}`}
+              onClick={() => handleCategoryChange("toast")}
+            >
+              Toast
+            </button>
+            <button
+              className={`category-tab-horizontal ${activeCategory === "all-day-breakfast" ? "active" : ""}`}
+              onClick={() => handleCategoryChange("all-day-breakfast")}
+            >
+              All Day Breakfast
+            </button>
+            <button
+              className={`category-tab-horizontal ${activeCategory === "smoothie-bowls" ? "active" : ""}`}
+              onClick={() => handleCategoryChange("smoothie-bowls")}
+            >
+              Smoothie Bowls
+            </button>
+            <button
+              className={`category-tab-horizontal ${activeCategory === "earth-grills-crisps" ? "active" : ""}`}
+              onClick={() => handleCategoryChange("earth-grills-crisps")}
+            >
+              Earth Grills/Crisps
+            </button>
+            <button
+              className={`category-tab-horizontal ${activeCategory === "salads" ? "active" : ""}`}
+              onClick={() => handleCategoryChange("salads")}
+            >
+              Salads
+            </button>
+            <button
+              className={`category-tab-horizontal ${activeCategory === "platters" ? "active" : ""}`}
+              onClick={() => handleCategoryChange("platters")}
+            >
+              Platters
+            </button>
+            <button
+              className={`category-tab-horizontal ${activeCategory === "earth-bowls" ? "active" : ""}`}
+              onClick={() => handleCategoryChange("earth-bowls")}
+            >
+              Earth Bowls
+            </button>
+            <button
+              className={`category-tab-horizontal ${activeCategory === "noodle-bowls" ? "active" : ""}`}
+              onClick={() => handleCategoryChange("noodle-bowls")}
+            >
+              Noodle Bowls
+            </button>
+            <button
+              className={`category-tab-horizontal ${activeCategory === "pasta-pizza" ? "active" : ""}`}
+              onClick={() => handleCategoryChange("pasta-pizza")}
+            >
+              Pasta/Pizza
+            </button>
+            <button
+              className={`category-tab-horizontal ${activeCategory === "desserts" ? "active" : ""}`}
+              onClick={() => handleCategoryChange("desserts")}
+            >
+              Desserts
+            </button>
           </div>
         </div>
       </div>
