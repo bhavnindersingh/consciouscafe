@@ -247,6 +247,7 @@ body {
   text-align: center;
   position: relative;
   overflow: hidden;
+  min-height: 70vh;
 }
 
 .hero::before {
