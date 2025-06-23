@@ -47,10 +47,16 @@ const ProductGrid = ({
 
         <div className="container">
           <div className="hero-content">
-            <h1>Conscious Cafe</h1>
+            <h1>
+              <span style={{ color: "rgb(255, 255, 255)" }}>
+                Conscious Cafe
+              </span>
+            </h1>
             <p>
-              Experience our artisanal food and beverages made with conscious
-              ingredients
+              <span style={{ color: "rgb(255, 255, 255)" }}>
+                Experience our artisanal food and beverages made with conscious
+                ingredients
+              </span>
             </p>
             <button className="cta-btn" onClick={() => navigate("/menu")}>
               View Full Food Menu
