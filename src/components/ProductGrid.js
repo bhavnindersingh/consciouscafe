@@ -28,15 +28,23 @@ const ProductGrid = ({
       {/* Hero Section */}
       <section className="hero">
         <div className="container">
-          <div className="hero-content">
-            <h1>Conscious Cafe</h1>
-            <p>
-              Experience our artisanal food and beverages made with conscious
-              ingredients
-            </p>
-            <button className="cta-btn" onClick={() => navigate("/menu")}>
-              View Full Food Menu
-            </button>
+          <div className="hero-video-container">
+            <div className="video-wrapper">
+              <video
+                autoPlay
+                muted
+                controls={false}
+                playsInline
+                loop
+                className="hero-video"
+              >
+                <source
+                  type="video/mp4"
+                  src="https://cdn.builder.io/o/assets%2F9813a8427ba5406c83ac4c926732fea1%2F63f4ca45502342e49dedb33601103eac?alt=media&token=34e40572-03d4-44c7-934d-596f265673f4&apiKey=9813a8427ba5406c83ac4c926732fea1"
+                />
+              </video>
+              <div className="video-aspect-ratio"></div>
+            </div>
           </div>
         </div>
       </section>
