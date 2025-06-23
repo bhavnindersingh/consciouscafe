@@ -27,6 +27,24 @@ const ProductGrid = ({
     <div className="product-section">
       {/* Hero Section */}
       <section className="hero">
+        {/* Video Backdrop */}
+        <div className="hero-video-backdrop">
+          <video
+            autoPlay
+            muted
+            controls={false}
+            playsInline
+            loop
+            className="hero-background-video"
+          >
+            <source
+              type="video/mp4"
+              src="https://cdn.builder.io/o/assets%2F9813a8427ba5406c83ac4c926732fea1%2F63f4ca45502342e49dedb33601103eac?alt=media&token=34e40572-03d4-44c7-934d-596f265673f4&apiKey=9813a8427ba5406c83ac4c926732fea1"
+            />
+          </video>
+          <div className="hero-video-overlay"></div>
+        </div>
+
         <div className="container">
           <div className="hero-content">
             <h1>Conscious Cafe</h1>
@@ -40,7 +58,6 @@ const ProductGrid = ({
           </div>
         </div>
       </section>
-
       {/* Category Navigation */}
       <div className="category-navigation">
         <div className="container">
