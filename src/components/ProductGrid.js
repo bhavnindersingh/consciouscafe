@@ -41,6 +41,80 @@ const ProductGrid = ({
         </div>
       </section>
 
+      {/* Category Navigation */}
+      <div className="category-navigation">
+        <div className="container">
+          <div className="category-tabs-horizontal">
+            <button
+              className="category-tab-horizontal active"
+              onClick={() => navigate("/menu")}
+            >
+              All Items
+            </button>
+            <button
+              className="category-tab-horizontal"
+              onClick={() => navigate("/menu")}
+            >
+              Toast
+            </button>
+            <button
+              className="category-tab-horizontal"
+              onClick={() => navigate("/menu")}
+            >
+              All Day Breakfast
+            </button>
+            <button
+              className="category-tab-horizontal"
+              onClick={() => navigate("/menu")}
+            >
+              Smoothie Bowls
+            </button>
+            <button
+              className="category-tab-horizontal"
+              onClick={() => navigate("/menu")}
+            >
+              Earth Grills/Crisps
+            </button>
+            <button
+              className="category-tab-horizontal"
+              onClick={() => navigate("/menu")}
+            >
+              Salads
+            </button>
+            <button
+              className="category-tab-horizontal"
+              onClick={() => navigate("/menu")}
+            >
+              Platters
+            </button>
+            <button
+              className="category-tab-horizontal"
+              onClick={() => navigate("/menu")}
+            >
+              Earth Bowls
+            </button>
+            <button
+              className="category-tab-horizontal"
+              onClick={() => navigate("/menu")}
+            >
+              Noodle Bowls
+            </button>
+            <button
+              className="category-tab-horizontal"
+              onClick={() => navigate("/menu")}
+            >
+              Pasta/Pizza
+            </button>
+            <button
+              className="category-tab-horizontal"
+              onClick={() => navigate("/menu")}
+            >
+              Desserts
+            </button>
+          </div>
+        </div>
+      </div>
+
       {/* Our Favorites Section */}
       <section className="featured-section">
         <div className="container">
