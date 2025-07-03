@@ -28,7 +28,7 @@ const Header = ({ cartItems, onCartToggle, onCategoryChange, categories }) => {
       <a href="#main-content" className="skip-link">
         Skip to main content
       </a>
-      <header className="header">
+      <header className="header" role="banner">
         {/* Main Header */}
         <div className="header-main">
           <div className="container">
