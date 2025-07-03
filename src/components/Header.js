@@ -44,6 +44,7 @@ const Header = ({ cartItems, onCartToggle, onCategoryChange, categories }) => {
                 </Link>
                 <div className="nav-section">
                   <button
+                    type="button"
                     className="nav-title"
                     aria-haspopup="true"
                     aria-expanded="false"
