@@ -69,6 +69,8 @@ const Header = ({ cartItems, onCartToggle, onCategoryChange, categories }) => {
               <button
                 className="mobile-menu-btn"
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
+                aria-label="Toggle mobile menu"
+                aria-expanded={isMenuOpen}
               >
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                   <path
