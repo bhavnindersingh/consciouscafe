@@ -131,7 +131,11 @@ const Header = ({ cartItems, onCartToggle, onCategoryChange, categories }) => {
 
       {/* Mobile Navigation */}
       {isMenuOpen && (
-        <div className="mobile-nav">
+        <div
+          className="mobile-nav"
+          role="navigation"
+          aria-label="Mobile navigation"
+        >
           <div className="container">
             <Link
               to="/"
