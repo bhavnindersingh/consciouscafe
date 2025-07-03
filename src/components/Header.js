@@ -82,6 +82,7 @@ const Header = ({ cartItems, onCartToggle, onCategoryChange, categories }) => {
               {/* Right Actions */}
               <div className="header-actions">
                 <button
+                  type="button"
                   className="mobile-menu-btn"
                   onClick={() => setIsMenuOpen(!isMenuOpen)}
                   aria-label="Toggle mobile menu"
