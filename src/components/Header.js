@@ -93,7 +93,11 @@ const Header = ({ cartItems, onCartToggle, onCategoryChange, categories }) => {
                   />
                 </svg>
               </button>
-              <button className="cart-btn" onClick={onCartToggle}>
+              <button
+                className="cart-btn"
+                onClick={onCartToggle}
+                aria-label={`Shopping cart with ${cartItemCount} items`}
+              >
                 <span className="cart-text">Bag</span>
                 <svg
                   className="cart-icon"
