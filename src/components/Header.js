@@ -172,7 +172,7 @@ const Header = ({ cartItems, onCartToggle, onCategoryChange, categories }) => {
           </div>
         )}
       </header>
-    </>
+    </div>
   );
 };
 
