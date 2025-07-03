@@ -1,43 +1,93 @@
-import React, { useState, useEffect } from 'react';
-import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
-import Header from './components/Header';
-import ProductGrid from './components/ProductGrid';
-import CategoryPage from './components/CategoryPage';
-import FoodMenuPage from './components/FoodMenuPage';
-import ProductDetailPage from './components/ProductDetailPage';
-import Cart from './components/Cart';
-import Checkout from './components/Checkout';
-import ProductPage from './components/ProductPage';
-import Footer from './components/Footer';
-import { products } from './data/products';
+import React, { useState, useEffect } from "react";
+import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import Header from "./components/Header";
+import ProductGrid from "./components/ProductGrid";
+import CategoryPage from "./components/CategoryPage";
+import FoodMenuPage from "./components/FoodMenuPage";
+import ProductDetailPage from "./components/ProductDetailPage";
+import Cart from "./components/Cart";
+import Checkout from "./components/Checkout";
+import ProductPage from "./components/ProductPage";
+import Footer from "./components/Footer";
+import { products } from "./data/products";
 
 function App() {
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   const [cartItems, setCartItems] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [isProductPageOpen, setIsProductPageOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  
+
   // Define all categories to be displayed - moved from ProductGrid
   const displayCategories = [
-    { id: 'toast', name: 'Toast', icon: '🍞', description: 'Artisanal toasts with various toppings' },
-    { id: 'all-day-breakfast', name: 'All Day Breakfast', icon: '🍳', description: 'Breakfast favorites served all day' },
-    { id: 'smoothie-bowls', name: 'Smoothie Bowls', icon: '🥣', description: 'Nutritious and refreshing smoothie bowls' },
-    { id: 'earth-grills-crisps', name: 'Earth Grills/Crisps', icon: '🌽', description: 'Grilled vegetables and crispy snacks' },
-    { id: 'salads', name: 'Salads', icon: '🥗', description: 'Fresh and healthy salad options' },
-    { id: 'platters', name: 'Platters', icon: '🍽️', description: 'Sharing platters for groups' },
-    { id: 'earth-bowls', name: 'Earth Bowls', icon: '🥙', description: 'Wholesome bowls packed with goodness' },
-    { id: 'noodle-bowls', name: 'Noodle Bowls', icon: '🍜', description: 'Flavorful noodle dishes from around the world' },
-    { id: 'pasta-pizza', name: 'Pasta/Pizza', icon: '🍕', description: 'Italian classics with a conscious twist' },
-    { id: 'desserts', name: 'Desserts', icon: '🍰', description: 'Sweet treats to end your meal' }
+    {
+      id: "toast",
+      name: "Toast",
+      icon: "🍞",
+      description: "Artisanal toasts with various toppings",
+    },
+    {
+      id: "all-day-breakfast",
+      name: "All Day Breakfast",
+      icon: "🍳",
+      description: "Breakfast favorites served all day",
+    },
+    {
+      id: "smoothie-bowls",
+      name: "Smoothie Bowls",
+      icon: "🥣",
+      description: "Nutritious and refreshing smoothie bowls",
+    },
+    {
+      id: "earth-grills-crisps",
+      name: "Earth Grills/Crisps",
+      icon: "🌽",
+      description: "Grilled vegetables and crispy snacks",
+    },
+    {
+      id: "salads",
+      name: "Salads",
+      icon: "🥗",
+      description: "Fresh and healthy salad options",
+    },
+    {
+      id: "platters",
+      name: "Platters",
+      icon: "🍽️",
+      description: "Sharing platters for groups",
+    },
+    {
+      id: "earth-bowls",
+      name: "Earth Bowls",
+      icon: "🥙",
+      description: "Wholesome bowls packed with goodness",
+    },
+    {
+      id: "noodle-bowls",
+      name: "Noodle Bowls",
+      icon: "🍜",
+      description: "Flavorful noodle dishes from around the world",
+    },
+    {
+      id: "pasta-pizza",
+      name: "Pasta/Pizza",
+      icon: "🍕",
+      description: "Italian classics with a conscious twist",
+    },
+    {
+      id: "desserts",
+      name: "Desserts",
+      icon: "🍰",
+      description: "Sweet treats to end your meal",
+    },
   ];
 
   // Load cart from localStorage on component mount
   useEffect(() => {
-    const savedCart = localStorage.getItem('consciousBakesCart');
+    const savedCart = localStorage.getItem("consciousBakesCart");
     if (savedCart) {
       setCartItems(JSON.parse(savedCart));
     }
@@ -45,7 +95,7 @@ function App() {
 
   // Save cart to localStorage whenever cartItems changes
   useEffect(() => {
-    localStorage.setItem('consciousBakesCart', JSON.stringify(cartItems));
+    localStorage.setItem("consciousBakesCart", JSON.stringify(cartItems));
   }, [cartItems]);
 
   // Scroll to top whenever location changes
@@ -54,20 +104,20 @@ function App() {
   }, [location.pathname]);
 
   const addToCart = (product) => {
-    setCartItems(prevItems => {
-      const existingItem = prevItems.find(item => item.id === product.id);
-      
+    setCartItems((prevItems) => {
+      const existingItem = prevItems.find((item) => item.id === product.id);
+
       if (existingItem) {
-        return prevItems.map(item =>
+        return prevItems.map((item) =>
           item.id === product.id
             ? { ...item, quantity: item.quantity + (product.quantity || 1) }
-            : item
+            : item,
         );
       } else {
         return [...prevItems, { ...product, quantity: product.quantity || 1 }];
       }
     });
-    
+
     // Auto-open cart when item is added
     setIsCartOpen(true);
   };
@@ -78,17 +128,17 @@ function App() {
       return;
     }
 
-    setCartItems(prevItems =>
-      prevItems.map(item =>
-        item.id === productId
-          ? { ...item, quantity: newQuantity }
-          : item
-      )
+    setCartItems((prevItems) =>
+      prevItems.map((item) =>
+        item.id === productId ? { ...item, quantity: newQuantity } : item,
+      ),
     );
   };
 
   const removeFromCart = (productId) => {
-    setCartItems(prevItems => prevItems.filter(item => item.id !== productId));
+    setCartItems((prevItems) =>
+      prevItems.filter((item) => item.id !== productId),
+    );
   };
 
   const clearCart = () => {
@@ -110,8 +160,8 @@ function App() {
   };
 
   const handleCategoryChange = (category) => {
-    if (category === 'all') {
-      navigate('/');
+    if (category === "all") {
+      navigate("/");
     } else {
       navigate(`/category/${category}`);
     }
@@ -129,57 +179,54 @@ function App() {
 
   return (
     <div className="App">
-      <Header 
+      <Header
         cartItems={cartItems}
         onCartToggle={handleCartToggle}
         onCategoryChange={handleCategoryChange}
         categories={displayCategories}
       />
-      
-      <main>
+
+      <main role="main">
         <Routes>
-          <Route 
-            path="/" 
+          <Route
+            path="/"
             element={
-              <ProductGrid 
+              <ProductGrid
                 products={products}
                 onAddToCart={addToCart}
                 onProductClick={handleProductClick}
                 onCategoryChange={handleCategoryChange}
                 categories={displayCategories}
               />
-            } 
+            }
           />
-          <Route 
-            path="/category/:categoryId" 
+          <Route
+            path="/category/:categoryId"
             element={
-              <CategoryPage 
+              <CategoryPage
                 products={products}
                 onAddToCart={addToCart}
                 onProductClick={handleProductClick}
-                category={location.pathname.split('/')[2]}
+                category={location.pathname.split("/")[2]}
               />
-            } 
+            }
           />
-          <Route 
-            path="/menu" 
+          <Route
+            path="/menu"
             element={
-              <FoodMenuPage 
+              <FoodMenuPage
                 categories={displayCategories}
                 products={products}
                 onAddToCart={addToCart}
                 onProductClick={handleProductClick}
               />
-            } 
+            }
           />
-          <Route 
-            path="/product/:productId" 
+          <Route
+            path="/product/:productId"
             element={
-              <ProductDetailPage 
-                products={products}
-                onAddToCart={addToCart}
-              />
-            } 
+              <ProductDetailPage products={products} onAddToCart={addToCart} />
+            }
           />
         </Routes>
       </main>
