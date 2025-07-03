@@ -1,6 +1,2 @@
 User-agent: *
-Disallow: /build/
-Disallow: /static/
 Allow: /
-
-Sitemap: /sitemap.xml
