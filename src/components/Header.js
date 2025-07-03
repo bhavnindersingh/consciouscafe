@@ -24,7 +24,9 @@ const Header = ({ cartItems, onCartToggle, onCategoryChange, categories }) => {
   ];
 
   return (
-    <header className="header">
+    <>
+      <a href="#main-content" className="skip-link">Skip to main content</a>
+      <header className="header">
       {/* Main Header */}
       <div className="header-main">
         <div className="container">
@@ -131,11 +133,7 @@ const Header = ({ cartItems, onCartToggle, onCategoryChange, categories }) => {
 
       {/* Mobile Navigation */}
       {isMenuOpen && (
-        <div
-          className="mobile-nav"
-          role="navigation"
-          aria-label="Mobile navigation"
-        >
+        <div className="mobile-nav" role="navigation" aria-label="Mobile navigation">
           <div className="container">
             <Link
               to="/"
