@@ -24,7 +24,7 @@ const Header = ({ cartItems, onCartToggle, onCategoryChange, categories }) => {
   ];
 
   return (
-    <>
+    <div>
       <a href="#main-content" className="skip-link">
         Skip to main content
       </a>
