@@ -186,7 +186,7 @@ function App() {
         categories={displayCategories}
       />
 
-      <main role="main">
+      <main role="main" id="main-content">
         <Routes>
           <Route
             path="/"
