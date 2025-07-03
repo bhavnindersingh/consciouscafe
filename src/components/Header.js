@@ -30,12 +30,22 @@ const Header = ({ cartItems, onCartToggle, onCategoryChange, categories }) => {
         <div className="container">
           <div className="header-content">
             {/* Left Navigation */}
-            <nav className="desktop-nav">
+            <nav
+              className="desktop-nav"
+              role="navigation"
+              aria-label="Main navigation"
+            >
               <Link to="/" className="nav-title">
                 Home
               </Link>
               <div className="nav-section">
-                <button className="nav-title">Food</button>
+                <button
+                  className="nav-title"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                >
+                  Food
+                </button>
                 <div className="nav-dropdown">
                   {menuCategories.map((category) => (
                     <Link
