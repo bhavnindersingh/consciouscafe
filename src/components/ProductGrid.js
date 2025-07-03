@@ -48,12 +48,10 @@ const ProductGrid = ({
         <div className="container">
           <div className="hero-content">
             <h1>
-              <span style={{ color: "rgb(255, 255, 255)" }}>
-                Conscious Cafe
-              </span>
+              <span style={{ color: "#ffffff" }}>Conscious Cafe</span>
             </h1>
             <p>
-              <span style={{ color: "rgb(255, 255, 255)" }}>
+              <span style={{ color: "#ffffff" }}>
                 Experience our artisanal food and beverages made with conscious
                 ingredients
               </span>
