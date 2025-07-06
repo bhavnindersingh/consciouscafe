@@ -4,11 +4,15 @@ import Header from "./components/Header";
 import ProductGrid from "./components/ProductGrid";
 import CategoryPage from "./components/CategoryPage";
 import FoodMenuPage from "./components/FoodMenuPage";
+import DrinksMenuPage from "./components/DrinksMenuPage";
 import ProductDetailPage from "./components/ProductDetailPage";
 import Cart from "./components/Cart";
 import Checkout from "./components/Checkout";
 import ProductPage from "./components/ProductPage";
 import Footer from "./components/Footer";
+import AboutUs from "./components/AboutUs";
+import Contact from "./components/Contact";
+import DeliveryInfo from "./components/DeliveryInfo";
 import { products } from "./data/products";
 
 function App() {
@@ -223,10 +227,43 @@ function App() {
             }
           />
           <Route
+            path="/drinks"
+            element={
+              <DrinksMenuPage
+                products={products}
+                onAddToCart={addToCart}
+                onProductClick={handleProductClick}
+              />
+            }
+          />
+          <Route
+            path="/drinks/category/:categoryId"
+            element={
+              <CategoryPage
+                products={products}
+                onAddToCart={addToCart}
+                onProductClick={handleProductClick}
+                category={location.pathname.split("/")[3]}
+              />
+            }
+          />
+          <Route
             path="/product/:productId"
             element={
               <ProductDetailPage products={products} onAddToCart={addToCart} />
             }
+          />
+          <Route
+            path="/about"
+            element={<AboutUs />}
+          />
+          <Route
+            path="/contact"
+            element={<Contact />}
+          />
+          <Route
+            path="/delivery"
+            element={<DeliveryInfo />}
           />
         </Routes>
       </main>

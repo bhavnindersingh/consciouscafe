@@ -6,8 +6,8 @@ const Footer = () => {
       <div className="container">
         <div className="footer-content">
           <div className="footer-section">
-            <h3>Conscious Bakes</h3>
-            <p>Premium artisanal baked goods made with love and conscious ingredients.</p>
+            <h3>Conscious Cafe</h3>
+            <p>Mindful eating meets exceptional taste - conscious cuisine made with love and sustainable ingredients.</p>
             <div className="social-links">
               <a href="#" aria-label="Instagram">
                 <i className="fab fa-instagram"></i>
@@ -22,38 +22,34 @@ const Footer = () => {
           </div>
 
           <div className="footer-section">
-            <h4>Shop</h4>
+            <h4>Menu</h4>
             <ul>
-              <li><a href="#">Cakes</a></li>
-              <li><a href="#">Pastries</a></li>
-              <li><a href="#">Breads</a></li>
-              <li><a href="#">Cookies</a></li>
-              <li><a href="#">Cupcakes</a></li>
+              <li><a href="/menu">Food Menu</a></li>
+              <li><a href="/drinks">Drinks Menu</a></li>
+              <li><a href="/">Bestsellers</a></li>
             </ul>
           </div>
 
           <div className="footer-section">
             <h4>Information</h4>
             <ul>
-              <li><a href="#">About Us</a></li>
-              <li><a href="#">Contact</a></li>
-              <li><a href="#">Delivery Info</a></li>
-              <li><a href="#">Custom Orders</a></li>
+              <li><a href="/about">About Us</a></li>
+              <li><a href="/contact">Contact</a></li>
+              <li><a href="/delivery">Delivery Info</a></li>
             </ul>
           </div>
 
           <div className="footer-section">
-            <h4>Newsletter</h4>
-            <p>Subscribe to get updates on new products and special offers.</p>
-            <div className="newsletter-form">
-              <input type="email" placeholder="Enter your email" />
-              <button>Subscribe</button>
-            </div>
+            <h4>Opening Hours</h4>
+            <ul>
+              <li>Open All Day: 9:00 AM - 9:30 PM</li>
+              <li>Tuesday: Closed</li>
+            </ul>
           </div>
         </div>
 
         <div className="footer-bottom">
-          <p>&copy; 2025 Conscious Bakes. All rights reserved.</p>
+          <p>&copy; 2025 Conscious Cafe. All rights reserved.</p>
           <div className="footer-links">
             <a href="#">Privacy Policy</a>
             <a href="#">Terms of Service</a>

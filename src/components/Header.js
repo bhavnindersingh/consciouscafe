@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
 const Header = ({ cartItems, onCartToggle, onCategoryChange, categories }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -8,6 +8,15 @@ const Header = ({ cartItems, onCartToggle, onCategoryChange, categories }) => {
     0,
   );
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Check current page types
+  const isHomePage = location.pathname === '/';
+  const isProductPage = location.pathname.startsWith('/product/');
+  const isFoodCategoryPage = location.pathname.startsWith('/category/');
+  const isFoodMenuPage = location.pathname === '/menu';
+  const isDrinksCategoryPage = location.pathname.startsWith('/drinks/category/');
+  const isDrinksMenuPage = location.pathname === '/drinks';
 
   // Use categories from props if available, otherwise use default
   const menuCategories = categories || [
@@ -23,17 +32,53 @@ const Header = ({ cartItems, onCartToggle, onCategoryChange, categories }) => {
     { id: "desserts", name: "Desserts" },
   ];
 
+  const drinksCategories = [
+    { id: "juices", name: "Juices" },
+    { id: "mocktails", name: "Mocktails" },
+    { id: "floral-teas", name: "Floral Teas" },
+    { id: "chai", name: "Chai" },
+    { id: "coffee", name: "Coffee" },
+  ];
+
   return (
     <div>
       <a href="#main-content" className="skip-link">
         Skip to main content
       </a>
       <header className="header" role="banner">
+        {/* Top Navigation Bar - Show subcategories */}
+        {(isFoodMenuPage || isFoodCategoryPage || isDrinksMenuPage || isDrinksCategoryPage) && (
+          <div className="top-nav-bar">
+            <div className="container">
+              <nav className="top-nav" role="navigation" aria-label="Category navigation">
+                {(isFoodMenuPage || isFoodCategoryPage) && menuCategories.map((category) => (
+                  <Link
+                    key={category.id}
+                    to={`/category/${category.id}`}
+                    className={`top-nav-item ${location.pathname === `/category/${category.id}` ? 'active' : ''}`}
+                  >
+                    {category.name}
+                  </Link>
+                ))}
+                {(isDrinksMenuPage || isDrinksCategoryPage) && drinksCategories.map((category) => (
+                  <Link
+                    key={category.id}
+                    to={`/drinks/category/${category.id}`}
+                    className={`top-nav-item ${location.pathname === `/drinks/category/${category.id}` ? 'active' : ''}`}
+                  >
+                    {category.name}
+                  </Link>
+                ))}
+              </nav>
+            </div>
+          </div>
+        )}
+        
         {/* Main Header */}
         <div className="header-main">
           <div className="container">
             <div className="header-content">
-              {/* Left Navigation */}
+              {/* Left Navigation - Always show */}
               <nav
                 className="desktop-nav"
                 role="navigation"
@@ -42,30 +87,12 @@ const Header = ({ cartItems, onCartToggle, onCategoryChange, categories }) => {
                 <Link to="/" className="nav-title">
                   Home
                 </Link>
-                <div className="nav-section">
-                  <button
-                    type="button"
-                    className="nav-title"
-                    aria-haspopup="true"
-                    aria-expanded="false"
-                  >
-                    Food
-                  </button>
-                  <div className="nav-dropdown">
-                    {menuCategories.map((category) => (
-                      <Link
-                        key={category.id}
-                        to={`/category/${category.id}`}
-                        className="nav-item"
-                      >
-                        {category.name}
-                      </Link>
-                    ))}
-                    <Link to="/menu" className="nav-item">
-                      Full Menu
-                    </Link>
-                  </div>
-                </div>
+                <Link to="/menu" className="nav-title">
+                  Food
+                </Link>
+                <Link to="/drinks" className="nav-title">
+                  Drinks
+                </Link>
               </nav>
 
               {/* Center Logo */}
@@ -151,22 +178,40 @@ const Header = ({ cartItems, onCartToggle, onCategoryChange, categories }) => {
               >
                 Home
               </Link>
-              {menuCategories.map((category) => (
-                <Link
-                  key={category.id}
-                  to={`/category/${category.id}`}
-                  className="mobile-nav-item"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {category.name}
-                </Link>
-              ))}
               <Link
                 to="/menu"
                 className="mobile-nav-item"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Full Menu
+                Food Menu
+              </Link>
+              <Link
+                to="/drinks"
+                className="mobile-nav-item"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Drinks Menu
+              </Link>
+              <Link
+                to="/about"
+                className="mobile-nav-item"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                About Us
+              </Link>
+              <Link
+                to="/contact"
+                className="mobile-nav-item"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Contact
+              </Link>
+              <Link
+                to="/delivery"
+                className="mobile-nav-item"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Delivery
               </Link>
             </div>
           </div>

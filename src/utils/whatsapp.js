@@ -1,7 +1,7 @@
 export const formatWhatsAppMessage = (cartItems, customerInfo) => {
   const businessPhone = "+918148132442"; // WhatsApp business number
   
-  let message = `🥗 New Order from Consciouscafe.in 🍜' \n\n`;
+  let message = `🥗 New Order from Consciouscafe.in \n\n`;
   message += `👤 *Customer Details:*\n`;
   message += `Name: ${customerInfo.name}\n`;
   message += `Phone: ${customerInfo.phone}\n`;

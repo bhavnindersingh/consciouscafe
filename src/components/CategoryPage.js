@@ -86,6 +86,46 @@ const CategoryPage = ({ category: propCategory, products, onAddToCart, onProduct
       heroImage: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=1200&h=400&fit=crop',
       bgColor: 'linear-gradient(135deg, #F0E6F0 0%, #FAF0FA 100%)',
       icon: '🍰'
+    },
+    'juices': {
+      title: 'Juices',
+      subtitle: 'Fresh and healthy juice blends',
+      description: 'Nutrient-packed juices made with fresh fruits and vegetables for your wellness.',
+      heroImage: 'https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=1200&h=400&fit=crop',
+      bgColor: 'linear-gradient(135deg, #E6FFE6 0%, #F0FFF0 100%)',
+      icon: '🧃'
+    },
+    'mocktails': {
+      title: 'Mocktails',
+      subtitle: 'Refreshing non-alcoholic cocktails',
+      description: 'Creative and refreshing mocktails crafted with premium ingredients.',
+      heroImage: 'https://images.unsplash.com/photo-1571091655789-405eb7a3a3a8?w=1200&h=400&fit=crop',
+      bgColor: 'linear-gradient(135deg, #FFE6F0 0%, #FFF0F8 100%)',
+      icon: '🍹'
+    },
+    'floral-teas': {
+      title: 'Floral Teas',
+      subtitle: 'Aromatic and calming tea blends',
+      description: 'Delicate floral tea blends for relaxation and wellness.',
+      heroImage: 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=1200&h=400&fit=crop',
+      bgColor: 'linear-gradient(135deg, #F0E6FF 0%, #F8F0FF 100%)',
+      icon: '🌸'
+    },
+    'chai': {
+      title: 'Chai',
+      subtitle: 'Traditional spiced tea',
+      description: 'Authentic Indian chai blends with aromatic spices.',
+      heroImage: 'https://images.unsplash.com/photo-1571934811356-5cc061b6821f?w=1200&h=400&fit=crop',
+      bgColor: 'linear-gradient(135deg, #FFF0E6 0%, #FFF8F0 100%)',
+      icon: '☕'
+    },
+    'coffee': {
+      title: 'Coffee',
+      subtitle: 'Premium coffee selections',
+      description: 'Expertly crafted coffee drinks from espresso to specialty lattes.',
+      heroImage: 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=1200&h=400&fit=crop',
+      bgColor: 'linear-gradient(135deg, #E6E0D4 0%, #F0EDE6 100%)',
+      icon: '☕'
     }
   };
 
@@ -124,11 +164,6 @@ const CategoryPage = ({ category: propCategory, products, onAddToCart, onProduct
       {/* Products Section */}
       <div className="category-products">
         <div className="container">
-          <div className="category-products-header">
-            <h2>Our {currentCategory.title}</h2>
-            <p>Handcrafted with love and the finest ingredients</p>
-          </div>
-          
           {filteredProducts.length > 0 ? (
             <div className="products-grid">
               {filteredProducts.map(product => (
