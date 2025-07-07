@@ -977,15 +977,15 @@ body {
     gap: 40px;
     text-align: center;
   }
-  
+
   .instagram-stats {
     justify-content: center;
   }
-  
+
   .instagram-post {
     width: 180px;
   }
-  
+
   .instagram-post img {
     height: 150px;
   }
@@ -995,19 +995,19 @@ body {
   .instagram-section {
     padding: 60px 0;
   }
-  
+
   .instagram-handle h3 {
     font-size: 24px;
   }
-  
+
   .instagram-stats {
     gap: 20px;
   }
-  
+
   .instagram-post {
     width: 160px;
   }
-  
+
   .instagram-post img {
     height: 130px;
   }
@@ -3023,8 +3023,6 @@ body {
   order: 1;
 }
 
-
-
 .product-sizes {
   margin-top: 16px;
 }
@@ -3155,7 +3153,7 @@ body {
 /* Ensure consistent product card height on smaller screens */
 @media (max-width: 992px) {
   .product-info {
-    height: 270px;
+    min-height: auto;
   }
 }
 
@@ -3423,15 +3421,13 @@ body {
 
 @media (max-width: 576px) {
   .product-info {
-    height: 230px;
+    min-height: auto;
     padding: 20px 16px;
   }
 
   .product-name {
     font-size: 18px;
   }
-
-
 
   .add-to-cart-btn {
     padding: 12px 16px;
@@ -3491,7 +3487,6 @@ body {
     font-size: 13px;
   }
 
-
   .nutrition-grid {
     grid-template-columns: 1fr;
   }
@@ -3538,7 +3533,6 @@ body {
   .product-description {
     font-size: 13px;
   }
-
 
   .size-options {
     flex-direction: column;
