@@ -14,7 +14,6 @@ import AboutUs from "./components/AboutUs";
 import Contact from "./components/Contact";
 import DeliveryInfo from "./components/DeliveryInfo";
 import { products } from "./data/products";
-import "./styles/mobile-fix.css";
 
 function App() {
   const navigate = useNavigate();
