@@ -618,9 +618,9 @@ body {
   z-index: 2;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 6px;
   justify-content: space-between;
-  min-height: 120px;
+  min-height: 140px;
 }
 
 .product-category-subtle {
@@ -658,32 +658,32 @@ body {
 }
 
 .product-price {
-  font-size: 10px;
-  font-weight: 300;
-  color: rgba(33, 33, 33, 0.3);
-  margin: 0;
-  letter-spacing: 0.5px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #212121;
+  margin: 4px 0;
+  letter-spacing: 0;
   order: 3;
 }
 
 /* Product description - consistent styling across all product cards */
 .product-description {
-  color: rgba(33, 33, 33, 0.4);
-  font-size: 11px;
+  color: rgba(33, 33, 33, 0.6);
+  font-size: 13px;
   margin: 0;
-  line-height: 1.3;
+  line-height: 1.4;
   font-weight: 400;
   display: -webkit-box;
-  -webkit-line-clamp: 1;
-  line-clamp: 1;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  height: 14px;
+  height: 36px;
   order: 2;
 }
 
 .from-price {
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 400;
   color: rgba(33, 33, 33, 0.6);
   margin-left: 4px;
