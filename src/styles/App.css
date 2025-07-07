@@ -619,6 +619,8 @@ body {
   display: flex;
   flex-direction: column;
   gap: 2px;
+  justify-content: space-between;
+  min-height: 120px;
 }
 
 .product-category-subtle {
