@@ -1,0 +1,15 @@
+{
+  "short_name": "Conscious Cafe",
+  "name": "Conscious Cafe - Premium Artisanal Food & Beverages",
+  "icons": [
+    {
+      "src": "android-icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#26532B",
+  "background_color": "#F4F2F0"
+}
