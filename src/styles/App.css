@@ -703,10 +703,8 @@ body {
   letter-spacing: 1px;
   position: relative;
   transition: all 0.3s ease;
-  margin: 0;
+  margin: 8px auto 0 auto;
   display: block;
-  margin-left: auto;
-  margin-right: auto;
   order: 4;
 }
 
