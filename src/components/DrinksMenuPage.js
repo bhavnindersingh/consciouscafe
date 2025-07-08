@@ -17,32 +17,57 @@ const DrinksMenuPage = ({ products, onAddToCart, onProductClick }) => {
   );
 
   return (
-    <div className="drinks-menu-page">
-      <div className="page-header">
-        <h1>Drinks Menu</h1>
-        <p>Refreshing beverages to complement your meal</p>
-      </div>
-
-      <div className="drinks-grid">
-        {drinkProducts.length > 0 ? (
-          drinkProducts.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              onAddToCart={onAddToCart}
-              onProductClick={onProductClick}
-            />
-          ))
-        ) : (
-          <div className="no-drinks">
-            <h3>Coming Soon!</h3>
+    <div className="food-menu-page">
+      {/* Hero Section */}
+      <div className="hero food-menu-hero">
+        <div className="hero-image">
+          <img 
+            src="https://images.unsplash.com/photo-1544145945-f90425340c7e?w=1200&h=300&fit=crop&crop=center" 
+            alt="Drinks Menu" 
+            className="hero-bg-image"
+          />
+          <div className="hero-overlay"></div>
+        </div>
+        <div className="container">
+          <div className="hero-content">
+            <h1>Drinks Menu</h1>
             <p>
-              Our drinks menu is being prepared. Check back soon for refreshing
-              options.
+              Refreshing beverages to complement your meal
             </p>
           </div>
-        )}
+        </div>
       </div>
+
+      {/* Drinks Section */}
+      <section className="category-section">
+        <div className="container">
+          <div className="section-header">
+            <h2>Our Beverages</h2>
+            <p>Discover our selection of refreshing drinks</p>
+          </div>
+
+          {drinkProducts.length > 0 ? (
+            <div className="products-grid">
+              {drinkProducts.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  onAddToCart={onAddToCart}
+                  onProductClick={onProductClick}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="no-results">
+              <h3>Coming Soon!</h3>
+              <p>
+                Our drinks menu is being prepared. Check back soon for refreshing
+                options.
+              </p>
+            </div>
+          )}
+        </div>
+      </section>
     </div>
   );
 };

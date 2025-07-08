@@ -3430,8 +3430,8 @@ body {
   }
   
   .product-image {
-    height: 180px !important;
-    margin-bottom: 4px !important;
+    height: 240px !important;
+    margin-bottom: 8px !important;
   }
   
   .product-info {
@@ -3475,8 +3475,8 @@ body {
   }
   
   .product-image {
-    height: 160px !important;
-    margin-bottom: 2px !important;
+    height: 280px !important;
+    margin-bottom: 8px !important;
   }
 
   .hero-categories {
