@@ -236,12 +236,6 @@ const FoodMenuPage = ({
                 <div className="container">
                   <div className="category-header">
                     <h2>{category.name}</h2>
-                    <Link
-                      to={`/category/${category.id}`}
-                      className="view-all-link"
-                    >
-                      View All {category.name}
-                    </Link>
                   </div>
 
                   <div className="products-grid">

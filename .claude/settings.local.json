@@ -5,7 +5,8 @@
       "Bash(npm start)",
       "Bash(npm run build:*)",
       "Bash(rg:*)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(sed:*)"
     ],
     "deny": []
   }

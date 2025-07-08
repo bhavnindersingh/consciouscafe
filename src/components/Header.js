@@ -46,12 +46,12 @@ const Header = ({ cartItems, onCartToggle, onCategoryChange, categories }) => {
         Skip to main content
       </a>
       <header className="header" role="banner">
-        {/* Top Navigation Bar - Show subcategories */}
-        {(isFoodMenuPage || isFoodCategoryPage || isDrinksMenuPage || isDrinksCategoryPage) && (
+        {/* Top Navigation Bar - Show subcategories only on category pages */}
+        {(isFoodCategoryPage || isDrinksCategoryPage) && (
           <div className="top-nav-bar">
             <div className="container">
               <nav className="top-nav" role="navigation" aria-label="Category navigation">
-                {(isFoodMenuPage || isFoodCategoryPage) && menuCategories.map((category) => (
+                {isFoodCategoryPage && menuCategories.map((category) => (
                   <Link
                     key={category.id}
                     to={`/category/${category.id}`}
@@ -60,7 +60,7 @@ const Header = ({ cartItems, onCartToggle, onCategoryChange, categories }) => {
                     {category.name}
                   </Link>
                 ))}
-                {(isDrinksMenuPage || isDrinksCategoryPage) && drinksCategories.map((category) => (
+                {isDrinksCategoryPage && drinksCategories.map((category) => (
                   <Link
                     key={category.id}
                     to={`/drinks/category/${category.id}`}

@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import ProductCard from "./ProductCard";
+import InstagramFeed from "./InstagramFeed";
 
 const ProductGrid = ({
   products,
@@ -103,82 +104,7 @@ const ProductGrid = ({
             </p>
           </div>
           
-          <div className="instagram-content">
-            <div className="instagram-info">
-              <div className="instagram-handle">
-                <span className="instagram-icon">📸</span>
-                <h3>@consciouscafe.kavas</h3>
-              </div>
-              <p>
-                Join our community of conscious food lovers and get inspired 
-                by our daily creations, sustainable practices, and the stories 
-                behind every dish.
-              </p>
-              <div className="instagram-stats">
-                <div className="stat">
-                  <span className="stat-number">🌱</span>
-                  <span className="stat-label">Conscious Cooking</span>
-                </div>
-                <div className="stat">
-                  <span className="stat-number">📷</span>
-                  <span className="stat-label">Daily Updates</span>
-                </div>
-                <div className="stat">
-                  <span className="stat-number">🍽️</span>
-                  <span className="stat-label">Food Stories</span>
-                </div>
-              </div>
-              <a 
-                href="https://instagram.com/consciouscafe.kavas" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="instagram-follow-btn"
-              >
-                Follow Us on Instagram
-              </a>
-            </div>
-            
-            <div className="instagram-preview">
-              <div className="instagram-grid">
-                <div className="instagram-post">
-                  <img 
-                    src="https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=300&h=300&fit=crop" 
-                    alt="Instagram post" 
-                  />
-                </div>
-                <div className="instagram-post">
-                  <img 
-                    src="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=300&h=300&fit=crop" 
-                    alt="Instagram post" 
-                  />
-                </div>
-                <div className="instagram-post">
-                  <img 
-                    src="https://images.unsplash.com/photo-1551024601-bec78aea704b?w=300&h=300&fit=crop" 
-                    alt="Instagram post" 
-                  />
-                </div>
-                <div className="instagram-post">
-                  <img 
-                    src="https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=300&h=300&fit=crop" 
-                    alt="Instagram post" 
-                  />
-                </div>
-                <div className="instagram-post">
-                  <img 
-                    src="https://images.unsplash.com/photo-1565299507177-b0ac66763ed1?w=300&h=300&fit=crop" 
-                    alt="Instagram post" 
-                  />
-                </div>
-                <div className="instagram-post">
-                  <img 
-                    src="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=300&h=300&fit=crop" 
-                    alt="Instagram post" 
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
+          <InstagramFeed />
         </div>
       </section>
 

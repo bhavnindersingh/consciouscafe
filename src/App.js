@@ -2,12 +2,11 @@ import React, { useState, useEffect } from "react";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import Header from "./components/Header";
 import ProductGrid from "./components/ProductGrid";
-import CategoryPage from "./components/CategoryPage";
 import FoodMenuPage from "./components/FoodMenuPage";
 import DrinksMenuPage from "./components/DrinksMenuPage";
-import ProductDetailPage from "./components/ProductDetailPage";
 import Cart from "./components/Cart";
 import Checkout from "./components/Checkout";
+import ProductDetailPage from "./components/ProductDetailPage";
 import ProductPage from "./components/ProductPage";
 import Footer from "./components/Footer";
 import AboutUs from "./components/AboutUs";
@@ -205,17 +204,6 @@ function App() {
             }
           />
           <Route
-            path="/category/:categoryId"
-            element={
-              <CategoryPage
-                products={products}
-                onAddToCart={addToCart}
-                onProductClick={handleProductClick}
-                category={location.pathname.split("/")[2]}
-              />
-            }
-          />
-          <Route
             path="/menu"
             element={
               <FoodMenuPage
@@ -233,17 +221,6 @@ function App() {
                 products={products}
                 onAddToCart={addToCart}
                 onProductClick={handleProductClick}
-              />
-            }
-          />
-          <Route
-            path="/drinks/category/:categoryId"
-            element={
-              <CategoryPage
-                products={products}
-                onAddToCart={addToCart}
-                onProductClick={handleProductClick}
-                category={location.pathname.split("/")[3]}
               />
             }
           />
