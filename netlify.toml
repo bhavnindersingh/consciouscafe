@@ -1,0 +1,12 @@
+[build]
+  publish = "build"
+  command = "npm run build"
+
+[build.environment]
+  NODE_VERSION = "18"
+
+[[functions]]
+  directory = "netlify/functions"
+
+# Environment variables will be set in Netlify dashboard
+# or using Netlify CLI: netlify env:set VARIABLE_NAME value

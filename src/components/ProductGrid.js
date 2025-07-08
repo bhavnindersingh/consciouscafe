@@ -96,14 +96,6 @@ const ProductGrid = ({
       {/* Instagram Section */}
       <section className="instagram-section">
         <div className="container">
-          <div className="section-header">
-            <h2>Follow Our Journey</h2>
-            <p>
-              Stay connected with us on Instagram for daily inspiration, 
-              behind-the-scenes moments, and delicious food photography.
-            </p>
-          </div>
-          
           <InstagramFeed />
         </div>
       </section>

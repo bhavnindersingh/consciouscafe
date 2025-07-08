@@ -17,18 +17,55 @@ const InstagramFeed = () => {
     try {
       setLoading(true);
       
-      // Note: This is a simplified approach. In production, you'll need:
-      // 1. Instagram Basic Display API with proper authentication
-      // 2. A backend server to handle API keys securely
-      // 3. Regular token refresh mechanism
+      // Check cache first (cache for 15 minutes)
+      const cacheKey = 'instagram_posts_cache';
+      const cacheTimeKey = 'instagram_posts_cache_time';
+      const cacheTime = localStorage.getItem(cacheTimeKey);
+      const now = new Date().getTime();
+      const cacheExpiry = 15 * 60 * 1000; // 15 minutes in milliseconds
       
-      // For now, we'll create a mock data structure that matches Instagram's format
-      // and provide fallback to static images
+      if (cacheTime && (now - parseInt(cacheTime)) < cacheExpiry) {
+        const cachedPosts = localStorage.getItem(cacheKey);
+        if (cachedPosts) {
+          setPosts(JSON.parse(cachedPosts));
+          setError(null);
+          setLoading(false);
+          return;
+        }
+      }
       
-      // Attempt to fetch from Instagram (this will require proper API setup)
-      // const response = await fetch(`/api/instagram/${instagramUsername}`);
+      // First try to fetch from our serverless function
+      const response = await fetch('/.netlify/functions/instagram');
       
-      // For demonstration, using mock data with realistic Instagram post structure
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.data) {
+          setPosts(data.data);
+          setError(null);
+          
+          // Cache the successful response
+          localStorage.setItem(cacheKey, JSON.stringify(data.data));
+          localStorage.setItem(cacheTimeKey, now.toString());
+          return;
+        }
+      }
+      
+      // If serverless function fails, log the error and use fallback
+      const errorData = await response.json().catch(() => ({}));
+      console.warn('Instagram API failed:', errorData);
+      
+      // Set appropriate error message based on response
+      if (response.status === 401) {
+        setError('Instagram token expired - Please update configuration');
+      } else if (response.status === 429) {
+        setError('Instagram rate limit exceeded - Please try again later');
+      } else if (response.status === 500 && errorData.error?.includes('Missing Instagram configuration')) {
+        setError('Instagram not configured - Add API credentials to enable live posts');
+      } else {
+        setError('Instagram API temporarily unavailable');
+      }
+      
+      // Use fallback mock data with realistic Instagram post structure
       const mockPosts = [
         {
           id: '1',
@@ -96,11 +133,11 @@ const InstagramFeed = () => {
         }
       ];
 
-      // Simulate API delay
+      // Simulate API delay for fallback
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       setPosts(mockPosts);
-      setError(null);
+      setError('Using demo content - Configure Instagram API for live posts');
     } catch (err) {
       console.error('Error fetching Instagram posts:', err);
       setError('Unable to load Instagram posts');
