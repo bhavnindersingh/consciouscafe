@@ -17,55 +17,7 @@ const InstagramFeed = () => {
     try {
       setLoading(true);
       
-      // Check cache first (cache for 15 minutes)
-      const cacheKey = 'instagram_posts_cache';
-      const cacheTimeKey = 'instagram_posts_cache_time';
-      const cacheTime = localStorage.getItem(cacheTimeKey);
-      const now = new Date().getTime();
-      const cacheExpiry = 15 * 60 * 1000; // 15 minutes in milliseconds
-      
-      if (cacheTime && (now - parseInt(cacheTime)) < cacheExpiry) {
-        const cachedPosts = localStorage.getItem(cacheKey);
-        if (cachedPosts) {
-          setPosts(JSON.parse(cachedPosts));
-          setError(null);
-          setLoading(false);
-          return;
-        }
-      }
-      
-      // First try to fetch from our serverless function
-      const response = await fetch('/.netlify/functions/instagram');
-      
-      if (response.ok) {
-        const data = await response.json();
-        if (data.success && data.data) {
-          setPosts(data.data);
-          setError(null);
-          
-          // Cache the successful response
-          localStorage.setItem(cacheKey, JSON.stringify(data.data));
-          localStorage.setItem(cacheTimeKey, now.toString());
-          return;
-        }
-      }
-      
-      // If serverless function fails, log the error and use fallback
-      const errorData = await response.json().catch(() => ({}));
-      console.warn('Instagram API failed:', errorData);
-      
-      // Set appropriate error message based on response
-      if (response.status === 401) {
-        setError('Instagram token expired - Please update configuration');
-      } else if (response.status === 429) {
-        setError('Instagram rate limit exceeded - Please try again later');
-      } else if (response.status === 500 && errorData.error?.includes('Missing Instagram configuration')) {
-        setError('Instagram not configured - Add API credentials to enable live posts');
-      } else {
-        setError('Instagram API temporarily unavailable');
-      }
-      
-      // Use fallback mock data with realistic Instagram post structure
+      // Using curated mock data for consistent display
       const mockPosts = [
         {
           id: '1',
@@ -133,37 +85,15 @@ const InstagramFeed = () => {
         }
       ];
 
-      // Simulate API delay for fallback
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Simulate loading delay for better UX
+      await new Promise(resolve => setTimeout(resolve, 800));
       
       setPosts(mockPosts);
-      setError('Using demo content - Configure Instagram API for live posts');
+      setError(null);
     } catch (err) {
-      console.error('Error fetching Instagram posts:', err);
+      console.error('Error loading Instagram posts:', err);
       setError('Unable to load Instagram posts');
-      
-      // Fallback to static images if API fails
-      const fallbackPosts = [
-        {
-          id: 'fallback1',
-          media_url: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=400&h=400&fit=crop',
-          caption: 'Follow us @consciouscafe.kavas for daily inspiration!',
-          permalink: `https://instagram.com/${instagramUsername}`
-        },
-        {
-          id: 'fallback2',
-          media_url: 'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&h=400&fit=crop',
-          caption: 'Fresh, conscious food daily',
-          permalink: `https://instagram.com/${instagramUsername}`
-        },
-        {
-          id: 'fallback3',
-          media_url: 'https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400&h=400&fit=crop',
-          caption: 'Behind the scenes at our cafe',
-          permalink: `https://instagram.com/${instagramUsername}`
-        }
-      ];
-      setPosts(fallbackPosts);
+      setPosts([]);
     } finally {
       setLoading(false);
     }
