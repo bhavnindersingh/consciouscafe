@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import { HelmetProvider } from "react-helmet-async";
 import Header from "./components/Header";
 import ProductGrid from "./components/ProductGrid";
 import FoodMenuPage from "./components/FoodMenuPage";
@@ -181,15 +182,16 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <Header
-        cartItems={cartItems}
-        onCartToggle={handleCartToggle}
-        onCategoryChange={handleCategoryChange}
-        categories={displayCategories}
-      />
+    <HelmetProvider>
+      <div className="App">
+        <Header
+          cartItems={cartItems}
+          onCartToggle={handleCartToggle}
+          onCategoryChange={handleCategoryChange}
+          categories={displayCategories}
+        />
 
-      <main role="main" id="main-content">
+        <main role="main" id="main-content">
         <Routes>
           <Route
             path="/"
@@ -270,7 +272,8 @@ function App() {
         onClose={handleProductPageClose}
         onAddToCart={addToCart}
       />
-    </div>
+      </div>
+    </HelmetProvider>
   );
 }
 

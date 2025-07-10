@@ -1,8 +1,30 @@
 import React from "react";
+import SEO from "./SEO";
+import { generatePageSEO, generateStructuredData } from "../utils/seoData";
 
 const AboutUs = () => {
+  // Generate SEO data for about page
+  const seoData = generatePageSEO('about', {
+    structuredData: [
+      generateStructuredData('restaurant'),
+      generateStructuredData('breadcrumb', {
+        items: [
+          { name: 'Home', url: '/' },
+          { name: 'About Us', url: '/about' },
+        ]
+      })
+    ]
+  });
+
   return (
     <div className="about-us-page">
+      <SEO
+        title={seoData.title}
+        description={seoData.description}
+        keywords={seoData.keywords}
+        url={seoData.url}
+        structuredData={seoData.structuredData}
+      />
       {/* Hero Section */}
       <section className="about-hero">
         <div className="container">

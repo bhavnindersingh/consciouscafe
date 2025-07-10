@@ -2,6 +2,8 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import ProductCard from "./ProductCard";
 import InstagramFeed from "./InstagramFeed";
+import SEO from "./SEO";
+import { generatePageSEO, generateStructuredData } from "../utils/seoData";
 
 const ProductGrid = ({
   products,
@@ -14,6 +16,19 @@ const ProductGrid = ({
 
   // Use categories from props instead of defining them here
   const displayCategories = categories || [];
+  
+  // Generate SEO data for home page
+  const seoData = generatePageSEO('home', {
+    structuredData: [
+      generateStructuredData('website'),
+      generateStructuredData('restaurant'),
+      generateStructuredData('breadcrumb', {
+        items: [
+          { name: 'Home', url: '/' },
+        ]
+      })
+    ]
+  });
 
   // Get ALL bestseller products (both food and drinks)
   const featuredProducts = products
@@ -26,6 +41,13 @@ const ProductGrid = ({
 
   return (
     <div className="product-section">
+      <SEO
+        title={seoData.title}
+        description={seoData.description}
+        keywords={seoData.keywords}
+        url={seoData.url}
+        structuredData={seoData.structuredData}
+      />
       {/* Hero Section */}
       <section className="hero">
         {/* Video Backdrop */}

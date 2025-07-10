@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import SEO from './SEO';
+import { generateStructuredData } from '../utils/seoData';
 
 const ProductDetailPage = ({ products, onAddToCart }) => {
   const { productId } = useParams();
@@ -79,8 +81,43 @@ const ProductDetailPage = ({ products, onAddToCart }) => {
     "Organic Milk"
   ];
   
+  // Generate SEO data for product page
+  const seoData = product ? {
+    title: product.name,
+    description: product.description || `Delicious ${product.name} from Conscious Cafe. Made with conscious ingredients and artisanal care.`,
+    keywords: `${product.name}, conscious cafe, artisanal food, ${product.category}, organic food, healthy eating`,
+    url: `/product/${product.id}`,
+    image: product.image,
+    structuredData: [
+      generateStructuredData('menuItem', {
+        name: product.name,
+        description: product.description || `Delicious ${product.name} from Conscious Cafe`,
+        image: product.image,
+        price: product.price,
+        nutrition: nutritionalInfo,
+      }),
+      generateStructuredData('breadcrumb', {
+        items: [
+          { name: 'Home', url: '/' },
+          { name: 'Menu', url: '/menu' },
+          { name: product.name, url: `/product/${product.id}` },
+        ]
+      })
+    ]
+  } : null;
+  
   return (
     <div className="product-detail-page">
+      {seoData && (
+        <SEO
+          title={seoData.title}
+          description={seoData.description}
+          keywords={seoData.keywords}
+          url={seoData.url}
+          image={seoData.image}
+          structuredData={seoData.structuredData}
+        />
+      )}
       <div className="container">
         <div className="product-detail-card">
           <div className="product-detail-header">

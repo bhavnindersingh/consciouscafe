@@ -6,7 +6,11 @@
       "Bash(npm run build:*)",
       "Bash(rg:*)",
       "Bash(rm:*)",
-      "Bash(sed:*)"
+      "Bash(sed:*)",
+      "WebFetch(domain:g.co)",
+      "WebFetch(domain:www.google.com)",
+      "Bash(npx react-scripts:*)",
+      "Bash(node:*)"
     ],
     "deny": []
   }

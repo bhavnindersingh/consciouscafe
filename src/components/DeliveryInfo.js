@@ -1,8 +1,30 @@
 import React from "react";
+import SEO from "./SEO";
+import { generatePageSEO, generateStructuredData } from "../utils/seoData";
 
 const DeliveryInfo = () => {
+  // Generate SEO data for delivery page
+  const seoData = generatePageSEO('delivery', {
+    structuredData: [
+      generateStructuredData('restaurant'),
+      generateStructuredData('breadcrumb', {
+        items: [
+          { name: 'Home', url: '/' },
+          { name: 'Delivery Information', url: '/delivery' },
+        ]
+      })
+    ]
+  });
+
   return (
     <div className="delivery-info-page">
+      <SEO
+        title={seoData.title}
+        description={seoData.description}
+        keywords={seoData.keywords}
+        url={seoData.url}
+        structuredData={seoData.structuredData}
+      />
       <div className="delivery-container">
         <header className="delivery-header">
           <h1>Delivery Information</h1>

@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import SEO from "./SEO";
+import { generatePageSEO, generateStructuredData } from "../utils/seoData";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -24,8 +26,28 @@ const Contact = () => {
     setFormData({ name: "", email: "", phone: "", message: "" });
   };
 
+  // Generate SEO data for contact page
+  const seoData = generatePageSEO('contact', {
+    structuredData: [
+      generateStructuredData('restaurant'),
+      generateStructuredData('breadcrumb', {
+        items: [
+          { name: 'Home', url: '/' },
+          { name: 'Contact Us', url: '/contact' },
+        ]
+      })
+    ]
+  });
+
   return (
     <div className="contact-page">
+      <SEO
+        title={seoData.title}
+        description={seoData.description}
+        keywords={seoData.keywords}
+        url={seoData.url}
+        structuredData={seoData.structuredData}
+      />
       <div className="contact-container">
         <header className="contact-header">
           <h1>Contact Us</h1>

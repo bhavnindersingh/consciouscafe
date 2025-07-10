@@ -1,2 +1,15 @@
 User-agent: *
 Allow: /
+
+# Sitemap
+Sitemap: https://consciouscafe.in/sitemap.xml
+
+# Common crawlers
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
