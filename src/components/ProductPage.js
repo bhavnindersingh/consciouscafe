@@ -4,6 +4,7 @@ const ProductPage = ({ product, isOpen, onClose, onAddToCart }) => {
   const [selectedSize, setSelectedSize] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [selectedPrice, setSelectedPrice] = useState(product?.price || 0);
+  const [selectedOption, setSelectedOption] = useState(null);
 
   // Define size options for cakes
   const cakeSizes = {
@@ -14,20 +15,32 @@ const ProductPage = ({ product, isOpen, onClose, onAddToCart }) => {
   };
 
   const isCake = product?.category === 'birthday-cakes';
+  const hasOptions = product?.options && product.options.length > 0;
 
   React.useEffect(() => {
-    if (product && isCake && !selectedSize) {
-      const firstSize = Object.keys(cakeSizes)[0];
-      setSelectedSize(firstSize);
-      setSelectedPrice(product.price * cakeSizes[firstSize].multiplier);
-    } else if (product && !isCake) {
-      setSelectedPrice(product.price);
+    if (product) {
+      if (isCake && !selectedSize) {
+        const firstSize = Object.keys(cakeSizes)[0];
+        setSelectedSize(firstSize);
+        setSelectedPrice(product.price * cakeSizes[firstSize].multiplier);
+      } else if (hasOptions && !selectedOption) {
+        const firstOption = product.options[0];
+        setSelectedOption(firstOption);
+        setSelectedPrice(firstOption.price);
+      } else if (!isCake && !hasOptions) {
+        setSelectedPrice(product.price);
+      }
     }
-  }, [product, isCake]);
+  }, [product, isCake, hasOptions, selectedSize, selectedOption]);
 
   const handleSizeChange = (size) => {
     setSelectedSize(size);
     setSelectedPrice(product.price * cakeSizes[size].multiplier);
+  };
+
+  const handleOptionChange = (option) => {
+    setSelectedOption(option);
+    setSelectedPrice(option.price);
   };
 
   const handleAddToCart = () => {
@@ -36,7 +49,12 @@ const ProductPage = ({ product, isOpen, onClose, onAddToCart }) => {
       price: selectedPrice,
       quantity: quantity,
       selectedSize: isCake ? selectedSize : null,
-      id: isCake ? `${product.id}-${selectedSize}` : product.id
+      selectedOption: hasOptions ? selectedOption : null,
+      id: isCake
+        ? `${product.id}-${selectedSize}`
+        : hasOptions
+        ? `${product.id}-${selectedOption.name}`
+        : product.id,
     };
 
     onAddToCart(productToAdd);
@@ -79,6 +97,9 @@ const ProductPage = ({ product, isOpen, onClose, onAddToCart }) => {
                 {isCake && selectedSize && (
                   <span className="size-info">({selectedSize})</span>
                 )}
+                {hasOptions && selectedOption && (
+                  <span className="size-info">({selectedOption.name})</span>
+                )}
               </div>
             </div>
 
@@ -91,6 +112,25 @@ const ProductPage = ({ product, isOpen, onClose, onAddToCart }) => {
                 </p>
               )}
             </div>
+
+            {/* Options Selection */}
+            {hasOptions && (
+              <div className="size-selection">
+                <h3>Choose Option</h3>
+                <div className="size-options">
+                  {product.options.map((option) => (
+                    <div
+                      key={option.name}
+                      className={`size-option ${selectedOption?.name === option.name ? 'selected' : ''}`}
+                      onClick={() => handleOptionChange(option)}
+                    >
+                      <div className="size-name">{option.name}</div>
+                      <div className="size-price">₹{option.price}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Size Selection for Cakes */}
             {isCake && (
@@ -160,16 +200,22 @@ const ProductPage = ({ product, isOpen, onClose, onAddToCart }) => {
                 <span>Same day delivery available</span>
               </div>
               <div className="feature">
-                <i className="fas fa-heart"></i>
-                <span>Made with love</span>
+                <i className="fas fa-leaf"></i>
+                <span>Fresh ingredients</span>
               </div>
             </div>
 
             {/* Ingredients */}
-            <div className="product-ingredients">
-              <h3>Ingredients</h3>
-              <p>Premium flour, organic eggs, real butter, pure vanilla extract, and the finest ingredients sourced locally when possible.</p>
-            </div>
+            {product.ingredients && product.ingredients.length > 0 && (
+              <div className="product-ingredients">
+                <h3>Ingredients</h3>
+                <ul>
+                  {product.ingredients.map((ingredient, index) => (
+                    <li key={index}>{ingredient}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         </div>
       </div>

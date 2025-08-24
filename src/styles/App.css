@@ -150,7 +150,7 @@ body {
   left: 0;
   width: 0;
   height: 1px;
-  background: #26532b;
+  background: #212121;
   transition: width 0.3s ease;
 }
 
@@ -199,17 +199,7 @@ body {
   background-color: #f8f8f8;
 }
 
-.trade-btn {
-  background: #26532b !important;
-  color: white !important;
-  padding: 8px 15px !important;
-  border-radius: 20px !important;
-  font-weight: 500;
-}
 
-.trade-btn:hover {
-  background: #3a7a40 !important;
-}
 
 .logo {
   position: absolute;
@@ -267,7 +257,7 @@ body {
 }
 
 .cart-badge {
-  background: #26532b;
+  background: #212121;
   color: white;
   border-radius: 50%;
   width: 18px;
@@ -430,15 +420,7 @@ body {
   color: white;
 }
 
-.hero-categories {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 32px;
-  margin-top: 80px;
-  max-width: 1000px;
-  margin-left: auto;
-  margin-right: auto;
-}
+
 
 .category-card {
   background: rgba(255, 255, 255, 0.8);
@@ -478,12 +460,7 @@ body {
   border-color: rgba(33, 33, 33, 0.12);
 }
 
-.category-icon {
-  font-size: 48px;
-  margin-bottom: 20px;
-  display: block;
-  filter: grayscale(0.2);
-}
+
 
 .category-card h3 {
   font-size: 18px;
@@ -584,8 +561,8 @@ body {
   position: absolute;
   top: 20px;
   left: 20px;
-  background: linear-gradient(135deg, #ffb6c1 0%, #ffc0cb 100%);
-  color: #8b4b6b;
+  background: #212121;
+  color: white;
   padding: 8px 16px;
   border-radius: 20px;
   font-size: 12px;
@@ -593,7 +570,7 @@ body {
   z-index: 3;
   text-transform: uppercase;
   letter-spacing: 1px;
-  box-shadow: 0 4px 16px rgba(255, 182, 193, 0.3);
+  box-shadow: 0 4px 16px rgba(33, 33, 33, 0.2);
 }
 
 .product-image {
@@ -647,20 +624,7 @@ body {
   order: 1;
 }
 
-.product-card-name {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #333;
-  margin: 0.5rem 0;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  line-clamp: 2; /* Added standard property */
-  overflow: hidden;
-  text-overflow: ellipsis;
-  height: calc(1.1rem * 1.5 * 2); /* Assuming line-height of 1.5, for 2 lines */
-  line-height: 1.5;
-}
+
 
 .product-price {
   font-size: 18px;
@@ -793,214 +757,56 @@ body {
   box-shadow: 0 4px 20px rgba(33, 33, 33, 0.1);
 }
 
-/* Instagram Section Styles */
-.instagram-section {
-  padding: 60px 0 80px;
-  background: transparent;
-  position: relative;
+
+
+
+
+/* Option buttons for products with options (like Avocado Toast) - Rectangular Black & White Design */
+.product-options {
+  margin: 24px 0;
 }
 
-.instagram-content {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 80px;
-  align-items: center;
-  margin-top: 60px;
-  position: relative;
-  z-index: 2;
-}
-
-.instagram-info {
-  padding: 0;
-}
-
-.instagram-handle {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 24px;
-}
-
-.instagram-icon {
-  font-size: 20px;
-  color: #26532b;
-}
-
-.instagram-handle h3 {
-  font-size: 32px;
-  font-weight: 400;
+.product-options h3 {
+  margin-bottom: 16px;
+  font-size: 14px;
+  font-weight: 600;
   color: #212121;
-  margin: 0;
-  letter-spacing: -0.5px;
-}
-
-.instagram-info p {
-  font-size: 16px;
-  color: rgba(33, 33, 33, 0.6);
-  line-height: 1.7;
-  margin-bottom: 40px;
-  font-weight: 400;
-}
-
-.instagram-stats {
-  display: flex;
-  gap: 40px;
-  margin-bottom: 40px;
-}
-
-.stat {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  text-align: left;
-}
-
-.stat-number {
-  font-size: 18px;
-  margin-bottom: 4px;
-  color: #26532b;
-}
-
-.stat-label {
-  font-size: 11px;
-  font-weight: 500;
-  color: rgba(33, 33, 33, 0.5);
   text-transform: uppercase;
   letter-spacing: 1px;
 }
 
-.instagram-follow-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
+.option-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.option-btn {
+  background: transparent;
+  border: 1px solid rgba(33, 33, 33, 0.3);
+  border-radius: 0;
+  padding: 10px 20px;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(33, 33, 33, 0.8);
+}
+
+.option-btn:hover {
   background: #212121;
   color: white;
-  text-decoration: none;
-  padding: 14px 28px;
-  border-radius: 0;
-  font-weight: 500;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  transition: all 0.3s ease;
-  border: 1px solid #212121;
-}
-
-.instagram-follow-btn:hover {
-  background: transparent;
-  color: #212121;
+  border-color: #212121;
   transform: translateY(-1px);
-  box-shadow: 0 4px 20px rgba(33, 33, 33, 0.1);
+  box-shadow: 0 2px 8px rgba(33, 33, 33, 0.1);
 }
 
-.instagram-preview {
-  position: relative;
-  overflow: hidden;
-}
-
-.instagram-grid {
-  display: flex;
-  gap: 20px;
-  overflow-x: auto;
-  padding: 20px 0;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-.instagram-grid::-webkit-scrollbar {
-  display: none;
-}
-
-.instagram-post {
-  flex: 0 0 auto;
-  width: 220px;
-  background: white;
-  padding: 15px 15px 60px 15px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-  transform: rotate(-2deg);
-  transition: all 0.3s ease;
-  position: relative;
-  border-radius: 2px;
-}
-
-.instagram-post:nth-child(even) {
-  transform: rotate(1.5deg);
-  margin-top: 10px;
-}
-
-.instagram-post:nth-child(3n) {
-  transform: rotate(-1deg);
-  margin-top: -5px;
-}
-
-.instagram-post:hover {
-  transform: rotate(0deg) scale(1.05);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-  z-index: 10;
-}
-
-.instagram-post::after {
-  content: "@consciouscafe.kavas";
-  position: absolute;
-  bottom: 15px;
-  left: 15px;
-  right: 15px;
-  font-size: 11px;
-  color: #666;
-  text-align: center;
-  font-weight: 500;
-  letter-spacing: 0.5px;
-}
-
-.instagram-post img {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-  border-radius: 1px;
-  transition: all 0.3s ease;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .instagram-content {
-    grid-template-columns: 1fr;
-    gap: 40px;
-    text-align: center;
-  }
-
-  .instagram-stats {
-    justify-content: center;
-  }
-
-  .instagram-post {
-    width: 180px;
-  }
-
-  .instagram-post img {
-    height: 150px;
-  }
-}
-
-@media (max-width: 480px) {
-  .instagram-section {
-    padding: 60px 0;
-  }
-
-  .instagram-handle h3 {
-    font-size: 24px;
-  }
-
-  .instagram-stats {
-    gap: 20px;
-  }
-
-  .instagram-post {
-    width: 160px;
-  }
-
-  .instagram-post img {
-    height: 130px;
-  }
+.option-btn.selected {
+  background: #212121;
+  color: white;
+  border-color: #212121;
 }
 
 /* Cart Styles - Premium Award-Winning Design */
@@ -1047,7 +853,7 @@ body {
 }
 
 .cart-header-icon {
-  color: #8b4b6b;
+  color: #212121;
 }
 
 .cart-summary {
@@ -1110,7 +916,7 @@ body {
 }
 
 .empty-cart-icon {
-  color: #ffb6c1;
+  color: rgba(33, 33, 33, 0.3);
   margin-bottom: 24px;
 }
 
@@ -1361,9 +1167,287 @@ body {
 
 .final-total .total-label,
 .final-total .total-amount {
-  font-weight: 700;
-  color: #000;
+  font-size: 18px;
+  font-weight: bold;
 }
+
+
+
+/* Styles for product options */
+.size-option .size-price {
+  font-weight: bold;
+}
+
+.size-option .size-serves {
+  font-size: 0.9em;
+  color: #666;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #212121;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 16px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.instagram-feed-loading {
+  text-align: center;
+  padding: 40px 20px;
+  color: #666;
+}
+
+/* Instagram Feed - Polaroid Style Single Row */
+.instagram-feed {
+  padding: 40px 0;
+  background: #f8f8f8;
+  border-radius: 0;
+  margin: 40px 0;
+}
+
+.instagram-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 30px 30px 30px;
+  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 30px;
+}
+
+.instagram-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.profile-avatar {
+  width: 40px;
+  height: 40px;
+  background: #ddd;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.profile-info h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #212121;
+  margin: 0;
+}
+
+.profile-info p {
+  font-size: 12px;
+  color: #666;
+  margin: 2px 0 0 0;
+}
+
+.instagram-follow-btn {
+  background: #212121;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 0;
+  font-size: 11px;
+  font-weight: 600;
+  text-decoration: none;
+  letter-spacing: 0.5px;
+  transition: all 0.2s ease;
+}
+
+.instagram-follow-btn:hover {
+  background: #333;
+}
+
+.instagram-grid {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  padding: 0 30px 20px 30px;
+  scrollbar-width: thin;
+  scrollbar-color: #ccc #f0f0f0;
+}
+
+.instagram-grid::-webkit-scrollbar {
+  height: 8px;
+}
+
+.instagram-grid::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 4px;
+}
+
+.instagram-grid::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+
+.instagram-grid::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+.instagram-post {
+  flex: 0 0 auto;
+  width: 280px;
+  background: white;
+  padding: 20px 20px 80px 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+  border-radius: 0;
+}
+
+.instagram-post:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+.instagram-post img {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+  display: block;
+  border-radius: 0;
+}
+
+.instagram-post-content {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  right: 20px;
+}
+
+.instagram-post-caption {
+  font-size: 11px;
+  color: #333;
+  line-height: 1.3;
+  margin-bottom: 6px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.instagram-post-date {
+  font-size: 9px;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.instagram-footer {
+  text-align: center;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.view-all-link {
+  background: transparent;
+  color: #666;
+  border: 1px solid #ddd;
+  text-decoration: none;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  padding: 10px 20px;
+  border-radius: 0;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+}
+
+.view-all-link:hover {
+  background: #212121;
+  color: white;
+  border-color: #212121;
+}
+
+.instagram-error {
+  text-align: center;
+  padding: 40px 20px;
+  color: #666;
+}
+
+/* Responsive Design for Instagram */
+@media (max-width: 768px) {
+  .instagram-header {
+    padding: 0 20px 20px 20px;
+    margin-bottom: 20px;
+  }
+
+  .instagram-grid {
+    padding: 0 20px 20px 20px;
+    gap: 15px;
+  }
+
+  .instagram-post {
+    width: 240px;
+    padding: 16px 16px 50px 16px;
+  }
+
+  .instagram-post img {
+    height: 200px;
+  }
+
+  .instagram-post-content {
+    bottom: 16px;
+    left: 16px;
+    right: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .instagram-header {
+    padding: 0 15px 15px 15px;
+    margin-bottom: 15px;
+  }
+
+  .profile-info h3 {
+    font-size: 14px;
+  }
+
+  .profile-info p {
+    font-size: 11px;
+  }
+
+  .instagram-follow-btn {
+    padding: 6px 12px;
+    font-size: 10px;
+  }
+
+  .instagram-grid {
+    padding: 0 15px 15px 15px;
+    gap: 12px;
+  }
+
+  .instagram-post {
+    width: 200px;
+    padding: 12px 12px 40px 12px;
+  }
+
+  .instagram-post img {
+    height: 160px;
+  }
+
+  .instagram-post-content {
+    bottom: 12px;
+    left: 12px;
+    right: 12px;
+  }
+}
+
+
 
 .subtotal-row {
   font-size: 13px;
@@ -1453,7 +1537,7 @@ body {
 }
 
 .checkout-header-icon {
-  color: #8b4b6b;
+  color: #212121;
 }
 
 .checkout-header h2 {
@@ -1563,9 +1647,9 @@ body {
 
 .place-order-btn {
   flex: 1;
-  background: #25d366;
+  background: #212121;
   color: white;
-  border: 1px solid #25d366;
+  border: 1px solid #212121;
   padding: 16px 24px;
   border-radius: 0;
   font-size: 11px;
@@ -1582,7 +1666,7 @@ body {
 
 .place-order-btn:hover {
   background: transparent;
-  color: #25d366;
+  color: #212121;
   transform: translateY(-1px);
   box-shadow: 0 4px 20px rgba(37, 211, 102, 0.2);
 }
@@ -1669,12 +1753,12 @@ body {
   margin: 0;
   width: 16px;
   height: 16px;
-  accent-color: #8b4b6b;
+  accent-color: #212121;
 }
 
 .order-type-option input[type="radio"]:checked + span {
   font-weight: 600;
-  color: #8b4b6b;
+  color: #212121;
 }
 
 .order-type-option:has(input[type="radio"]:checked) {
@@ -1798,7 +1882,7 @@ body {
 }
 
 .newsletter-form button {
-  background: #26532b;
+  background: #212121;
   color: white;
   border: none;
   padding: 8px 16px;
@@ -1916,7 +2000,7 @@ body {
 
 .search-input:focus {
   outline: none;
-  border-color: #26532b;
+  border-color: #212121;
   box-shadow: 0 4px 20px rgba(38, 83, 43, 0.1);
 }
 
@@ -2082,7 +2166,7 @@ body {
 }
 
 .view-all-link {
-  color: #26532b;
+  color: #212121;
   text-decoration: none;
   font-weight: 500;
   font-size: 14px;
@@ -2137,8 +2221,8 @@ body {
 }
 
 .bestseller-badge-detail {
-  background: linear-gradient(135deg, #ffb6c1 0%, #ffc0cb 100%);
-  color: #8b4b6b;
+  background: linear-gradient(135deg, #f8f8f8 0%, #ffffff 100%);
+  color: #212121;
   padding: 6px 16px;
   border-radius: 20px;
   font-size: 12px;
@@ -2199,7 +2283,7 @@ body {
 .product-category-tag {
   display: inline-block;
   background: rgba(38, 83, 43, 0.1);
-  color: #26532b;
+  color: #212121;
   padding: 6px 14px;
   border-radius: 20px;
   font-size: 12px;
@@ -2209,7 +2293,7 @@ body {
 .product-bestseller-tag {
   display: inline-block;
   background: rgba(139, 75, 107, 0.1);
-  color: #8b4b6b;
+  color: #212121;
   padding: 6px 14px;
   border-radius: 20px;
   font-size: 12px;
@@ -2290,7 +2374,7 @@ body {
 .nutrition-value {
   font-size: 20px;
   font-weight: 700;
-  color: #26532b;
+  color: #212121;
   margin-bottom: 4px;
 }
 
@@ -2558,8 +2642,8 @@ body {
   position: absolute;
   top: 20px;
   left: 20px;
-  background: linear-gradient(135deg, #ffb6c1 0%, #ffc0cb 100%);
-  color: #8b4b6b;
+  background: linear-gradient(135deg, #f8f8f8 0%, #ffffff 100%);
+  color: #212121;
   padding: 8px 16px;
   border-radius: 20px;
   font-size: 12px;
@@ -2918,7 +3002,7 @@ body {
 
 .fresh-badge {
   font-size: 14px;
-  color: #8b4b6b;
+  color: #212121;
   font-weight: 500;
 }
 
@@ -3061,22 +3145,64 @@ body {
 
 .size-btn {
   background: white;
-  border: 1px solid rgba(33, 33, 33, 0.1);
+  border: 1px solid #212121;
   border-radius: 0;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.size-btn:hover {
+  background: #212121;
+  color: white;
+}
+
+.size-btn.selected {
+  background: #212121;
+  color: white;
+  border-color: #212121;
+}
+
+/* Option buttons for products with options (like Avocado Toast) */
+.product-options {
+  margin: 24px 0;
+}
+
+.product-options h3 {
+  margin-bottom: 16px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.option-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.option-btn {
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
   padding: 12px 20px;
   font-size: 14px;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
-.size-btn:hover {
-  border-color: #26532b;
+.option-btn:hover {
+  border-color: #212121;
 }
 
-.size-btn.selected {
-  background: #26532b;
+.option-btn.selected {
+  background: #212121;
   color: white;
-  border-color: #26532b;
+  border-color: #212121;
 }
 
 .quantity-selector {
@@ -3120,8 +3246,8 @@ body {
 
 .product-category-tag {
   display: inline-block;
-  background: rgba(38, 83, 43, 0.1);
-  color: #26532b;
+  background: rgba(33, 33, 33, 0.1);
+  color: #212121;
   padding: 8px 16px;
   border-radius: 20px;
   font-size: 14px;
@@ -3499,9 +3625,7 @@ body {
     margin-bottom: 8px !important;
   }
 
-  .hero-categories {
-    grid-template-columns: 1fr;
-  }
+
 }
 
 /* About Us Page Styles */
@@ -4309,316 +4433,8 @@ body {
   }
 }
 
-/* Instagram Feed Styles */
-.instagram-feed {
-  background: white;
-  border-radius: 0;
-  padding: 40px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-  margin-top: 40px;
-}
 
-.instagram-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 32px;
-  padding-bottom: 24px;
-  border-bottom: 1px solid rgba(33, 33, 33, 0.1);
-}
-
-.instagram-profile {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.instagram-icon {
-  font-size: 32px;
-}
-
-.profile-info h3 {
-  font-size: 24px;
-  font-weight: 700;
-  color: #212121;
-  margin: 0 0 4px 0;
-  letter-spacing: -0.5px;
-}
-
-.profile-info p {
-  font-size: 14px;
-  color: rgba(33, 33, 33, 0.6);
-  margin: 0;
-  font-weight: 500;
-}
-
-.follow-button {
-  background: #212121;
-  color: white;
-  border: 1px solid #212121;
-  border-radius: 0;
-  padding: 12px 24px;
-  font-size: 11px;
-  font-weight: 400;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  display: inline-block;
-}
-
-.follow-button:hover {
-  background: transparent;
-  color: #212121;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 20px rgba(33, 33, 33, 0.1);
-}
-
-.instagram-feed-loading {
-  text-align: center;
-  padding: 60px 20px;
-  background: white;
-  border-radius: 0;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-  margin-top: 40px;
-}
-
-.loading-spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid rgba(33, 33, 33, 0.1);
-  border-top: 3px solid #212121;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin: 0 auto 16px;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.instagram-feed-loading p {
-  color: rgba(33, 33, 33, 0.6);
-  font-size: 16px;
-  margin: 0;
-}
-
-.instagram-error {
-  text-align: center;
-  padding: 20px;
-  background: rgba(231, 76, 60, 0.1);
-  border: 1px solid rgba(231, 76, 60, 0.2);
-  border-radius: 0;
-  margin-bottom: 24px;
-}
-
-.instagram-error p {
-  color: #e74c3c;
-  font-size: 14px;
-  margin: 0;
-}
-
-.instagram-posts-container {
-  margin-bottom: 32px;
-}
-
-.instagram-posts-scroll {
-  display: flex;
-  gap: 24px;
-  overflow-x: auto;
-  padding: 8px 0 16px;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(33, 33, 33, 0.2) transparent;
-}
-
-.instagram-posts-scroll::-webkit-scrollbar {
-  height: 6px;
-}
-
-.instagram-posts-scroll::-webkit-scrollbar-track {
-  background: rgba(33, 33, 33, 0.05);
-  border-radius: 3px;
-}
-
-.instagram-posts-scroll::-webkit-scrollbar-thumb {
-  background: rgba(33, 33, 33, 0.2);
-  border-radius: 3px;
-}
-
-.instagram-posts-scroll::-webkit-scrollbar-thumb:hover {
-  background: rgba(33, 33, 33, 0.3);
-}
-
-.instagram-post-card {
-  flex: 0 0 280px;
-  background: white;
-  border: 1px solid rgba(33, 33, 33, 0.1);
-  border-radius: 0;
-  overflow: hidden;
-  transition: all 0.3s ease;
-}
-
-.instagram-post-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-}
-
-.post-link {
-  text-decoration: none;
-  color: inherit;
-  display: block;
-}
-
-.post-image {
-  position: relative;
-  width: 100%;
-  height: 280px;
-  overflow: hidden;
-}
-
-.post-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.3s ease;
-}
-
-.instagram-post-card:hover .post-image img {
-  transform: scale(1.05);
-}
-
-.post-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(33, 33, 33, 0.7);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.instagram-post-card:hover .post-overlay {
-  opacity: 1;
-}
-
-.post-overlay-icon {
-  font-size: 24px;
-  color: white;
-}
-
-.post-info {
-  padding: 20px;
-}
-
-.post-caption {
-  font-size: 14px;
-  line-height: 1.5;
-  color: rgba(33, 33, 33, 0.8);
-  margin: 0 0 12px 0;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.post-date {
-  font-size: 12px;
-  color: rgba(33, 33, 33, 0.5);
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.instagram-footer {
-  text-align: center;
-  padding-top: 24px;
-  border-top: 1px solid rgba(33, 33, 33, 0.1);
-}
-
-.view-all-posts {
-  background: transparent;
-  color: rgba(33, 33, 33, 0.6);
-  border: 1px solid rgba(33, 33, 33, 0.2);
-  border-radius: 0;
-  padding: 12px 24px;
-  font-size: 11px;
-  font-weight: 400;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  display: inline-block;
-}
-
-.view-all-posts:hover {
-  background: #212121;
-  color: white;
-  border-color: #212121;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 20px rgba(33, 33, 33, 0.1);
-}
-
-/* Responsive Design for Instagram Feed */
-@media (max-width: 768px) {
-  .instagram-feed {
-    padding: 30px 20px;
-    margin-top: 30px;
-  }
-  
-  .instagram-header {
-    flex-direction: column;
-    gap: 20px;
-    text-align: center;
-  }
-  
-  .instagram-profile {
-    flex-direction: column;
-    gap: 12px;
-  }
-  
-  .profile-info h3 {
-    font-size: 20px;
-  }
-  
-  .instagram-posts-scroll {
-    gap: 16px;
-  }
-  
-  .instagram-post-card {
-    flex: 0 0 250px;
-  }
-  
-  .post-image {
-    height: 250px;
-  }
-  
-  .post-info {
-    padding: 16px;
-  }
-}
-
-@media (max-width: 480px) {
-  .instagram-feed {
-    padding: 20px 16px;
-  }
-  
-  .instagram-posts-scroll {
-    gap: 12px;
-  }
-  
-  .instagram-post-card {
-    flex: 0 0 220px;
-  }
-  
-  .post-image {
-    height: 220px;
-  }
-  
+{ 
   .profile-info h3 {
     font-size: 18px;
   }

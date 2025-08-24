@@ -55,7 +55,7 @@ const InstagramFeed = () => {
           id: '5',
           media_url: 'https://images.unsplash.com/photo-1565299507177-b0ac66763ed1?w=400&h=400&fit=crop',
           media_type: 'IMAGE',
-          caption: 'Perfect afternoon coffee moment ☕ #CoffeeTime #AfternoonBreak',
+          caption: 'Afternoon coffee moment ☕ #CoffeeTime #AfternoonBreak',
           permalink: 'https://instagram.com/p/example5',
           timestamp: '2024-01-11T14:30:00+0000'
         },
@@ -63,7 +63,7 @@ const InstagramFeed = () => {
           id: '6',
           media_url: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&h=400&fit=crop',
           media_type: 'IMAGE',
-          caption: 'Homemade pasta with love 🍝 #PastaLove #Homemade',
+          caption: 'Homemade pasta 🍝 #PastaLove #Homemade',
           permalink: 'https://instagram.com/p/example6',
           timestamp: '2024-01-10T19:00:00+0000'
         },
@@ -79,7 +79,7 @@ const InstagramFeed = () => {
           id: '8',
           media_url: 'https://images.unsplash.com/photo-1506806732259-39c2d0268443?w=400&h=400&fit=crop',
           media_type: 'IMAGE',
-          caption: 'Smoothie bowl perfection 🥣 #SmoothieBowl #HealthyTreats',
+          caption: 'Smoothie bowl 🥣 #SmoothieBowl #HealthyTreats',
           permalink: 'https://instagram.com/p/example8',
           timestamp: '2024-01-08T09:30:00+0000'
         }
@@ -134,7 +134,7 @@ const InstagramFeed = () => {
     <div className="instagram-feed">
       <div className="instagram-header">
         <div className="instagram-profile">
-          <span className="instagram-icon">📸</span>
+          <div className="profile-avatar">📸</div>
           <div className="profile-info">
             <h3>@{instagramUsername}</h3>
             <p>Latest from our Instagram</p>
@@ -144,9 +144,9 @@ const InstagramFeed = () => {
           href={`https://instagram.com/${instagramUsername}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="follow-button"
+          className="instagram-follow-btn"
         >
-          Follow
+          FOLLOW
         </a>
       </div>
 
@@ -156,40 +156,30 @@ const InstagramFeed = () => {
         </div>
       )}
 
-      <div className="instagram-posts-container">
-        <div className="instagram-posts-scroll">
-          {posts.map((post, index) => (
-            <div key={post.id} className="instagram-post-card">
-              <a 
-                href={post.permalink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="post-link"
-              >
-                <div className="post-image">
-                  <img 
-                    src={post.media_url} 
-                    alt={truncateCaption(post.caption, 50)}
-                    loading={index < 3 ? "eager" : "lazy"}
-                  />
-                  <div className="post-overlay">
-                    <span className="post-overlay-icon">👁️</span>
-                  </div>
-                </div>
-                <div className="post-info">
-                  <p className="post-caption">
-                    {truncateCaption(post.caption)}
-                  </p>
-                  {post.timestamp && (
-                    <span className="post-date">
-                      {formatTimestamp(post.timestamp)}
-                    </span>
-                  )}
-                </div>
-              </a>
+      <div className="instagram-grid">
+        {posts.map((post, index) => (
+          <div key={post.id} className="instagram-post">
+            <a 
+              href={post.permalink}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img 
+                src={post.media_url} 
+                alt={truncateCaption(post.caption, 50)}
+                loading={index < 3 ? "eager" : "lazy"}
+              />
+            </a>
+            <div className="instagram-post-content">
+              <div className="instagram-post-caption">
+                {truncateCaption(post.caption, 120)}
+              </div>
+              <div className="instagram-post-date">
+                {formatTimestamp(post.timestamp)}
+              </div>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
 
       <div className="instagram-footer">
@@ -197,9 +187,9 @@ const InstagramFeed = () => {
           href={`https://instagram.com/${instagramUsername}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="view-all-posts"
+          className="view-all-link"
         >
-          View All Posts on Instagram
+          VIEW ALL POSTS ON INSTAGRAM
         </a>
       </div>
     </div>

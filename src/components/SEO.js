@@ -12,8 +12,8 @@ const SEO = ({
   canonical,
   noIndex = false,
 }) => {
-  const siteTitle = 'Conscious Cafe - Premium Artisanal Food & Beverages';
-  const siteDescription = 'Experience artisanal food and beverages made with conscious ingredients at Conscious Cafe. Fresh, organic, and locally sourced meals in a welcoming atmosphere.';
+  const siteTitle = 'Conscious Cafe - Food & Beverages';
+  const siteDescription = 'Experience conscious food and beverages at Conscious Cafe. Fresh, organic, and locally sourced meals in a welcoming atmosphere.';
   const siteImage = '/android-icon-192x192.png';
   const siteUrl = 'https://consciouscafe.com'; // Replace with actual domain
   

@@ -7,7 +7,7 @@ const Footer = () => {
         <div className="footer-content">
           <div className="footer-section">
             <h3>Conscious Cafe</h3>
-            <p>Mindful eating meets exceptional taste - conscious cuisine made with love and sustainable ingredients.</p>
+            <p>Experience conscious cuisine crafted with care.</p>
             <div className="social-links">
               <a href="#" aria-label="Instagram">
                 <i className="fab fa-instagram"></i>

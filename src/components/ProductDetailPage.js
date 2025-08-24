@@ -16,13 +16,17 @@ const ProductDetailPage = ({ products, onAddToCart }) => {
   
   // Initialize state after product is found
   const [selectedSize, setSelectedSize] = useState(null);
+  const [selectedOption, setSelectedOption] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState('description');
   
-  // Update selectedSize when product changes
+  // Update selectedSize and selectedOption when product changes
   useEffect(() => {
     if (product?.sizes?.length > 0) {
       setSelectedSize(product.sizes[0].id);
+    }
+    if (product?.options?.length > 0) {
+      setSelectedOption(product.options[0]);
     }
   }, [product]);
   
@@ -43,15 +47,28 @@ const ProductDetailPage = ({ products, onAddToCart }) => {
   const handleSizeChange = (sizeId) => {
     setSelectedSize(sizeId);
   };
+
+  const handleOptionChange = (option) => {
+    setSelectedOption(option);
+  };
   
   const handleAddToCart = () => {
     const selectedSizeObj = product.sizes?.find(size => size.id === selectedSize);
+    
+    // Determine the final price based on selected size or option
+    let finalPrice = product.price;
+    if (selectedSizeObj) {
+      finalPrice = selectedSizeObj.price;
+    } else if (selectedOption) {
+      finalPrice = selectedOption.price;
+    }
     
     const productToAdd = {
       ...product,
       quantity,
       selectedSize: selectedSizeObj ? selectedSizeObj.name : null,
-      price: selectedSizeObj ? selectedSizeObj.price : product.price
+      selectedOption: selectedOption ? selectedOption.name : null,
+      price: finalPrice
     };
     
     onAddToCart(productToAdd);
@@ -62,36 +79,20 @@ const ProductDetailPage = ({ products, onAddToCart }) => {
     return `₹${price}`;
   };
 
-  // Mock nutritional data (would come from the product data in a real app)
-  const nutritionalInfo = {
-    calories: Math.floor(Math.random() * 300) + 200, // Random value between 200-500
-    protein: Math.floor(Math.random() * 15) + 5, // Random value between 5-20g
-    carbs: Math.floor(Math.random() * 30) + 20, // Random value between 20-50g
-    fats: Math.floor(Math.random() * 15) + 5, // Random value between 5-20g
-    fiber: Math.floor(Math.random() * 5) + 1, // Random value between 1-6g
-  };
-
-  // Mock ingredients (would come from the product data in a real app)
-  const ingredients = [
-    "Organic Flour", 
-    "Free-range Eggs", 
-    "Organic Sugar", 
-    "Himalayan Salt", 
-    "Natural Flavors", 
-    "Organic Milk"
-  ];
+  // Get nutritional data from product data
+  const nutritionalInfo = product.nutrition || {};
   
   // Generate SEO data for product page
   const seoData = product ? {
     title: product.name,
-    description: product.description || `Delicious ${product.name} from Conscious Cafe. Made with conscious ingredients and artisanal care.`,
-    keywords: `${product.name}, conscious cafe, artisanal food, ${product.category}, organic food, healthy eating`,
+    description: product.description || `${product.name} from Conscious Cafe.`,
+    keywords: `${product.name}, conscious cafe, ${product.category}, healthy eating`,
     url: `/product/${product.id}`,
     image: product.image,
     structuredData: [
       generateStructuredData('menuItem', {
         name: product.name,
-        description: product.description || `Delicious ${product.name} from Conscious Cafe`,
+        description: product.description || `${product.name} from Conscious Cafe`,
         image: product.image,
         price: product.price,
         nutrition: nutritionalInfo,
@@ -132,7 +133,11 @@ const ProductDetailPage = ({ products, onAddToCart }) => {
           
           <div className="product-detail-content">
             <div className="product-detail-image">
-              <img src={product.image} alt={product.name} />
+              {product.imageType === 'sirv' ? (
+                <img className="Sirv" data-src={product.sirvDataSrc || product.image} alt={product.name} />
+              ) : (
+                <img src={product.image} alt={product.name} />
+              )}
             </div>
             
             <div className="product-detail-info">
@@ -147,7 +152,10 @@ const ProductDetailPage = ({ products, onAddToCart }) => {
               </div>
               
               <div className="product-price-detail">
-                {formatPrice(product.price)}
+                {selectedOption ? formatPrice(selectedOption.price) : formatPrice(product.price)}
+                {selectedOption && (
+                  <span className="option-info"> ({selectedOption.name})</span>
+                )}
               </div>
               
               <div className="product-detail-tabs">
@@ -163,65 +171,83 @@ const ProductDetailPage = ({ products, onAddToCart }) => {
                 >
                   Nutrition
                 </button>
-                <button 
-                  className={`detail-tab ${activeTab === 'ingredients' ? 'active' : ''}`}
-                  onClick={() => setActiveTab('ingredients')}
-                >
-                  Ingredients
-                </button>
               </div>
               
               <div className="product-detail-tab-content">
                 {activeTab === 'description' && (
                   <div className="description-content">
                     <p className="product-detail-description">{product.description}</p>
-                    <p>Our {product.name} is made with the finest ingredients, carefully selected to ensure the best taste and quality. Perfect for any occasion, this dish will satisfy your cravings and leave you wanting more.</p>
                   </div>
                 )}
                 
                 {activeTab === 'nutrition' && (
                   <div className="nutrition-content">
-                    <div className="nutrition-grid">
-                      <div className="nutrition-item">
-                        <div className="nutrition-value">{nutritionalInfo.calories}</div>
-                        <div className="nutrition-label">Calories</div>
-                      </div>
-                      <div className="nutrition-item">
-                        <div className="nutrition-value">{nutritionalInfo.protein}g</div>
-                        <div className="nutrition-label">Protein</div>
-                      </div>
-                      <div className="nutrition-item">
-                        <div className="nutrition-value">{nutritionalInfo.carbs}g</div>
-                        <div className="nutrition-label">Carbs</div>
-                      </div>
-                      <div className="nutrition-item">
-                        <div className="nutrition-value">{nutritionalInfo.fats}g</div>
-                        <div className="nutrition-label">Fats</div>
-                      </div>
-                      <div className="nutrition-item">
-                        <div className="nutrition-value">{nutritionalInfo.fiber}g</div>
-                        <div className="nutrition-label">Fiber</div>
-                      </div>
-                    </div>
-                    
-                    <div className="nutrition-note">
-                      <p>Values are approximate and based on standard serving size.</p>
-                    </div>
+                    {Object.keys(nutritionalInfo).length > 0 ? (
+                      <>
+                        <div className="nutrition-grid">
+                          {nutritionalInfo.calories && (
+                            <div className="nutrition-item">
+                              <div className="nutrition-value">{nutritionalInfo.calories}</div>
+                              <div className="nutrition-label">Calories</div>
+                            </div>
+                          )}
+                          {nutritionalInfo.protein && (
+                            <div className="nutrition-item">
+                              <div className="nutrition-value">{nutritionalInfo.protein}g</div>
+                              <div className="nutrition-label">Protein</div>
+                            </div>
+                          )}
+                          {nutritionalInfo.carbs && (
+                            <div className="nutrition-item">
+                              <div className="nutrition-value">{nutritionalInfo.carbs}g</div>
+                              <div className="nutrition-label">Carbs</div>
+                            </div>
+                          )}
+                          {nutritionalInfo.fats && (
+                            <div className="nutrition-item">
+                              <div className="nutrition-value">{nutritionalInfo.fats}g</div>
+                              <div className="nutrition-label">Fats</div>
+                            </div>
+                          )}
+                          {nutritionalInfo.fiber && (
+                            <div className="nutrition-item">
+                              <div className="nutrition-value">{nutritionalInfo.fiber}g</div>
+                              <div className="nutrition-label">Fiber</div>
+                            </div>
+                          )}
+                        </div>
+                        <div className="nutrition-note">
+                          <p>Values are approximate and based on standard serving size.</p>
+                        </div>
+                      </>
+                    ) : (
+                      <p>Nutrition information not available for this product.</p>
+                    )}
                   </div>
                 )}
                 
-                {activeTab === 'ingredients' && (
-                  <div className="ingredients-content">
-                    <ul className="ingredients-list">
-                      {ingredients.map((ingredient, index) => (
-                        <li key={index} className="ingredient-item">{ingredient}</li>
-                      ))}
-                    </ul>
-                    <p className="ingredients-note">All our ingredients are sourced from local farmers and suppliers whenever possible.</p>
-                  </div>
-                )}
+
               </div>
               
+              {/* Options Selection for products with options (like Avocado Toast) */}
+              {product.options && product.options.length > 0 && (
+                <div className="product-options">
+                  <h3>Choose Option</h3>
+                  <div className="option-buttons">
+                    {product.options.map(option => (
+                      <button
+                        key={option.name}
+                        className={`option-btn ${selectedOption?.name === option.name ? 'selected' : ''}`}
+                        onClick={() => handleOptionChange(option)}
+                      >
+                        {option.name} - {formatPrice(option.price)}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Size Selection for birthday cakes */}
               {product.category === 'birthday-cakes' && product.sizes && (
                 <div className="product-sizes">
                   <h3>Choose Size</h3>

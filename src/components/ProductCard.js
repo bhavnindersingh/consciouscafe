@@ -16,8 +16,11 @@ const ProductCard = ({ product, onAddToCart, onProductClick }) => {
 
   const handleQuickAdd = (e) => {
     e.stopPropagation();
-    // For birthday cakes, open product page to select size
-    if (product.category === 'birthday-cakes') {
+    // Check if product has options (like Avocado Toast with Veg/Egg options)
+    const hasOptions = Array.isArray(product.options) && product.options.length > 0;
+    
+    // For birthday cakes or items with options, open product page to select
+    if (product.category === 'birthday-cakes' || hasOptions) {
       onProductClick(product);
     } else {
       // For other items, add directly to cart
@@ -32,7 +35,11 @@ const ProductCard = ({ product, onAddToCart, onProductClick }) => {
       )}
       
       <div className="product-image">
-        <img src={product.image} alt={product.name} />
+        {product.imageType === 'sirv' ? (
+          <img className="Sirv" data-src={product.sirvDataSrc || product.image} alt={product.name} />
+        ) : (
+          <img src={product.image} alt={product.name} />
+        )}
       </div>
       
       <div className="product-info">
@@ -50,7 +57,16 @@ const ProductCard = ({ product, onAddToCart, onProductClick }) => {
           className="add-to-cart-btn"
           onClick={handleQuickAdd}
         >
-          {product.category === 'birthday-cakes' ? 'Choose Size' : 'Add To Cart'}
+          {(() => {
+            const hasOptions = Array.isArray(product.options) && product.options.length > 0;
+            if (product.category === 'birthday-cakes') {
+              return 'Choose Size';
+            } else if (hasOptions) {
+              return 'Choose Option';
+            } else {
+              return 'Add To Cart';
+            }
+          })()}
         </button>
       </div>
     </div>

@@ -281,7 +281,7 @@ const Checkout = ({ isOpen, onClose, cartItems, onOrderComplete }) => {
                     value={customerInfo.notes}
                     onChange={handleInputChange}
                     rows="2"
-                    placeholder="Any special requests or delivery instructions..."
+                    placeholder="Special requests or delivery instructions"
                   ></textarea>
                 </div>
 

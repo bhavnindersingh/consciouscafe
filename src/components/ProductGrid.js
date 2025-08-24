@@ -75,8 +75,7 @@ const ProductGrid = ({
             </h1>
             <p>
               <span style={{ color: "#ffffff" }}>
-                Experience our artisanal food and beverages made with conscious
-                ingredients
+                Experience conscious food and beverages
               </span>
             </p>
             <div style={{display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap'}}>
