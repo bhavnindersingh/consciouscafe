@@ -87,6 +87,21 @@ table {
   box-sizing: border-box;
 }
 
+/* Ensure proper responsive behavior */
+html {
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+}
+
+/* Force hardware acceleration for smoother animations */
+* {
+  -webkit-transform: translateZ(0);
+  -moz-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  -o-transform: translateZ(0);
+  transform: translateZ(0);
+}
+
 body {
   font-family:
     "Inter",
