@@ -5,7 +5,9 @@ export const products = [
     name: "Mushroom Toast", 
     category: "toast", 
     price: 190, 
-    image: "https://images.unsplash.com/photo-1551024506-0bccd828d307?w=400&h=400&fit=crop", 
+    imageType: 'sirv',
+    image: "https://consciouscafe.sirv.com/Food%20Menu%20Conscious%20Cafe%20August%2725/MushroomToast.webp.JPG", 
+    sirvDataSrc: "https://consciouscafe.sirv.com/Food%20Menu%20Conscious%20Cafe%20August%2725/MushroomToast.webp.JPG",
     description: "Sourdough toast, babaganoush, roasted mushrooms, pesto and micro-greens",
     nutrition: { calories: 239, protein: 8, carbs: 28, fats: 10.5 },
     dietary: "vegan"
@@ -20,8 +22,8 @@ export const products = [
       { name: "With Poached Egg", price: 220 },
     ],
     imageType: 'sirv',
-    image: "https://consciouscafe.sirv.com/Food%20Menu%20Conscious%20Cafe%20August'25/DSC_6311.JPG",
-    sirvDataSrc: "https://consciouscafe.sirv.com/Food%20Menu%20Conscious%20Cafe%20August'25/DSC_6311.JPG",
+    image: "https://consciouscafe.sirv.com/Food%20Menu%20Conscious%20Cafe%20August%2725/avocadotoast.webp.JPG",
+    sirvDataSrc: "https://consciouscafe.sirv.com/Food%20Menu%20Conscious%20Cafe%20August%2725/avocadotoast.webp.JPG",
     description: "Sourdough toast, avocado, fetta cheese, micro greens & optional poached egg",
     nutrition: { calories: "285/350", protein: "7.2/13.2", carbs: 25, fats: "17/22" },
     dietary: "veg/egg"
@@ -31,7 +33,9 @@ export const products = [
     name: "Pesto Cream Cheese", 
     category: "toast", 
     price: 199, 
-    image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400&h=400&fit=crop", 
+    imageType: 'sirv',
+    image: "https://consciouscafe.sirv.com/Food%20Menu%20Conscious%20Cafe%20August%2725/pestocreamcheese.webp.JPG", 
+    sirvDataSrc: "https://consciouscafe.sirv.com/Food%20Menu%20Conscious%20Cafe%20August%2725/pestocreamcheese.webp.JPG",
     description: "Sourdough toast, cream cheese, pesto, roasted beetroot, radish, micro-greens",
     nutrition: { calories: 214, protein: 7.5, carbs: 25, fats: 9 },
     dietary: "veg"
@@ -41,7 +45,9 @@ export const products = [
     name: "Burrata Bruschetta", 
     category: "toast", 
     price: 220, 
-    image: "https://images.unsplash.com/photo-1549931319-a545dcf3bc73?w=400&h=400&fit=crop", 
+    imageType: 'sirv',
+    image: "https://consciouscafe.sirv.com/Food%20Menu%20Conscious%20Cafe%20August%2725/burratabruschetta.JPG", 
+    sirvDataSrc: "https://consciouscafe.sirv.com/Food%20Menu%20Conscious%20Cafe%20August%2725/burratabruschetta.JPG",
     description: "Sourdough toast, burrata cheese, roasted cherry tomatoes, balsamic dressing and fresh basil",
     nutrition: { calories: 191, protein: 7, carbs: 25, fats: 6.6 },
     dietary: "veg"

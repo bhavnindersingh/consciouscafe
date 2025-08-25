@@ -1,8 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const ProductCard = ({ product, onAddToCart, onProductClick }) => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (window.Sirv) {
+      window.Sirv.start();
+    }
+  }, []);
   
   const handleCardClick = (e) => {
     // Don't open product page if clicking the add to cart button
