@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ProductCard from "./ProductCard";
 import InstagramFeed from "./InstagramFeed";
@@ -13,6 +13,22 @@ const ProductGrid = ({
   categories,
 }) => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://scripts.sirv.com/sirvjs/v3/sirv.js";
+    script.async = true;
+    document.body.appendChild(script);
+
+    return () => {
+      const scriptTag = document.querySelector(
+        'script[src="https://scripts.sirv.com/sirvjs/v3/sirv.js"]',
+      );
+      if (scriptTag) {
+        document.body.removeChild(scriptTag);
+      }
+    };
+  }, []);
 
   // Use categories from props instead of defining them here
   const displayCategories = categories || [];
@@ -52,21 +68,13 @@ const ProductGrid = ({
       <section className="hero">
         {/* Video Backdrop */}
         <div className="hero-video-backdrop">
-          <video
-            autoPlay
-            muted
-            controls={false}
-            playsInline
-            loop
-            className="hero-background-video"
-          >
-            <source
-              type="video/mp4"
-              src="https://cdn.builder.io/o/assets%2F9813a8427ba5406c83ac4c926732fea1%2F63f4ca45502342e49dedb33601103eac?alt=media&token=34e40572-03d4-44c7-934d-596f265673f4&apiKey=9813a8427ba5406c83ac4c926732fea1"
-            />
-          </video>
-          <div className="hero-video-overlay"></div>
+          <div
+            className="Sirv"
+            data-src="https://consciouscafe.sirv.com/CCOpenshotvideo.mp4"
+            data-options="video.background: true;"
+          ></div>
         </div>
+        <div className="hero-video-overlay"></div>
 
         <div className="container">
           <div className="hero-content">
@@ -75,7 +83,7 @@ const ProductGrid = ({
             </h1>
             <p>
               <span style={{ color: "#ffffff" }}>
-                Experience conscious food and beverages
+                <i>Atithi Devo Bhav</i>
               </span>
             </p>
             <div style={{display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap'}}>
