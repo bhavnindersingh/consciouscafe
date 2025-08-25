@@ -43,6 +43,26 @@
 - ✅ All breakpoints (768px, 480px) will function correctly
 - ✅ Mobile navigation and layouts will display properly
 
+## Additional Fixes Applied (Round 2)
+
+### 3. Hero Video Text Disappearing Issue
+**Problem**: Text and hyperlinks on hero banner disappearing after video loads
+**Root Cause**: Z-index conflicts between video overlay and content
+**Fixes Applied**:
+- ✅ Fixed hero-content z-index from 3 to 15
+- ✅ Added pointer-events: none to video overlay
+- ✅ Enhanced text visibility with text-shadow
+- ✅ Ensured CTA buttons are always clickable
+
+### 4. CSS Specificity Issues
+**Problem**: Excessive !important declarations causing production conflicts
+**Root Cause**: CSS minifier handles specificity differently than dev server
+**Fixes Applied**:
+- ✅ Removed problematic !important declarations from mobile styles
+- ✅ Enhanced CSS specificity using proper selectors
+- ✅ Added consistent responsive behavior rules
+- ✅ Fixed overflow issues on mobile devices
+
 ## Testing Checklist
 
 After deployment, verify:
