@@ -127,7 +127,7 @@ const ProductDetailPage = ({ products, onAddToCart }) => {
             </button>
             
             {product.bestseller && (
-              <span className="bestseller-badge-detail">Bestseller</span>
+              <span className="bestseller-badge">Bestseller</span>
             )}
           </div>
           
@@ -237,7 +237,7 @@ const ProductDetailPage = ({ products, onAddToCart }) => {
                     {product.options.map(option => (
                       <button
                         key={option.name}
-                        className={`option-btn ${selectedOption?.name === option.name ? 'selected' : ''}`}
+                        className={`cta-btn ${selectedOption?.name === option.name ? '' : 'secondary'}`}
                         onClick={() => handleOptionChange(option)}
                       >
                         {option.name} - {formatPrice(option.price)}
@@ -255,7 +255,7 @@ const ProductDetailPage = ({ products, onAddToCart }) => {
                     {product.sizes.map(size => (
                       <button
                         key={size.id}
-                        className={`size-btn ${selectedSize === size.id ? 'selected' : ''}`}
+                        className={`cta-btn ${selectedSize === size.id ? '' : 'secondary'}`}
                         onClick={() => handleSizeChange(size.id)}
                       >
                         {size.name} - {formatPrice(size.price)}
@@ -284,7 +284,7 @@ const ProductDetailPage = ({ products, onAddToCart }) => {
                 </div>
                 
                 <button 
-                  className="add-to-cart-btn-detail"
+                  className="cta-btn"
                   onClick={handleAddToCart}
                 >
                   Add to Cart
