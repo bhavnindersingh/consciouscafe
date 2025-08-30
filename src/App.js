@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import Header from "./components/Header";
+import Hero from "./components/Hero";
 import ProductGrid from "./components/ProductGrid";
 import FoodMenuPage from "./components/FoodMenuPage";
 import DrinksMenuPage from "./components/DrinksMenuPage";
@@ -18,6 +19,7 @@ import { products } from "./data/products";
 function App() {
   const navigate = useNavigate();
   const location = useLocation();
+  const isHomePage = location.pathname === "/";
 
   const [cartItems, setCartItems] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -190,6 +192,8 @@ function App() {
           onCategoryChange={handleCategoryChange}
           categories={displayCategories}
         />
+
+        {isHomePage && <Hero />}
 
         <main role="main" id="main-content">
         <Routes>

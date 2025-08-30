@@ -63,6 +63,19 @@
 - ✅ Added consistent responsive behavior rules
 - ✅ Fixed overflow issues on mobile devices
 
+### 5. Hero Video Text Disappearing (Advanced Fix)
+**Problem**: Hero section text and buttons disappearing after Sirv video loads
+**Root Cause**: Sirv video player dynamically creates elements that override z-index
+**Comprehensive Fixes Applied**:
+- ✅ Added maximum z-index values (9999) to hero content
+- ✅ Implemented JavaScript monitoring for DOM changes
+- ✅ Added React useEffect hook to continuously fix visibility
+- ✅ Enhanced Sirv video player options for better control
+- ✅ Added CSS animations to ensure content fades in properly
+- ✅ Implemented multiple fallback solutions (CSS + JS + React)
+- ✅ Added MutationObserver to detect and fix Sirv interference
+- ✅ Enhanced text shadows and backgrounds for better visibility
+
 ## Testing Checklist
 
 After deployment, verify:

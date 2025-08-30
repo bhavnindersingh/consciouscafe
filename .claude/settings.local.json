@@ -10,7 +10,13 @@
       "WebFetch(domain:g.co)",
       "WebFetch(domain:www.google.com)",
       "Bash(npx react-scripts:*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "WebFetch(domain:consciouscafe.sirv.com)",
+      "Bash(cp:*)",
+      "Bash(mv:*)",
+      "Bash(ls:*)",
+      "Bash(git add:*)",
+      "Bash(git push:*)"
     ],
     "deny": []
   }

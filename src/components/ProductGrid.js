@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import ProductCard from "./ProductCard";
 import InstagramFeed from "./InstagramFeed";
@@ -13,22 +13,6 @@ const ProductGrid = ({
   categories,
 }) => {
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const script = document.createElement("script");
-    script.src = "https://scripts.sirv.com/sirvjs/v3/sirv.js";
-    script.async = true;
-    document.body.appendChild(script);
-
-    return () => {
-      const scriptTag = document.querySelector(
-        'script[src="https://scripts.sirv.com/sirvjs/v3/sirv.js"]',
-      );
-      if (scriptTag) {
-        document.body.removeChild(scriptTag);
-      }
-    };
-  }, []);
 
   // Use categories from props instead of defining them here
   const displayCategories = categories || [];
@@ -64,40 +48,7 @@ const ProductGrid = ({
         url={seoData.url}
         structuredData={seoData.structuredData}
       />
-      {/* Hero Section */}
-      <section className="hero">
-        {/* Video Backdrop */}
-        <div className="hero-video-backdrop">
-          <div
-            className="Sirv"
-            data-src="https://consciouscafe.sirv.com/CCOpenshotvideo.mp4"
-            data-options="video.background: true;"
-          ></div>
-        </div>
-        <div className="hero-video-overlay"></div>
-
-        <div className="container">
-          <div className="hero-content">
-            <h1>
-              <span style={{ color: "#ffffff" }}>Conscious Cafe</span>
-            </h1>
-            <p>
-              <span style={{ color: "#ffffff" }}>
-                <i>Atithi Devo Bhav</i>
-              </span>
-            </p>
-            <div style={{display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap'}}>
-              <button className="cta-btn" onClick={() => navigate("/menu")}>
-                View Food Menu
-              </button>
-              <button className="cta-btn" onClick={() => navigate("/drinks")}>
-                View Drinks Menu
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
+      
       {/* Our Favorites Section */}
       <section className="featured-section">
         <div className="container">
