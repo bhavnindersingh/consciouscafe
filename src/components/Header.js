@@ -78,7 +78,37 @@ const Header = ({ cartItems, onCartToggle, onCategoryChange, categories }) => {
         <div className="header-main">
           <div className="container">
             <div className="header-content">
-              {/* Left Navigation - Always show */}
+              {/* Mobile Burger Menu - Left Side */}
+              <button
+                type="button"
+                className="mobile-menu-btn"
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                aria-label="Toggle mobile menu"
+                aria-expanded={isMenuOpen}
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M3 12H21"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
+                  <path
+                    d="M3 6H21"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
+                  <path
+                    d="M3 18H21"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </button>
+
+              {/* Left Navigation - Desktop only */}
               <nav
                 className="desktop-nav"
                 role="navigation"
@@ -106,36 +136,8 @@ const Header = ({ cartItems, onCartToggle, onCategoryChange, categories }) => {
                 </Link>
               </div>
 
-              {/* Right Actions */}
+              {/* Right Actions - Cart only */}
               <div className="header-actions">
-                <button
-                  type="button"
-                  className="mobile-menu-btn"
-                  onClick={() => setIsMenuOpen(!isMenuOpen)}
-                  aria-label="Toggle mobile menu"
-                  aria-expanded={isMenuOpen}
-                >
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <path
-                      d="M3 12H21"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                    />
-                    <path
-                      d="M3 6H21"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                    />
-                    <path
-                      d="M3 18H21"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                </button>
                 <button
                   type="button"
                   className="cart-btn"

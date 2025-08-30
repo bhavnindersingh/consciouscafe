@@ -2172,8 +2172,38 @@ body {
     gap: 8px;
   }
 
+  /* Mobile Header Layout */
+  .header-content {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+
   .mobile-menu-btn {
-    display: block;
+    display: flex;
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+  }
+
+  .logo {
+    position: static;
+    transform: none;
+    display: flex;
+    justify-content: center;
+  }
+
+  .header-actions {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    margin-left: 0;
   }
 
   .desktop-nav {
