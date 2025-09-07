@@ -1,11 +1,91 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import ProductCard from './ProductCard';
 
 const CategoryPage = ({ category: propCategory, products, onAddToCart, onProductClick }) => {
   // Use the category from URL params if not provided as prop
   const { categoryId } = useParams();
   const category = propCategory || categoryId;
+
+  // All categories for navigation
+  const allCategories = [
+    { id: "all", name: "All Items", type: "food" },
+    { id: "toast", name: "Toast", type: "food" },
+    { id: "all-day-breakfast", name: "All Day Breakfast", type: "food" },
+    { id: "smoothie-bowls", name: "Smoothie Bowls", type: "food" },
+    { id: "earth-grills-crisps", name: "Earth Grills/Crisps", type: "food" },
+    { id: "salads", name: "Salads", type: "food" },
+    { id: "platters", name: "Platters", type: "food" },
+    { id: "earth-bowls", name: "Earth Bowls", type: "food" },
+    { id: "noodle-bowls", name: "Noodle Bowls", type: "food" },
+    { id: "pasta-pizza", name: "Pasta/Pizza", type: "food" },
+    { id: "all-drinks", name: "All Drinks", type: "drinks" },
+    { id: "coffee", name: "Coffee", type: "drinks" },
+    { id: "floral-teas", name: "Floral Teas", type: "drinks" },
+    { id: "chai", name: "Chai", type: "drinks" },
+    { id: "juices", name: "Juices", type: "drinks" },
+    { id: "mocktails", name: "Mocktails", type: "drinks" }
+  ];
+
+  // JavaScript sticky navigation - Hero visibility based
+  useEffect(() => {
+    let ticking = false;
+    
+    const calculateStickyTrigger = () => {
+      const heroElement = document.querySelector('.category-hero');
+      if (!heroElement) return 150; // fallback
+      
+      const heroHeight = heroElement.offsetHeight;
+      const heroTop = heroElement.offsetTop;
+      const isMobile = window.innerWidth <= 768;
+      const triggerPercentage = isMobile ? 0.6 : 0.75;
+      
+      return heroTop + (heroHeight * triggerPercentage);
+    };
+    
+    const handleScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          const categoryNav = document.querySelector('.category-navigation');
+          const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+          const triggerPoint = calculateStickyTrigger();
+          
+          if (categoryNav) {
+            if (scrollTop > triggerPoint) {
+              categoryNav.classList.add('sticky');
+              categoryNav.classList.remove('static');
+            } else {
+              categoryNav.classList.remove('sticky');
+              categoryNav.classList.add('static');
+            }
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    // Initial calculation and event listener
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleScroll, { passive: true }); // Recalculate on resize
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+    };
+  }, []);
+
+  const handleCategoryClick = (categoryId) => {
+    if (categoryId === "all") {
+      window.location.href = "/menu";
+    } else if (categoryId === "all-drinks") {
+      window.location.href = "/drinks";
+    } else if (allCategories.find(cat => cat.id === categoryId)?.type === "drinks") {
+      window.location.href = `/drinks/category/${categoryId}`;
+    } else {
+      window.location.href = `/category/${categoryId}`;
+    }
+  };
   const categoryData = {
     'toast': {
       title: 'Toast',
@@ -13,7 +93,12 @@ const CategoryPage = ({ category: propCategory, products, onAddToCart, onProduct
       description: 'Enjoy a variety of toasts with different toppings and spreads.',
       heroImage: 'https://images.unsplash.com/photo-1551024506-0bccd828d307?w=1200&h=400&fit=crop',
       bgColor: 'linear-gradient(135deg, #FFE4E6 0%, #FFF0F5 100%)',
-      icon: '🍞'
+      icon: '🍞',
+      seo: {
+        title: 'Fresh Toast Menu - Conscious Cafe | Artisanal Toasts',
+        description: 'Discover our artisanal toast collection with various toppings and spreads. Fresh, delicious toasts made daily at Conscious Cafe.',
+        keywords: 'toast menu, artisanal toast, breakfast toast, conscious cafe toast'
+      }
     },
     'all-day-breakfast': {
       title: 'All Day Breakfast',
@@ -21,7 +106,12 @@ const CategoryPage = ({ category: propCategory, products, onAddToCart, onProduct
       description: 'Start your day right with our all-day breakfast options.',
       heroImage: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=1200&h=400&fit=crop',
       bgColor: 'linear-gradient(135deg, #F0E6FF 0%, #FAF0FF 100%)',
-      icon: '🍳'
+      icon: '🍳',
+      seo: {
+        title: 'All Day Breakfast Menu - Conscious Cafe | Breakfast Anytime',
+        description: 'Enjoy breakfast favorites served all day at Conscious Cafe. Fresh eggs, healthy options, and delicious breakfast dishes available anytime.',
+        keywords: 'all day breakfast, breakfast menu, conscious cafe breakfast, healthy breakfast'
+      }
     },
     'smoothie-bowls': {
       title: 'Smoothie Bowls',
@@ -121,11 +211,29 @@ const CategoryPage = ({ category: propCategory, products, onAddToCart, onProduct
     },
     'coffee': {
       title: 'Coffee',
-      subtitle: 'Coffee selections',
+      subtitle: 'Premium coffee selections',
       description: 'Coffee drinks from espresso to specialty lattes.',
       heroImage: 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=1200&h=400&fit=crop',
       bgColor: 'linear-gradient(135deg, #E6E0D4 0%, #F0EDE6 100%)',
-      icon: '☕'
+      icon: '☕',
+      seo: {
+        title: 'Premium Coffee Menu - Conscious Cafe | Espresso & Specialty Lattes',
+        description: 'Discover our premium coffee selection including espresso, cappuccino, lattes, and specialty coffee drinks at Conscious Cafe.',
+        keywords: 'coffee menu, espresso, cappuccino, latte, specialty coffee, conscious cafe coffee'
+      }
+    },
+    'smoothie-bowls': {
+      title: 'Smoothie Bowls',
+      subtitle: 'Nutritious smoothie bowls',
+      description: 'Thick smoothie bowls topped with fresh fruits and superfoods.',
+      heroImage: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1200&h=400&fit=crop',
+      bgColor: 'linear-gradient(135deg, #FFF4E6 0%, #FFFAF0 100%)',
+      icon: '🥣',
+      seo: {
+        title: 'Smoothie Bowl Menu - Conscious Cafe | Healthy Smoothie Bowls',
+        description: 'Enjoy our nutritious smoothie bowls topped with fresh fruits and superfoods at Conscious Cafe.',
+        keywords: 'smoothie bowl menu, healthy smoothie bowls, acai bowls, superfood bowls, conscious cafe smoothie bowls'
+      }
     }
   };
 
@@ -133,11 +241,32 @@ const CategoryPage = ({ category: propCategory, products, onAddToCart, onProduct
   const filteredProducts = products.filter(product => product.category === category);
 
   if (!currentCategory) {
-    return null;
+    return (
+      <div className="category-page">
+        <div className="container" style={{padding: '100px 20px', textAlign: 'center'}}>
+          <h2>Category "{category}" not found</h2>
+          <p>Available categories: {Object.keys(categoryData).join(', ')}</p>
+          <p>Products count: {products.length}</p>
+        </div>
+      </div>
+    );
   }
 
   return (
     <div className="category-page">
+      <Helmet>
+        <title>{currentCategory.seo?.title || `${currentCategory.title} - Conscious Cafe`}</title>
+        <meta name="description" content={currentCategory.seo?.description || currentCategory.description} />
+        {currentCategory.seo?.keywords && (
+          <meta name="keywords" content={currentCategory.seo.keywords} />
+        )}
+        <meta property="og:title" content={currentCategory.seo?.title || `${currentCategory.title} - Conscious Cafe`} />
+        <meta property="og:description" content={currentCategory.seo?.description || currentCategory.description} />
+        <meta property="og:image" content={currentCategory.heroImage} />
+        <meta property="og:type" content="website" />
+        <link rel="canonical" href={`https://consciousbakes.com/category/${category}`} />
+      </Helmet>
+
       {/* Hero Banner */}
       <div 
         className="category-hero"
@@ -157,6 +286,23 @@ const CategoryPage = ({ category: propCategory, products, onAddToCart, onProduct
             <div className="category-hero-image">
               <img src={currentCategory.heroImage} alt={currentCategory.title} />
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Category Navigation */}
+      <div className="category-navigation static">
+        <div className="container">
+          <div className="category-tabs-horizontal">
+            {allCategories.map((cat) => (
+              <button
+                key={cat.id}
+                className={`category-tab-horizontal ${category === cat.id ? "active" : ""}`}
+                onClick={() => handleCategoryClick(cat.id)}
+              >
+                {cat.name}
+              </button>
+            ))}
           </div>
         </div>
       </div>

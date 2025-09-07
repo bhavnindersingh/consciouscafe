@@ -115,6 +115,54 @@ const FoodMenuPage = ({
     return () => window.removeEventListener('scroll', throttledHandleScroll);
   }, [categories]);
 
+  // JavaScript sticky navigation - Hero visibility based
+  useEffect(() => {
+    let ticking = false;
+    
+    const calculateStickyTrigger = () => {
+      const heroElement = document.querySelector('.food-menu-hero');
+      if (!heroElement) return 150; // fallback
+      
+      const heroHeight = heroElement.offsetHeight;
+      const heroTop = heroElement.offsetTop;
+      const isMobile = window.innerWidth <= 768;
+      const triggerPercentage = isMobile ? 0.6 : 0.75;
+      
+      return heroTop + (heroHeight * triggerPercentage);
+    };
+    
+    const handleScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          const categoryNav = document.querySelector('.category-navigation');
+          const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+          const triggerPoint = calculateStickyTrigger();
+          
+          if (categoryNav) {
+            if (scrollTop > triggerPoint) {
+              categoryNav.classList.add('sticky');
+              categoryNav.classList.remove('static');
+            } else {
+              categoryNav.classList.remove('sticky');
+              categoryNav.classList.add('static');
+            }
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    // Initial calculation and event listener
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleScroll, { passive: true }); // Recalculate on resize
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+    };
+  }, []);
+
+
   // Get the currently active category for navigation highlighting
   const getCurrentActiveCategory = () => {
     return scrollActiveCategory;

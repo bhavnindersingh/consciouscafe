@@ -17,7 +17,9 @@
       "Bash(ls:*)",
       "Bash(git add:*)",
       "Bash(git push:*)",
-      "Read(/mnt/c/Users/inder/OneDrive/Desktop/**)"
+      "Read(/mnt/c/Users/inder/OneDrive/Desktop/**)",
+      "Bash(pkill:*)",
+      "Bash(kill:*)"
     ],
     "deny": []
   }

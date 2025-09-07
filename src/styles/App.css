@@ -2711,15 +2711,14 @@ body {
 }
 
 .product-count {
-  background: #212121;
-  color: white;
+  background: rgba(244, 242, 240, 0.8);
+  color: rgba(33, 33, 33, 0.7);
   padding: 8px 16px;
   border-radius: 20px;
-  font-family: "Inter", sans-serif;
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  font-family: "Cormorant Garamond", serif;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid rgba(33, 33, 33, 0.1);
 }
 
 .fresh-badge {
