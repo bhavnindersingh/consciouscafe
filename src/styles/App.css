@@ -2781,6 +2781,417 @@ body {
   font-weight: 400;
 }
 
+/* About Us / Our Story Page Styles */
+.about-us-page {
+  background: rgba(255, 255, 255, 0.6);
+  min-height: 100vh;
+}
+
+.about-hero {
+  background: linear-gradient(135deg, #f4f2f0 0%, #ffffff 100%);
+  padding: 100px 0 80px;
+  text-align: center;
+  position: relative;
+}
+
+.about-hero::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 30% 20%, rgba(33, 33, 33, 0.02) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.about-hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.about-hero h1 {
+  font-family: "EB Garamond", "Inter", serif;
+  font-size: 48px;
+  font-weight: 700;
+  color: #212121;
+  margin-bottom: 20px;
+  letter-spacing: -1.5px;
+  line-height: 1.1;
+}
+
+.about-hero-subtitle {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 24px;
+  color: rgba(33, 33, 33, 0.8);
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+/* Story Section */
+.story-section {
+  padding: 100px 0;
+  background: rgba(255, 255, 255, 0.8);
+  position: relative;
+}
+
+.story-section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, rgba(244, 242, 240, 0.2) 0%, rgba(255, 255, 255, 0.9) 100%);
+  pointer-events: none;
+}
+
+.story-content {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.story-image {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 16px 48px rgba(33, 33, 33, 0.12);
+}
+
+.story-image img {
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.5s ease;
+}
+
+.story-image:hover img {
+  transform: scale(1.02);
+}
+
+.story-text {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.story-intro,
+.story-mission {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 18px;
+  line-height: 1.7;
+  color: rgba(33, 33, 33, 0.8);
+  font-weight: 400;
+}
+
+.story-intro {
+  font-size: 20px;
+  font-weight: 500;
+  color: rgba(33, 33, 33, 0.9);
+}
+
+/* Values Section */
+.values-section {
+  padding: 100px 0;
+  background: rgba(244, 242, 240, 0.3);
+  position: relative;
+}
+
+.values-section h2 {
+  font-family: "EB Garamond", "Inter", serif;
+  font-size: 42px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 60px;
+  color: #212121;
+  letter-spacing: -1px;
+}
+
+.values-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 40px;
+}
+
+.value-card {
+  background: white;
+  padding: 40px 30px;
+  text-align: center;
+  border-radius: 2px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.value-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(33, 33, 33, 0.01) 0%, transparent 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.value-card:hover::before {
+  opacity: 1;
+}
+
+.value-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(33, 33, 33, 0.12);
+}
+
+.value-icon {
+  font-size: 48px;
+  margin-bottom: 24px;
+  display: block;
+}
+
+.value-card h3 {
+  font-family: "EB Garamond", "Inter", serif;
+  font-size: 24px;
+  font-weight: 600;
+  color: #212121;
+  margin-bottom: 16px;
+  letter-spacing: -0.5px;
+}
+
+.value-card p {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 16px;
+  color: rgba(33, 33, 33, 0.7);
+  line-height: 1.6;
+  font-weight: 400;
+}
+
+/* Founders Section */
+.founders-section {
+  padding: 100px 0;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.founders-section h2 {
+  font-family: "EB Garamond", "Inter", serif;
+  font-size: 42px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 60px;
+  color: #212121;
+  letter-spacing: -1px;
+}
+
+.founders-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 50px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.founder-card {
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.founder-card:hover {
+  transform: translateY(-2px);
+}
+
+.founder-image {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto 24px;
+  box-shadow: 0 8px 25px rgba(33, 33, 33, 0.1);
+  transition: all 0.3s ease;
+}
+
+.founder-card:hover .founder-image {
+  box-shadow: 0 12px 35px rgba(33, 33, 33, 0.15);
+}
+
+.founder-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.founder-card h3 {
+  font-family: "EB Garamond", "Inter", serif;
+  font-size: 24px;
+  font-weight: 600;
+  color: #212121;
+  margin-bottom: 8px;
+  letter-spacing: -0.5px;
+}
+
+.founder-card p {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 16px;
+  color: rgba(33, 33, 33, 0.6);
+  font-weight: 500;
+}
+
+/* Experience Section */
+.experience-section {
+  padding: 100px 0;
+  background: linear-gradient(135deg, rgba(244, 242, 240, 0.4) 0%, rgba(255, 255, 255, 0.8) 100%);
+  text-align: center;
+}
+
+.experience-content h2 {
+  font-family: "EB Garamond", "Inter", serif;
+  font-size: 42px;
+  font-weight: 700;
+  color: #212121;
+  margin-bottom: 32px;
+  letter-spacing: -1px;
+}
+
+.experience-content p {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 20px;
+  color: rgba(33, 33, 33, 0.8);
+  line-height: 1.6;
+  max-width: 800px;
+  margin: 0 auto 60px;
+  font-weight: 400;
+}
+
+.experience-features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 40px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.feature {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 30px 20px;
+  background: white;
+  border-radius: 2px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+}
+
+.feature:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.feature-icon {
+  font-size: 36px;
+}
+
+.feature span:last-child {
+  font-family: "EB Garamond", "Inter", serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: #212121;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Mobile Responsive for About Us Page */
+@media (max-width: 768px) {
+  .about-hero {
+    padding: 80px 0 60px;
+  }
+
+  .about-hero h1 {
+    font-size: 36px;
+  }
+
+  .about-hero-subtitle {
+    font-size: 20px;
+  }
+
+  .story-section {
+    padding: 80px 0;
+  }
+
+  .story-content {
+    grid-template-columns: 1fr;
+    gap: 50px;
+  }
+
+  .story-image img {
+    height: 300px;
+  }
+
+  .story-intro,
+  .story-mission {
+    font-size: 16px;
+  }
+
+  .story-intro {
+    font-size: 18px;
+  }
+
+  .values-section,
+  .founders-section,
+  .experience-section {
+    padding: 80px 0;
+  }
+
+  .values-section h2,
+  .founders-section h2,
+  .experience-content h2 {
+    font-size: 32px;
+  }
+
+  .values-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .founders-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 40px;
+  }
+
+  .experience-features {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+  }
+}
+
+@media (max-width: 480px) {
+  .about-hero h1 {
+    font-size: 28px;
+  }
+
+  .about-hero-subtitle {
+    font-size: 18px;
+  }
+
+  .founders-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .experience-features {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Mobile Responsive for Category Pages */
 @media (max-width: 768px) {
   .category-hero {
