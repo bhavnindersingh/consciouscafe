@@ -10,6 +10,7 @@ import Cart from "./components/Cart";
 import Checkout from "./components/Checkout";
 import ProductDetailPage from "./components/ProductDetailPage";
 import ProductPage from "./components/ProductPage";
+import CategoryPage from "./components/CategoryPage";
 import Footer from "./components/Footer";
 import AboutUs from "./components/AboutUs";
 import Contact from "./components/Contact";
@@ -174,7 +175,17 @@ function App() {
   };
 
   const handleProductClick = (product) => {
-    navigate(`/product/${product.id}`);
+    // Helper function to create slug from product name
+    const createSlug = (name) => {
+      return name
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '') // Remove special characters except spaces and hyphens
+        .replace(/\s+/g, '-') // Replace spaces with hyphens
+        .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
+        .trim();
+    };
+    
+    navigate(`/product/${createSlug(product.name)}`);
   };
 
   // For backward compatibility with modal approach
@@ -225,6 +236,26 @@ function App() {
             element={
               <DrinksMenuPage
                 products={products}
+                onAddToCart={addToCart}
+                onProductClick={handleProductClick}
+              />
+            }
+          />
+          <Route
+            path="/drinks/category/:categoryId"
+            element={
+              <CategoryPage 
+                products={products} 
+                onAddToCart={addToCart}
+                onProductClick={handleProductClick}
+              />
+            }
+          />
+          <Route
+            path="/category/:categoryId"
+            element={
+              <CategoryPage 
+                products={products} 
                 onAddToCart={addToCart}
                 onProductClick={handleProductClick}
               />

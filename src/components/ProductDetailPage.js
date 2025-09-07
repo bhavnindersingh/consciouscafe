@@ -7,12 +7,20 @@ const ProductDetailPage = ({ products, onAddToCart }) => {
   const { productId } = useParams();
   const navigate = useNavigate();
   
-  // Convert productId to number safely
-  const numericProductId = parseInt(productId, 10);
+  // Helper function to create slug from product name
+  const createSlug = (name) => {
+    return name
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, '') // Remove special characters except spaces and hyphens
+      .replace(/\s+/g, '-') // Replace spaces with hyphens
+      .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
+      .trim();
+  };
   
-  // Find the product with proper error handling
+  // Find the product by slug (first try slug, fallback to numeric ID for backward compatibility)
   const product = Array.isArray(products) ? 
-    products.find(p => p.id === numericProductId) : null;
+    products.find(p => createSlug(p.name) === productId) ||
+    products.find(p => p.id === parseInt(productId, 10)) : null;
   
   // Initialize state after product is found
   const [selectedSize, setSelectedSize] = useState(null);
@@ -84,10 +92,10 @@ const ProductDetailPage = ({ products, onAddToCart }) => {
   
   // Generate SEO data for product page
   const seoData = product ? {
-    title: product.name,
-    description: product.description || `${product.name} from Conscious Cafe.`,
-    keywords: `${product.name}, conscious cafe, ${product.category}, healthy eating`,
-    url: `/product/${product.id}`,
+    title: `${product.name}`,
+    description: product.description || `${product.name} from Conscious Cafe - Fresh, healthy food made with conscious ingredients.`,
+    keywords: `${product.name}, conscious cafe, ${product.category}, healthy eating, fresh food, organic`,
+    url: `/product/${createSlug(product.name)}`,
     image: product.image,
     structuredData: [
       generateStructuredData('menuItem', {
@@ -101,7 +109,7 @@ const ProductDetailPage = ({ products, onAddToCart }) => {
         items: [
           { name: 'Home', url: '/' },
           { name: 'Menu', url: '/menu' },
-          { name: product.name, url: `/product/${product.id}` },
+          { name: product.name, url: `/product/${createSlug(product.name)}` },
         ]
       })
     ]
@@ -125,10 +133,6 @@ const ProductDetailPage = ({ products, onAddToCart }) => {
             <button onClick={() => navigate(-1)} className="back-btn">
               &larr; Back
             </button>
-            
-            {product.bestseller && (
-              <span className="bestseller-badge">Bestseller</span>
-            )}
           </div>
           
           <div className="product-detail-content">
@@ -148,7 +152,9 @@ const ProductDetailPage = ({ products, onAddToCart }) => {
                   {product.category.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
                 </div>
                 
-
+                {product.bestseller && (
+                  <span className="bestseller-badge">Bestseller</span>
+                )}
               </div>
               
               <div className="product-price-detail">
