@@ -75,6 +75,31 @@ const CategoryPage = ({ category: propCategory, products, onAddToCart, onProduct
     };
   }, []);
 
+  // Auto-scroll navigation bar to show active category in center
+  useEffect(() => {
+    const scrollNavigationToActive = () => {
+      const navigationContainer = document.querySelector('.category-tabs-horizontal');
+      const activeTab = document.querySelector(`.category-tab-horizontal.active`);
+      
+      if (navigationContainer && activeTab) {
+        const containerRect = navigationContainer.getBoundingClientRect();
+        const activeTabRect = activeTab.getBoundingClientRect();
+        
+        // Calculate scroll position to center the active tab
+        const scrollLeft = activeTab.offsetLeft - (containerRect.width / 2) + (activeTabRect.width / 2);
+        
+        // Smooth scroll the navigation container
+        navigationContainer.scrollTo({
+          left: scrollLeft,
+          behavior: 'smooth'
+        });
+      }
+    };
+
+    // Trigger auto-scroll when component mounts and category changes
+    scrollNavigationToActive();
+  }, [category]);
+
   const handleCategoryClick = (categoryId) => {
     if (categoryId === "all") {
       window.location.href = "/menu";
