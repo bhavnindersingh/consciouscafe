@@ -12,6 +12,7 @@
  * 
  */
 
+
 /* CSS Reset */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
@@ -357,15 +358,23 @@ body {
   z-index: 1;
 }
 
-.hero-video-backdrop .Sirv,
-.hero-video-backdrop video {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
+.hero-video-backdrop .Sirv {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.hero-video-backdrop .Sirv > div,
+.hero-video-backdrop .Sirv video {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center !important;
 }
 
 .hero-video-overlay {
