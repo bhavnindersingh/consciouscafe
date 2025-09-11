@@ -16,6 +16,7 @@ const FoodMenuPage = ({
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [scrollActiveCategory, setScrollActiveCategory] = useState("all");
 
+
   // Initialize with bestsellers as featured products
   useEffect(() => {
     if (products && products.length > 0) {
@@ -219,8 +220,8 @@ const FoodMenuPage = ({
       <div className="hero food-menu-hero">
         <div className="hero-image">
           <img 
-            className="Sirv hero-bg-image" 
-            data-src="https://consciouscafe.sirv.com/for%20food%20menu%20banner.jpg" 
+            className="hero-bg-image" 
+            src="https://consciouscafe.sirv.com/for%20food%20menu%20banner.jpg?q=85&format=webp" 
             alt="Food Menu"
           />
           <div className="hero-overlay"></div>
