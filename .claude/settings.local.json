@@ -19,7 +19,11 @@
       "Bash(git push:*)",
       "Read(/mnt/c/Users/inder/OneDrive/Desktop/**)",
       "Bash(pkill:*)",
-      "Bash(kill:*)"
+      "Bash(kill:*)",
+      "WebFetch(domain:sirv.com)",
+      "WebSearch",
+      "Bash(git commit:*)",
+      "WebFetch(domain:www.consciouscafe.in)"
     ],
     "deny": []
   }

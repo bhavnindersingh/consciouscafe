@@ -110,10 +110,7 @@ const Hero = () => {
             <h1>Conscious Cafe</h1>
             <div className="hero-buttons">
               <button className="cta-btn" onClick={() => navigate('/menu')}>
-                View Food Menu
-              </button>
-              <button className="cta-btn" onClick={() => navigate('/drinks')}>
-                View Drinks Menu
+                View Menu
               </button>
             </div>
           </div>
@@ -193,51 +190,14 @@ const Hero = () => {
               onClick={() => handleCategoryClick("pasta-pizza")}
               data-category-id="pasta-pizza"
             >
-              Pasta/Pizza
-            </button>
-            
-            {/* Drinks Categories */}
-            <button
-              className={`category-tab-horizontal ${selectedCategory === "all-drinks" ? "active" : ""}`}
-              onClick={() => handleCategoryClick("all-drinks")}
-              data-category-id="all-drinks"
-            >
-              All Drinks
+              Pasta
             </button>
             <button
-              className={`category-tab-horizontal ${selectedCategory === "coffee" ? "active" : ""}`}
-              onClick={() => handleCategoryClick("coffee", "drinks")}
-              data-category-id="coffee"
+              className={`category-tab-horizontal ${selectedCategory === "desserts" ? "active" : ""}`}
+              onClick={() => handleCategoryClick("desserts")}
+              data-category-id="desserts"
             >
-              Coffee
-            </button>
-            <button
-              className={`category-tab-horizontal ${selectedCategory === "floral-teas" ? "active" : ""}`}
-              onClick={() => handleCategoryClick("floral-teas", "drinks")}
-              data-category-id="floral-teas"
-            >
-              Floral Teas
-            </button>
-            <button
-              className={`category-tab-horizontal ${selectedCategory === "chai" ? "active" : ""}`}
-              onClick={() => handleCategoryClick("chai", "drinks")}
-              data-category-id="chai"
-            >
-              Chai
-            </button>
-            <button
-              className={`category-tab-horizontal ${selectedCategory === "juices" ? "active" : ""}`}
-              onClick={() => handleCategoryClick("juices", "drinks")}
-              data-category-id="juices"
-            >
-              Juices
-            </button>
-            <button
-              className={`category-tab-horizontal ${selectedCategory === "mocktails" ? "active" : ""}`}
-              onClick={() => handleCategoryClick("mocktails", "drinks")}
-              data-category-id="mocktails"
-            >
-              Mocktails
+              Desserts
             </button>
           </div>
         </div>

@@ -3,6 +3,31 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 
 const Header = ({ cartItems, onCartToggle, onCategoryChange, categories }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isFoodDropdownOpen, setIsFoodDropdownOpen] = useState(false);
+  const [isDrinksDropdownOpen, setIsDrinksDropdownOpen] = useState(false);
+
+  // Food categories
+  const foodCategories = [
+    { id: "toast", name: "Toast" },
+    { id: "all-day-breakfast", name: "All Day Breakfast" },
+    { id: "smoothie-bowls", name: "Smoothie Bowls" },
+    { id: "earth-grills-crisps", name: "Earth Grills/Crisps" },
+    { id: "salads", name: "Salads" },
+    { id: "platters", name: "Platters" },
+    { id: "earth-bowls", name: "Earth Bowls" },
+    { id: "noodle-bowls", name: "Noodle Bowls" },
+    { id: "pasta-pizza", name: "Pasta" },
+    { id: "desserts", name: "Desserts" }
+  ];
+
+  // Drinks categories
+  const drinksCategories = [
+    { id: "coffee", name: "Coffee" },
+    { id: "floral-teas", name: "Floral Teas" },
+    { id: "chai", name: "Chai" },
+    { id: "juices", name: "Juices" },
+    { id: "mocktails", name: "Mocktails" }
+  ];
   const cartItemCount = cartItems.reduce(
     (total, item) => total + item.quantity,
     0,
@@ -60,12 +85,32 @@ const Header = ({ cartItems, onCartToggle, onCategoryChange, categories }) => {
                 <Link to="/" className="nav-title">
                   Home
                 </Link>
-                <Link to="/menu" className="nav-title">
-                  Food
-                </Link>
-                <Link to="/drinks" className="nav-title">
-                  Drinks
-                </Link>
+                
+                {/* Food Dropdown */}
+                <div 
+                  className="nav-dropdown"
+                  onMouseEnter={() => setIsFoodDropdownOpen(true)}
+                  onMouseLeave={() => setIsFoodDropdownOpen(false)}
+                >
+                  <Link to="/menu" className="nav-title">
+                    Food
+                  </Link>
+                  {isFoodDropdownOpen && (
+                    <div className="dropdown-menu">
+                      {foodCategories.map((category) => (
+                        <Link
+                          key={category.id}
+                          to={`/category/${category.id}`}
+                          className="dropdown-item"
+                          onClick={() => setIsFoodDropdownOpen(false)}
+                        >
+                          {category.name}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
               </nav>
 
               {/* Center Logo */}
@@ -80,7 +125,7 @@ const Header = ({ cartItems, onCartToggle, onCategoryChange, categories }) => {
               </div>
 
               {/* Right Actions - Cart only */}
-              <div className="header-actions">
+              <div className="header-actions flex-gap-15">
                 <button
                   type="button"
                   className="cart-btn"
@@ -129,13 +174,6 @@ const Header = ({ cartItems, onCartToggle, onCategoryChange, categories }) => {
                 onClick={() => setIsMenuOpen(false)}
               >
                 Food Menu
-              </Link>
-              <Link
-                to="/drinks"
-                className="mobile-nav-item"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Drinks Menu
               </Link>
               <Link
                 to="/about"

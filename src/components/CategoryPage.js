@@ -8,7 +8,24 @@ const CategoryPage = ({ category: propCategory, products, onAddToCart, onProduct
   const { categoryId } = useParams();
   const category = propCategory || categoryId;
 
-  // All categories for navigation
+  // Initialize Sirv for hero image
+  useEffect(() => {
+    if (window.Sirv) {
+      window.Sirv.start();
+    }
+  }, []);
+
+  // Reinitialize Sirv when category changes
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (window.Sirv) {
+        window.Sirv.start();
+      }
+    }, 100);
+    return () => clearTimeout(timer);
+  }, [category]);
+
+  // Food categories only for navigation
   const allCategories = [
     { id: "all", name: "All Items", type: "food" },
     { id: "toast", name: "Toast", type: "food" },
@@ -19,13 +36,8 @@ const CategoryPage = ({ category: propCategory, products, onAddToCart, onProduct
     { id: "platters", name: "Platters", type: "food" },
     { id: "earth-bowls", name: "Earth Bowls", type: "food" },
     { id: "noodle-bowls", name: "Noodle Bowls", type: "food" },
-    { id: "pasta-pizza", name: "Pasta/Pizza", type: "food" },
-    { id: "all-drinks", name: "All Drinks", type: "drinks" },
-    { id: "coffee", name: "Coffee", type: "drinks" },
-    { id: "floral-teas", name: "Floral Teas", type: "drinks" },
-    { id: "chai", name: "Chai", type: "drinks" },
-    { id: "juices", name: "Juices", type: "drinks" },
-    { id: "mocktails", name: "Mocktails", type: "drinks" }
+    { id: "pasta-pizza", name: "Pasta", type: "food" },
+    { id: "desserts", name: "Desserts", type: "food" }
   ];
 
   // JavaScript sticky navigation - Hero visibility based
@@ -103,10 +115,6 @@ const CategoryPage = ({ category: propCategory, products, onAddToCart, onProduct
   const handleCategoryClick = (categoryId) => {
     if (categoryId === "all") {
       window.location.href = "/menu";
-    } else if (categoryId === "all-drinks") {
-      window.location.href = "/drinks";
-    } else if (allCategories.find(cat => cat.id === categoryId)?.type === "drinks") {
-      window.location.href = `/drinks/category/${categoryId}`;
     } else {
       window.location.href = `/category/${categoryId}`;
     }
@@ -116,7 +124,7 @@ const CategoryPage = ({ category: propCategory, products, onAddToCart, onProduct
       title: 'Toast',
       subtitle: 'Delicious toasts for every taste',
       description: 'Enjoy a variety of toasts with different toppings and spreads.',
-      heroImage: 'https://images.unsplash.com/photo-1551024506-0bccd828d307?w=1200&h=400&fit=crop',
+      heroImage: 'https://consciouscafe.sirv.com/Food%20Menu%20Conscious%20Cafe%20August\'25/TOASTS/pesto%20cream%20cheese/pestocreamcheese.webp.JPG',
       bgColor: 'linear-gradient(135deg, #FFE4E6 0%, #FFF0F5 100%)',
       icon: '🍞',
       seo: {
@@ -129,7 +137,7 @@ const CategoryPage = ({ category: propCategory, products, onAddToCart, onProduct
       title: 'All Day Breakfast',
       subtitle: 'Breakfast favorites served all day',
       description: 'Start your day right with our all-day breakfast options.',
-      heroImage: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=1200&h=400&fit=crop',
+      heroImage: 'https://consciouscafe.sirv.com/Food%20Menu%20Conscious%20Cafe%20August\'25/ALL%20DAY%20BREAKFAST/Pancakes/Pancake.JPG',
       bgColor: 'linear-gradient(135deg, #F0E6FF 0%, #FAF0FF 100%)',
       icon: '🍳',
       seo: {
@@ -142,7 +150,7 @@ const CategoryPage = ({ category: propCategory, products, onAddToCart, onProduct
       title: 'Smoothie Bowls',
       subtitle: 'Healthy and refreshing smoothie bowls',
       description: 'Packed with nutrients and flavor, our smoothie bowls are a perfect meal.',
-      heroImage: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1200&h=400&fit=crop',
+      heroImage: 'https://consciouscafe.sirv.com/Food%20Menu%20Conscious%20Cafe%20August\'25/SMOOTHIE%20BOWLS/Goodness%20bowl/Goodness%20Bowl.JPG',
       bgColor: 'linear-gradient(135deg, #FFF4E6 0%, #FFFAF0 100%)',
       icon: '🥣'
     },
@@ -150,7 +158,7 @@ const CategoryPage = ({ category: propCategory, products, onAddToCart, onProduct
       title: 'Earth Grills/Crisps',
       subtitle: 'Grilled and crispy delights',
       description: 'Savor the taste of our grilled and crispy offerings.',
-      heroImage: 'https://images.unsplash.com/photo-1549931319-a545dcf3bc73?w=1200&h=400&fit=crop',
+      heroImage: 'https://consciouscafe.sirv.com/Food%20Menu%20Conscious%20Cafe%20August\'25/EARTH%20GRILS/Grilled%20sweet%20potato/Grilled%20Sweet%20Potato.JPG',
       bgColor: 'linear-gradient(135deg, #F5F0E6 0%, #FAF7F0 100%)',
       icon: '🌽'
     },
@@ -158,7 +166,7 @@ const CategoryPage = ({ category: propCategory, products, onAddToCart, onProduct
       title: 'Salads',
       subtitle: 'Fresh and healthy salads',
       description: 'Our salads are made with the freshest ingredients.',
-      heroImage: 'https://images.unsplash.com/photo-1551024506-0bccd828d307?w=1200&h=400&fit=crop',
+      heroImage: 'https://consciouscafe.sirv.com/Food%20Menu%20Conscious%20Cafe%20August\'25/SALADS/Tropical%20salad/Tropical%20Salad.JPG',
       bgColor: 'linear-gradient(135deg, #E6FFF0 0%, #F0FAF5 100%)',
       icon: '🥗'
     },
@@ -166,7 +174,7 @@ const CategoryPage = ({ category: propCategory, products, onAddToCart, onProduct
       title: 'Platters',
       subtitle: 'Perfect for sharing',
       description: 'Our platters are perfect for sharing with friends and family.',
-      heroImage: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=1200&h=400&fit=crop',
+      heroImage: 'https://consciouscafe.sirv.com/Food%20Menu%20Conscious%20Cafe%20August\'25/PLATTERS/Mezze%20platter/Mezze%20Platter.JPG',
       bgColor: 'linear-gradient(135deg, #E6F0FF 0%, #F0F5FA 100%)',
       icon: '🍽️'
     },
@@ -174,7 +182,7 @@ const CategoryPage = ({ category: propCategory, products, onAddToCart, onProduct
       title: 'Earth Bowls',
       subtitle: 'Wholesome and nutritious bowls',
       description: 'Enjoy our earth bowls packed with nutrients.',
-      heroImage: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1200&h=400&fit=crop',
+      heroImage: 'https://consciouscafe.sirv.com/Food%20Menu%20Conscious%20Cafe%20August\'25/EARTH%20BOWLS/Thai%20Bowl.JPG',
       bgColor: 'linear-gradient(135deg, #FFF0E6 0%, #FFF5F0 100%)',
       icon: '🥙'
     },
@@ -182,15 +190,15 @@ const CategoryPage = ({ category: propCategory, products, onAddToCart, onProduct
       title: 'Noodle Bowls',
       subtitle: 'Flavorful noodle bowls',
       description: 'Our noodle bowls are a perfect blend of taste and nutrition.',
-      heroImage: 'https://images.unsplash.com/photo-1549931319-a545dcf3bc73?w=1200&h=400&fit=crop',
+      heroImage: 'https://consciouscafe.sirv.com/Food%20Menu%20Conscious%20Cafe%20August\'25/NOODLE%20BOWLS/Laksa.JPG',
       bgColor: 'linear-gradient(135deg, #F0F5E6 0%, #F5FAF0 100%)',
       icon: '🍜'
     },
     'pasta-pizza': {
-      title: 'Pasta/Pizza',
+      title: 'Pasta',
       subtitle: 'Italian favorites',
-      description: 'Indulge in our delicious pasta and pizza offerings.',
-      heroImage: 'https://images.unsplash.com/photo-1551024506-0bccd828d307?w=1200&h=400&fit=crop',
+      description: 'Indulge in our delicious pasta offerings.',
+      heroImage: 'https://consciouscafe.sirv.com/Food%20Menu%20Conscious%20Cafe%20August\'25/PASTAS/Meatless%20Meatballs%20(M%26M).JPG',
       bgColor: 'linear-gradient(135deg, #FFE6E6 0%, #FFF0F0 100%)',
       icon: '🍕'
     },
@@ -198,7 +206,7 @@ const CategoryPage = ({ category: propCategory, products, onAddToCart, onProduct
       title: 'Desserts',
       subtitle: 'Sweet treats to end your meal',
       description: 'Our desserts are the perfect way to end your meal.',
-      heroImage: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=1200&h=400&fit=crop',
+      heroImage: 'https://consciouscafe.sirv.com/Food%20Menu%20Conscious%20Cafe%20August\'25/DESSERTS/Chocolate%20Mousse.JPG',
       bgColor: 'linear-gradient(135deg, #F0E6F0 0%, #FAF0FA 100%)',
       icon: '🍰'
     },
@@ -245,19 +253,6 @@ const CategoryPage = ({ category: propCategory, products, onAddToCart, onProduct
         title: 'Premium Coffee Menu - Conscious Cafe | Espresso & Specialty Lattes',
         description: 'Discover our premium coffee selection including espresso, cappuccino, lattes, and specialty coffee drinks at Conscious Cafe.',
         keywords: 'coffee menu, espresso, cappuccino, latte, specialty coffee, conscious cafe coffee'
-      }
-    },
-    'smoothie-bowls': {
-      title: 'Smoothie Bowls',
-      subtitle: 'Nutritious smoothie bowls',
-      description: 'Thick smoothie bowls topped with fresh fruits and superfoods.',
-      heroImage: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1200&h=400&fit=crop',
-      bgColor: 'linear-gradient(135deg, #FFF4E6 0%, #FFFAF0 100%)',
-      icon: '🥣',
-      seo: {
-        title: 'Smoothie Bowl Menu - Conscious Cafe | Healthy Smoothie Bowls',
-        description: 'Enjoy our nutritious smoothie bowls topped with fresh fruits and superfoods at Conscious Cafe.',
-        keywords: 'smoothie bowl menu, healthy smoothie bowls, acai bowls, superfood bowls, conscious cafe smoothie bowls'
       }
     }
   };
@@ -309,7 +304,11 @@ const CategoryPage = ({ category: propCategory, products, onAddToCart, onProduct
               </div>
             </div>
             <div className="category-hero-image">
-              <img src={currentCategory.heroImage} alt={currentCategory.title} />
+              {currentCategory.heroImage.includes('sirv.com') ? (
+                <img className="Sirv" data-src={currentCategory.heroImage} alt={currentCategory.title} />
+              ) : (
+                <img src={currentCategory.heroImage} alt={currentCategory.title} />
+              )}
             </div>
           </div>
         </div>

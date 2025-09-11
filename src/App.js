@@ -80,9 +80,9 @@ function App() {
     },
     {
       id: "pasta-pizza",
-      name: "Pasta/Pizza",
-      icon: "🍕",
-      description: "Italian classics with a conscious twist",
+      name: "Pasta",
+      icon: "🍝",
+      description: "Italian pasta classics with a conscious twist",
     },
     {
       id: "desserts",
@@ -226,26 +226,6 @@ function App() {
               <FoodMenuPage
                 categories={displayCategories}
                 products={products}
-                onAddToCart={addToCart}
-                onProductClick={handleProductClick}
-              />
-            }
-          />
-          <Route
-            path="/drinks"
-            element={
-              <DrinksMenuPage
-                products={products}
-                onAddToCart={addToCart}
-                onProductClick={handleProductClick}
-              />
-            }
-          />
-          <Route
-            path="/drinks/category/:categoryId"
-            element={
-              <CategoryPage 
-                products={products} 
                 onAddToCart={addToCart}
                 onProductClick={handleProductClick}
               />

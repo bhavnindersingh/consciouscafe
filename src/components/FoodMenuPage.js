@@ -219,9 +219,9 @@ const FoodMenuPage = ({
       <div className="hero food-menu-hero">
         <div className="hero-image">
           <img 
-            src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200&h=300&fit=crop&crop=center" 
-            alt="Food Menu" 
-            className="hero-bg-image"
+            className="Sirv hero-bg-image" 
+            data-src="https://consciouscafe.sirv.com/for%20food%20menu%20banner.jpg" 
+            alt="Food Menu"
           />
           <div className="hero-overlay"></div>
         </div>
@@ -297,7 +297,7 @@ const FoodMenuPage = ({
               className={`category-tab-horizontal ${getCurrentActiveCategory() === "pasta-pizza" ? "active" : ""}`}
               onClick={() => handleCategoryChange("pasta-pizza")}
             >
-              Pasta/Pizza
+              Pasta
             </button>
             <button
               className={`category-tab-horizontal ${getCurrentActiveCategory() === "desserts" ? "active" : ""}`}

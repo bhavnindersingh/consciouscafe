@@ -81,12 +81,36 @@ table {
   src: url("../fonts/Inter-Italic-VariableFont_opsz,wght.ttf") format("truetype");
 }
 
+/* CSS Custom Properties */
+:root {
+  --font-heading: "EB Garamond", "Inter", serif;
+  --font-body: "Cormorant Garamond", serif;
+  --font-ui: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --color-primary: #212121;
+  --color-text-secondary: rgba(33, 33, 33, 0.6);
+  --color-border: rgba(33, 33, 33, 0.2);
+  --color-bg: #f4f2f0;
+  --transition-standard: all 0.3s ease;
+  --transition-fast: all 0.2s ease;
+}
+
+/* Utility Classes */
+.flex { display: flex; }
+.flex-center { display: flex; align-items: center; }
+.flex-center-between { display: flex; align-items: center; justify-content: space-between; }
+.flex-center-center { display: flex; align-items: center; justify-content: center; }
+.flex-column { display: flex; flex-direction: column; }
+.flex-wrap { display: flex; flex-wrap: wrap; }
+.flex-gap-10 { display: flex; gap: 10px; }
+.flex-gap-15 { display: flex; gap: 15px; }
+.flex-gap-20 { display: flex; gap: 20px; }
+
 /* Base Styles */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: var(--transition-standard);
 }
 
 html {
@@ -100,7 +124,7 @@ html {
 body {
   font-family: "Cormorant Garamond", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, serif;
   line-height: 1.5;
-  color: #212121;
+  color: var(--color-primary);
   background-color: #f4f2f0;
   font-size: 16px;
   font-weight: 400;
@@ -198,46 +222,6 @@ body {
   width: 100%;
 }
 
-.nav-dropdown {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  background: white;
-  border: 1px solid #eee;
-  border-radius: 8px;
-  padding: 10px 0;
-  min-width: 200px;
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(-8px);
-  transition: all 0.3s ease;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  z-index: 100;
-}
-
-.nav-section:hover .nav-dropdown {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-}
-
-.nav-item {
-  display: block;
-  width: 100%;
-  padding: 8px 20px;
-  background: none;
-  border: none;
-  text-align: left;
-  cursor: pointer;
-  font-size: 14px;
-  color: #000;
-  text-decoration: none;
-  font-weight: 500;
-}
-
-.nav-item:hover {
-  background-color: #f8f8f8;
-}
 
 .logo {
   position: absolute;
@@ -251,9 +235,6 @@ body {
 }
 
 .header-actions {
-  display: flex;
-  align-items: center;
-  gap: 15px;
   margin-left: auto;
 }
 
@@ -267,7 +248,7 @@ body {
 }
 
 .cart-btn {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-body);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -287,7 +268,7 @@ body {
 }
 
 .cart-text {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-body);
   font-size: 16px;
 }
 
@@ -297,7 +278,7 @@ body {
 }
 
 .cart-badge {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-body);
   background: #212121;
   color: white;
   border-radius: 50%;
@@ -405,7 +386,7 @@ body {
 }
 
 .hero h1 {
-  font-family: "EB Garamond", "Inter", serif;
+  font-family: var(--font-heading);
   font-size: clamp(2rem, 6vw, 3.5rem);
   font-weight: 700;
   margin-bottom: 1.5rem;
@@ -417,7 +398,7 @@ body {
 }
 
 .hero p {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-body);
   font-size: clamp(1.2rem, 2.5vw, 1.8rem);
   margin-bottom: 2rem;
   color: #ffffff;
@@ -425,6 +406,7 @@ body {
   line-height: 1.4;
   font-style: italic;
 }
+
 
 .hero-buttons {
   display: flex;
@@ -437,11 +419,11 @@ body {
 /* Buttons */
 .cta-btn {
   background: transparent;
-  color: #212121;
+  color: var(--color-primary);
   padding: 14px 28px;
   border: 1px solid #212121;
   border-radius: 0;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: var(--font-ui);
   font-size: 13px;
   font-weight: 500;
   text-transform: uppercase;
@@ -450,14 +432,14 @@ body {
   text-decoration: none;
   display: inline-block;
   position: relative;
-  transition: all 0.3s ease;
+  transition: var(--transition-standard);
   z-index: 1;
   pointer-events: auto;
 }
 
 .cta-btn.secondary {
   background: transparent;
-  color: #212121;
+  color: var(--color-primary);
 }
 
 .cta-btn:hover {
@@ -508,16 +490,16 @@ body {
 }
 
 .category-card h3 {
-  font-family: "EB Garamond", "Inter", serif;
+  font-family: var(--font-heading);
   font-size: 18px;
   font-weight: 600;
   margin-bottom: 8px;
-  color: #212121;
+  color: var(--color-primary);
   letter-spacing: -0.5px;
 }
 
 .category-card p {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-body);
   font-size: 14px;
   color: rgba(33, 33, 33, 0.6);
   margin: 0;
@@ -556,18 +538,18 @@ body {
 .best-sellers h2,
 .all-products h2,
 .section-header h2 {
-  font-family: "EB Garamond", "Inter", serif;
+  font-family: var(--font-heading);
   font-size: 48px;
   font-weight: 700;
   text-align: center;
   margin-bottom: 24px;
-  color: #212121;
+  color: var(--color-primary);
   letter-spacing: -1.5px;
   line-height: 1.1;
 }
 
 .best-sellers p {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-body);
   text-align: center;
   font-size: 20px;
   color: rgba(33, 33, 33, 0.7);
@@ -590,7 +572,7 @@ body {
 }
 
 .section-header p {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-body);
   font-size: 15px;
   color: rgba(33, 33, 33, 0.6);
   font-weight: 400;
@@ -615,7 +597,7 @@ body {
   cursor: pointer;
   padding: 15px 15px 40px 15px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
+  transition: var(--transition-standard);
   transform: rotate(0deg);
 }
 
@@ -683,18 +665,18 @@ body {
 }
 
 .product-name {
-  font-family: "EB Garamond", "Inter", serif;
+  font-family: var(--font-heading);
   font-size: 20px;
   font-weight: 600;
   margin: 0;
-  color: #212121;
+  color: var(--color-primary);
   line-height: 1.4;
   letter-spacing: 0;
   order: 1;
 }
 
 .product-description {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-body);
   color: rgba(33, 33, 33, 0.6);
   font-size: 15px;
   margin: 0;
@@ -714,7 +696,7 @@ body {
 .product-price {
   font-size: 18px;
   font-weight: 600;
-  color: #212121;
+  color: var(--color-primary);
   margin: 4px 0;
   letter-spacing: 0;
   order: 3;
@@ -734,14 +716,14 @@ body {
   border: 1px solid rgba(33, 33, 33, 0.3);
   padding: 10px 20px;
   border-radius: 0;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: var(--font-ui);
   font-size: 11px;
   font-weight: 500;
   cursor: pointer;
   text-transform: uppercase;
   letter-spacing: 1px;
   position: relative;
-  transition: all 0.3s ease;
+  transition: var(--transition-standard);
   margin: 0;
   display: inline-block;
   order: 4;
@@ -750,7 +732,7 @@ body {
 .add-to-cart-btn:hover {
   background: #212121;
   color: white;
-  border-color: #212121;
+  border-color: var(--color-primary);
   transform: translateY(-1px);
   box-shadow: 0 2px 8px rgba(33, 33, 33, 0.1);
 }
@@ -765,11 +747,11 @@ body {
 }
 
 .product-options h3 {
-  font-family: "EB Garamond", "Inter", serif;
+  font-family: var(--font-heading);
   margin-bottom: 16px;
   font-size: 14px;
   font-weight: 600;
-  color: #212121;
+  color: var(--color-primary);
   text-transform: uppercase;
   letter-spacing: 1px;
 }
@@ -785,11 +767,11 @@ body {
   border: 1px solid rgba(33, 33, 33, 0.3);
   border-radius: 0;
   padding: 10px 20px;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: var(--font-ui);
   font-size: 11px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: var(--transition-standard);
   text-transform: uppercase;
   letter-spacing: 1px;
   color: rgba(33, 33, 33, 0.8);
@@ -799,7 +781,7 @@ body {
 .option-btn.selected {
   background: #212121;
   color: white;
-  border-color: #212121;
+  border-color: var(--color-primary);
   transform: translateY(-1px);
   box-shadow: 0 2px 8px rgba(33, 33, 33, 0.1);
 }
@@ -829,10 +811,10 @@ body {
 }
 
 .about-content h2 {
-  font-family: "EB Garamond", "Inter", serif;
+  font-family: var(--font-heading);
   font-size: 48px;
   font-weight: 700;
-  color: #212121;
+  color: var(--color-primary);
   margin-bottom: 32px;
   max-width: 900px;
   margin-left: auto;
@@ -847,7 +829,7 @@ body {
   padding: 14px 28px;
   border: 1px solid #212121;
   border-radius: 0;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: var(--font-ui);
   font-size: 13px;
   font-weight: 500;
   text-transform: uppercase;
@@ -856,12 +838,12 @@ body {
   text-decoration: none;
   display: inline-block;
   position: relative;
-  transition: all 0.3s ease;
+  transition: var(--transition-standard);
 }
 
 .learn-more-btn:hover {
   background: transparent;
-  color: #212121;
+  color: var(--color-primary);
   transform: translateY(-1px);
   box-shadow: 0 4px 20px rgba(33, 33, 33, 0.1);
 }
@@ -910,11 +892,11 @@ body {
 }
 
 .cart-header-icon {
-  color: #212121;
+  color: var(--color-primary);
 }
 
 .cart-summary {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-body);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -923,18 +905,18 @@ body {
 }
 
 .item-count {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-body);
   font-weight: 500;
 }
 
 .cart-total-preview {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-body);
   font-weight: 600;
   color: #000;
 }
 
 .cart-header h2 {
-  font-family: "EB Garamond", "Inter", serif;
+  font-family: var(--font-heading);
   font-size: 18px;
   color: #000;
   font-weight: 600;
@@ -952,7 +934,7 @@ body {
   justify-content: center;
   cursor: pointer;
   color: #666;
-  transition: all 0.2s ease;
+  transition: var(--transition-fast);
 }
 
 .close-btn:hover {
@@ -982,7 +964,7 @@ body {
 }
 
 .empty-cart h3 {
-  font-family: "EB Garamond", "Inter", serif;
+  font-family: var(--font-heading);
   font-size: 20px;
   color: #000;
   margin-bottom: 8px;
@@ -990,7 +972,7 @@ body {
 }
 
 .empty-cart p {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-body);
   color: #666;
   margin-bottom: 32px;
   font-size: 16px;
@@ -1032,7 +1014,7 @@ body {
 }
 
 .item-details h4 {
-  font-family: "EB Garamond", "Inter", serif;
+  font-family: var(--font-heading);
   font-size: 16px;
   color: #000;
   font-weight: 600;
@@ -1041,7 +1023,7 @@ body {
 }
 
 .item-price {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-body);
   color: #666;
   font-size: 14px;
   margin: 0;
@@ -1061,18 +1043,18 @@ body {
   background: transparent;
   cursor: pointer;
   border-radius: 0;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: var(--font-ui);
   display: flex;
   align-items: center;
   justify-content: center;
   color: rgba(33, 33, 33, 0.6);
-  transition: all 0.2s ease;
+  transition: var(--transition-fast);
 }
 
 .quantity-btn:hover:not(:disabled) {
   background: #212121;
   color: white;
-  border-color: #212121;
+  border-color: var(--color-primary);
 }
 
 .quantity-btn:disabled {
@@ -1081,7 +1063,7 @@ body {
 }
 
 .quantity-display {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-body);
   font-size: 16px;
   font-weight: 600;
   min-width: 30px;
@@ -1090,7 +1072,7 @@ body {
 }
 
 .remove-btn {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-body);
   background: none;
   border: none;
   color: #999;
@@ -1117,7 +1099,7 @@ body {
 }
 
 .item-total .total-label {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-body);
   font-size: 12px;
   color: #666;
   text-transform: uppercase;
@@ -1125,7 +1107,7 @@ body {
 }
 
 .item-total .total-amount {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-body);
   font-size: 16px;
   font-weight: 600;
   color: #000;
@@ -1149,21 +1131,21 @@ body {
 }
 
 .total-row .total-label {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-body);
   font-size: 16px;
   color: #000;
   font-weight: 600;
 }
 
 .total-row .total-amount {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-body);
   font-size: 18px;
   font-weight: 700;
   color: #000;
 }
 
 .subtotal-row {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-body);
   font-size: 13px;
   color: #666;
   border-bottom: none;
@@ -1171,7 +1153,7 @@ body {
 }
 
 .gst-row {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-body);
   font-size: 13px;
   color: #999;
   border-bottom: 1px solid #f0f0f0;
@@ -1181,7 +1163,7 @@ body {
 }
 
 .gst-row .total-amount {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-body);
   font-size: 13px;
   color: #999;
   font-weight: 400;
@@ -1196,7 +1178,7 @@ body {
 
 .final-total .total-label,
 .final-total .total-amount {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-body);
   font-size: 18px;
   font-weight: bold;
 }
@@ -1214,7 +1196,7 @@ body {
   border: 1px solid #212121;
   padding: 16px 24px;
   border-radius: 0;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: var(--font-ui);
   font-size: 11px;
   font-weight: 400;
   text-transform: uppercase;
@@ -1224,12 +1206,12 @@ body {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  transition: all 0.3s ease;
+  transition: var(--transition-standard);
 }
 
 .checkout-btn:hover {
   background: transparent;
-  color: #212121;
+  color: var(--color-primary);
   transform: translateY(-1px);
   box-shadow: 0 4px 20px rgba(33, 33, 33, 0.1);
 }
@@ -1241,18 +1223,18 @@ body {
   border: 1px solid rgba(33, 33, 33, 0.2);
   padding: 14px 24px;
   border-radius: 0;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: var(--font-ui);
   font-size: 11px;
   font-weight: 400;
   text-transform: uppercase;
   letter-spacing: 1px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: var(--transition-fast);
 }
 
 .continue-shopping-btn:hover {
   background: #212121;
-  border-color: #212121;
+  border-color: var(--color-primary);
   color: white;
 }
 
@@ -1307,15 +1289,15 @@ body {
 }
 
 .profile-info h3 {
-  font-family: "EB Garamond", "Inter", serif;
+  font-family: var(--font-heading);
   font-size: 16px;
   font-weight: 600;
-  color: #212121;
+  color: var(--color-primary);
   margin: 0;
 }
 
 .profile-info p {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-body);
   font-size: 12px;
   color: #666;
   margin: 2px 0 0 0;
@@ -1327,12 +1309,12 @@ body {
   border: none;
   padding: 8px 16px;
   border-radius: 0;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: var(--font-ui);
   font-size: 11px;
   font-weight: 600;
   text-decoration: none;
   letter-spacing: 0.5px;
-  transition: all 0.2s ease;
+  transition: var(--transition-fast);
 }
 
 .instagram-follow-btn:hover {
@@ -1372,7 +1354,7 @@ body {
   background: white;
   padding: 20px 20px 80px 20px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
+  transition: var(--transition-standard);
   position: relative;
   border-radius: 0;
 }
@@ -1398,7 +1380,7 @@ body {
 }
 
 .instagram-post-caption {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-body);
   font-size: 11px;
   color: #333;
   line-height: 1.3;
@@ -1429,20 +1411,20 @@ body {
   color: #666;
   border: 1px solid #ddd;
   text-decoration: none;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: var(--font-ui);
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.5px;
   padding: 10px 20px;
   border-radius: 0;
-  transition: all 0.2s ease;
+  transition: var(--transition-fast);
   text-transform: uppercase;
 }
 
 .view-all-link:hover {
   background: #212121;
   color: white;
-  border-color: #212121;
+  border-color: var(--color-primary);
 }
 
 .instagram-error,
@@ -1499,24 +1481,24 @@ body {
 }
 
 .food-menu-hero h1 {
-  font-family: "EB Garamond", "Inter", serif;
+  font-family: var(--font-heading);
   font-size: 32px;
   font-weight: 700;
   margin-bottom: 8px;
-  color: white;
+  color: #4a4a4a;
   letter-spacing: -1px;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  text-shadow: none;
 }
 
 .food-menu-hero p {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-body);
   font-size: 16px;
-  color: rgba(255, 255, 255, 0.9);
+  color: #6a6a6a;
   margin: 0;
   max-width: 600px;
   margin-left: auto;
   margin-right: auto;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  text-shadow: none;
 }
 
 .search-container {
@@ -1533,12 +1515,12 @@ body {
   font-size: 16px;
   background: rgba(255, 255, 255, 0.9);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
+  transition: var(--transition-standard);
 }
 
 .search-input:focus {
   outline: none;
-  border-color: #212121;
+  border-color: var(--color-primary);
   box-shadow: 0 4px 20px rgba(38, 83, 43, 0.1);
 }
 
@@ -1601,21 +1583,21 @@ body {
   background: none;
   border: none;
   padding: 10px 20px;
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-body);
   font-size: 16px;
   font-weight: 500;
   color: #666;
   cursor: pointer;
   white-space: nowrap;
   border-radius: 20px;
-  transition: all 0.3s ease;
+  transition: var(--transition-standard);
   text-wrap: nowrap;
 }
 
 .category-tab:hover,
 .category-tab-horizontal:hover {
   background: rgba(33, 33, 33, 0.05);
-  color: #212121;
+  color: var(--color-primary);
 }
 
 .category-tab.active,
@@ -1633,10 +1615,10 @@ body {
 }
 
 .category-header h2 {
-  font-family: "EB Garamond", "Inter", serif;
+  font-family: var(--font-heading);
   font-size: 28px;
   font-weight: 700;
-  color: #212121;
+  color: var(--color-primary);
 }
 
 /* No Results */
@@ -1677,19 +1659,19 @@ body {
   border: 1px solid rgba(33, 33, 33, 0.2);
   border-radius: 0;
   padding: 8px 16px;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: var(--font-ui);
   font-size: 11px;
   font-weight: 400;
   text-transform: uppercase;
   letter-spacing: 1px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: var(--transition-standard);
 }
 
 .back-btn:hover {
   background: #212121;
   color: white;
-  border-color: #212121;
+  border-color: var(--color-primary);
 }
 
 
@@ -1756,11 +1738,11 @@ body {
 }
 
 .checkout-header-icon {
-  color: #212121;
+  color: var(--color-primary);
 }
 
 .checkout-header h2 {
-  font-family: "EB Garamond", "Inter", serif;
+  font-family: var(--font-heading);
   font-size: 20px;
   font-weight: 600;
   color: #000;
@@ -1780,7 +1762,7 @@ body {
 
 .order-summary h3,
 .customer-form h3 {
-  font-family: "EB Garamond", "Inter", serif;
+  font-family: var(--font-heading);
   font-size: 18px;
   margin-bottom: 20px;
   color: #000;
@@ -1814,7 +1796,7 @@ body {
   border-top: 2px solid #212121;
   background: rgba(33, 33, 33, 0.05);
   border-radius: 0;
-  color: #212121;
+  color: var(--color-primary);
 }
 
 .form-group {
@@ -1842,7 +1824,7 @@ body {
 .form-group input:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: #212121;
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(33, 33, 33, 0.1);
 }
 
@@ -1873,7 +1855,7 @@ body {
   border: 1px solid #212121;
   padding: 16px 24px;
   border-radius: 0;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: var(--font-ui);
   font-size: 11px;
   font-weight: 400;
   text-transform: uppercase;
@@ -1883,12 +1865,12 @@ body {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  transition: all 0.3s ease;
+  transition: var(--transition-standard);
 }
 
 .place-order-btn:hover {
   background: transparent;
-  color: #212121;
+  color: var(--color-primary);
   transform: translateY(-1px);
   box-shadow: 0 4px 20px rgba(37, 211, 102, 0.2);
 }
@@ -1899,18 +1881,18 @@ body {
   border: 1px solid rgba(33, 33, 33, 0.2);
   padding: 16px 24px;
   border-radius: 0;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: var(--font-ui);
   font-size: 11px;
   font-weight: 400;
   text-transform: uppercase;
   letter-spacing: 1px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: var(--transition-fast);
 }
 
 .cancel-btn:hover {
   background: #212121;
-  border-color: #212121;
+  border-color: var(--color-primary);
   color: white;
 }
 
@@ -1934,7 +1916,7 @@ body {
 }
 
 .info-box h4 {
-  font-family: "EB Garamond", "Inter", serif;
+  font-family: var(--font-heading);
   margin-bottom: 8px;
   color: #000;
   font-size: 16px;
@@ -1942,7 +1924,7 @@ body {
 }
 
 .info-box p {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-body);
   color: #666;
   font-size: 14px;
   line-height: 1.5;
@@ -1964,14 +1946,14 @@ body {
   padding: 12px 16px;
   border: 1px solid rgba(33, 33, 33, 0.2);
   border-radius: 0;
-  transition: all 0.2s ease;
+  transition: var(--transition-fast);
   flex: 1;
   min-width: 140px;
 }
 
 .order-type-option:hover,
 .order-type-option:has(input[type="radio"]:checked) {
-  border-color: #212121;
+  border-color: var(--color-primary);
   background-color: rgba(33, 33, 33, 0.05);
 }
 
@@ -1979,19 +1961,19 @@ body {
   margin: 0;
   width: 16px;
   height: 16px;
-  accent-color: #212121;
+  accent-color: var(--color-primary);
 }
 
 .order-type-option input[type="radio"]:checked + span {
   font-weight: 600;
-  color: #212121;
+  color: var(--color-primary);
 }
 
 .order-type-option span {
   font-size: 14px;
   font-weight: 500;
   color: #333;
-  transition: all 0.2s ease;
+  transition: var(--transition-fast);
 }
 
 .distance-note {
@@ -2020,7 +2002,7 @@ body {
 
 .footer-section h3,
 .footer-section h4 {
-  font-family: "EB Garamond", "Inter", serif;
+  font-family: var(--font-heading);
   margin-bottom: 16px;
   color: #000;
   font-size: 14px;
@@ -2028,7 +2010,7 @@ body {
 }
 
 .footer-section p {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-body);
   color: #666;
   line-height: 1.5;
   margin-bottom: 16px;
@@ -2069,28 +2051,6 @@ body {
   color: #000;
 }
 
-.newsletter-form {
-  display: flex;
-  gap: 8px;
-}
-
-.newsletter-form input {
-  flex: 1;
-  padding: 8px 12px;
-  border: 1px solid #ccc;
-  font-size: 13px;
-}
-
-.newsletter-form button {
-  background: #212121;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  font-size: 13px;
-  cursor: pointer;
-  font-weight: 500;
-}
 
 .footer-bottom {
   border-top: 1px solid #e5e5e5;
@@ -2117,15 +2077,6 @@ body {
   color: #000;
 }
 
-/* Size Option Styles */
-.size-option .size-price {
-  font-weight: bold;
-}
-
-.size-option .size-serves {
-  font-size: 0.9em;
-  color: #666;
-}
 
 /* Mobile Responsive Styles */
 @media (max-width: 768px) {
@@ -2329,7 +2280,7 @@ body {
   font-size: 2rem;
   font-weight: 700;
   margin-bottom: 20px;
-  color: #212121;
+  color: var(--color-primary);
 }
 
 .product-detail-info h3 {
@@ -2337,11 +2288,11 @@ body {
   font-size: 1.5rem;
   font-weight: 600;
   margin: 30px 0 15px 0;
-  color: #212121;
+  color: var(--color-primary);
 }
 
 .product-detail-info p {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-body);
   font-size: 1.1rem;
   line-height: 1.6;
   margin-bottom: 20px;
@@ -2379,7 +2330,7 @@ body {
 
 .nutrition-table td,
 .ingredients-table td {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-body);
   font-size: 1rem;
   color: rgba(33, 33, 33, 0.8);
 }
@@ -2413,7 +2364,7 @@ body {
   padding: 6px 12px;
   background: rgba(38, 83, 43, 0.1);
   border-radius: 20px;
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-body);
   font-size: 0.9rem;
   color: #26532B;
   font-weight: 500;
@@ -2446,7 +2397,7 @@ body {
   font-family: "EB Garamond", serif;
   font-size: clamp(1.8rem, 4vw, 2.5rem);
   font-weight: 700;
-  color: #212121;
+  color: var(--color-primary);
   margin-bottom: 15px;
   line-height: 1.2;
 }
@@ -2466,10 +2417,10 @@ body {
 
 .product-category-tag {
   background: rgba(33, 33, 33, 0.1);
-  color: #212121;
+  color: var(--color-primary);
   padding: 6px 12px;
   border-radius: 20px;
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-body);
   font-size: 0.9rem;
   font-weight: 500;
   text-transform: capitalize;
@@ -2480,7 +2431,7 @@ body {
   font-family: "EB Garamond", serif;
   font-size: 2rem;
   font-weight: 700;
-  color: #212121;
+  color: var(--color-primary);
   margin: 20px 0;
 }
 
@@ -2507,16 +2458,16 @@ body {
   color: rgba(33, 33, 33, 0.6);
   cursor: pointer;
   border-bottom: 2px solid transparent;
-  transition: all 0.3s ease;
+  transition: var(--transition-standard);
 }
 
 .detail-tab.active {
-  color: #212121;
-  border-bottom-color: #212121;
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
 }
 
 .detail-tab:hover {
-  color: #212121;
+  color: var(--color-primary);
 }
 
 /* Tab Content */
@@ -2530,7 +2481,7 @@ body {
 }
 
 .product-detail-description {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-body);
   font-size: 1.1rem;
   line-height: 1.7;
   color: rgba(33, 33, 33, 0.8);
@@ -2561,12 +2512,12 @@ body {
   font-family: "EB Garamond", serif;
   font-size: 1.5rem;
   font-weight: 700;
-  color: #212121;
+  color: var(--color-primary);
   margin-bottom: 5px;
 }
 
 .nutrition-label {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-body);
   font-size: 0.9rem;
   color: rgba(33, 33, 33, 0.7);
   text-transform: uppercase;
@@ -2582,7 +2533,7 @@ body {
 }
 
 .nutrition-note p {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-body);
   font-size: 0.9rem;
   color: rgba(33, 33, 33, 0.7);
   font-style: italic;
@@ -2600,7 +2551,7 @@ body {
   font-family: "EB Garamond", serif;
   font-size: 1.3rem;
   font-weight: 600;
-  color: #212121;
+  color: var(--color-primary);
   margin-bottom: 15px;
 }
 
@@ -2628,12 +2579,12 @@ body {
 }
 
 .product-actions .quantity {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-body);
   font-size: 16px;
   font-weight: 600;
   min-width: 30px;
   text-align: center;
-  color: #212121;
+  color: var(--color-primary);
 }
 
 .product-actions .cta-btn {
@@ -2650,12 +2601,12 @@ body {
 .product-not-found h2 {
   font-family: "EB Garamond", serif;
   font-size: 2rem;
-  color: #212121;
+  color: var(--color-primary);
   margin-bottom: 15px;
 }
 
 .product-not-found p {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-body);
   font-size: 1.1rem;
   color: rgba(33, 33, 33, 0.6);
   margin-bottom: 30px;
@@ -2686,17 +2637,17 @@ body {
 }
 
 .category-hero-text h1 {
-  font-family: "EB Garamond", "Inter", serif;
+  font-family: var(--font-heading);
   font-size: 48px;
   font-weight: 700;
-  color: #212121;
+  color: var(--color-primary);
   margin-bottom: 16px;
   letter-spacing: -1.5px;
   line-height: 1.1;
 }
 
 .category-subtitle {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-body);
   font-size: 24px;
   color: rgba(33, 33, 33, 0.8);
   margin-bottom: 16px;
@@ -2705,7 +2656,7 @@ body {
 }
 
 .category-description {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-body);
   font-size: 18px;
   color: rgba(33, 33, 33, 0.7);
   margin-bottom: 24px;
@@ -2724,7 +2675,7 @@ body {
   color: rgba(33, 33, 33, 0.7);
   padding: 8px 16px;
   border-radius: 20px;
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-body);
   font-size: 14px;
   font-weight: 500;
   border: 1px solid rgba(33, 33, 33, 0.1);
@@ -2735,7 +2686,7 @@ body {
   color: rgba(33, 33, 33, 0.7);
   padding: 8px 16px;
   border-radius: 20px;
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-body);
   font-size: 14px;
   font-weight: 500;
   border: 1px solid rgba(33, 33, 33, 0.1);
@@ -2785,7 +2736,7 @@ body {
 }
 
 .no-products p {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-body);
   font-size: 18px;
   font-weight: 400;
 }
@@ -2822,17 +2773,17 @@ body {
 }
 
 .about-hero h1 {
-  font-family: "EB Garamond", "Inter", serif;
+  font-family: var(--font-heading);
   font-size: 48px;
   font-weight: 700;
-  color: #212121;
+  color: var(--color-primary);
   margin-bottom: 20px;
   letter-spacing: -1.5px;
   line-height: 1.1;
 }
 
 .about-hero-subtitle {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-body);
   font-size: 24px;
   color: rgba(33, 33, 33, 0.8);
   font-style: italic;
@@ -2894,7 +2845,7 @@ body {
 
 .story-intro,
 .story-mission {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-body);
   font-size: 18px;
   line-height: 1.7;
   color: rgba(33, 33, 33, 0.8);
@@ -2915,12 +2866,12 @@ body {
 }
 
 .values-section h2 {
-  font-family: "EB Garamond", "Inter", serif;
+  font-family: var(--font-heading);
   font-size: 42px;
   font-weight: 700;
   text-align: center;
   margin-bottom: 60px;
-  color: #212121;
+  color: var(--color-primary);
   letter-spacing: -1px;
 }
 
@@ -2936,7 +2887,7 @@ body {
   text-align: center;
   border-radius: 2px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
+  transition: var(--transition-standard);
   position: relative;
   overflow: hidden;
 }
@@ -2969,16 +2920,16 @@ body {
 }
 
 .value-card h3 {
-  font-family: "EB Garamond", "Inter", serif;
+  font-family: var(--font-heading);
   font-size: 24px;
   font-weight: 600;
-  color: #212121;
+  color: var(--color-primary);
   margin-bottom: 16px;
   letter-spacing: -0.5px;
 }
 
 .value-card p {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-body);
   font-size: 16px;
   color: rgba(33, 33, 33, 0.7);
   line-height: 1.6;
@@ -2992,12 +2943,12 @@ body {
 }
 
 .founders-section h2 {
-  font-family: "EB Garamond", "Inter", serif;
+  font-family: var(--font-heading);
   font-size: 42px;
   font-weight: 700;
   text-align: center;
   margin-bottom: 60px;
-  color: #212121;
+  color: var(--color-primary);
   letter-spacing: -1px;
 }
 
@@ -3011,7 +2962,7 @@ body {
 
 .founder-card {
   text-align: center;
-  transition: all 0.3s ease;
+  transition: var(--transition-standard);
 }
 
 .founder-card:hover {
@@ -3025,7 +2976,7 @@ body {
   overflow: hidden;
   margin: 0 auto 24px;
   box-shadow: 0 8px 25px rgba(33, 33, 33, 0.1);
-  transition: all 0.3s ease;
+  transition: var(--transition-standard);
 }
 
 .founder-card:hover .founder-image {
@@ -3040,16 +2991,16 @@ body {
 }
 
 .founder-card h3 {
-  font-family: "EB Garamond", "Inter", serif;
+  font-family: var(--font-heading);
   font-size: 24px;
   font-weight: 600;
-  color: #212121;
+  color: var(--color-primary);
   margin-bottom: 8px;
   letter-spacing: -0.5px;
 }
 
 .founder-card p {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-body);
   font-size: 16px;
   color: rgba(33, 33, 33, 0.6);
   font-weight: 500;
@@ -3063,16 +3014,16 @@ body {
 }
 
 .experience-content h2 {
-  font-family: "EB Garamond", "Inter", serif;
+  font-family: var(--font-heading);
   font-size: 42px;
   font-weight: 700;
-  color: #212121;
+  color: var(--color-primary);
   margin-bottom: 32px;
   letter-spacing: -1px;
 }
 
 .experience-content p {
-  font-family: "Cormorant Garamond", serif;
+  font-family: var(--font-body);
   font-size: 20px;
   color: rgba(33, 33, 33, 0.8);
   line-height: 1.6;
@@ -3098,7 +3049,7 @@ body {
   background: white;
   border-radius: 2px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
-  transition: all 0.3s ease;
+  transition: var(--transition-standard);
 }
 
 .feature:hover {
@@ -3111,10 +3062,10 @@ body {
 }
 
 .feature span:last-child {
-  font-family: "EB Garamond", "Inter", serif;
+  font-family: var(--font-heading);
   font-size: 16px;
   font-weight: 500;
-  color: #212121;
+  color: var(--color-primary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -3324,5 +3275,144 @@ body {
   
   .nutrition-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Contact & Delivery Page Minimal Styles */
+.contact-form-container {
+  background: white;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.form-group {
+  margin-bottom: 25px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+  font-size: 16px;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+  font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #26532B;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+@media (max-width: 768px) {
+  .contact-form-container {
+    padding: 30px 20px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}
+
+/* Hide broken images in hero banners */
+.category-hero-image img:not([src]):not([srcset]):not([data-src]) {
+  opacity: 0;
+}
+
+.category-hero-image img[src=""],
+.category-hero-image img:not([src]),
+.category-hero-image img[src="undefined"] {
+  opacity: 0;
+}
+
+/* Navigation Dropdown Styles */
+.nav-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-arrow {
+  font-size: 12px;
+  margin-left: 5px;
+  transition: transform 0.2s ease;
+}
+
+.nav-dropdown:hover .dropdown-arrow {
+  transform: rotate(180deg);
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 8px 0;
+  min-width: 200px;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.2s ease;
+}
+
+.nav-dropdown:hover .dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.dropdown-item {
+  display: block;
+  padding: 12px 20px;
+  color: #333;
+  text-decoration: none;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.dropdown-item:hover {
+  background-color: #f8f9fa;
+  color: #26532B;
+}
+
+/* Mobile adjustments - hide dropdowns on mobile */
+@media (max-width: 768px) {
+  .nav-dropdown .dropdown-menu {
+    display: none;
+  }
+  
+  .dropdown-arrow {
+    display: none;
   }
 }
