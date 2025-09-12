@@ -1,6 +1,6 @@
-import React, { useEffect, memo } from 'react';
+import React, { useEffect } from 'react';
 
-const ProductCard = memo(({ product, onAddToCart, onProductClick }) => {
+const ProductCard = ({ product, onAddToCart, onProductClick }) => {
 
   useEffect(() => {
     // Defer Sirv initialization to reduce main thread blocking
@@ -95,6 +95,6 @@ const ProductCard = memo(({ product, onAddToCart, onProductClick }) => {
       </div>
     </div>
   );
-});
+};
 
 export default ProductCard;

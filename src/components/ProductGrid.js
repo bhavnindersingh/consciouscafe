@@ -1,11 +1,11 @@
-import React, { memo, useMemo } from "react";
+import React, { useMemo, startTransition } from "react";
 import { useNavigate } from "react-router-dom";
 import ProductCard from "./ProductCard";
 import InstagramFeed from "./InstagramFeed";
 import SEO from "./SEO";
 import { generatePageSEO, generateStructuredData } from "../utils/seoData";
 
-const ProductGrid = memo(({
+const ProductGrid = ({
   products,
   onAddToCart,
   onProductClick,
@@ -88,12 +88,12 @@ const ProductGrid = memo(({
               Welcome to Conscious Cafe, where every dish tells a story of
               quality and care.
             </h2>
-            <button className="learn-more-btn" onClick={() => navigate("/about")}>About Us</button>
+            <button className="learn-more-btn" onClick={() => startTransition(() => navigate("/about"))}>About Us</button>
           </div>
         </div>
       </section>
     </div>
   );
-});
+};
 
 export default ProductGrid;

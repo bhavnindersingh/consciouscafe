@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useRef, memo } from 'react';
+import React, { useEffect, useState, useRef, startTransition } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const Hero = memo(() => {
+const Hero = () => {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState("all");
   const scrollContainerRef = useRef(null);
@@ -34,15 +34,17 @@ const Hero = memo(() => {
       }
     }, 50);
 
-    if (categoryId === "all") {
-      navigate("/menu");
-    } else if (categoryId === "all-drinks") {
-      navigate("/drinks");
-    } else if (type === "drinks") {
-      navigate(`/drinks/category/${categoryId}`);
-    } else {
-      navigate(`/category/${categoryId}`);
-    }
+    startTransition(() => {
+      if (categoryId === "all") {
+        navigate("/menu");
+      } else if (categoryId === "all-drinks") {
+        navigate("/drinks");
+      } else if (type === "drinks") {
+        navigate(`/drinks/category/${categoryId}`);
+      } else {
+        navigate(`/category/${categoryId}`);
+      }
+    });
   };
 
 
@@ -114,7 +116,7 @@ const Hero = memo(() => {
           <div className="hero-content">
             <h1>Conscious Cafe</h1>
             <div className="hero-buttons">
-              <button className="cta-btn" onClick={() => navigate('/menu')}>
+              <button className="cta-btn" onClick={() => startTransition(() => navigate('/menu'))}>
                 View Menu
               </button>
             </div>
@@ -209,6 +211,6 @@ const Hero = memo(() => {
       </div>
     </div>
   );
-});
+};
 
 export default Hero;

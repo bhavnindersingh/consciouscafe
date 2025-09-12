@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Suspense, lazy, useMemo, useCallback } from "react";
+import React, { useState, useEffect, Suspense, lazy, useMemo, startTransition } from "react";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import Header from "./components/Header";
@@ -112,7 +112,7 @@ function App() {
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
-  const addToCart = useCallback((product) => {
+  const addToCart = (product) => {
     setCartItems((prevItems) => {
       const existingItem = prevItems.find((item) => item.id === product.id);
 
@@ -129,9 +129,9 @@ function App() {
 
     // Auto-open cart when item is added
     setIsCartOpen(true);
-  }, []);
+  };
 
-  const updateQuantity = useCallback((productId, newQuantity) => {
+  const updateQuantity = (productId, newQuantity) => {
     if (newQuantity <= 0) {
       removeFromCart(productId);
       return;
@@ -142,17 +142,17 @@ function App() {
         item.id === productId ? { ...item, quantity: newQuantity } : item,
       ),
     );
-  }, []);
+  };
 
-  const removeFromCart = useCallback((productId) => {
+  const removeFromCart = (productId) => {
     setCartItems((prevItems) =>
       prevItems.filter((item) => item.id !== productId),
     );
-  }, []);
+  };
 
-  const clearCart = useCallback(() => {
+  const clearCart = () => {
     setCartItems([]);
-  }, []);
+  };
 
   const handleCartToggle = () => {
     setIsCartOpen(!isCartOpen);
@@ -169,14 +169,16 @@ function App() {
   };
 
   const handleCategoryChange = (category) => {
-    if (category === "all") {
-      navigate("/");
-    } else {
-      navigate(`/category/${category}`);
-    }
+    startTransition(() => {
+      if (category === "all") {
+        navigate("/");
+      } else {
+        navigate(`/category/${category}`);
+      }
+    });
   };
 
-  const handleProductClick = useCallback((product) => {
+  const handleProductClick = (product) => {
     // Helper function to create slug from product name
     const createSlug = (name) => {
       return name
@@ -187,8 +189,10 @@ function App() {
         .trim();
     };
     
-    navigate(`/product/${createSlug(product.name)}`);
-  }, [navigate]);
+    startTransition(() => {
+      navigate(`/product/${createSlug(product.name)}`);
+    });
+  };
 
   // For backward compatibility with modal approach
   const handleProductPageClose = () => {
