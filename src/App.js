@@ -1,21 +1,23 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense, lazy, useMemo, useCallback } from "react";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import Header from "./components/Header";
 import Hero from "./components/Hero";
 import ProductGrid from "./components/ProductGrid";
-import FoodMenuPage from "./components/FoodMenuPage";
-import DrinksMenuPage from "./components/DrinksMenuPage";
 import Cart from "./components/Cart";
-import Checkout from "./components/Checkout";
-import ProductDetailPage from "./components/ProductDetailPage";
-import ProductPage from "./components/ProductPage";
-import CategoryPage from "./components/CategoryPage";
 import Footer from "./components/Footer";
-import AboutUs from "./components/AboutUs";
-import Contact from "./components/Contact";
-import DeliveryInfo from "./components/DeliveryInfo";
 import { products } from "./data/products";
+
+// Lazy load non-critical components
+const FoodMenuPage = lazy(() => import("./components/FoodMenuPage"));
+const Checkout = lazy(() => import("./components/Checkout"));
+const ProductDetailPage = lazy(() => import("./components/ProductDetailPage"));
+const ProductPage = lazy(() => import("./components/ProductPage"));
+const CategoryPage = lazy(() => import("./components/CategoryPage"));
+const AboutUs = lazy(() => import("./components/AboutUs"));
+const Contact = lazy(() => import("./components/Contact"));
+const DeliveryInfo = lazy(() => import("./components/DeliveryInfo"));
+const NotFound = lazy(() => import("./components/NotFound"));
 
 function App() {
   const navigate = useNavigate();
@@ -28,8 +30,8 @@ function App() {
   const [isProductPageOpen, setIsProductPageOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
-  // Define all categories to be displayed - moved from ProductGrid
-  const displayCategories = [
+  // Memoize categories to prevent unnecessary re-renders
+  const displayCategories = useMemo(() => [
     {
       id: "toast",
       name: "Toast",
@@ -90,7 +92,7 @@ function App() {
       icon: "🍰",
       description: "Sweet treats to end your meal",
     },
-  ];
+  ], []);
 
   // Load cart from localStorage on component mount
   useEffect(() => {
@@ -110,7 +112,7 @@ function App() {
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
-  const addToCart = (product) => {
+  const addToCart = useCallback((product) => {
     setCartItems((prevItems) => {
       const existingItem = prevItems.find((item) => item.id === product.id);
 
@@ -127,9 +129,9 @@ function App() {
 
     // Auto-open cart when item is added
     setIsCartOpen(true);
-  };
+  }, []);
 
-  const updateQuantity = (productId, newQuantity) => {
+  const updateQuantity = useCallback((productId, newQuantity) => {
     if (newQuantity <= 0) {
       removeFromCart(productId);
       return;
@@ -140,17 +142,17 @@ function App() {
         item.id === productId ? { ...item, quantity: newQuantity } : item,
       ),
     );
-  };
+  }, []);
 
-  const removeFromCart = (productId) => {
+  const removeFromCart = useCallback((productId) => {
     setCartItems((prevItems) =>
       prevItems.filter((item) => item.id !== productId),
     );
-  };
+  }, []);
 
-  const clearCart = () => {
+  const clearCart = useCallback(() => {
     setCartItems([]);
-  };
+  }, []);
 
   const handleCartToggle = () => {
     setIsCartOpen(!isCartOpen);
@@ -174,7 +176,7 @@ function App() {
     }
   };
 
-  const handleProductClick = (product) => {
+  const handleProductClick = useCallback((product) => {
     // Helper function to create slug from product name
     const createSlug = (name) => {
       return name
@@ -186,7 +188,7 @@ function App() {
     };
     
     navigate(`/product/${createSlug(product.name)}`);
-  };
+  }, [navigate]);
 
   // For backward compatibility with modal approach
   const handleProductPageClose = () => {
@@ -207,7 +209,8 @@ function App() {
         {isHomePage && <Hero />}
 
         <main role="main" id="main-content">
-        <Routes>
+        <Suspense fallback={<div className="loading-spinner" style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px', fontFamily: 'var(--font-ui)', color: '#666'}}>Loading...</div>}>
+          <Routes>
           <Route
             path="/"
             element={
@@ -259,7 +262,12 @@ function App() {
             path="/delivery"
             element={<DeliveryInfo />}
           />
-        </Routes>
+          <Route
+            path="*"
+            element={<NotFound />}
+          />
+          </Routes>
+        </Suspense>
       </main>
 
       <Footer />

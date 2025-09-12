@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 
-const InstagramFeed = () => {
+const InstagramFeed = memo(() => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -194,6 +194,6 @@ const InstagramFeed = () => {
       </div>
     </div>
   );
-};
+});
 
 export default InstagramFeed;

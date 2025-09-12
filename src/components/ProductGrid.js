@@ -1,11 +1,11 @@
-import React from "react";
+import React, { memo, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import ProductCard from "./ProductCard";
 import InstagramFeed from "./InstagramFeed";
 import SEO from "./SEO";
 import { generatePageSEO, generateStructuredData } from "../utils/seoData";
 
-const ProductGrid = ({
+const ProductGrid = memo(({
   products,
   onAddToCart,
   onProductClick,
@@ -17,8 +17,8 @@ const ProductGrid = ({
   // Use categories from props instead of defining them here
   const displayCategories = categories || [];
   
-  // Generate SEO data for home page
-  const seoData = generatePageSEO('home', {
+  // Memoize SEO data for home page
+  const seoData = useMemo(() => generatePageSEO('home', {
     structuredData: [
       generateStructuredData('website'),
       generateStructuredData('restaurant'),
@@ -28,16 +28,16 @@ const ProductGrid = ({
         ]
       })
     ]
-  });
+  }), []);
 
-  // Get ALL bestseller products (both food and drinks)
-  const featuredProducts = products
-    ? products.filter((product) => product.bestseller)
-    : [];
-  // If no bestsellers are marked, just take the first 6 products
-  if (featuredProducts.length === 0 && products) {
-    featuredProducts.push(...products.slice(0, 6));
-  }
+  // Memoize featured products calculation
+  const featuredProducts = useMemo(() => {
+    if (!products) return [];
+    
+    const bestsellers = products.filter((product) => product.bestseller);
+    // If no bestsellers are marked, just take the first 6 products
+    return bestsellers.length > 0 ? bestsellers : products.slice(0, 6);
+  }, [products]);
 
   return (
     <div className="product-section">
@@ -94,6 +94,6 @@ const ProductGrid = ({
       </section>
     </div>
   );
-};
+});
 
 export default ProductGrid;

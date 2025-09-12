@@ -19,12 +19,6 @@ export const generateSitemap = (products = []) => {
       lastmod: currentDate,
     },
     {
-      url: 'drinks',
-      changefreq: 'weekly',
-      priority: '0.9',
-      lastmod: currentDate,
-    },
-    {
       url: 'about',
       changefreq: 'monthly',
       priority: '0.7',

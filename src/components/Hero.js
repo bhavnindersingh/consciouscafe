@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const Hero = () => {
+const Hero = memo(() => {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState("all");
   const scrollContainerRef = useRef(null);
@@ -46,9 +46,10 @@ const Hero = () => {
   };
 
 
-  // JavaScript sticky navigation - Hero visibility based
+  // Defer sticky navigation to reduce main thread blocking
   useEffect(() => {
-    let ticking = false;
+    const timer = setTimeout(() => {
+      let ticking = false;
     
     const calculateStickyTrigger = () => {
       const heroElement = document.querySelector('.hero');
@@ -87,10 +88,14 @@ const Hero = () => {
     // Initial calculation and event listener
     window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('resize', handleScroll, { passive: true }); // Recalculate on resize
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('resize', handleScroll);
-    };
+    
+      return () => {
+        window.removeEventListener('scroll', handleScroll);
+        window.removeEventListener('resize', handleScroll);
+      };
+    }, 300); // Defer by 300ms
+    
+    return () => clearTimeout(timer);
   }, []);
 
 
@@ -98,7 +103,7 @@ const Hero = () => {
     <div>
       <section className="hero">
         <div className="hero-video-backdrop">
-          <div className="Sirv" data-options="video.background:true; video.quality.min:1080">
+          <div className="Sirv" data-options="video.background:true; video.quality.min:1080; video.preload:metadata; video.autoplay:true;">
             <div data-src="https://consciouscafe.sirv.com/CCOpenvideoshot.mp4"></div>
           </div>
         </div>
@@ -204,6 +209,6 @@ const Hero = () => {
       </div>
     </div>
   );
-};
+});
 
 export default Hero;

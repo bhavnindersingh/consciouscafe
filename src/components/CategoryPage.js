@@ -284,7 +284,7 @@ const CategoryPage = ({ category: propCategory, products, onAddToCart, onProduct
         <meta property="og:description" content={currentCategory.seo?.description || currentCategory.description} />
         <meta property="og:image" content={currentCategory.heroImage} />
         <meta property="og:type" content="website" />
-        <link rel="canonical" href={`https://consciousbakes.com/category/${category}`} />
+        <link rel="canonical" href={`https://consciouscafe.in/category/${category}`} />
       </Helmet>
 
       {/* Hero Banner */}

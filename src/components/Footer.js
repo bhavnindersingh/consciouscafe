@@ -1,12 +1,12 @@
-import React from 'react';
+import React, { memo } from 'react';
 
-const Footer = () => {
+const Footer = memo(() => {
   return (
     <footer className="footer">
       <div className="container">
         <div className="footer-content">
           <div className="footer-section">
-            <h3>Conscious Cafe</h3>
+            <h2>Conscious Cafe</h2>
             <p>Experience conscious cuisine crafted with care.</p>
             <div className="social-links">
               <a href="#" aria-label="Instagram">
@@ -58,6 +58,6 @@ const Footer = () => {
       </div>
     </footer>
   );
-};
+});
 
 export default Footer;

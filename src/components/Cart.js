@@ -53,7 +53,7 @@ const Cart = ({ isOpen, onClose, cartItems, onUpdateQuantity, onRemoveItem, onCh
                 {cartItems.map(item => (
                   <div key={item.id} className="cart-item">
                     <div className="item-image">
-                      <img src={item.image} alt={item.name} />
+                      <img src={item.image} alt={`${item.name} from Conscious Cafe - ${item.category?.replace(/-/g, ' ') || 'artisanal'} dish`} />
                     </div>
                     
                     <div className="item-details">

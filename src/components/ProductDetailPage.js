@@ -138,9 +138,9 @@ const ProductDetailPage = ({ products, onAddToCart }) => {
           <div className="product-detail-content">
             <div className="product-detail-image">
               {product.imageType === 'sirv' ? (
-                <img className="Sirv" data-src={product.sirvDataSrc || product.image} alt={product.name} />
+                <img className="Sirv" data-src={product.sirvDataSrc || product.image} alt={`${product.name} - ${product.description} - Conscious Cafe Auroville artisanal vegan cuisine`} />
               ) : (
-                <img src={product.image} alt={product.name} />
+                <img src={product.image} alt={`${product.name} - ${product.description} - Conscious Cafe Auroville artisanal vegan cuisine`} />
               )}
             </div>
             
@@ -238,6 +238,7 @@ const ProductDetailPage = ({ products, onAddToCart }) => {
               {/* Options Selection for products with options (like Avocado Toast) */}
               {product.options && product.options.length > 0 && (
                 <div className="product-options">
+                  <h2>Product Options</h2>
                   <h3>Choose Option</h3>
                   <div className="option-buttons">
                     {product.options.map(option => (
@@ -256,6 +257,7 @@ const ProductDetailPage = ({ products, onAddToCart }) => {
               {/* Size Selection for birthday cakes */}
               {product.category === 'birthday-cakes' && product.sizes && (
                 <div className="product-sizes">
+                  <h2>Size Options</h2>
                   <h3>Choose Size</h3>
                   <div className="size-options">
                     {product.sizes.map(size => (

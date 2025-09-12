@@ -15,7 +15,7 @@ const SEO = ({
   const siteTitle = 'Conscious Cafe - Food & Beverages';
   const siteDescription = 'Experience conscious food and beverages at Conscious Cafe. Fresh, organic, and locally sourced meals in a welcoming atmosphere.';
   const siteImage = '/android-icon-192x192.png';
-  const siteUrl = 'https://consciouscafe.com'; // Replace with actual domain
+  const siteUrl = 'https://consciouscafe.in';
   
   const pageTitle = title ? `${title} | ${siteTitle}` : siteTitle;
   const pageDescription = description || siteDescription;
@@ -42,15 +42,23 @@ const SEO = ({
       <meta property="og:url" content={pageUrl} />
       <meta property="og:image" content={pageImage} />
       <meta property="og:image:alt" content={title || 'Conscious Cafe'} />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
       <meta property="og:site_name" content="Conscious Cafe" />
       <meta property="og:locale" content="en_US" />
+      <meta property="article:author" content="Conscious Cafe" />
       
       {/* Twitter Card Tags */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={pageTitle} />
       <meta name="twitter:description" content={pageDescription} />
       <meta name="twitter:image" content={pageImage} />
+      <meta name="twitter:image:alt" content={title || 'Conscious Cafe'} />
       <meta name="twitter:site" content="@consciouscafe" />
+      <meta name="twitter:creator" content="@consciouscafe" />
+      
+      {/* Facebook App ID (optional - add if you have one) */}
+      <meta property="fb:app_id" content="" />
       
       {/* Additional Meta Tags */}
       <meta name="author" content="Conscious Cafe" />

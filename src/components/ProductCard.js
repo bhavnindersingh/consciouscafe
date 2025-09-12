@@ -1,13 +1,15 @@
-import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, memo } from 'react';
 
-const ProductCard = ({ product, onAddToCart, onProductClick }) => {
-  const navigate = useNavigate();
+const ProductCard = memo(({ product, onAddToCart, onProductClick }) => {
 
   useEffect(() => {
-    if (window.Sirv) {
-      window.Sirv.start();
-    }
+    // Defer Sirv initialization to reduce main thread blocking
+    const timer = setTimeout(() => {
+      if (window.Sirv) {
+        window.Sirv.start();
+      }
+    }, 100);
+    return () => clearTimeout(timer);
   }, []);
   
   const handleCardClick = (e) => {
@@ -42,9 +44,25 @@ const ProductCard = ({ product, onAddToCart, onProductClick }) => {
       
       <div className="product-image">
         {product.imageType === 'sirv' ? (
-          <img className="Sirv" data-src={product.sirvDataSrc || product.image} alt={product.name} />
+          <img 
+            className="Sirv" 
+            data-src={product.sirvDataSrc || product.image}
+            data-options="q:92; format:webp; scale.option:noup; fit:crop;"
+            loading="lazy"
+            decoding="async"
+            width="400"
+            height="300"
+            alt={`${product.name} - ${product.description || 'Artisanal vegan dish at Conscious Cafe Auroville'}`} 
+          />
         ) : (
-          <img src={product.image} alt={product.name} />
+          <img 
+            src={product.image} 
+            loading="lazy"
+            decoding="async"
+            width="400"
+            height="300"
+            alt={`${product.name} - ${product.description || 'Artisanal vegan dish at Conscious Cafe Auroville'}`} 
+          />
         )}
       </div>
       
@@ -77,6 +95,6 @@ const ProductCard = ({ product, onAddToCart, onProductClick }) => {
       </div>
     </div>
   );
-};
+});
 
 export default ProductCard;

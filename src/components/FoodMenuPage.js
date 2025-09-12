@@ -228,7 +228,9 @@ const FoodMenuPage = ({
           <img 
             className="Sirv hero-bg-image" 
             data-src="https://consciouscafe.sirv.com/for%20food%20menu%20banner.jpg"
-            data-options="q:92; scale.option:noup; fit:cover;"
+            data-options="q:92; format:webp; scale.option:noup; fit:cover;"
+            loading="eager"
+            decoding="async"
             alt="Food Menu"
           />
           <div className="hero-overlay"></div>

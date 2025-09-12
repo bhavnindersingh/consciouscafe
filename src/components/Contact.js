@@ -186,7 +186,7 @@ const Contact = () => {
                 alt="Conscious Cafe interior - welcoming community space" 
               />
               <div style={{marginTop: '20px', padding: '20px', background: '#f8f8f8', borderRadius: '12px'}}>
-                <h3 style={{color: '#26532B', marginBottom: '15px'}}>What makes us special?</h3>
+                <h2 style={{color: '#26532B', marginBottom: '15px'}}>What makes us special?</h2>
                 <div className="experience-features">
                   <div className="feature">
                     <span className="feature-icon">🌱</span>

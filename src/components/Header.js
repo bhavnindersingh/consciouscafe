@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, memo } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 
-const Header = ({ cartItems, onCartToggle, onCategoryChange, categories }) => {
+const Header = memo(({ cartItems, onCartToggle, onCategoryChange, categories }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isFoodDropdownOpen, setIsFoodDropdownOpen] = useState(false);
   const [isDrinksDropdownOpen, setIsDrinksDropdownOpen] = useState(false);
@@ -202,6 +202,6 @@ const Header = ({ cartItems, onCartToggle, onCategoryChange, categories }) => {
       </header>
     </div>
   );
-};
+});
 
 export default Header;
