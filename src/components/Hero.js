@@ -105,8 +105,8 @@ const Hero = () => {
     <div>
       <section className="hero">
         <div className="hero-video-backdrop">
-          <div className="Sirv" data-options="video.background:true; video.quality.min:1080; video.preload:metadata; video.autoplay:true;">
-            <div data-src="https://consciouscafe.sirv.com/CCOpenvideoshot.mp4"></div>
+          <div className="Sirv" data-options="video.background:true; video.quality.min:720; video.preload:none; video.autoplay:true;">
+            <div data-src="https://consciouscafe.sirv.com/CCOpenvideoshot.mp4?mobile=true"></div>
           </div>
         </div>
         
