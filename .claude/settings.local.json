@@ -23,7 +23,10 @@
       "WebFetch(domain:sirv.com)",
       "WebSearch",
       "Bash(git commit:*)",
-      "WebFetch(domain:www.consciouscafe.in)"
+      "WebFetch(domain:www.consciouscafe.in)",
+      "Bash(xargs kill:*)",
+      "Bash(xargs -r kill -9)",
+      "Bash(netstat:*)"
     ],
     "deny": []
   }
