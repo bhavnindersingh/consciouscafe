@@ -21,7 +21,7 @@ const PrivacyPolicy = () => {
 
           <div className="legal-intro">
             <p>
-              Welcome to Conscious Cafe, the best cafe in Auroville and top restaurant in Pondicherry, your premier destination for consciously sourced non-processed vegetarian cuisine crafted by our top chef. As the finest coffee house and elite dining establishment with ice bath, sauna, yogashala, and community space in the Auroville area of Pondicherry, Tamil Nadu, we are committed to protecting your privacy while you explore our award-winning conscious dining and wellness experience featuring premium artisanal coffee, specialty beverages, yoga-inspired wellness bowls, cold therapy, heat therapy, meditation spaces, and sustainable consciously sourced non-processed food served by our master chef team.
+              Welcome to Conscious Cafe, the best cafe in Auroville and top vegetarian restaurant in Pondicherry, your premier destination for consciously sourced non-processed vegetarian cuisine crafted by our top chef. As the finest coffee house and elite vegetarian dining establishment with ice bath, sauna, yogashala, and community space in the Auroville area of Pondicherry, Tamil Nadu, we are committed to protecting your privacy while you explore our award-winning conscious vegetarian dining and wellness experience featuring premium artisanal coffee, specialty beverages, yoga-inspired wellness bowls, cold therapy, heat therapy, meditation spaces, and sustainable consciously sourced non-processed vegetarian food served by our master chef team.
             </p>
             <p className="disclaimer">
               <strong>Disclaimer:</strong> Conscious Cafe is an independent establishment located near Auroville, Pondicherry. We are not affiliated with, endorsed by, or part of the Auroville Foundation. We operate as a private restaurant business inspired by the conscious living principles of the Auroville community.
@@ -32,7 +32,7 @@ const PrivacyPolicy = () => {
           
           <h3>Personal Information</h3>
           <p>
-            When you visit our best cafe in Auroville, top restaurant in Pondicherry and Puducherry with ice bath, sauna, yogashala, and community space serving consciously sourced non-processed food prepared by our top chef, or use our award-winning wellness center and coffee house online services in the Auroville, Pondicherry, and Puducherry area, we may collect:
+            When you visit our best cafe in Auroville, top vegetarian restaurant in Pondicherry and Puducherry with ice bath, sauna, yogashala, and community space serving consciously sourced non-processed vegetarian food prepared by our top chef, or use our award-winning wellness center and coffee house online services in the Auroville, Pondicherry, and Puducherry area, we may collect:
           </p>
           <ul>
             <li>Contact information for dining, ice bath, sauna, yogashala, and community space reservations (name, phone, email)</li>
@@ -58,7 +58,7 @@ const PrivacyPolicy = () => {
           
           <h3>Service Delivery</h3>
           <p>
-            We use your information to provide exceptional conscious dining experiences at the best cafe in Auroville and top restaurant in Pondicherry, featuring world-class chef creations:
+            We use your information to provide exceptional conscious vegetarian dining experiences at the best cafe in Auroville and top vegetarian restaurant in Pondicherry, featuring world-class chef creations:
           </p>
           <ul>
             <li>Processing orders for our premium artisanal coffee, specialty beverages, elite consciously sourced non-processed breakfast, and gourmet wellness lunch bowls from the finest cafe in Pondicherry</li>
@@ -70,7 +70,7 @@ const PrivacyPolicy = () => {
 
           <h3>Communication</h3>
           <p>
-            We may contact you regarding exclusive offers from the best cafe in Auroville and top restaurant in Pondicherry:
+            We may contact you regarding exclusive offers from the best cafe in Auroville and top vegetarian restaurant in Pondicherry:
           </p>
           <ul>
             <li>Order confirmations for our premium consciously sourced coffee, gourmet breakfast bowls, and elite sustainable meals from the finest cafe in Pondicherry</li>
@@ -96,7 +96,7 @@ const PrivacyPolicy = () => {
 
           <h3>Legal Requirements</h3>
           <p>
-            We may disclose information when required by Indian law or to protect our restaurant business serving consciously sourced non-processed food, customers enjoying our conscious cuisine, and the broader Auroville and Pondicherry community.
+            We may disclose information when required by Indian law or to protect our vegetarian restaurant business serving consciously sourced non-processed vegetarian food, customers enjoying our conscious vegetarian cuisine, and the broader Auroville and Pondicherry community.
           </p>
 
           <h2>Data Security</h2>
@@ -106,13 +106,13 @@ const PrivacyPolicy = () => {
 
           <h2>Your Rights</h2>
           <p>
-            As a valued customer of our conscious cuisine restaurant in Pondicherry, you have the right to:
+            As a valued customer of our conscious vegetarian cuisine restaurant in Pondicherry, you have the right to:
           </p>
           <ul>
-            <li>Access your personal information related to orders of our consciously sourced non-processed food and coffee</li>
+            <li>Access your personal information related to orders of our consciously sourced non-processed vegetarian food and coffee</li>
             <li>Correct inaccurate information about dietary preferences and delivery details</li>
-            <li>Request deletion of your data from our restaurant systems</li>
-            <li>Opt-out of marketing communications about our Auroville-area dining experiences</li>
+            <li>Request deletion of your data from our vegetarian restaurant systems</li>
+            <li>Opt-out of marketing communications about our Auroville-area vegetarian dining experiences</li>
             <li>Portability of your data related to our vegetarian restaurant services</li>
           </ul>
 

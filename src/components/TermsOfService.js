@@ -21,7 +21,7 @@ const TermsOfService = () => {
 
           <div className="legal-intro">
             <p>
-              Welcome to Conscious Cafe, the best cafe in Auroville and top restaurant in Pondicherry, your sanctuary for consciously sourced non-processed vegetarian cuisine crafted by our top chef, premium artisanal coffee, and award-winning mindful dining experiences. As the finest coffee house and elite dining establishment with ice bath, sauna, yogashala, and community space in the Auroville area of Pondicherry, Tamil Nadu, these Terms of Service govern your use of our luxury restaurant services, wellness center amenities, world-class online ordering platform, and exclusive wellness-focused dining experiences featuring specialty beverages, cold therapy, heat therapy, yoga sessions, and master chef creations.
+              Welcome to Conscious Cafe, the best cafe in Auroville and top vegetarian restaurant in Pondicherry, your sanctuary for consciously sourced non-processed vegetarian cuisine crafted by our top chef, premium artisanal coffee, and award-winning mindful vegetarian dining experiences. As the finest coffee house and elite vegetarian dining establishment with ice bath, sauna, yogashala, and community space in the Auroville area of Pondicherry, Tamil Nadu, these Terms of Service govern your use of our luxury vegetarian restaurant services, wellness center amenities, world-class online ordering platform, and exclusive wellness-focused vegetarian dining experiences featuring specialty beverages, cold therapy, heat therapy, yoga sessions, and master chef creations.
             </p>
             <p className="disclaimer">
               <strong>Important Disclaimer:</strong> Conscious Cafe is an independent restaurant business serving consciously sourced non-processed food, located near Auroville in Pondicherry, Tamil Nadu. We are not affiliated with, endorsed by, sponsored by, or part of the Auroville Foundation or any official Auroville organization. We operate as a private establishment inspired by conscious living principles and sustainable dining practices of the Auroville community.
@@ -30,18 +30,18 @@ const TermsOfService = () => {
 
           <h2>Acceptance of Terms</h2>
           <p>
-            By visiting our best cafe in Auroville and top restaurant in Pondicherry and Puducherry serving consciously sourced non-processed vegetarian food, ordering our premium artisanal coffee and award-winning conscious cuisine, or using our elite online services, you agree to these Terms of Service. Our finest dining establishment serves the Pondicherry, Puducherry, and Auroville community with commitment to luxury sustainable dining, yoga-inspired wellness, and world-class holistic food experiences crafted by our master chef team.
+            By visiting our best cafe in Auroville and top vegetarian restaurant in Pondicherry and Puducherry serving consciously sourced non-processed vegetarian food, ordering our premium artisanal coffee and award-winning conscious vegetarian cuisine, or using our elite online services, you agree to these Terms of Service. Our finest vegetarian dining establishment serves the Pondicherry, Puducherry, and Auroville community with commitment to luxury sustainable vegetarian dining, yoga-inspired wellness, and world-class holistic vegetarian food experiences crafted by our master chef team.
           </p>
 
           <h2>Restaurant Services</h2>
           
           <h3>Dining Services</h3>
           <p>
-            Conscious Cafe, the best cafe in Auroville and top restaurant in Pondicherry and Puducherry, provides exceptional consciously sourced non-processed dining experiences featuring world-class chef creations across the Auroville, Pondicherry, and Puducherry region, including:
+            Conscious Cafe, the best cafe in Auroville and top vegetarian restaurant in Pondicherry and Puducherry, provides exceptional consciously sourced non-processed vegetarian dining experiences featuring world-class chef creations across the Auroville, Pondicherry, and Puducherry region, including:
           </p>
           <ul>
             <li><strong>Premium Gourmet Breakfast:</strong> Elite smoothie bowls, luxury avocado toast, quinoa porridge, specialty herbal teas, craft cold-pressed juices, and award-winning artisanal coffee from the best cafe in Pondicherry, Puducherry, and Auroville</li>
-            <li><strong>Master Chef Lunch:</strong> Signature nourish bowls, gourmet consciously sourced salads, artisan quinoa burgers, premium vegan wraps, wellness soups, and sustainable protein options crafted by our top chef serving Auroville, Pondicherry, and Puducherry</li>
+            <li><strong>Master Chef Lunch:</strong> Signature nourish bowls, gourmet consciously sourced salads, artisan quinoa burgers, premium vegetarian wraps, wellness soups, and sustainable protein options crafted by our top chef serving Auroville, Pondicherry, and Puducherry</li>
             <li><strong>Fine Dining Dinner:</strong> Exquisite plant-based curries, luxury consciously sourced pasta, gluten-free masterpieces, raw food artistry, and Ayurvedic-inspired culinary creations available across Pondicherry, Puducherry, and Auroville region</li>
             <li><strong>Specialty Artisanal Beverages:</strong> Premium single-origin coffee, craft matcha lattes, golden milk elixirs, artisan kombucha, fresh fruit smoothies, and herbal wellness teas from the finest coffee house in Auroville, Pondicherry, and Puducherry</li>
             <li><strong>Gourmet Healthy Snacks:</strong> Raw energy balls, premium consciously sourced nuts, seasonal fruit bowls, and probiotic treats from the top cafe serving Auroville, Pondicherry, and Puducherry</li>
@@ -73,7 +73,7 @@ const TermsOfService = () => {
             <li>Premium fresh consciously sourced produce from elite local Pondicherry farmers and sustainable suppliers for the best cafe experience</li>
             <li>Seasonal gourmet menu changes reflecting the finest of Tamil Nadu's consciously sourced harvest crafted by our top chef</li>
             <li>Premium artisanal coffee beans ethically sourced and masterfully roasted for optimal flavor at the finest coffee house</li>
-            <li>Luxury vegan, vegetarian, gluten-free, and raw food options for diverse dietary needs at the top restaurant</li>
+            <li>Luxury vegetarian, gluten-free, and raw food options for diverse dietary needs at the top vegetarian restaurant</li>
             <li>Premium Ayurvedic spices and healing herbs integrated into our award-winning conscious cuisine by master chef</li>
           </ul>
 
@@ -92,7 +92,7 @@ const TermsOfService = () => {
           
           <h3>Service Areas</h3>
           <p>
-            We deliver our premium consciously sourced non-processed vegetarian meals, specialty artisanal coffee, and gourmet wellness beverages from the best cafe in Auroville and top restaurant in Pondicherry and Puducherry to:
+            We deliver our premium consciously sourced non-processed vegetarian meals, specialty artisanal coffee, and gourmet wellness beverages from the best cafe in Auroville and top vegetarian restaurant in Pondicherry and Puducherry to:
           </p>
           <ul>
             <li>Auroville community and surrounding residential areas</li>
@@ -125,31 +125,31 @@ const TermsOfService = () => {
             <li>All premium certifications and source information for our elite consciously sourced Pondicherry-region ingredients at the finest restaurant</li>
             <li>Detailed allergen information for common concerns (nuts, gluten, soy, dairy alternatives) from the top cafe</li>
             <li>Nutritional benefits of our premium superfoods, adaptogens, and Ayurvedic ingredients curated by our master chef</li>
-            <li>Luxury vegan, vegetarian, raw food, and gluten-free menu designations at the best cafe in Pondicherry</li>
+            <li>Luxury vegetarian, raw food, and gluten-free menu designations at the best cafe in Pondicherry</li>
             <li>Expert consultation available for specific dietary requirements and wellness goals from our top chef team</li>
           </ul>
 
           <h3>Health Disclaimers</h3>
           <p>
-            While our award-winning restaurant and best cafe serving premium consciously sourced non-processed food promotes wellness through conscious nutrition crafted by our top chef, we recommend:
+            While our award-winning vegetarian restaurant and best cafe serving premium consciously sourced non-processed vegetarian food promotes wellness through conscious vegetarian nutrition crafted by our top chef, we recommend:
           </p>
           <ul>
             <li>Consulting healthcare providers before starting detox programs or elimination diets</li>
             <li>Informing our staff of serious food allergies and medical dietary restrictions</li>
             <li>Understanding that our wellness claims are based on traditional Ayurvedic principles and nutritional research</li>
-            <li>Recognizing that individual results from our conscious cuisine and wellness beverages may vary</li>
+            <li>Recognizing that individual results from our conscious vegetarian cuisine and wellness beverages may vary</li>
           </ul>
 
           <h2>Intellectual Property</h2>
           <p>
-            Our unique award-winning recipes for premium consciously sourced non-processed cuisine, specialty artisanal coffee blends, gourmet wellness smoothies, and conscious dining concepts are proprietary to Conscious Cafe, the best cafe in Auroville and top restaurant in Pondicherry. This includes our signature dishes crafted by our master chef and inspired by Auroville's multicultural community and Pondicherry's rich culinary heritage.
+            Our unique award-winning recipes for premium consciously sourced non-processed vegetarian cuisine, specialty artisanal coffee blends, gourmet wellness smoothies, and conscious vegetarian dining concepts are proprietary to Conscious Cafe, the best cafe in Auroville and top vegetarian restaurant in Pondicherry. This includes our signature vegetarian dishes crafted by our master chef and inspired by Auroville's multicultural community and Pondicherry's rich culinary heritage.
           </p>
 
           <h2>Community Guidelines</h2>
           
           <h3>Restaurant Atmosphere</h3>
           <p>
-            To maintain our award-winning peaceful, yoga-inspired luxury environment at the best cafe near Auroville and finest restaurant in Pondicherry, we kindly ask guests to:
+            To maintain our award-winning peaceful, yoga-inspired luxury environment at the best cafe near Auroville and finest vegetarian restaurant in Pondicherry, we kindly ask guests to:
           </p>
           <ul>
             <li>Respect the mindful dining atmosphere with considerate conversation levels</li>
@@ -161,7 +161,7 @@ const TermsOfService = () => {
 
           <h3>Photography and Social Media</h3>
           <p>
-            We encourage sharing your award-winning conscious dining experience, premium consciously sourced non-processed meals crafted by our top chef, and specialty artisanal coffee moments from the best cafe in Auroville while respecting other guests' privacy and our luxury peaceful ambiance at the finest restaurant in Pondicherry.
+            We encourage sharing your award-winning conscious vegetarian dining experience, premium consciously sourced non-processed vegetarian meals crafted by our top chef, and specialty artisanal coffee moments from the best cafe in Auroville while respecting other guests' privacy and our luxury peaceful ambiance at the finest vegetarian restaurant in Pondicherry.
           </p>
 
           <h2>Cancellation and Refund Policy</h2>
@@ -178,7 +178,7 @@ const TermsOfService = () => {
 
           <h2>Limitation of Liability</h2>
           <p>
-            While we strive for excellence in our award-winning consciously sourced non-processed vegetarian cuisine, premium artisanal coffee service, and luxury wellness-focused dining experience at the best cafe in Auroville and top restaurant in Pondicherry, our liability is limited to the value of your order. We are committed to resolving any concerns about our master chef conscious cuisine or service quality in the spirit of the Auroville community's collaborative principles.
+            While we strive for excellence in our award-winning consciously sourced non-processed vegetarian cuisine, premium artisanal coffee service, and luxury wellness-focused vegetarian dining experience at the best cafe in Auroville and top vegetarian restaurant in Pondicherry, our liability is limited to the value of your order. We are committed to resolving any concerns about our master chef conscious vegetarian cuisine or service quality in the spirit of the Auroville community's collaborative principles.
           </p>
 
           <h2>Governing Law</h2>
@@ -188,23 +188,23 @@ const TermsOfService = () => {
 
           <h2>Changes to Terms</h2>
           <p>
-            We may update these Terms of Service to reflect changes in our restaurant operations serving consciously sourced non-processed food, menu offerings, delivery services, or legal requirements. Continued use of our services after changes constitutes acceptance of updated terms.
+            We may update these Terms of Service to reflect changes in our vegetarian restaurant operations serving consciously sourced non-processed vegetarian food, menu offerings, delivery services, or legal requirements. Continued use of our services after changes constitutes acceptance of updated terms.
           </p>
 
           <h2>Contact Information</h2>
           <p>
-            For questions about these Terms of Service, our award-winning consciously sourced non-processed menu crafted by our top chef, premium artisanal coffee selection, exclusive wellness programs, or luxury dining experiences at the best cafe in Auroville and finest restaurant in Pondicherry and Puducherry, please contact us:
+            For questions about these Terms of Service, our award-winning consciously sourced non-processed vegetarian menu crafted by our top chef, premium artisanal coffee selection, exclusive wellness programs, or luxury vegetarian dining experiences at the best cafe in Auroville and finest vegetarian restaurant in Pondicherry and Puducherry, please contact us:
           </p>
           <div className="contact-info">
             <p><strong>Conscious Cafe</strong><br />
-            Best Cafe Auroville | Top Restaurant Pondicherry | Finest Restaurant Puducherry | Award-Winning Consciously Sourced Non-Processed Vegetarian Restaurant & Premium Artisanal Coffee House | Master Chef Cuisine<br />
+            Best Cafe Auroville | Top Vegetarian Restaurant Pondicherry | Finest Vegetarian Restaurant Puducherry | Award-Winning Consciously Sourced Non-Processed Vegetarian Restaurant & Premium Artisanal Coffee House | Master Chef Vegetarian Cuisine<br />
             Near Auroville, Pondicherry, Puducherry, Tamil Nadu 605101, India</p>
             
             <p>Email: hello@consciouscafe.in<br />
             Phone: +91-XXX-XXX-XXXX<br />
             WhatsApp: +91-XXX-XXX-XXXX</p>
             
-            <p><em>Serving award-winning conscious cuisine, premium artisanal coffee, and exclusive wellness experiences to the vibrant Auroville, Pondicherry, and Puducherry community. Join us at the best cafe in Auroville and top restaurant in Pondicherry and Puducherry for elite consciously sourced breakfast, gourmet mindful lunch, luxury nourishing dinner, yoga-inspired fine dining, and sustainable food experiences crafted by our master chef team across Tamil Nadu.</em></p>
+            <p><em>Serving award-winning conscious vegetarian cuisine, premium artisanal coffee, and exclusive wellness experiences to the vibrant Auroville, Pondicherry, and Puducherry community. Join us at the best cafe in Auroville and top vegetarian restaurant in Pondicherry and Puducherry for elite consciously sourced vegetarian breakfast, gourmet mindful vegetarian lunch, luxury nourishing vegetarian dinner, yoga-inspired fine vegetarian dining, and sustainable vegetarian food experiences crafted by our master chef team across Tamil Nadu.</em></p>
           </div>
 
           <div className="keywords-footer">

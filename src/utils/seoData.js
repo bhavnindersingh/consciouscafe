@@ -22,7 +22,7 @@ export const siteConfig = {
       country: 'IN',
     },
     phone: '+91-XXXX-XXXXXX', // Add actual phone when available
-    email: 'info@consciouscafe.in',
+    email: 'hello@consciouscafe.in',
     hours: {
       monday: '7:00 AM - 9:00 PM',
       tuesday: '7:00 AM - 9:00 PM',
@@ -39,29 +39,29 @@ export const siteConfig = {
 
 export const pageData = {
   home: {
-    title: 'Conscious Cafe Auroville | Artisanal Vegan Restaurant',
-    description: 'Experience artisanal vegan & vegetarian food at Conscious Cafe Auroville. Fresh, organic meals with conscious ingredients at Kavas Yoga Retreat. Order online now!',
-    keywords: 'conscious cafe auroville, artisanal vegan restaurant, organic food auroville, healthy restaurant, sustainable dining, kavas yoga retreat, conscious eating, vegan, vegetarian',
+    title: 'Conscious Cafe Auroville | Best Vegetarian Restaurant with Ice Bath, Sauna, Yogashala',
+    description: 'Experience artisanal vegetarian food at Conscious Cafe Auroville. Fresh, consciously sourced non-processed meals with conscious ingredients at Kavas Yoga Retreat. Order online now!',
+    keywords: 'conscious cafe auroville, artisanal vegetarian restaurant, consciously sourced food auroville, healthy restaurant, sustainable dining, kavas yoga retreat, conscious eating, vegetarian, ice bath, sauna, yogashala',
   },
   menu: {
-    title: 'Vegan Food Menu | Conscious Cafe Auroville',
-    description: 'Browse our artisanal vegan & vegetarian menu featuring toasts, bowls, salads & desserts. Fresh, organic ingredients. Best healthy restaurant in Auroville!',
-    keywords: 'vegan menu auroville, organic food menu, healthy restaurant menu, artisanal dishes, vegan breakfast, vegetarian lunch, conscious cafe menu, auroville dining',
+    title: 'Vegetarian Food Menu | Conscious Cafe Auroville',
+    description: 'Browse our artisanal vegetarian menu featuring toasts, bowls, salads & desserts. Fresh, consciously sourced non-processed ingredients. Best healthy restaurant in Auroville!',
+    keywords: 'vegetarian menu auroville, consciously sourced food menu, healthy restaurant menu, artisanal dishes, vegetarian breakfast, vegetarian lunch, conscious cafe menu, auroville dining',
   },
   about: {
     title: 'About Conscious Cafe | Sustainable Dining Auroville',
-    description: 'Discover Conscious Cafe Auroville\'s mission of sustainable, conscious eating. Located at Kavas Yoga Retreat, we serve artisanal vegan food with love.',
-    keywords: 'about conscious cafe auroville, sustainable restaurant, organic food philosophy, kavas yoga retreat, conscious eating, eco-friendly dining, vegan restaurant story',
+    description: 'Discover Conscious Cafe Auroville\'s mission of sustainable, conscious eating. Located at Kavas Yoga Retreat, we serve artisanal vegetarian food with love.',
+    keywords: 'about conscious cafe auroville, sustainable restaurant, consciously sourced food philosophy, kavas yoga retreat, conscious eating, eco-friendly dining, vegetarian restaurant story',
   },
   contact: {
     title: 'Contact & Location | Conscious Cafe Auroville',
-    description: 'Visit Conscious Cafe at Kavas Yoga Retreat, Auroville. Get directions, hours, phone & reservation info. Best vegan restaurant in Auroville Tamil Nadu.',
+    description: 'Visit Conscious Cafe at Kavas Yoga Retreat, Auroville. Get directions, hours, phone & reservation info. Best vegetarian restaurant in Auroville Tamil Nadu.',
     keywords: 'conscious cafe location, auroville restaurant address, kavas yoga retreat, contact details, restaurant hours, reservations auroville, directions',
   },
   delivery: {
     title: 'Food Delivery Auroville | Conscious Cafe Online Order',
-    description: 'Order healthy vegan food delivery from Conscious Cafe Auroville. Fresh, organic meals delivered to your door. Serving Auroville and nearby areas.',
-    keywords: 'food delivery auroville, vegan food delivery, conscious cafe delivery, online food order, healthy meal delivery, organic food delivery, takeout auroville',
+    description: 'Order healthy vegetarian food delivery from Conscious Cafe Auroville. Fresh, consciously sourced non-processed meals delivered to your door. Serving Auroville and nearby areas.',
+    keywords: 'food delivery auroville, vegetarian food delivery, conscious cafe delivery, online food order, healthy meal delivery, consciously sourced food delivery, takeout auroville',
   },
   'privacy-policy': {
     title: 'Privacy Policy - Conscious Cafe Auroville | Best Restaurant with Ice Bath, Sauna, Yogashala',
