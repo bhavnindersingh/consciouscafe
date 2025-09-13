@@ -17,6 +17,8 @@ const CategoryPage = lazy(() => import("./components/CategoryPage"));
 const AboutUs = lazy(() => import("./components/AboutUs"));
 const Contact = lazy(() => import("./components/Contact"));
 const DeliveryInfo = lazy(() => import("./components/DeliveryInfo"));
+const PrivacyPolicy = lazy(() => import("./components/PrivacyPolicy"));
+const TermsOfService = lazy(() => import("./components/TermsOfService"));
 const NotFound = lazy(() => import("./components/NotFound"));
 
 function App() {
@@ -265,6 +267,14 @@ function App() {
           <Route
             path="/delivery"
             element={<DeliveryInfo />}
+          />
+          <Route
+            path="/privacy-policy"
+            element={<PrivacyPolicy />}
+          />
+          <Route
+            path="/terms-of-service"
+            element={<TermsOfService />}
           />
           <Route
             path="*"

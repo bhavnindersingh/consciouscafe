@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   return (
@@ -24,18 +25,18 @@ const Footer = () => {
           <div className="footer-section">
             <h4>Menu</h4>
             <ul>
-              <li><a href="/menu">Food Menu</a></li>
-              <li><a href="/drinks">Drinks Menu</a></li>
-              <li><a href="/">Bestsellers</a></li>
+              <li><Link to="/menu">Food Menu</Link></li>
+              <li><Link to="/drinks">Drinks Menu</Link></li>
+              <li><Link to="/">Bestsellers</Link></li>
             </ul>
           </div>
 
           <div className="footer-section">
             <h4>Information</h4>
             <ul>
-              <li><a href="/about">About Us</a></li>
-              <li><a href="/contact">Contact</a></li>
-              <li><a href="/delivery">Delivery Info</a></li>
+              <li><Link to="/about">About Us</Link></li>
+              <li><Link to="/contact">Contact</Link></li>
+              <li><Link to="/delivery">Delivery Info</Link></li>
             </ul>
           </div>
 
@@ -51,8 +52,8 @@ const Footer = () => {
         <div className="footer-bottom">
           <p>&copy; 2025 Conscious Cafe. All rights reserved.</p>
           <div className="footer-links">
-            <a href="#">Privacy Policy</a>
-            <a href="#">Terms of Service</a>
+            <Link to="/privacy-policy">Privacy Policy</Link>
+            <Link to="/terms-of-service">Terms of Service</Link>
           </div>
         </div>
       </div>
