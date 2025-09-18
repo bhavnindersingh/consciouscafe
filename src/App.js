@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Suspense, lazy, useMemo, startTransition } from "react";
+import React, { useState, useEffect, useMemo, startTransition } from "react";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import Header from "./components/Header";
@@ -8,18 +8,18 @@ import Cart from "./components/Cart";
 import Footer from "./components/Footer";
 import { products } from "./data/products";
 
-// Lazy load non-critical components
-const FoodMenuPage = lazy(() => import("./components/FoodMenuPage"));
-const Checkout = lazy(() => import("./components/Checkout"));
-const ProductDetailPage = lazy(() => import("./components/ProductDetailPage"));
-const ProductPage = lazy(() => import("./components/ProductPage"));
-const CategoryPage = lazy(() => import("./components/CategoryPage"));
-const AboutUs = lazy(() => import("./components/AboutUs"));
-const Contact = lazy(() => import("./components/Contact"));
-const DeliveryInfo = lazy(() => import("./components/DeliveryInfo"));
-const PrivacyPolicy = lazy(() => import("./components/PrivacyPolicy"));
-const TermsOfService = lazy(() => import("./components/TermsOfService"));
-const NotFound = lazy(() => import("./components/NotFound"));
+// Import components directly (temporary fix for chunk loading)
+import FoodMenuPage from "./components/FoodMenuPage";
+import Checkout from "./components/Checkout";
+import ProductDetailPage from "./components/ProductDetailPage";
+import ProductPage from "./components/ProductPage";
+import CategoryPage from "./components/CategoryPage";
+import AboutUs from "./components/AboutUs";
+import Contact from "./components/Contact";
+import DeliveryInfo from "./components/DeliveryInfo";
+import PrivacyPolicy from "./components/PrivacyPolicy";
+import TermsOfService from "./components/TermsOfService";
+import NotFound from "./components/NotFound";
 
 function App() {
   const navigate = useNavigate();
@@ -215,7 +215,6 @@ function App() {
         {isHomePage && <Hero />}
 
         <main role="main" id="main-content">
-        <Suspense fallback={<div className="loading-spinner" style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px', fontFamily: 'var(--font-ui)', color: '#666'}}>Loading...</div>}>
           <Routes>
           <Route
             path="/"
@@ -281,8 +280,7 @@ function App() {
             element={<NotFound />}
           />
           </Routes>
-        </Suspense>
-      </main>
+        </main>
 
       <Footer />
 

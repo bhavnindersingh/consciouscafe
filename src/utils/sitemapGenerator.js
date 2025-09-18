@@ -36,6 +36,18 @@ export const generateSitemap = (products = []) => {
       priority: '0.6',
       lastmod: currentDate,
     },
+    {
+      url: 'privacy-policy',
+      changefreq: 'monthly',
+      priority: '0.5',
+      lastmod: currentDate,
+    },
+    {
+      url: 'terms-of-service',
+      changefreq: 'monthly',
+      priority: '0.5',
+      lastmod: currentDate,
+    },
   ];
 
   const productPages = products.map(product => ({

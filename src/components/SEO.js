@@ -13,7 +13,7 @@ const SEO = ({
   noIndex = false,
 }) => {
   const siteTitle = 'Conscious Cafe - Food & Beverages';
-  const siteDescription = 'Experience conscious food and beverages at Conscious Cafe. Fresh, organic, and locally sourced meals in a welcoming atmosphere.';
+  const siteDescription = 'Experience conscious vegetarian & vegan food and beverages at Conscious Cafe. Fresh, consciously sourced non-processed plant-based meals in a welcoming atmosphere.';
   const siteImage = '/android-icon-192x192.png';
   const siteUrl = 'https://consciouscafe.in';
   

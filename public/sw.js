@@ -1,5 +1,5 @@
 // Service Worker for Conscious Cafe
-const CACHE_NAME = 'conscious-cafe-v1';
+const CACHE_NAME = 'conscious-cafe-v2';
 const urlsToCache = [
   '/',
   '/static/js/bundle.js',

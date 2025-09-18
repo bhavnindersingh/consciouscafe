@@ -1,9 +1,26 @@
 [build]
   publish = "build"
   command = "npm run build"
+  base = ""
 
 [build.environment]
+  NETLIFY_BUILD_IMAGE = "ubuntu-noble-24.04"
   NODE_VERSION = "18"
+
+[build.processing]
+  skip_processing = false
+
+[build.processing.images]
+  compress = true
+
+[context.production]
+  environment = { NODE_ENV = "production" }
+
+[context.deploy-preview]
+  environment = { NODE_ENV = "production" }
+
+[context.branch-deploy]
+  environment = { NODE_ENV = "production" }
 
 [[redirects]]
   from = "/*"
