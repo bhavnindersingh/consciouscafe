@@ -96,7 +96,9 @@ const AboutUs = () => {
             <div className="founder-card">
               <div className="founder-image">
                 <img
-                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
+                  src="https://consciouscafe.sirv.com/Our%20Story%20page/Zulfiqar%20Headshot.png?w=720&h=720&q=95"
+                  loading="lazy"
+                  decoding="async"
                   alt="Zulfi"
                 />
               </div>
