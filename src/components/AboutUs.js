@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import SEO from "./SEO";
 import { generatePageSEO, generateStructuredData } from "../utils/seoData";
 
@@ -15,6 +15,13 @@ const AboutUs = () => {
       })
     ]
   });
+
+  // Initialize Sirv for images
+  useEffect(() => {
+    if (window.Sirv) {
+      window.Sirv.start();
+    }
+  }, []);
 
   return (
     <div className="about-us-page">
@@ -42,9 +49,13 @@ const AboutUs = () => {
         <div className="container">
           <div className="story-content">
             <div className="story-image">
-              <img 
-                src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=400&fit=crop&crop=center" 
-                alt="Our founders practicing yoga and mindfulness" 
+              <img
+                className="Sirv"
+                data-src="https://consciouscafe.sirv.com/Our%20Story%20page/Top%20photo%20on%20page.JPG"
+                data-options="q:95; format:webp; scale.option:noup; fit:cover;"
+                loading="eager"
+                decoding="async"
+                alt="Our founders practicing yoga and mindfulness"
               />
             </div>
             <div className="story-text">
@@ -60,6 +71,59 @@ const AboutUs = () => {
                 share this sense of balance and mindfulness with you, fostering a deeper connection and 
                 inspiring a journey of continual growth and learning together.
               </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Founders Section */}
+      <section className="founders-section">
+        <div className="container">
+          <h2>Meet Our Founders</h2>
+          <div className="founders-grid">
+            <div className="founder-card">
+              <div className="founder-image">
+                <img
+                  src="https://consciouscafe.sirv.com/Our%20Story%20page/Kirtana%20headshot.jpg?w=720&h=720&q=95"
+                  loading="lazy"
+                  decoding="async"
+                  alt="Kirtana"
+                />
+              </div>
+              <h3>Kirtana</h3>
+              <p>Co-Founder</p>
+            </div>
+            <div className="founder-card">
+              <div className="founder-image">
+                <img
+                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
+                  alt="Zulfi"
+                />
+              </div>
+              <h3>Zulfi</h3>
+              <p>Co-Founder</p>
+            </div>
+            <div className="founder-card">
+              <div className="founder-image">
+                <img
+                  src="https://consciouscafe.sirv.com/Our%20Story%20page/bhuvi%20headshot.png?w=720&h=720&q=95"
+                  loading="lazy"
+                  decoding="async"
+                  alt="Bhavninder"
+                />
+              </div>
+              <h3>Bhavninder</h3>
+              <p>Co-Founder</p>
+            </div>
+            <div className="founder-card">
+              <div className="founder-image">
+                <img
+                  src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face"
+                  alt="Pallavi"
+                />
+              </div>
+              <h3>Pallavi</h3>
+              <p>Co-Founder</p>
             </div>
           </div>
         </div>
@@ -89,55 +153,6 @@ const AboutUs = () => {
               <div className="value-icon">🍃</div>
               <h3>Natural Living</h3>
               <p>Celebrating the flavors of nature through wholesome, conscious food choices</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Founders Section */}
-      <section className="founders-section">
-        <div className="container">
-          <h2>Meet Our Founders</h2>
-          <div className="founders-grid">
-            <div className="founder-card">
-              <div className="founder-image">
-                <img 
-                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face" 
-                  alt="Kirtana" 
-                />
-              </div>
-              <h3>Kirtana</h3>
-              <p>Co-Founder</p>
-            </div>
-            <div className="founder-card">
-              <div className="founder-image">
-                <img 
-                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face" 
-                  alt="Zulfi" 
-                />
-              </div>
-              <h3>Zulfi</h3>
-              <p>Co-Founder</p>
-            </div>
-            <div className="founder-card">
-              <div className="founder-image">
-                <img 
-                  src="https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=150&h=150&fit=crop&crop=face" 
-                  alt="Bhavninder" 
-                />
-              </div>
-              <h3>Bhavninder</h3>
-              <p>Co-Founder</p>
-            </div>
-            <div className="founder-card">
-              <div className="founder-image">
-                <img 
-                  src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face" 
-                  alt="Pallavi" 
-                />
-              </div>
-              <h3>Pallavi</h3>
-              <p>Co-Founder</p>
             </div>
           </div>
         </div>
