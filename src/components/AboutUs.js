@@ -120,7 +120,9 @@ const AboutUs = () => {
             <div className="founder-card">
               <div className="founder-image">
                 <img
-                  src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face"
+                  src="https://consciouscafe.sirv.com/Our%20Story%20page/pallavi%20headshot.jpeg?w=720&h=720&q=95"
+                  loading="lazy"
+                  decoding="async"
                   alt="Pallavi"
                 />
               </div>
