@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import SEO from "./SEO";
 import { generatePageSEO, generateStructuredData } from "../utils/seoData";
 
@@ -16,12 +16,6 @@ const AboutUs = () => {
     ]
   });
 
-  // Initialize Sirv for images
-  useEffect(() => {
-    if (window.Sirv) {
-      window.Sirv.start();
-    }
-  }, []);
 
   return (
     <div className="about-us-page">
@@ -50,9 +44,7 @@ const AboutUs = () => {
           <div className="story-content">
             <div className="story-image">
               <img
-                className="Sirv"
-                data-src="https://consciouscafe.sirv.com/Our%20Story%20page/Top%20photo%20on%20page.JPG"
-                data-options="q:95; format:webp; scale.option:noup; fit:cover;"
+                src="/images/Our Story page/Top photo on page.JPG"
                 loading="eager"
                 decoding="async"
                 alt="Our founders practicing yoga and mindfulness"
@@ -84,7 +76,7 @@ const AboutUs = () => {
             <div className="founder-card">
               <div className="founder-image">
                 <img
-                  src="https://consciouscafe.sirv.com/Our%20Story%20page/Kirtana%20headshot.jpg?w=720&h=720&q=95"
+                  src="/images/Our Story page/Kirtana headshot.jpg"
                   loading="lazy"
                   decoding="async"
                   alt="Kirtana"
@@ -96,7 +88,7 @@ const AboutUs = () => {
             <div className="founder-card">
               <div className="founder-image">
                 <img
-                  src="https://consciouscafe.sirv.com/Our%20Story%20page/Zulfiqar%20Headshot.png?w=720&h=720&q=95"
+                  src="/images/Our Story page/Zulfiqar Headshot.png"
                   loading="lazy"
                   decoding="async"
                   alt="Zulfi"
@@ -108,7 +100,7 @@ const AboutUs = () => {
             <div className="founder-card">
               <div className="founder-image">
                 <img
-                  src="https://consciouscafe.sirv.com/Our%20Story%20page/bhuvi%20headshot.png?w=720&h=720&q=95"
+                  src="/images/Our Story page/bhuvi headshot.png"
                   loading="lazy"
                   decoding="async"
                   alt="Bhavninder"
@@ -120,7 +112,7 @@ const AboutUs = () => {
             <div className="founder-card">
               <div className="founder-image">
                 <img
-                  src="https://consciouscafe.sirv.com/Our%20Story%20page/pallavi%20headshot.jpeg?w=720&h=720&q=95"
+                  src="/images/Our Story page/pallavi headshot.jpeg"
                   loading="lazy"
                   decoding="async"
                   alt="Pallavi"
