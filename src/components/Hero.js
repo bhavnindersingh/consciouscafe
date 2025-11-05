@@ -105,11 +105,23 @@ const Hero = () => {
     <div>
       <section className="hero">
         <div className="hero-video-backdrop">
-          <div className="Sirv" data-options="video.background:true; video.quality.min:720; video.preload:none; video.autoplay:true;">
-            <div data-src="https://consciouscafe.sirv.com/CCOpenvideoshot.mp4?mobile=true"></div>
-          </div>
+          <iframe
+            src="https://imagekit.io/player/embed/consciouscafe/CCOpenvideoshot%20%20Banner%20Video%20of%20website.mp4?controls=false&autoplay=true&loop=true&muted=true&background=%23000000&thumbnail=https%3A%2F%2Fik.imagekit.io%2Fconsciouscafe%2FCCOpenvideoshot%2520%2520Banner%2520Video%2520of%2520website.mp4%2Fik-thumbnail.jpg%3FupdatedAt%3D1762325130126&updatedAt=1762325130126"
+            title="Conscious Cafe Hero Video"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              border: 'none'
+            }}
+          />
         </div>
-        
+
         <div className="hero-video-overlay"></div>
 
         <div className="container">

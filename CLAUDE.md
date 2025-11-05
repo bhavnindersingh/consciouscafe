@@ -79,7 +79,7 @@ Update actual business information in `src/utils/seoData.js`:
 
 ### Key Style Features
 - Custom CSS Grid layouts for product displays
-- Sirv CDN integration for video streaming (hero section)
+- ImageKit video player integration for hero banner video
 - Hardware acceleration for smooth animations
 - Comprehensive mobile responsiveness
 
@@ -88,19 +88,20 @@ Update actual business information in `src/utils/seoData.js`:
 ### Deployment-Specific Issues
 - **CSS Build Failures**: Invalid CSS syntax can break Netlify builds - ensure proper CSS comment syntax
 - **Mobile Responsiveness**: Production builds may lose responsive styles if CSS syntax errors occur
-- **Hero Video**: Sirv video integration requires z-index management to prevent text disappearing
+- **Hero Video**: ImageKit video player requires proper z-index management to ensure content visibility
 
 ### Development vs Production Differences
 - CSS minifier in production is more strict than development server
 - Media queries can be lost during build if CSS syntax errors exist
 - Z-index conflicts may appear differently in production
 
-## Sirv Integration
+## Video Integration
 
-The hero section uses Sirv video streaming service:
-- Video player configured in `Hero.js`
-- Custom CSS ensures content visibility over video
-- Multiple fallback solutions for video loading issues
+The hero section uses ImageKit video player:
+- ImageKit iframe embed configured in `Hero.js`
+- Video set to autoplay, loop, and muted for optimal user experience
+- Custom inline styles and CSS ensure proper sizing and content visibility
+- Background color set to black (#000000) for seamless loading
 
 ## Data Management
 
