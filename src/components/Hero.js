@@ -111,10 +111,10 @@ const Hero = () => {
             loop
             muted
             playsInline
-            poster="https://ik.imagekit.io/consciouscafe/tr:w-1920/CCOpenvideoshot%20%20Banner%20Video%20of%20website.mp4"
+            poster="https://ik.imagekit.io/consciouscafe/CCOpenvideoshot%20%20Banner%20Video%20of%20website.mp4?tr=w-1920,q-90"
           >
             <source
-              src="https://ik.imagekit.io/consciouscafe/CCOpenvideoshot%20%20Banner%20Video%20of%20website.mp4"
+              src="https://ik.imagekit.io/consciouscafe/CCOpenvideoshot%20%20Banner%20Video%20of%20website.mp4?tr=w-1920,q-90"
               type="video/mp4"
             />
             Your browser does not support the video tag.

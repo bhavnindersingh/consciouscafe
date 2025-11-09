@@ -26,7 +26,8 @@
       "WebFetch(domain:www.consciouscafe.in)",
       "Bash(xargs kill:*)",
       "Bash(xargs -r kill -9)",
-      "Bash(netstat:*)"
+      "Bash(netstat:*)",
+      "WebFetch(domain:imagekit.io)"
     ],
     "deny": []
   }
