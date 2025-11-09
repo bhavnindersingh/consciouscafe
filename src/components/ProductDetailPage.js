@@ -137,11 +137,7 @@ const ProductDetailPage = ({ products, onAddToCart }) => {
           
           <div className="product-detail-content">
             <div className="product-detail-image">
-              {product.imageType === 'sirv' ? (
-                <img className="Sirv" data-src={product.sirvDataSrc || product.image} alt={`${product.name} - ${product.description} - Conscious Cafe Auroville artisanal vegan cuisine`} />
-              ) : (
-                <img src={product.image} alt={`${product.name} - ${product.description} - Conscious Cafe Auroville artisanal vegan cuisine`} />
-              )}
+              <img src={product.image} alt={`${product.name} - ${product.description} - Conscious Cafe Auroville artisanal vegan cuisine`} />
             </div>
             
             <div className="product-detail-info">
@@ -244,7 +240,7 @@ const ProductDetailPage = ({ products, onAddToCart }) => {
                     {product.options.map(option => (
                       <button
                         key={option.name}
-                        className={`cta-btn ${selectedOption?.name === option.name ? '' : 'secondary'}`}
+                        className={`cta-btn ${selectedOption?.name === option.name ? 'selected' : 'secondary'}`}
                         onClick={() => handleOptionChange(option)}
                       >
                         {option.name} - {formatPrice(option.price)}
@@ -263,7 +259,7 @@ const ProductDetailPage = ({ products, onAddToCart }) => {
                     {product.sizes.map(size => (
                       <button
                         key={size.id}
-                        className={`cta-btn ${selectedSize === size.id ? '' : 'secondary'}`}
+                        className={`cta-btn ${selectedSize === size.id ? 'selected' : 'secondary'}`}
                         onClick={() => handleSizeChange(size.id)}
                       >
                         {size.name} - {formatPrice(size.price)}

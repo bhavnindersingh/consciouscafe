@@ -340,42 +340,43 @@ body {
   z-index: 1;
 }
 
-.hero-video-backdrop .Sirv {
+/* ImageKit video wrapper */
+.hero-video-backdrop .imagekit-video-wrapper {
   position: absolute !important;
   top: 0 !important;
   left: 0 !important;
   width: 100% !important;
   height: 100% !important;
+  overflow: hidden !important;
 }
 
-.hero-video-backdrop .Sirv > div,
-.hero-video-backdrop .Sirv video {
-  position: absolute !important;
-  top: 0 !important;
-  left: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: cover !important;
-  object-position: center !important;
-}
-
-/* Fix Sirv loader layout shift */
-.hero-video-backdrop .smv-loader,
-.hero-video-backdrop .smv-component-loader {
-  position: absolute !important;
-  top: 0 !important;
-  left: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  margin: 0 !important;
-}
-
-.hero-video-backdrop .smv-bounce-wrapper {
+.hero-video-backdrop .imagekit-iframe {
   position: absolute !important;
   top: 50% !important;
   left: 50% !important;
-  transform: translate(-50%, -50%) !important;
-  margin: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  border: none !important;
+  pointer-events: none !important;
+  transform: translate(-50%, -50%) scale(1.5) !important;
+  transform-origin: center center !important;
+}
+
+/* Ensure proper scaling based on container aspect ratio */
+@media (max-aspect-ratio: 16/9) {
+  .hero-video-backdrop .imagekit-iframe {
+    width: 177.78% !important;
+    height: 100% !important;
+    transform: translate(-50%, -50%) scale(1) !important;
+  }
+}
+
+@media (min-aspect-ratio: 16/9) {
+  .hero-video-backdrop .imagekit-iframe {
+    width: 100% !important;
+    height: 177.78% !important;
+    transform: translate(-50%, -50%) scale(1) !important;
+  }
 }
 
 .hero-video-overlay {
@@ -462,6 +463,12 @@ body {
   color: var(--color-primary);
 }
 
+.cta-btn.selected {
+  background: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+}
+
 .cta-btn:hover {
   background: #212121;
   color: white;
@@ -472,6 +479,11 @@ body {
 .cta-btn.secondary:hover {
   background: #212121;
   color: white;
+}
+
+.cta-btn.selected:hover {
+  background: #1e441f;
+  border-color: #1e441f;
 }
 
 /* Category Cards */
@@ -759,51 +771,6 @@ body {
 
 .add-to-cart-btn:active {
   transform: translateY(0);
-}
-
-/* Product Options */
-.product-options {
-  margin: 24px 0;
-}
-
-.product-options h3 {
-  font-family: var(--font-heading);
-  margin-bottom: 16px;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--color-primary);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.option-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-.option-btn {
-  background: transparent;
-  border: 1px solid rgba(33, 33, 33, 0.3);
-  border-radius: 0;
-  padding: 10px 20px;
-  font-family: var(--font-ui);
-  font-size: 11px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: var(--transition-standard);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: rgba(33, 33, 33, 0.8);
-}
-
-.option-btn:hover,
-.option-btn.selected {
-  background: #212121;
-  color: white;
-  border-color: var(--color-primary);
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(33, 33, 33, 0.1);
 }
 
 /* About Section */

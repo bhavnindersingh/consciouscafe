@@ -8,23 +8,6 @@ const CategoryPage = ({ category: propCategory, products, onAddToCart, onProduct
   const { categoryId } = useParams();
   const category = propCategory || categoryId;
 
-  // Initialize Sirv for hero image
-  useEffect(() => {
-    if (window.Sirv) {
-      window.Sirv.start();
-    }
-  }, []);
-
-  // Reinitialize Sirv when category changes
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (window.Sirv) {
-        window.Sirv.start();
-      }
-    }, 100);
-    return () => clearTimeout(timer);
-  }, [category]);
-
   // Food categories only for navigation
   const allCategories = [
     { id: "all", name: "All Items", type: "food" },
@@ -119,12 +102,22 @@ const CategoryPage = ({ category: propCategory, products, onAddToCart, onProduct
       window.location.href = `/category/${categoryId}`;
     }
   };
+
+  // Helper function to get hero image from products
+  const getHeroImageForCategory = (categoryId) => {
+    const categoryProducts = products.filter(p => p.category === categoryId);
+    if (categoryProducts.length === 0) return null;
+
+    // Try to get bestseller first, otherwise get first product
+    const bestseller = categoryProducts.find(p => p.bestseller);
+    return bestseller?.image || categoryProducts[0]?.image;
+  };
+
   const categoryData = {
     'toast': {
       title: 'Toast',
       subtitle: 'Delicious toasts for every taste',
       description: 'Enjoy a variety of toasts with different toppings and spreads.',
-      heroImage: 'https://consciouscafe.sirv.com/Food%20Menu%20Conscious%20Cafe%20August\'25/TOASTS/pesto%20cream%20cheese/pestocreamcheese.webp.JPG',
       bgColor: 'linear-gradient(135deg, #FFE4E6 0%, #FFF0F5 100%)',
       icon: '🍞',
       seo: {
@@ -137,7 +130,6 @@ const CategoryPage = ({ category: propCategory, products, onAddToCart, onProduct
       title: 'All Day Breakfast',
       subtitle: 'Breakfast favorites served all day',
       description: 'Start your day right with our all-day breakfast options.',
-      heroImage: 'https://consciouscafe.sirv.com/Food%20Menu%20Conscious%20Cafe%20August\'25/ALL%20DAY%20BREAKFAST/Pancakes/Pancake.JPG',
       bgColor: 'linear-gradient(135deg, #F0E6FF 0%, #FAF0FF 100%)',
       icon: '🍳',
       seo: {
@@ -150,7 +142,6 @@ const CategoryPage = ({ category: propCategory, products, onAddToCart, onProduct
       title: 'Smoothie Bowls',
       subtitle: 'Healthy and refreshing smoothie bowls',
       description: 'Packed with nutrients and flavor, our smoothie bowls are a perfect meal.',
-      heroImage: 'https://consciouscafe.sirv.com/Food%20Menu%20Conscious%20Cafe%20August\'25/SMOOTHIE%20BOWLS/Goodness%20bowl/Goodness%20Bowl.JPG',
       bgColor: 'linear-gradient(135deg, #FFF4E6 0%, #FFFAF0 100%)',
       icon: '🥣'
     },
@@ -158,7 +149,6 @@ const CategoryPage = ({ category: propCategory, products, onAddToCart, onProduct
       title: 'Earth Grills/Crisps',
       subtitle: 'Grilled and crispy delights',
       description: 'Savor the taste of our grilled and crispy offerings.',
-      heroImage: 'https://consciouscafe.sirv.com/Food%20Menu%20Conscious%20Cafe%20August\'25/EARTH%20GRILS/Grilled%20sweet%20potato/Grilled%20Sweet%20Potato.JPG',
       bgColor: 'linear-gradient(135deg, #F5F0E6 0%, #FAF7F0 100%)',
       icon: '🌽'
     },
@@ -166,7 +156,6 @@ const CategoryPage = ({ category: propCategory, products, onAddToCart, onProduct
       title: 'Salads',
       subtitle: 'Fresh and healthy salads',
       description: 'Our salads are made with the freshest ingredients.',
-      heroImage: 'https://consciouscafe.sirv.com/Food%20Menu%20Conscious%20Cafe%20August\'25/SALADS/Tropical%20salad/Tropical%20Salad.JPG',
       bgColor: 'linear-gradient(135deg, #E6FFF0 0%, #F0FAF5 100%)',
       icon: '🥗'
     },
@@ -174,7 +163,6 @@ const CategoryPage = ({ category: propCategory, products, onAddToCart, onProduct
       title: 'Platters',
       subtitle: 'Perfect for sharing',
       description: 'Our platters are perfect for sharing with friends and family.',
-      heroImage: 'https://consciouscafe.sirv.com/Food%20Menu%20Conscious%20Cafe%20August\'25/PLATTERS/Mezze%20platter/Mezze%20Platter.JPG',
       bgColor: 'linear-gradient(135deg, #E6F0FF 0%, #F0F5FA 100%)',
       icon: '🍽️'
     },
@@ -182,7 +170,6 @@ const CategoryPage = ({ category: propCategory, products, onAddToCart, onProduct
       title: 'Earth Bowls',
       subtitle: 'Wholesome and nutritious bowls',
       description: 'Enjoy our earth bowls packed with nutrients.',
-      heroImage: 'https://consciouscafe.sirv.com/Food%20Menu%20Conscious%20Cafe%20August\'25/EARTH%20BOWLS/Thai%20Bowl.JPG',
       bgColor: 'linear-gradient(135deg, #FFF0E6 0%, #FFF5F0 100%)',
       icon: '🥙'
     },
@@ -190,7 +177,6 @@ const CategoryPage = ({ category: propCategory, products, onAddToCart, onProduct
       title: 'Noodle Bowls',
       subtitle: 'Flavorful noodle bowls',
       description: 'Our noodle bowls are a perfect blend of taste and nutrition.',
-      heroImage: 'https://consciouscafe.sirv.com/Food%20Menu%20Conscious%20Cafe%20August\'25/NOODLE%20BOWLS/Laksa.JPG',
       bgColor: 'linear-gradient(135deg, #F0F5E6 0%, #F5FAF0 100%)',
       icon: '🍜'
     },
@@ -198,7 +184,6 @@ const CategoryPage = ({ category: propCategory, products, onAddToCart, onProduct
       title: 'Pasta',
       subtitle: 'Italian favorites',
       description: 'Indulge in our delicious pasta offerings.',
-      heroImage: 'https://consciouscafe.sirv.com/Food%20Menu%20Conscious%20Cafe%20August\'25/PASTAS/Meatless%20Meatballs%20(M%26M).JPG',
       bgColor: 'linear-gradient(135deg, #FFE6E6 0%, #FFF0F0 100%)',
       icon: '🍕'
     },
@@ -206,7 +191,6 @@ const CategoryPage = ({ category: propCategory, products, onAddToCart, onProduct
       title: 'Desserts',
       subtitle: 'Sweet treats to end your meal',
       description: 'Our desserts are the perfect way to end your meal.',
-      heroImage: 'https://consciouscafe.sirv.com/Food%20Menu%20Conscious%20Cafe%20August\'25/DESSERTS/Chocolate%20Mousse.JPG',
       bgColor: 'linear-gradient(135deg, #F0E6F0 0%, #FAF0FA 100%)',
       icon: '🍰'
     },
@@ -260,6 +244,9 @@ const CategoryPage = ({ category: propCategory, products, onAddToCart, onProduct
   const currentCategory = categoryData[category];
   const filteredProducts = products.filter(product => product.category === category);
 
+  // Get dynamic hero image from products
+  const heroImage = currentCategory?.heroImage || getHeroImageForCategory(category);
+
   if (!currentCategory) {
     return (
       <div className="category-page">
@@ -282,13 +269,13 @@ const CategoryPage = ({ category: propCategory, products, onAddToCart, onProduct
         )}
         <meta property="og:title" content={currentCategory.seo?.title || `${currentCategory.title} - Conscious Cafe`} />
         <meta property="og:description" content={currentCategory.seo?.description || currentCategory.description} />
-        <meta property="og:image" content={currentCategory.heroImage} />
+        {heroImage && <meta property="og:image" content={heroImage} />}
         <meta property="og:type" content="website" />
         <link rel="canonical" href={`https://consciouscafe.in/category/${category}`} />
       </Helmet>
 
       {/* Hero Banner */}
-      <div 
+      <div
         className="category-hero"
         style={{ background: currentCategory.bgColor }}
       >
@@ -303,13 +290,11 @@ const CategoryPage = ({ category: propCategory, products, onAddToCart, onProduct
                 <span className="fresh-badge">🌸 Freshly Made Daily</span>
               </div>
             </div>
-            <div className="category-hero-image">
-              {currentCategory.heroImage.includes('sirv.com') ? (
-                <img className="Sirv" data-src={currentCategory.heroImage} alt={currentCategory.title} />
-              ) : (
-                <img src={currentCategory.heroImage} alt={currentCategory.title} />
-              )}
-            </div>
+            {heroImage && (
+              <div className="category-hero-image">
+                <img src={heroImage} alt={currentCategory.title} />
+              </div>
+            )}
           </div>
         </div>
       </div>

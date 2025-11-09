@@ -1,17 +1,7 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
 const ProductCard = ({ product, onAddToCart, onProductClick }) => {
 
-  useEffect(() => {
-    // Defer Sirv initialization to reduce main thread blocking
-    const timer = setTimeout(() => {
-      if (window.Sirv) {
-        window.Sirv.start();
-      }
-    }, 100);
-    return () => clearTimeout(timer);
-  }, []);
-  
   const handleCardClick = (e) => {
     // Don't open product page if clicking the add to cart button
     if (e.target.closest('.add-to-cart-btn')) {
@@ -43,27 +33,14 @@ const ProductCard = ({ product, onAddToCart, onProductClick }) => {
       )}
       
       <div className="product-image">
-        {product.imageType === 'sirv' ? (
-          <img 
-            className="Sirv" 
-            data-src={product.sirvDataSrc || product.image}
-            data-options="q:92; format:webp; scale.option:noup; fit:crop;"
-            loading="lazy"
-            decoding="async"
-            width="400"
-            height="300"
-            alt={`${product.name} - ${product.description || 'Artisanal vegan dish at Conscious Cafe Auroville'}`} 
-          />
-        ) : (
-          <img 
-            src={product.image} 
-            loading="lazy"
-            decoding="async"
-            width="400"
-            height="300"
-            alt={`${product.name} - ${product.description || 'Artisanal vegan dish at Conscious Cafe Auroville'}`} 
-          />
-        )}
+        <img
+          src={product.image}
+          loading="lazy"
+          decoding="async"
+          width="400"
+          height="300"
+          alt={`${product.name} - ${product.description || 'Artisanal vegan dish at Conscious Cafe Auroville'}`}
+        />
       </div>
       
       <div className="product-info">

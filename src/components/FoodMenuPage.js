@@ -16,13 +16,6 @@ const FoodMenuPage = ({
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [scrollActiveCategory, setScrollActiveCategory] = useState("all");
 
-  // Initialize Sirv for hero image
-  useEffect(() => {
-    if (window.Sirv) {
-      window.Sirv.start();
-    }
-  }, []);
-
   // Initialize with bestsellers as featured products
   useEffect(() => {
     if (products && products.length > 0) {
@@ -225,10 +218,9 @@ const FoodMenuPage = ({
       {/* Hero Section */}
       <div className="hero food-menu-hero">
         <div className="hero-image">
-          <img 
-            className="Sirv hero-bg-image" 
-            data-src="https://consciouscafe.sirv.com/for%20food%20menu%20banner.jpg"
-            data-options="q:92; format:webp; scale.option:noup; fit:cover;"
+          <img
+            className="hero-bg-image"
+            src="/images/for food menu banner.jpg"
             loading="eager"
             decoding="async"
             alt="Food Menu"
