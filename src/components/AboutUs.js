@@ -1,6 +1,7 @@
 import React from "react";
 import SEO from "./SEO";
 import { generatePageSEO, generateStructuredData } from "../utils/seoData";
+import { getGumletUrl, gumletPresets } from "../utils/gumlet";
 
 const AboutUs = () => {
   // Generate SEO data for about page
@@ -44,7 +45,10 @@ const AboutUs = () => {
           <div className="story-content">
             <div className="story-image">
               <img
-                src="/images/Our Story page/Top photo on page.JPG"
+                src={getGumletUrl(
+                  "images/Our Story page/Top photo on page.JPG",
+                  gumletPresets.storyImage
+                )}
                 loading="eager"
                 decoding="async"
                 alt="Our founders practicing yoga and mindfulness"
@@ -52,15 +56,15 @@ const AboutUs = () => {
             </div>
             <div className="story-text">
               <p className="story-intro">
-                A shared love for food, yoga, and community brought our founders—Kirtana, Zulfi, 
-                Bhavninder, and Pallavi—together. Their vision is to cultivate a vibrant, healthy 
-                community through a thoughtful blend of wellness practices, sustainable food economics, 
+                A shared love for food, yoga, and community brought our founders—Kirtana, Zulfi,
+                Bhavninder, and Pallavi—together. Their vision is to cultivate a vibrant, healthy
+                community through a thoughtful blend of wellness practices, sustainable food economics,
                 and a welcoming shared space.
               </p>
               <p className="story-mission">
-                We aim to infuse mindfulness into every aspect of our lives and work, creating a 
-                foundation of presence and purpose. By embracing these principles, we hope to gradually 
-                share this sense of balance and mindfulness with you, fostering a deeper connection and 
+                We aim to infuse mindfulness into every aspect of our lives and work, creating a
+                foundation of presence and purpose. By embracing these principles, we hope to gradually
+                share this sense of balance and mindfulness with you, fostering a deeper connection and
                 inspiring a journey of continual growth and learning together.
               </p>
             </div>
@@ -76,7 +80,10 @@ const AboutUs = () => {
             <div className="founder-card">
               <div className="founder-image">
                 <img
-                  src="/images/Our Story page/Kirtana headshot.jpg"
+                  src={getGumletUrl(
+                    "images/Our Story page/Kirtana headshot.jpg",
+                    gumletPresets.founder
+                  )}
                   loading="lazy"
                   decoding="async"
                   alt="Kirtana"
@@ -88,7 +95,10 @@ const AboutUs = () => {
             <div className="founder-card">
               <div className="founder-image">
                 <img
-                  src="/images/Our Story page/Zulfiqar Headshot.png"
+                  src={getGumletUrl(
+                    "images/Our Story page/Zulfiqar Headshot.png",
+                    gumletPresets.founder
+                  )}
                   loading="lazy"
                   decoding="async"
                   alt="Zulfi"
@@ -100,7 +110,10 @@ const AboutUs = () => {
             <div className="founder-card">
               <div className="founder-image">
                 <img
-                  src="/images/Our Story page/bhuvi headshot.png"
+                  src={getGumletUrl(
+                    "images/Our Story page/bhuvi headshot.png",
+                    gumletPresets.founder
+                  )}
                   loading="lazy"
                   decoding="async"
                   alt="Bhavninder"
@@ -112,7 +125,10 @@ const AboutUs = () => {
             <div className="founder-card">
               <div className="founder-image">
                 <img
-                  src="/images/Our Story page/pallavi headshot.jpeg"
+                  src={getGumletUrl(
+                    "images/Our Story page/pallavi headshot.jpeg",
+                    gumletPresets.founder
+                  )}
                   loading="lazy"
                   decoding="async"
                   alt="Pallavi"
@@ -160,8 +176,8 @@ const AboutUs = () => {
           <div className="experience-content">
             <h2>The Conscious Experience</h2>
             <p>
-              Join us for more than just a meal. Experience a journey of mindful eating, 
-              conscious living, and community connection. Every visit is an opportunity 
+              Join us for more than just a meal. Experience a journey of mindful eating,
+              conscious living, and community connection. Every visit is an opportunity
               to nourish your body, calm your mind, and connect with like-minded souls.
             </p>
             <div className="experience-features">

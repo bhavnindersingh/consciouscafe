@@ -1,3 +1,5 @@
+import { getGumletUrl, gumletPresets } from '../utils/gumlet';
+
 export const products = [
   // TOAST
   {
@@ -5,12 +7,12 @@ export const products = [
     name: "Mushroom Toast",
     category: "toast",
     price: 190,
-    image: "/images/Food Menu Conscious Cafe August'25/TOASTS/mushroom toast/MushroomToast.webp.JPG",
+    image: getGumletUrl("images/Food Menu Conscious Cafe August'25/TOASTS/mushroom toast/MushroomToast.webp.JPG", gumletPresets.productCard),
     description: "Sourdough toast, babaganoush, roasted mushrooms, pesto and micro-greens",
     nutrition: { calories: 239, protein: 8, carbs: 28, fats: 10.5 },
     dietary: "vegan"
   },
-    {
+  {
     id: 2,
     name: "Avocado Toast",
     category: "toast",
@@ -20,7 +22,7 @@ export const products = [
       { name: "Veg", price: 199 },
       { name: "With Poached Egg", price: 220 },
     ],
-    image: "/images/Food Menu Conscious Cafe August'25/TOASTS/avacado toast/avocadotoast.webp.JPG",
+    image: getGumletUrl("images/Food Menu Conscious Cafe August'25/TOASTS/avacado toast/avocadotoast.webp.JPG", gumletPresets.productCard),
     description: "Sourdough toast, avocado, fetta cheese, micro greens & optional poached egg",
     nutrition: { calories: "285/350", protein: "7.2/13.2", carbs: 25, fats: "17/22" },
     dietary: "veg/egg"
@@ -30,7 +32,7 @@ export const products = [
     name: "Pesto Cream Cheese",
     category: "toast",
     price: 199,
-    image: "/images/Food Menu Conscious Cafe August'25/TOASTS/pesto cream cheese/pestocreamcheese.webp.JPG",
+    image: getGumletUrl("images/Food Menu Conscious Cafe August'25/TOASTS/pesto cream cheese/pestocreamcheese.webp.JPG", gumletPresets.productCard),
     description: "Sourdough toast, cream cheese, pesto, roasted beetroot, radish, micro-greens",
     nutrition: { calories: 214, protein: 7.5, carbs: 25, fats: 9 },
     dietary: "veg"
@@ -40,7 +42,7 @@ export const products = [
     name: "Burrata Bruschetta",
     category: "toast",
     price: 220,
-    image: "/images/Food Menu Conscious Cafe August'25/TOASTS/buratta bruchetta/burratabruschetta.JPG",
+    image: getGumletUrl("images/Food Menu Conscious Cafe August'25/TOASTS/buratta bruchetta/burratabruschetta.JPG", gumletPresets.productCard),
     description: "Sourdough toast, burrata cheese, roasted cherry tomatoes, balsamic dressing and fresh basil",
     nutrition: { calories: 191, protein: 7, carbs: 25, fats: 6.6 },
     dietary: "veg"
@@ -52,7 +54,7 @@ export const products = [
     name: "Muhammara",
     category: "all-day-breakfast",
     price: 250,
-    image: "/images/Food Menu Conscious Cafe August'25/ALL DAY BREAKFAST/Muhammara/Muhammara.jpg",
+    image: getGumletUrl("images/Food Menu Conscious Cafe August'25/ALL DAY BREAKFAST/Muhammara/Muhammara.jpg", gumletPresets.productCard),
     description: "Roasted red pepper dip with salad, smoked eggplant, vegan sour cream & chilli oil, served with a side of warm pita bread",
     nutrition: { calories: 360, protein: 8.2, carbs: 47, fats: 15 },
     dietary: "vegan"
@@ -62,7 +64,7 @@ export const products = [
     name: "Cilbir",
     category: "all-day-breakfast",
     price: 290,
-    image: "/images/Food Menu Conscious Cafe August'25/ALL DAY BREAKFAST/Turkish eggs/Turkish Eggs.JPG",
+    image: getGumletUrl("images/Food Menu Conscious Cafe August'25/ALL DAY BREAKFAST/Turkish eggs/Turkish Eggs.JPG", gumletPresets.productCard),
     description: "Turkish style poached eggs, on a bed of herbed yogurt, chilli oil and served with a side of warm pita bread",
     nutrition: { calories: 391, protein: 20, carbs: 32, fats: 19 },
     dietary: "veg/contains egg"
@@ -72,7 +74,7 @@ export const products = [
     name: "Pancake",
     category: "all-day-breakfast",
     price: 380,
-    image: "/images/Food Menu Conscious Cafe August'25/ALL DAY BREAKFAST/Pancakes/Pancake.JPG",
+    image: getGumletUrl("images/Food Menu Conscious Cafe August'25/ALL DAY BREAKFAST/Pancakes/Pancake.JPG", gumletPresets.productCard),
     description: "Gluten free pancakes, topped with strawberry compote, chocolate, caramel with a side of fresh fruits",
     nutrition: { calories: 295, protein: 6.3, carbs: 36, fats: 14.8 },
     dietary: "veg/gluten free"
@@ -83,7 +85,7 @@ export const products = [
     category: "all-day-breakfast",
     price: 380,
     bestseller: true,
-    image: "/images/Food Menu Conscious Cafe August'25/ALL DAY BREAKFAST/french toast/French Toast.JPG",
+    image: getGumletUrl("images/Food Menu Conscious Cafe August'25/ALL DAY BREAKFAST/french toast/French Toast.JPG", gumletPresets.productCard),
     description: "Served with a side of lemon curd and fresh orange",
     nutrition: { calories: 291, protein: 8.7, carbs: 43, fats: 10 },
     dietary: "veg/contains egg"
@@ -95,7 +97,7 @@ export const products = [
     name: "Berry Blast Smoothie",
     category: "smoothie-bowls",
     price: 270,
-    image: "/images/Food Menu Conscious Cafe August'25/SMOOTHIE BOWLS/Berry blast smoothie/Berry Blast Smoothie.JPG",
+    image: getGumletUrl("images/Food Menu Conscious Cafe August'25/SMOOTHIE BOWLS/Berry blast smoothie/Berry Blast Smoothie.JPG", gumletPresets.productCard),
     description: "Mixed berries, bananas, coconut milk topped with fresh seasonal fruit, muesli and coconut flakes",
     nutrition: { calories: 273, protein: 5, carbs: 49, fats: 9 },
     dietary: "vegan"
@@ -105,7 +107,7 @@ export const products = [
     name: "Cocoa Peanut Smoothie",
     category: "smoothie-bowls",
     price: 320,
-    image: "/images/Food Menu Conscious Cafe August'25/SMOOTHIE BOWLS/cacao bowl/Cacao Bowl.JPG",
+    image: getGumletUrl("images/Food Menu Conscious Cafe August'25/SMOOTHIE BOWLS/cacao bowl/Cacao Bowl.JPG", gumletPresets.productCard),
     description: "Bananas, oat, cocoa, peanut butter and soy milk, topped with fresh seasonal fruit, muesli and coconut flakes",
     nutrition: { calories: 355, protein: 9, carbs: 53, fats: 13 },
     dietary: "vegan"
@@ -116,7 +118,7 @@ export const products = [
     category: "smoothie-bowls",
     price: 280,
     bestseller: true,
-    image: "/images/Food Menu Conscious Cafe August'25/SMOOTHIE BOWLS/Goodness bowl/Goodness Bowl.JPG",
+    image: getGumletUrl("images/Food Menu Conscious Cafe August'25/SMOOTHIE BOWLS/Goodness bowl/Goodness Bowl.JPG", gumletPresets.productCard),
     description: "Yogurt, honey papaya, orange and pomegranate topped with honey, muesli and coconut flakes",
     nutrition: { calories: 305, protein: 9, carbs: 50, fats: 8.7 },
     dietary: "veg"
@@ -126,7 +128,7 @@ export const products = [
     name: "Fruit Bliss Bowl",
     category: "smoothie-bowls",
     price: 320,
-    image: "/images/Food Menu Conscious Cafe August'25/SMOOTHIE BOWLS/fruit bliss bowl/Fruit Bliss Bowl.JPG",
+    image: getGumletUrl("images/Food Menu Conscious Cafe August'25/SMOOTHIE BOWLS/fruit bliss bowl/Fruit Bliss Bowl.JPG", gumletPresets.productCard),
     description: "Seasonal fruits, topped with coconut flakes, dates, almonds and chia seeds served with a side of date syrup and coconut milk",
     nutrition: { calories: 449, protein: 7, carbs: 59, fats: 24 },
     dietary: "vegan"
@@ -136,7 +138,7 @@ export const products = [
     name: "Overnight Oats",
     category: "smoothie-bowls",
     price: 260,
-    image: "/images/Food Menu Conscious Cafe August'25/SMOOTHIE BOWLS/Overnight Oats/Overnight Oats.JPG",
+    image: getGumletUrl("images/Food Menu Conscious Cafe August'25/SMOOTHIE BOWLS/Overnight Oats/Overnight Oats.JPG", gumletPresets.productCard),
     description: "Over night oats made with oat milk, peanut butter, and vanilla topped with strawberry compote, fresh bananas and house made muesli",
     nutrition: { calories: 280, protein: 10, carbs: 38, fats: 8 },
     dietary: "vegan"
@@ -146,7 +148,7 @@ export const products = [
     name: "Matcha Chia Pudding",
     category: "smoothie-bowls",
     price: 270,
-    image: "/images/Food Menu Conscious Cafe August'25/SMOOTHIE BOWLS/Chia pudding/Match Chia Pudding.JPG",
+    image: getGumletUrl("images/Food Menu Conscious Cafe August'25/SMOOTHIE BOWLS/Chia pudding/Match Chia Pudding.JPG", gumletPresets.productCard),
     description: "Creamy chia pudding made with matcha, coconut, topped with seasonal tropical fruits and house made muesli",
     nutrition: { calories: 260, protein: 5, carbs: 10, fats: 23 },
     dietary: "vegan"
@@ -158,7 +160,7 @@ export const products = [
     name: "Grilled Sweet Potato",
     category: "earth-grills-crisps",
     price: 280,
-    image: "/images/Food Menu Conscious Cafe August'25/EARTH GRILS/Grilled sweet potato/Grilled Sweet Potato.JPG",
+    image: getGumletUrl("images/Food Menu Conscious Cafe August'25/EARTH GRILS/Grilled sweet potato/Grilled Sweet Potato.JPG", gumletPresets.productCard),
     description: "Sweet and smoky grilled sweet potato with vegan sour cream and pesto",
     nutrition: { calories: 135, protein: 4.1, carbs: 25, fats: 1.8 },
     dietary: "vegan/gluten free"
@@ -169,7 +171,7 @@ export const products = [
     category: "earth-grills-crisps",
     price: 350,
     bestseller: true,
-    image: "/images/Food Menu Conscious Cafe August'25/EARTH GRILS/Tofu Satay/Grilled Tofu Satay.JPG",
+    image: getGumletUrl("images/Food Menu Conscious Cafe August'25/EARTH GRILS/Tofu Satay/Grilled Tofu Satay.JPG", gumletPresets.productCard),
     description: "Grilled tofu skewers with asian peanut satay sauce",
     nutrition: { calories: 220, protein: 26, carbs: 12, fats: 24 },
     dietary: "vegan/gluten free"
@@ -179,7 +181,7 @@ export const products = [
     name: "Taro Root Crisps",
     category: "earth-grills-crisps",
     price: 250,
-    image: "/images/Food Menu Conscious Cafe August'25/EARTH CRISPS/Tarot root fries/Taro Root Crisps.JPG",
+    image: getGumletUrl("images/Food Menu Conscious Cafe August'25/EARTH CRISPS/Tarot root fries/Taro Root Crisps.JPG", gumletPresets.productCard),
     description: "Arbi root fries seasoned with zatar and served with pesto and vegan mayo",
     nutrition: { calories: 273, protein: 2, carbs: 37, fats: 13 },
     dietary: "vegan/gluten free"
@@ -189,7 +191,7 @@ export const products = [
     name: "Cassava Crisps",
     category: "earth-grills-crisps",
     price: 200,
-    image: "/images/Food Menu Conscious Cafe August'25/EARTH CRISPS/Yuka (tapiocca fries)/Cassava Crisps.JPG",
+    image: getGumletUrl("images/Food Menu Conscious Cafe August'25/EARTH CRISPS/Yuka (tapiocca fries)/Cassava Crisps.JPG", gumletPresets.productCard),
     description: "Tapioca fries served with a sweet and spicy pineapple jalapeño salsa",
     nutrition: { calories: 240, protein: 1.4, carbs: 42, fats: 7.4 },
     dietary: "vegan/gluten free"
@@ -201,7 +203,7 @@ export const products = [
     name: "Watermelon Feta",
     category: "salads",
     price: 270,
-    image: "/images/Food Menu Conscious Cafe August'25/SALADS/Watermelon fetta salad/Watermelon Fetta Salad.JPG",
+    image: getGumletUrl("images/Food Menu Conscious Cafe August'25/SALADS/Watermelon fetta salad/Watermelon Fetta Salad.JPG", gumletPresets.productCard),
     description: "A spread of lettuce with watermelon, cucumber, feta, almonds, and a balsamic vinaigrette",
     nutrition: { calories: 228, protein: 8.2, carbs: 20, fats: 13.8 },
     dietary: "veg/gluten free"
@@ -211,7 +213,7 @@ export const products = [
     name: "Tropical Salad",
     category: "salads",
     price: 350,
-    image: "/images/Food Menu Conscious Cafe August'25/SALADS/Tropical salad/Tropical Salad.JPG",
+    image: getGumletUrl("images/Food Menu Conscious Cafe August'25/SALADS/Tropical salad/Tropical Salad.JPG", gumletPresets.productCard),
     description: "Lettuce, roasted beetroot, orange, walnuts, bocconcini and a orange tahini dressing",
     nutrition: { calories: 277, protein: 10.4, carbs: 23.4, fats: 17.2 },
     dietary: "veg/gluten free"
@@ -221,7 +223,7 @@ export const products = [
     name: "Botanical Balance (BB) Salad",
     category: "salads",
     price: 420,
-    image: "/images/Food Menu Conscious Cafe August'25/SALADS/BB salad/Botanical Balance (BB) Salad.JPG",
+    image: getGumletUrl("images/Food Menu Conscious Cafe August'25/SALADS/BB salad/Botanical Balance (BB) Salad.JPG", gumletPresets.productCard),
     description: "Flavor-packed salad with madagascar beans, crispy tofu, fresh veggies, and a zesty miso-citrus dressing",
     nutrition: { calories: 270, protein: 14, carbs: 14, fats: 18 },
     dietary: "veg/gluten free"
@@ -233,7 +235,7 @@ export const products = [
     name: "Yogi Platter",
     category: "platters",
     price: 380,
-    image: "/images/Food Menu Conscious Cafe August'25/PLATTERS/yogi platter/Yogi Platter.JPG",
+    image: getGumletUrl("images/Food Menu Conscious Cafe August'25/PLATTERS/yogi platter/Yogi Platter.JPG", gumletPresets.productCard),
     description: "Roasted mushrooms, babaganoush, hash brown, vegan sour cream, sourdough toast, salads and chia pudding",
     dietary: "vegan"
   },
@@ -242,7 +244,7 @@ export const products = [
     name: "Zulfi Platter",
     category: "platters",
     price: 420,
-    image: "/images/Food Menu Conscious Cafe August'25/PLATTERS/Zulfi platter/Zulfi Platter.JPG",
+    image: getGumletUrl("images/Food Menu Conscious Cafe August'25/PLATTERS/Zulfi platter/Zulfi Platter.JPG", gumletPresets.productCard),
     description: "Eggs (of your choice), hash browns, babaganoush, salad, roasted mushrooms, vegan sour cream and spinach and corn creamy drip with sour dough toast",
     dietary: "veg/contains egg"
   },
@@ -251,7 +253,7 @@ export const products = [
     name: "Mezze Platter",
     category: "platters",
     price: 590,
-    image: "/images/Food Menu Conscious Cafe August'25/PLATTERS/Mezze platter/Mezze Platter.JPG",
+    image: getGumletUrl("images/Food Menu Conscious Cafe August'25/PLATTERS/Mezze platter/Mezze Platter.JPG", gumletPresets.productCard),
     description: "Mediterranean platter with roasted veggies, chips, falafel, hummus, babaganoush, muhamarra, fetta cheese, pickles and pita bread",
     dietary: "vegan"
   },
@@ -263,7 +265,7 @@ export const products = [
     category: "earth-bowls",
     price: 620,
     bestseller: true,
-    image: "/images/Food Menu Conscious Cafe August'25/EARTH BOWLS/Thai Bowl.JPG",
+    image: getGumletUrl("images/Food Menu Conscious Cafe August'25/EARTH BOWLS/Thai Bowl.JPG", gumletPresets.productCard),
     description: "Tofu Krapao, pomelo or citrus salad, jasmine rice, and steamed greens with a side of Nam Phrik sauce",
     dietary: "vegan"
   },
@@ -272,7 +274,7 @@ export const products = [
     name: "Tokyo Katsu",
     category: "earth-bowls",
     price: 550,
-    image: "/images/Food Menu Conscious Cafe August'25/EARTH BOWLS/Tokyo Katsu.JPG",
+    image: getGumletUrl("images/Food Menu Conscious Cafe August'25/EARTH BOWLS/Tokyo Katsu.JPG", gumletPresets.productCard),
     description: "Crispy eggplant katsu, curry, steamed greens, Goma salad and Jasmine rice",
     dietary: "vegan"
   },
@@ -282,7 +284,7 @@ export const products = [
     category: "earth-bowls",
     price: 420,
     bestseller: true,
-    image: "/images/Food Menu Conscious Cafe August'25/EARTH BOWLS/Rangla Punjab.JPG",
+    image: getGumletUrl("images/Food Menu Conscious Cafe August'25/EARTH BOWLS/Rangla Punjab.JPG", gumletPresets.productCard),
     description: "Malai koft, hara saag, millets, salad and makki corn roti",
     dietary: "veg"
   },
@@ -291,7 +293,7 @@ export const products = [
     name: "Sol Bowl",
     category: "earth-bowls",
     price: 410,
-    image: "/images/Food Menu Conscious Cafe August'25/EARTH BOWLS/Sol Bowl.JPG",
+    image: getGumletUrl("images/Food Menu Conscious Cafe August'25/EARTH BOWLS/Sol Bowl.JPG", gumletPresets.productCard),
     description: "Black beans, millets, sour cream, roasted corn and pepper salsa, guacamole and plantain",
     dietary: "vegan"
   },
@@ -300,7 +302,7 @@ export const products = [
     name: "Mezze Kodo Bowl",
     category: "earth-bowls",
     price: 380,
-    image: "/images/Food Menu Conscious Cafe August'25/EARTH BOWLS/Mezze Kodo Bowl.JPG",
+    image: getGumletUrl("images/Food Menu Conscious Cafe August'25/EARTH BOWLS/Mezze Kodo Bowl.JPG", gumletPresets.productCard),
     description: "Beetroot Hummus, fetta, kodo, falafel, grilled veggies with muhamarra",
     dietary: "vegan"
   },
@@ -311,7 +313,7 @@ export const products = [
     name: "Khao Soi",
     category: "noodle-bowls",
     price: 480,
-    image: "/images/Food Menu Conscious Cafe August'25/NOODLE BOWLS/Khao Soi.JPG",
+    image: getGumletUrl("images/Food Menu Conscious Cafe August'25/NOODLE BOWLS/Khao Soi.JPG", gumletPresets.productCard),
     description: "Coconut and spiced turmeric broth with udon noodles, veggies and tofu, topped with crispy rice noodle, fried shallots, peanuts, coriander and green onions",
     nutrition: { calories: 460, protein: 20, carbs: 30, fats: 18 },
     dietary: "vegan"
@@ -322,7 +324,7 @@ export const products = [
     category: "noodle-bowls",
     price: 490,
     bestseller: true,
-    image: "/images/Food Menu Conscious Cafe August'25/NOODLE BOWLS/Laksa.JPG",
+    image: getGumletUrl("images/Food Menu Conscious Cafe August'25/NOODLE BOWLS/Laksa.JPG", gumletPresets.productCard),
     description: "Spicy peanut broth, rice noodles, crispy tofu, bok-choi, pickled cabbage and corn",
     nutrition: { calories: 530, protein: 22, carbs: 30, fats: 20 },
     dietary: "vegan"
@@ -332,7 +334,7 @@ export const products = [
     name: "Miso Ramen",
     category: "noodle-bowls",
     price: 405,
-    image: "/images/Food Menu Conscious Cafe August'25/NOODLE BOWLS/Miso Ramen.JPG",
+    image: getGumletUrl("images/Food Menu Conscious Cafe August'25/NOODLE BOWLS/Miso Ramen.JPG", gumletPresets.productCard),
     description: "Creamy miso broth, udon noodles, mushrooms, bokchoi and kimchi",
     nutrition: { calories: 355, protein: 12, carbs: 53, fats: 9.5 },
     dietary: "vegan"
@@ -342,7 +344,7 @@ export const products = [
     name: "Bibim Guksu",
     category: "noodle-bowls",
     price: 420,
-    image: "/images/Food Menu Conscious Cafe August'25/NOODLE BOWLS/Bibim Guksu.jpg",
+    image: getGumletUrl("images/Food Menu Conscious Cafe August'25/NOODLE BOWLS/Bibim Guksu.jpg", gumletPresets.productCard),
     description: "Gochujang soba noodles served cold with kimchi & asian veggies (egg optional)",
     nutrition: { calories: 360, protein: 12, carbs: 60, fats: 10 },
     dietary: "vegan"
@@ -354,7 +356,7 @@ export const products = [
     name: "Meatless Meatball (M&M)",
     category: "pasta-pizza",
     price: 510,
-    image: "/images/Food Menu Conscious Cafe August'25/PASTAS/Meatless Meatballs (M&M).JPG",
+    image: getGumletUrl("images/Food Menu Conscious Cafe August'25/PASTAS/Meatless Meatballs (M&M).JPG", gumletPresets.productCard),
     description: "Meatless meat balls cooked in aromatic tomato sauce, with spaghetti, fresh basil and parmesan cheese",
     nutrition: { calories: 423, protein: 15, carbs: 53, fats: 17 },
     dietary: "veg"
@@ -365,7 +367,7 @@ export const products = [
     category: "pasta-pizza",
     price: 470,
     bestseller: true,
-    image: "/images/Food Menu Conscious Cafe August'25/PASTAS/Zucchini Zoodles(ZZ).JPG",
+    image: getGumletUrl("images/Food Menu Conscious Cafe August'25/PASTAS/Zucchini Zoodles(ZZ).JPG", gumletPresets.productCard),
     description: "Zucchini noodles with creamy pesto, topped with fresh greens, basil, cherry tomatoes, and bocconcini",
     nutrition: { calories: 340, protein: 12, carbs: 12, fats: 28 },
     dietary: "veg/gluten free"
@@ -378,7 +380,7 @@ export const products = [
     category: "desserts",
     price: 220,
     bestseller: true,
-    image: "/images/Food Menu Conscious Cafe August'25/DESSERTS/Coconut Panna Cotta.JPG",
+    image: getGumletUrl("images/Food Menu Conscious Cafe August'25/DESSERTS/Coconut Panna Cotta.JPG", gumletPresets.productCard),
     description: "Coconut panna cotta with passion fruit coulis and tropical fruit topping",
     nutrition: { calories: 247, protein: 2, carbs: 11, fats: 23 },
     dietary: "vegan"
@@ -388,7 +390,7 @@ export const products = [
     name: "Chocolate Mousse",
     category: "desserts",
     price: 289,
-    image: "/images/Food Menu Conscious Cafe August'25/DESSERTS/Chocolate Mousse.JPG",
+    image: getGumletUrl("images/Food Menu Conscious Cafe August'25/DESSERTS/Chocolate Mousse.JPG", gumletPresets.productCard),
     description: "Vegan dark chocolate orange mousse, orange concentrate, almond praline salted tuile",
     nutrition: { calories: 389, protein: 5.3, carbs: 29, fats: 30 },
     dietary: "vegan"
