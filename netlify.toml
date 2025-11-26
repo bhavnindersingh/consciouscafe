@@ -13,8 +13,10 @@
 [build.processing.images]
   compress = true
 
-[context.production]
-  environment = { NODE_ENV = "production" }
+[context.production.environment]
+  NODE_ENV = "production"
+  REACT_APP_GUMLET_BASE_URL = "https://consciouscafe.gumlet.io"
+  REACT_APP_USE_GUMLET = "true"
 
 [context.deploy-preview]
   environment = { NODE_ENV = "production" }

@@ -341,21 +341,46 @@ body {
 }
 
 /* Hero video - Gumlet iframe player with full-screen cover */
-/* Uses Gumlet's official full-screen video background technique */
+/* Wrapper fills container, iframe scales to cover */
+.hero-video-backdrop > div {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
 .hero-video-backdrop iframe {
   position: absolute;
-  right: 0;
-  bottom: 0;
-  min-width: 100%;
-  min-height: 100%;
-  width: auto;
-  height: auto;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  transform: translate(-50%, -50%);
   z-index: 0;
   pointer-events: none;
-  -webkit-transform: translateZ(0);
+  -webkit-transform: translate(-50%, -50%) translateZ(0);
   will-change: transform;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
+}
+
+/* Scale up iframe to cover on wide screens (wider than 16:9) */
+@media (min-aspect-ratio: 16/9) {
+  .hero-video-backdrop iframe {
+    width: auto;
+    height: 100%;
+    min-width: 100%;
+  }
+}
+
+/* Scale up iframe to cover on tall screens (taller than 16:9) */
+@media (max-aspect-ratio: 16/9) {
+  .hero-video-backdrop iframe {
+    width: 100%;
+    height: auto;
+    min-height: 100%;
+  }
 }
 
 .hero-video-overlay {
