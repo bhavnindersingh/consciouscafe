@@ -104,10 +104,10 @@ const Hero = () => {
     <>
       <section className="hero">
         <div className="hero-video-backdrop">
-          <div style={{ position: 'relative' }}>
+          <div className="gumlet-wrapper">
             <iframe
               title="Gumlet video player"
-              src="https://play.gumlet.io/embed/6925f88a3c99376d4fd48188?background=true&autoplay=true&loop=true&muted=true&preload=true"
+              src="https://play.gumlet.io/embed/6925f88a3c99376d4fd48188?background=true&autoplay=true&loop=true&disableControls=true&muted=true&preload=true"
               style={{
                 border: 'none',
                 position: 'absolute',
