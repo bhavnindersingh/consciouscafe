@@ -79,7 +79,7 @@ Update actual business information in `src/utils/seoData.js`:
 
 ### Key Style Features
 - Custom CSS Grid layouts for product displays
-- Sirv CDN integration for video streaming (hero section)
+- Gumlet CDN integration for optimized media delivery (images and video)
 - Hardware acceleration for smooth animations
 - Comprehensive mobile responsiveness
 
@@ -88,19 +88,26 @@ Update actual business information in `src/utils/seoData.js`:
 ### Deployment-Specific Issues
 - **CSS Build Failures**: Invalid CSS syntax can break Netlify builds - ensure proper CSS comment syntax
 - **Mobile Responsiveness**: Production builds may lose responsive styles if CSS syntax errors occur
-- **Hero Video**: Sirv video integration requires z-index management to prevent text disappearing
+- **Hero Video**: Gumlet video iframe embed with proper z-index layering for content visibility
 
 ### Development vs Production Differences
 - CSS minifier in production is more strict than development server
 - Media queries can be lost during build if CSS syntax errors exist
 - Z-index conflicts may appear differently in production
 
-## Sirv Integration
+## Gumlet CDN Integration
 
-The hero section uses Sirv video streaming service:
-- Video player configured in `Hero.js`
-- Custom CSS ensures content visibility over video
-- Multiple fallback solutions for video loading issues
+The application uses Gumlet CDN for all media delivery:
+- **Images**: Optimized delivery with automatic format conversion (WebP, AVIF) via `gumlet.js` utility
+- **Video**: Hero section uses Gumlet video player with iframe embed for efficient streaming
+- **Configuration**: Gumlet base URL set in `.env.local` (REACT_APP_GUMLET_BASE_URL)
+- **Parameters**: Image transformations include width, height, quality, format, and crop mode
+
+### Gumlet Utility (`src/utils/gumlet.js`)
+- **getGumletUrl()**: Generates optimized URLs with transformation parameters
+- **gumletPresets**: Predefined optimization presets for different use cases
+- **getResponsiveImageSet()**: Creates srcset for responsive images
+- **Important**: Uses `fm` parameter (not `format`) for format transformations
 
 ## Data Management
 
@@ -109,7 +116,7 @@ Products include:
 - Categories and subcategories
 - Pricing (including dietary-specific prices)
 - Nutritional information
-- Image URLs (Sirv CDN)
+- Image URLs (Gumlet CDN with transformations)
 - SEO-optimized descriptions
 
 ### Cart Functionality

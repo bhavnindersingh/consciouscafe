@@ -105,20 +105,23 @@ const Hero = () => {
     <div>
       <section className="hero">
         <div className="hero-video-backdrop">
-          <video
-            className="hero-video"
-            autoPlay
-            loop
-            muted
-            playsInline
-            poster="https://ik.imagekit.io/consciouscafe/CCOpenvideoshot%20%20Banner%20Video%20of%20website.mp4?tr=w-1920,q-90"
-          >
-            <source
-              src="https://ik.imagekit.io/consciouscafe/CCOpenvideoshot%20%20Banner%20Video%20of%20website.mp4?tr=w-1920,q-90"
-              type="video/mp4"
-            />
-            Your browser does not support the video tag.
-          </video>
+          <iframe
+            title="Gumlet video player"
+            src="https://play.gumlet.io/embed/6925f88a3c99376d4fd48188?background=true&autoplay=true&loop=true&muted=true&preload=true"
+            style={{
+              border: 'none',
+              position: 'absolute',
+              right: 0,
+              bottom: 0,
+              minWidth: '100%',
+              minHeight: '100%',
+              width: 'auto',
+              height: 'auto',
+              zIndex: 0
+            }}
+            referrerPolicy="origin"
+            allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture; fullscreen"
+          />
         </div>
 
         <div className="hero-video-overlay"></div>
