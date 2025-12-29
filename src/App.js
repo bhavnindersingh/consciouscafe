@@ -1,32 +1,58 @@
 import React, { useState, useEffect, useMemo, startTransition } from "react";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
-import Header from "./components/Header";
-import Hero from "./components/Hero";
-import ProductGrid from "./components/ProductGrid";
-import Cart from "./components/Cart";
-import Footer from "./components/Footer";
+// Layout Components
+import Header from "./components/layout/Header/Header";
+import Footer from "./components/layout/Footer/Footer";
+
+// Product Components
+import ProductGrid from "./components/products/ProductGrid/ProductGrid";
+import Cart from "./components/cart/Cart/Cart";
+
+// Page Components
+import Hero from "./pages/Home/Hero";
+import FoodMenuPage from "./pages/Menu/FoodMenuPage";
+import CategoryPage from "./pages/Menu/CategoryPage";
+import ProductDetailPage from "./pages/Products/ProductDetailPage";
+import ProductPage from "./pages/Products/ProductPage";
+import Checkout from "./pages/Checkout/Checkout";
+import AboutUs from "./pages/Info/AboutUs";
+import Contact from "./pages/Info/Contact";
+import DeliveryInfo from "./pages/Info/DeliveryInfo";
+import PrivacyPolicy from "./pages/Info/PrivacyPolicy";
+import TermsOfService from "./pages/Info/TermsOfService";
+import NotFound from "./pages/NotFound/NotFound";
+
+// Dashboard Pages
+import DashboardLayout from "./pages/Dashboard/DashboardLayout";
+import DashboardHome from "./pages/Dashboard/DashboardHome";
+import Login from "./pages/Dashboard/Login";
+import Register from "./pages/Dashboard/Register";
+import WorkshopList from "./pages/Dashboard/WorkshopList";
+import WorkshopManager from "./pages/Dashboard/WorkshopManager";
+import EventList from "./pages/Dashboard/EventList";
+import EventManager from "./pages/Dashboard/EventManager";
+import RetreatList from "./pages/Dashboard/RetreatList";
+import RetreatManager from "./pages/Dashboard/RetreatManager";
+import RSVPList from "./pages/Dashboard/RSVPList";
+import FacilitatorRequests from "./pages/Dashboard/FacilitatorRequests";
+
+// Public Pages
+import RequestFacilitatorAccess from "./pages/Public/RequestFacilitatorAccess";
+
+// Data & Context
 import { products } from "./data/products";
+import { AuthProvider } from "./context/AuthContext";
+import { CartProvider, useCart } from "./context/CartContext";
 
-// Import components directly (temporary fix for chunk loading)
-import FoodMenuPage from "./components/FoodMenuPage";
-import Checkout from "./components/Checkout";
-import ProductDetailPage from "./components/ProductDetailPage";
-import ProductPage from "./components/ProductPage";
-import CategoryPage from "./components/CategoryPage";
-import AboutUs from "./components/AboutUs";
-import Contact from "./components/Contact";
-import DeliveryInfo from "./components/DeliveryInfo";
-import PrivacyPolicy from "./components/PrivacyPolicy";
-import TermsOfService from "./components/TermsOfService";
-import NotFound from "./components/NotFound";
-
-function App() {
+function AppContent() {
   const navigate = useNavigate();
   const location = useLocation();
   const isHomePage = location.pathname === "/";
 
-  const [cartItems, setCartItems] = useState([]);
+  // Use cart context instead of local state
+  const { cartItems, addToCart, updateQuantity, removeFromCart, clearCart } = useCart();
+
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [isProductPageOpen, setIsProductPageOpen] = useState(false);
@@ -96,64 +122,15 @@ function App() {
     },
   ], []);
 
-  // Load cart from localStorage on component mount
-  useEffect(() => {
-    const savedCart = localStorage.getItem("consciousBakesCart");
-    if (savedCart) {
-      setCartItems(JSON.parse(savedCart));
-    }
-  }, []);
-
-  // Save cart to localStorage whenever cartItems changes
-  useEffect(() => {
-    localStorage.setItem("consciousBakesCart", JSON.stringify(cartItems));
-  }, [cartItems]);
-
   // Scroll to top whenever location changes
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
-  const addToCart = (product) => {
-    setCartItems((prevItems) => {
-      const existingItem = prevItems.find((item) => item.id === product.id);
-
-      if (existingItem) {
-        return prevItems.map((item) =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + (product.quantity || 1) }
-            : item,
-        );
-      } else {
-        return [...prevItems, { ...product, quantity: product.quantity || 1 }];
-      }
-    });
-
-    // Auto-open cart when item is added
+  // Wrap addToCart to auto-open cart
+  const handleAddToCart = (product) => {
+    addToCart(product);
     setIsCartOpen(true);
-  };
-
-  const updateQuantity = (productId, newQuantity) => {
-    if (newQuantity <= 0) {
-      removeFromCart(productId);
-      return;
-    }
-
-    setCartItems((prevItems) =>
-      prevItems.map((item) =>
-        item.id === productId ? { ...item, quantity: newQuantity } : item,
-      ),
-    );
-  };
-
-  const removeFromCart = (productId) => {
-    setCartItems((prevItems) =>
-      prevItems.filter((item) => item.id !== productId),
-    );
-  };
-
-  const clearCart = () => {
-    setCartItems([]);
   };
 
   const handleCartToggle = () => {
@@ -190,7 +167,7 @@ function App() {
         .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
         .trim();
     };
-    
+
     startTransition(() => {
       navigate(`/product/${createSlug(product.name)}`);
     });
@@ -203,25 +180,24 @@ function App() {
   };
 
   return (
-    <HelmetProvider>
-      <div className="App">
-        <Header
-          cartItems={cartItems}
-          onCartToggle={handleCartToggle}
-          onCategoryChange={handleCategoryChange}
-          categories={displayCategories}
-        />
+    <div className="App">
+      <Header
+        cartItems={cartItems}
+        onCartToggle={handleCartToggle}
+        onCategoryChange={handleCategoryChange}
+        categories={displayCategories}
+      />
 
-        {isHomePage && <Hero />}
+      {isHomePage && <Hero />}
 
-        <main role="main" id="main-content">
-          <Routes>
+      <main role="main" id="main-content">
+        <Routes>
           <Route
             path="/"
             element={
               <ProductGrid
                 products={products}
-                onAddToCart={addToCart}
+                onAddToCart={handleAddToCart}
                 onProductClick={handleProductClick}
                 onCategoryChange={handleCategoryChange}
                 categories={displayCategories}
@@ -234,7 +210,7 @@ function App() {
               <FoodMenuPage
                 categories={displayCategories}
                 products={products}
-                onAddToCart={addToCart}
+                onAddToCart={handleAddToCart}
                 onProductClick={handleProductClick}
               />
             }
@@ -242,9 +218,9 @@ function App() {
           <Route
             path="/category/:categoryId"
             element={
-              <CategoryPage 
-                products={products} 
-                onAddToCart={addToCart}
+              <CategoryPage
+                products={products}
+                onAddToCart={handleAddToCart}
                 onProductClick={handleProductClick}
               />
             }
@@ -252,7 +228,7 @@ function App() {
           <Route
             path="/product/:productId"
             element={
-              <ProductDetailPage products={products} onAddToCart={addToCart} />
+              <ProductDetailPage products={products} onAddToCart={handleAddToCart} />
             }
           />
           <Route
@@ -279,8 +255,28 @@ function App() {
             path="*"
             element={<NotFound />}
           />
-          </Routes>
-        </main>
+          {/* Public Facilitator Access Request */}
+          <Route path="/request-facilitator-access" element={<RequestFacilitatorAccess />} />
+
+          {/* Dashboard Routes */}
+          <Route path="/facilitator-login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/dashboard" element={<DashboardLayout />}>
+            <Route index element={<DashboardHome />} />
+            <Route path="rsvps" element={<RSVPList />} />
+            <Route path="workshops" element={<WorkshopList />} />
+            <Route path="create-workshop" element={<WorkshopManager />} />
+            <Route path="edit-workshop/:id" element={<WorkshopManager />} />
+            <Route path="events" element={<EventList />} />
+            <Route path="create-event" element={<EventManager />} />
+            <Route path="edit-event/:id" element={<EventManager />} />
+            <Route path="retreats" element={<RetreatList />} />
+            <Route path="create-retreat" element={<RetreatManager />} />
+            <Route path="edit-retreat/:id" element={<RetreatManager />} />
+            <Route path="facilitator-requests" element={<FacilitatorRequests />} />
+          </Route>
+        </Routes>
+      </main>
 
       <Footer />
 
@@ -305,9 +301,21 @@ function App() {
         product={selectedProduct}
         isOpen={isProductPageOpen}
         onClose={handleProductPageClose}
-        onAddToCart={addToCart}
+        onAddToCart={handleAddToCart}
       />
-      </div>
+    </div>
+  );
+}
+
+// Main App component with providers
+function App() {
+  return (
+    <HelmetProvider>
+      <AuthProvider>
+        <CartProvider>
+          <AppContent />
+        </CartProvider>
+      </AuthProvider>
     </HelmetProvider>
   );
 }

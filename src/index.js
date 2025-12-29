@@ -1,7 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
-import './styles/App.css';
+
+// Global Styles - Import order matters!
+import './styles/reset.css';      // 1. Reset browser defaults
+import './styles/variables.css';  // 2. CSS custom properties
+import './styles/typography.css'; // 3. Font definitions
+import './styles/global.css';     // 4. Base global styles
+import './styles/utilities.css';  // 5. Utility classes
+import './styles/auth.css';       // 6. Authentication pages
+import './styles/dashboard.css';  // 7. Dashboard pages
+import './styles/App.css';        // 8. Component-specific styles
+
 import App from './App';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

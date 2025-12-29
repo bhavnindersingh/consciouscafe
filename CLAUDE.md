@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a React-based restaurant website for Conscious Cafe, featuring an artisanal food and beverage menu with e-commerce capabilities. The site includes product browsing, cart functionality, checkout process, and comprehensive SEO optimization.
+This is a React-based platform for Conscious Sanctuary, featuring workshops, events, and retreats with a facilitator dashboard. The platform includes an e-commerce menu for the cafe, product browsing, cart functionality, checkout process, facilitator management dashboard, and comprehensive SEO optimization.
 
 ## Development Commands
 
@@ -20,17 +20,48 @@ This is a React-based restaurant website for Conscious Cafe, featuring an artisa
 
 ## Architecture Overview
 
-### Component Structure
-The application follows a standard React component hierarchy:
+### Repository Structure
+The application follows a scalable, feature-based organization:
 
-- **App.js** - Main application component with routing, state management for cart, and category definitions
-- **Components** - Modular React components organized by functionality:
-  - Navigation: `Header.js`, `Footer.js`
-  - Product Display: `ProductGrid.js`, `ProductCard.js`, `ProductPage.js`, `ProductDetailPage.js`
-  - Menu Pages: `FoodMenuPage.js`, `DrinksMenuPage.js`, `CategoryPage.js`
-  - E-commerce: `Cart.js`, `Checkout.js`
-  - Content: `Hero.js`, `AboutUs.js`, `Contact.js`, `DeliveryInfo.js`
-  - Utilities: `SEO.js`, `InstagramFeed.js`
+```
+src/
+├── pages/              # Route-level page components
+├── components/         # Reusable UI components (organized by domain)
+├── features/           # Self-contained feature modules
+├── context/            # React Context providers
+├── hooks/              # Custom React hooks
+├── services/           # API and external service integrations
+├── utils/              # Utility functions
+├── data/               # Static data and constants
+├── styles/             # Global styles
+├── assets/             # Static assets
+└── config/             # Configuration files
+```
+
+**For detailed structure information, see [STRUCTURE.md](STRUCTURE.md)**
+
+### Component Organization
+
+- **pages/** - Full page components for each route:
+  - `Home/`, `Menu/`, `Products/`, `Checkout/`, `Info/`, `Dashboard/`, `Auth/`, `NotFound/`
+
+- **components/** - Reusable components organized by domain:
+  - `layout/` - Header, Footer, Hero
+  - `products/` - ProductCard, ProductGrid
+  - `cart/` - Cart component
+  - `social/` - InstagramFeed
+  - `seo/` - SEO component
+  - `common/` - Shared components (Button, Card, LoadingSpinner)
+
+- **features/** - Self-contained feature modules:
+  - `workshops/` - Workshop management (components, hooks, utils)
+  - `reservations/` - (Planned) Table reservations
+  - `loyalty/` - (Planned) Loyalty program
+
+- **services/** - External service integrations:
+  - `api/` - API endpoint functions
+  - `supabase/` - Supabase client configuration
+  - `analytics/` - Analytics tracking
 
 ### State Management
 - Local React state for cart management with localStorage persistence
@@ -60,9 +91,9 @@ The site includes extensive SEO optimization:
 - **Social Media**: Open Graph and Twitter Card tags
 
 ### SEO Architecture
-- **SEO.js** - Reusable SEO component
-- **seoData.js** - Centralized SEO configuration and structured data
-- **sitemapGenerator.js** - Sitemap generation utilities
+- **components/seo/SEO/SEO.js** - Reusable SEO component
+- **utils/seoData.js** - Centralized SEO configuration and structured data
+- **utils/sitemapGenerator.js** - Sitemap generation utilities
 
 ### Configuration Requirements
 Update actual business information in `src/utils/seoData.js`:
@@ -130,5 +161,33 @@ Products include:
 - **NEVER run `npm start` automatically** - User will start the development server manually when needed
 - Always run builds locally before deployment to catch CSS syntax errors
 - Product URLs are auto-generated from product names using slug conversion
-- Category definitions in `App.js` must match product categories in `products.js`
+- Category definitions in `App.js` must match product categories in `data/products.js`
 - SEO data should be updated with actual business information before production use
+
+## Adding New Features
+
+When adding new features or code, refer to [STRUCTURE.md](STRUCTURE.md) for:
+- Where to place new files
+- Naming conventions
+- Import patterns
+- Best practices
+
+### Quick Reference
+
+- **New Page** → `src/pages/PageName/PageName.js`
+- **Reusable Component** → `src/components/[domain]/ComponentName/ComponentName.js`
+- **New Feature Module** → `src/features/feature-name/`
+- **API Integration** → `src/services/api/entityName.js`
+- **Utility Function** → `src/utils/[categoryName].js`
+- **Custom Hook** → `src/hooks/useSomething.js`
+- **Global State** → `src/context/SomethingContext.js`
+
+### Authentication & Database
+
+- **Auth**: Supabase authentication via `context/AuthContext.js`
+- **Database**: Supabase client at `services/supabase/supabaseClient.js`
+- **Offerings Management**: Facilitator dashboard at `/dashboard` for creating/managing workshops, events, and retreats
+- **RSVP System**: Complete RSVP management with approval workflow
+- **Login**: `/login` route for authentication
+- **Protected Routes**: Dashboard routes require authentication
+- **Database Setup**: Run `SUPABASE_SETUP_COMPLETE.sql` in Supabase SQL Editor to set up all tables

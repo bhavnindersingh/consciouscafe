@@ -1,168 +1,24 @@
 /*
- * CONSCIOUS CAFE STYLESHEET
- * 
- * Typography:
- * - Titles/Headings: EB Garamond (Google Fonts)
- * - Descriptions/Body text: Cormorant Garamond (Google Fonts)
- * - UI Elements: Inter (Local font files)
- * 
- * Font Files:
- * - Inter-VariableFont_opsz,wght.ttf (src/fonts/)
- * - Inter-Italic-VariableFont_opsz,wght.ttf (src/fonts/)
- * 
+ * CONSCIOUS CAFE - COMPONENT STYLES
+ *
+ * NOTE: Global styles have been extracted to modular files:
+ * - reset.css - CSS reset
+ * - variables.css - CSS custom properties
+ * - typography.css - Font definitions
+ * - global.css - Base global styles
+ * - utilities.css - Utility classes
+ *
+ * This file contains component-specific styles.
+ * TODO (Future): Extract component styles to colocated CSS files
+ * (e.g., Header.css, ProductCard.css, etc.)
  */
 
+/* ========================================
+ * COMPONENT STYLES
+ * ======================================== */
 
-/* CSS Reset */
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed, 
-figure, figcaption, footer, header, hgroup, 
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
-	margin: 0;
-	padding: 0;
-	border: 0;
-	font-size: 100%;
-	font: inherit;
-	vertical-align: baseline;
-}
-
-article, aside, details, figcaption, figure, 
-footer, header, hgroup, menu, nav, section {
-	display: block;
-}
-
-body {
-	line-height: 1;
-}
-
-ol, ul {
-	list-style: none;
-}
-
-blockquote, q {
-	quotes: none;
-}
-
-blockquote:before, blockquote:after,
-q:before, q:after {
-	content: '';
-	content: none;
-}
-
-table {
-	border-collapse: collapse;
-	border-spacing: 0;
-}
-
-/* Fonts - Google Fonts now loaded via HTML preload */
-
-@font-face {
-  font-family: 'Inter';
-  font-style: normal;
-  font-weight: 100 900;
-  font-display: swap;
-  src: url("../fonts/Inter-VariableFont_opsz,wght.ttf") format("truetype");
-}
-
-@font-face {
-  font-family: 'Inter';
-  font-style: italic;
-  font-weight: 100 900;
-  font-display: swap;
-  src: url("../fonts/Inter-Italic-VariableFont_opsz,wght.ttf") format("truetype");
-}
-
-/* CSS Custom Properties */
-:root {
-  --font-heading: "EB Garamond", "Inter", serif;
-  --font-body: "Cormorant Garamond", serif;
-  --font-ui: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --color-primary: #212121;
-  --color-text-secondary: rgba(33, 33, 33, 0.6);
-  --color-text-muted: #444444; /* Improved contrast for accessibility */
-  --color-border: rgba(33, 33, 33, 0.2);
-  --color-bg: #f4f2f0;
-  --transition-standard: all 0.3s ease;
-  --transition-fast: all 0.2s ease;
-}
-
-/* Utility Classes */
-.flex { display: flex; }
-.flex-center { display: flex; align-items: center; }
-.flex-center-between { display: flex; align-items: center; justify-content: space-between; }
-.flex-center-center { display: flex; align-items: center; justify-content: center; }
-.flex-column { display: flex; flex-direction: column; }
-.flex-wrap { display: flex; flex-wrap: wrap; }
-.flex-gap-10 { display: flex; gap: 10px; }
-.flex-gap-15 { display: flex; gap: 15px; }
-.flex-gap-20 { display: flex; gap: 20px; }
-
-/* Base Styles */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  transition: var(--transition-standard);
-}
-
-html {
-  -webkit-text-size-adjust: none;
-  -ms-text-size-adjust: none;
-  text-size-adjust: none;
-  width: 100%;
-  overflow-x: hidden;
-}
-
-body {
-  font-family: "Cormorant Garamond", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, serif;
-  line-height: 1.5;
-  color: var(--color-primary);
-  background-color: #f4f2f0;
-  font-size: 16px;
-  font-weight: 400;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  margin: 0;
-  padding: 0;
-  min-height: 100vh;
-  width: 100%;
-  max-width: 100%;
-  overflow-x: hidden;
-}
-
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 24px;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-/* Accessibility Skip Link */
-.skip-link {
-  position: absolute;
-  top: -40px;
-  left: 6px;
-  background: #000;
-  color: #fff;
-  padding: 8px;
-  text-decoration: none;
-  z-index: 1000;
-  border-radius: 4px;
-}
-
-.skip-link:focus {
-  top: 6px;
-}
+/* Global styles (reset, variables, typography, base, utilities)
+   are now in separate modular files imported in index.js */
 
 /* Header Styles */
 .header {

@@ -1,0 +1,77 @@
+import React from 'react';
+import { Helmet } from 'react-helmet-async';
+
+const SEO = ({
+  title,
+  description,
+  keywords,
+  image,
+  url,
+  type = 'website',
+  structuredData,
+  canonical,
+  noIndex = false,
+}) => {
+  const siteTitle = 'Conscious Cafe - Food & Beverages';
+  const siteDescription = 'Experience conscious vegetarian & vegan food and beverages at Conscious Cafe. Fresh, consciously sourced non-processed plant-based meals in a welcoming atmosphere.';
+  const siteImage = '/android-icon-192x192.png';
+  const siteUrl = 'https://consciouscafe.in';
+  
+  const pageTitle = title ? `${title} | ${siteTitle}` : siteTitle;
+  const pageDescription = description || siteDescription;
+  const pageImage = image || siteImage;
+  const pageUrl = url || siteUrl;
+  
+  return (
+    <Helmet>
+      {/* Basic Meta Tags */}
+      <title>{pageTitle}</title>
+      <meta name="description" content={pageDescription} />
+      {keywords && <meta name="keywords" content={keywords} />}
+      
+      {/* Canonical URL */}
+      <link rel="canonical" href={canonical || pageUrl} />
+      
+      {/* Robots */}
+      <meta name="robots" content={noIndex ? 'noindex, nofollow' : 'index, follow'} />
+      
+      {/* Open Graph Tags */}
+      <meta property="og:title" content={pageTitle} />
+      <meta property="og:description" content={pageDescription} />
+      <meta property="og:type" content={type} />
+      <meta property="og:url" content={pageUrl} />
+      <meta property="og:image" content={pageImage} />
+      <meta property="og:image:alt" content={title || 'Conscious Cafe'} />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
+      <meta property="og:site_name" content="Conscious Cafe" />
+      <meta property="og:locale" content="en_US" />
+      <meta property="article:author" content="Conscious Cafe" />
+      
+      {/* Twitter Card Tags */}
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={pageTitle} />
+      <meta name="twitter:description" content={pageDescription} />
+      <meta name="twitter:image" content={pageImage} />
+      <meta name="twitter:image:alt" content={title || 'Conscious Cafe'} />
+      <meta name="twitter:site" content="@consciouscafe" />
+      <meta name="twitter:creator" content="@consciouscafe" />
+      
+      {/* Facebook App ID (optional - add if you have one) */}
+      <meta property="fb:app_id" content="" />
+      
+      {/* Additional Meta Tags */}
+      <meta name="author" content="Conscious Cafe" />
+      <meta name="theme-color" content="#26532B" />
+      
+      {/* Structured Data */}
+      {structuredData && (
+        <script type="application/ld+json">
+          {JSON.stringify(structuredData)}
+        </script>
+      )}
+    </Helmet>
+  );
+};
+
+export default SEO;

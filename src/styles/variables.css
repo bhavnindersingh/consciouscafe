@@ -1,0 +1,18 @@
+/* CSS Custom Properties / Design Tokens */
+:root {
+  /* Typography */
+  --font-heading: "EB Garamond", "Inter", serif;
+  --font-body: "Cormorant Garamond", serif;
+  --font-ui: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  /* Colors */
+  --color-primary: #212121;
+  --color-text-secondary: rgba(33, 33, 33, 0.6);
+  --color-text-muted: #444444; /* Improved contrast for accessibility */
+  --color-border: rgba(33, 33, 33, 0.2);
+  --color-bg: #f4f2f0;
+
+  /* Transitions */
+  --transition-standard: all 0.3s ease;
+  --transition-fast: all 0.2s ease;
+}

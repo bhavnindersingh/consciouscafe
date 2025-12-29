@@ -1,0 +1,31 @@
+/*
+ * CONSCIOUS CAFE TYPOGRAPHY
+ *
+ * Typography:
+ * - Titles/Headings: EB Garamond (Google Fonts)
+ * - Descriptions/Body text: Cormorant Garamond (Google Fonts)
+ * - UI Elements: Inter (Local font files)
+ *
+ * Font Files:
+ * - Inter-VariableFont_opsz,wght.ttf (src/fonts/)
+ * - Inter-Italic-VariableFont_opsz,wght.ttf (src/fonts/)
+ */
+
+/* Inter - Local Font Files */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("../fonts/Inter-VariableFont_opsz,wght.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("../fonts/Inter-Italic-VariableFont_opsz,wght.ttf") format("truetype");
+}
+
+/* Note: EB Garamond and Cormorant Garamond are loaded via Google Fonts in public/index.html */

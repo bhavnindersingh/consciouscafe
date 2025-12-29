@@ -1,0 +1,12 @@
+/* Utility Classes */
+
+/* Flexbox Utilities */
+.flex { display: flex; }
+.flex-center { display: flex; align-items: center; }
+.flex-center-between { display: flex; align-items: center; justify-content: space-between; }
+.flex-center-center { display: flex; align-items: center; justify-content: center; }
+.flex-column { display: flex; flex-direction: column; }
+.flex-wrap { display: flex; flex-wrap: wrap; }
+.flex-gap-10 { display: flex; gap: 10px; }
+.flex-gap-15 { display: flex; gap: 15px; }
+.flex-gap-20 { display: flex; gap: 20px; }

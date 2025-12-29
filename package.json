@@ -1,7 +1,7 @@
 {
-  "name": "consciouscafe-website",
+  "name": "conscious-sanctuary",
   "version": "1.0.0",
-  "description": "Conscious Cafe - Premium Artisanal Food & Beverages",
+  "description": "Conscious Sanctuary - Workshops, Events & Retreats Platform",
   "main": "src/index.js",
   "scripts": {
     "start": "react-scripts start",
@@ -10,6 +10,7 @@
     "eject": "react-scripts eject"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.86.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-helmet-async": "^1.3.0",
