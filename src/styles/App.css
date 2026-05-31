@@ -53,7 +53,7 @@
 }
 
 .nav-title {
-  font-weight: 500;
+  font-weight: 400;
   cursor: pointer;
   padding: 10px 0;
   font-size: 20px;
@@ -2584,9 +2584,14 @@
   pointer-events: none;
 }
 
-.category-products .container {
+.category-products .container,
+.featured-section .container,
+.search-results-section .container,
+.category-section .container {
   position: relative;
   z-index: 2;
+  max-width: 100%;
+  padding: 0 40px;
 }
 
 .no-products {
