@@ -1,4 +1,4 @@
-import React, { useState, useMemo, startTransition } from "react";
+import React, { useState, useMemo, useEffect, startTransition } from "react";
 import { useNavigate } from "react-router-dom";
 import ProductCard from "../ProductCard/ProductCard";
 import InstagramFeed from "../../social/InstagramFeed/InstagramFeed";
@@ -38,6 +38,16 @@ const ProductGrid = ({
   }, [products, activeCategory]);
 
   const featuredProducts = useMemo(() => displayProducts.slice(0, 6), [displayProducts]);
+
+  // Scroll active category tab to center when it changes
+  useEffect(() => {
+    const nav = document.querySelector('.home-category-nav .category-tabs-horizontal');
+    const active = document.querySelector('.home-category-nav .category-tab-horizontal.active');
+    if (nav && active) {
+      const scrollLeft = active.offsetLeft - nav.clientWidth / 2 + active.offsetWidth / 2;
+      nav.scrollTo({ left: scrollLeft, behavior: 'smooth' });
+    }
+  }, [activeCategory]);
 
   const handleCategoryClick = (catId) => {
     setActiveCategory(catId);

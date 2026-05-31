@@ -57,6 +57,7 @@
   cursor: pointer;
   padding: 10px 0;
   font-size: 20px;
+  font-family: var(--font-heading);
   color: #000;
   text-decoration: none;
   border: none;
@@ -1432,9 +1433,10 @@
 .category-tabs-horizontal {
   display: flex;
   overflow-x: auto;
-  padding: 16px 0;
+  padding: 16px 32px;
   gap: 8px;
   scrollbar-width: none;
+  scroll-padding-inline: 32px;
 }
 
 .category-tabs::-webkit-scrollbar,
