@@ -404,7 +404,7 @@
 .all-products h2,
 .section-header h2 {
   font-family: var(--font-heading);
-  font-size: 56px;
+  font-size: clamp(1.75rem, 4vw, 3.5rem);
   font-weight: 700;
   text-align: center;
   margin-bottom: 24px;
@@ -447,7 +447,7 @@
 .products-grid,
 .featured-products-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 340px));
+  grid-template-columns: repeat(auto-fit, minmax(260px, 340px));
   gap: 32px;
   margin-top: 48px;
   justify-content: center;
@@ -2479,7 +2479,7 @@
 
 .category-hero-text h1 {
   font-family: var(--font-heading);
-  font-size: 72px;
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
   font-weight: 700;
   color: var(--color-primary);
   margin-bottom: 16px;
@@ -2994,7 +2994,7 @@
 }
 
 /* Mobile Responsive for Category Pages */
-@media (max-width: 768px) {
+@media (max-width: 1000px) {
   .category-hero {
     padding: 60px 0;
     min-height: 300px;
@@ -3007,7 +3007,7 @@
   }
 
   .category-hero-text h1 {
-    font-size: 36px;
+    font-size: clamp(2rem, 6vw, 3rem);
   }
 
   .category-subtitle {
