@@ -9,6 +9,8 @@ const FoodMenuPage = ({
   products,
   onAddToCart,
   onProductClick,
+  loading = false,
+  error = null,
 }) => {
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
@@ -261,8 +263,25 @@ const FoodMenuPage = ({
       </div>
 
 
+      {/* Loading / Error / Empty states */}
+      {loading && (
+        <div className="menu-status-message">
+          <p>Loading menu…</p>
+        </div>
+      )}
+      {!loading && error && (
+        <div className="menu-status-message">
+          <p>Could not load the menu right now. Please try again later.</p>
+        </div>
+      )}
+      {!loading && !error && products.length === 0 && (
+        <div className="menu-status-message">
+          <p>Menu coming soon. Check back shortly!</p>
+        </div>
+      )}
+
       {/* Search Results */}
-      {searchTerm !== "" && (
+      {!loading && searchTerm !== "" && (
         <section className="search-results-section">
           <div className="container">
             <div className="section-header">
@@ -294,8 +313,8 @@ const FoodMenuPage = ({
         </section>
       )}
 
-      {/* Category Sections - Only show if not searching */}
-      {searchTerm === "" && (
+      {/* Category Sections - Only show if not searching and data is loaded */}
+      {!loading && searchTerm === "" && (
         <>
           {categories.map((category) => {
             // Filter products for this category

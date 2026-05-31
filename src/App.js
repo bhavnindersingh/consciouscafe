@@ -54,7 +54,7 @@ function AppContent() {
   const { cartItems, addToCart, updateQuantity, removeFromCart, clearCart } = useCart();
 
   // Live delivery menu from manager app's Supabase
-  const { items: products, categories: liveCategories, loading: menuLoading } = useDeliveryMenu();
+  const { items: products, categories: liveCategories, loading: menuLoading, error: menuError } = useDeliveryMenu();
 
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
@@ -154,6 +154,8 @@ function AppContent() {
                 products={products}
                 onAddToCart={handleAddToCart}
                 onProductClick={handleProductClick}
+                loading={menuLoading}
+                error={menuError}
               />
             }
           />
