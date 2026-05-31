@@ -447,10 +447,33 @@
 .products-grid,
 .featured-products-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 340px));
-  gap: 32px;
+  grid-template-columns: 1fr;
+  gap: 24px;
   margin-top: 48px;
-  justify-content: center;
+}
+
+@media (min-width: 640px) {
+  .products-grid,
+  .featured-products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 28px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .products-grid,
+  .featured-products-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+  }
+}
+
+@media (min-width: 1440px) {
+  .products-grid,
+  .featured-products-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 28px;
+  }
 }
 
 /* Product Cards */
@@ -1987,12 +2010,6 @@
 
   .mobile-nav {
     display: block;
-  }
-
-  .products-grid,
-  .featured-products-grid {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
   }
 
   .cart-sidebar {
