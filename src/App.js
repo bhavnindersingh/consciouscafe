@@ -54,7 +54,7 @@ function AppContent() {
   const { cartItems, addToCart, updateQuantity, removeFromCart, clearCart } = useCart();
 
   // Live delivery menu from manager app's Supabase
-  const { items: products, categories: liveCategories, loading: menuLoading, error: menuError } = useDeliveryMenu();
+  const { items: products, categories: liveCategories, mainCategories, categoryGroups, loading: menuLoading, error: menuError } = useDeliveryMenu();
 
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
@@ -127,7 +127,8 @@ function AppContent() {
         cartItems={cartItems}
         onCartToggle={handleCartToggle}
         onCategoryChange={handleCategoryChange}
-        categories={displayCategories}
+        mainCategories={mainCategories}
+        categoryGroups={categoryGroups}
       />
 
       {isHomePage && <Hero />}
@@ -143,6 +144,7 @@ function AppContent() {
                 onProductClick={handleProductClick}
                 onCategoryChange={handleCategoryChange}
                 categories={displayCategories}
+                mainCategories={mainCategories}
               />
             }
           />
@@ -163,6 +165,9 @@ function AppContent() {
             path="/category/:categoryId"
             element={
               <CategoryPage
+                categories={displayCategories}
+                mainCategories={mainCategories}
+                categoryGroups={categoryGroups}
                 products={products}
                 onAddToCart={handleAddToCart}
                 onProductClick={handleProductClick}

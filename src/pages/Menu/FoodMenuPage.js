@@ -243,12 +243,6 @@ const FoodMenuPage = ({
       <div className="category-navigation">
         <div className="container">
           <div className="category-tabs-horizontal">
-            <button
-              className={`category-tab-horizontal ${getCurrentActiveCategory() === "all" ? "active" : ""}`}
-              onClick={() => handleCategoryChange("all")}
-            >
-              All Items
-            </button>
             {categories.map((category) => (
               <button
                 key={category.id}

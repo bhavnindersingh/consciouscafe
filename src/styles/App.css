@@ -378,7 +378,7 @@
 .search-results-section,
 .category-section {
   padding: 60px 0;
-  background: rgba(255, 255, 255, 0.6);
+  background: #FDF0F1;
   position: relative;
 }
 
@@ -447,7 +447,7 @@
 .products-grid,
 .featured-products-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 320px));
   gap: 32px;
   margin-top: 48px;
 }
@@ -521,6 +521,15 @@
   color: #666;
   font-family: 'EB Garamond', serif;
   font-size: 1.2rem;
+}
+
+.home-category-nav {
+  background: #fff;
+  border-bottom: 1px solid #eee;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  padding: 0;
 }
 
 .product-info {
@@ -2543,7 +2552,7 @@
 
 .category-products {
   padding: 80px 0;
-  background: rgba(255, 255, 255, 0.8);
+  background: #FDF0F1;
   position: relative;
 }
 

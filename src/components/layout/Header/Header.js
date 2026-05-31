@@ -1,33 +1,9 @@
 import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 
-const Header = ({ cartItems, onCartToggle, onCategoryChange, categories }) => {
+const Header = ({ cartItems, onCartToggle, onCategoryChange, mainCategories = [], categoryGroups = {} }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isFoodDropdownOpen, setIsFoodDropdownOpen] = useState(false);
-  const [isDrinksDropdownOpen, setIsDrinksDropdownOpen] = useState(false);
-
-  // Food categories
-  const foodCategories = [
-    { id: "toast", name: "Toast" },
-    { id: "all-day-breakfast", name: "All Day Breakfast" },
-    { id: "smoothie-bowls", name: "Smoothie Bowls" },
-    { id: "earth-grills-crisps", name: "Earth Grills/Crisps" },
-    { id: "salads", name: "Salads" },
-    { id: "platters", name: "Platters" },
-    { id: "earth-bowls", name: "Earth Bowls" },
-    { id: "noodle-bowls", name: "Noodle Bowls" },
-    { id: "pasta-pizza", name: "Pasta" },
-    { id: "desserts", name: "Desserts" }
-  ];
-
-  // Drinks categories
-  const drinksCategories = [
-    { id: "coffee", name: "Coffee" },
-    { id: "floral-teas", name: "Floral Teas" },
-    { id: "chai", name: "Chai" },
-    { id: "juices", name: "Juices" },
-    { id: "mocktails", name: "Mocktails" }
-  ];
+  const [openDropdown, setOpenDropdown] = useState(null);
   const cartItemCount = cartItems.reduce(
     (total, item) => total + item.quantity,
     0,
@@ -82,35 +58,35 @@ const Header = ({ cartItems, onCartToggle, onCategoryChange, categories }) => {
                 role="navigation"
                 aria-label="Main navigation"
               >
-                <Link to="/" className="nav-title">
-                  Home
-                </Link>
-                
-                {/* Food Dropdown */}
-                <div 
-                  className="nav-dropdown"
-                  onMouseEnter={() => setIsFoodDropdownOpen(true)}
-                  onMouseLeave={() => setIsFoodDropdownOpen(false)}
-                >
-                  <Link to="/menu" className="nav-title">
-                    Food
-                  </Link>
-                  {isFoodDropdownOpen && (
-                    <div className="dropdown-menu">
-                      {foodCategories.map((category) => (
-                        <Link
-                          key={category.id}
-                          to={`/category/${category.id}`}
-                          className="dropdown-item"
-                          onClick={() => setIsFoodDropdownOpen(false)}
-                        >
-                          {category.name}
-                        </Link>
-                      ))}
+                {mainCategories.map((mainCat) => {
+                  const subs = categoryGroups[mainCat.id] || [];
+                  return (
+                    <div
+                      key={mainCat.id}
+                      className="nav-dropdown"
+                      onMouseEnter={() => setOpenDropdown(mainCat.id)}
+                      onMouseLeave={() => setOpenDropdown(null)}
+                    >
+                      <Link to={`/category/${mainCat.id}`} className="nav-title">
+                        {mainCat.name}
+                      </Link>
+                      {openDropdown === mainCat.id && subs.length > 0 && (
+                        <div className="dropdown-menu">
+                          {subs.map((sub) => (
+                            <Link
+                              key={sub.id}
+                              to={`/category/${sub.id}`}
+                              className="dropdown-item"
+                              onClick={() => setOpenDropdown(null)}
+                            >
+                              {sub.name}
+                            </Link>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-
+                  );
+                })}
               </nav>
 
               {/* Center Logo */}
@@ -161,20 +137,16 @@ const Header = ({ cartItems, onCartToggle, onCategoryChange, categories }) => {
             aria-label="Mobile navigation"
           >
             <div className="container">
-              <Link
-                to="/"
-                className="mobile-nav-item"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Home
-              </Link>
-              <Link
-                to="/menu"
-                className="mobile-nav-item"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Food Menu
-              </Link>
+              {mainCategories.map((mainCat) => (
+                <Link
+                  key={mainCat.id}
+                  to={`/category/${mainCat.id}`}
+                  className="mobile-nav-item"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {mainCat.name}
+                </Link>
+              ))}
               <Link
                 to="/about"
                 className="mobile-nav-item"

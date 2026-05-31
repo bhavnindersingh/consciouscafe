@@ -21,19 +21,50 @@ export function useDeliveryMenu() {
       .finally(() => setLoading(false));
   }, []);
 
-  // Unique categories in the order they appear, sorted alphabetically by name
+  const toLabel = (slug) =>
+    slug.replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
+
+  // Top-level POS categories (Food, Drinks, Patisserie…)
+  const mainCategories = useMemo(() => {
+    const seen = new Set();
+    const cats = [];
+    items.forEach((item) => {
+      if (!seen.has(item.mainCategory)) {
+        seen.add(item.mainCategory);
+        cats.push({ id: item.mainCategory, name: toLabel(item.mainCategory) });
+      }
+    });
+    return cats.sort((a, b) => a.name.localeCompare(b.name));
+  }, [items]);
+
+  // Sub-categories grouped by main category
+  const categoryGroups = useMemo(() => {
+    const groups = {};
+    items.forEach((item) => {
+      if (!groups[item.mainCategory]) groups[item.mainCategory] = new Set();
+      // Only add sub-category if it differs from the main category
+      if (item.category !== item.mainCategory) {
+        groups[item.mainCategory].add(item.category);
+      }
+    });
+    return Object.fromEntries(
+      Object.entries(groups).map(([main, subSet]) => [
+        main,
+        [...subSet]
+          .map((id) => ({ id, name: toLabel(id) }))
+          .sort((a, b) => a.name.localeCompare(b.name)),
+      ])
+    );
+  }, [items]);
+
+  // Flat sub-category list (for FoodMenuPage nav pills)
   const categories = useMemo(() => {
     const seen = new Set();
     const cats = [];
     items.forEach((item) => {
       if (!seen.has(item.category)) {
         seen.add(item.category);
-        cats.push({
-          id: item.category,
-          name: item.category
-            .replace(/-/g, ' ')
-            .replace(/\b\w/g, (l) => l.toUpperCase()),
-        });
+        cats.push({ id: item.category, name: toLabel(item.category) });
       }
     });
     return cats.sort((a, b) => a.name.localeCompare(b.name));
@@ -61,5 +92,5 @@ export function useDeliveryMenu() {
     [items]
   );
 
-  return { items, loading, error, categories, getByCategory, getBySlug, searchItems };
+  return { items, loading, error, categories, mainCategories, categoryGroups, getByCategory, getBySlug, searchItems };
 }

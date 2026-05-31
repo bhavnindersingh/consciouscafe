@@ -13,10 +13,9 @@ const toProduct = (recipe) => ({
   name: recipe.name,
   description: recipe.description || '',
   price: parseFloat(recipe.selling_price) || 0,
-  // sub_category is the fine-grained grouping (e.g. "Coffee", "Juices")
-  // fall back to the broad category if sub_category is not set
-  category: toSlug(recipe.sub_category || recipe.category),
-  image: recipe.delivery_image_url || recipe.image_url || null,
+  mainCategory: toSlug(recipe.category),                        // food, drinks, patisserie…
+  category: toSlug(recipe.sub_category || recipe.category),     // coffee, juices, toast… (for URL routing)
+  image: recipe.image_url || recipe.delivery_image_url || null,
   sku: recipe.sku || null,
   taxRate: parseFloat(recipe.tax_rate) || 5,
 });
@@ -27,7 +26,6 @@ export async function getDeliveryMenu() {
     .select(
       'id, name, description, selling_price, category, sub_category, image_url, delivery_image_url, sku, tax_rate'
     )
-    .eq('available_for_delivery', true)
     .eq('is_production_recipe', true)
     .order('category')
     .order('name');

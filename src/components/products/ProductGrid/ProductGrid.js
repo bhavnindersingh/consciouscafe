@@ -1,4 +1,4 @@
-import React, { useMemo, startTransition } from "react";
+import React, { useState, useMemo, startTransition } from "react";
 import { useNavigate } from "react-router-dom";
 import ProductCard from "../ProductCard/ProductCard";
 import InstagramFeed from "../../social/InstagramFeed/InstagramFeed";
@@ -10,34 +10,38 @@ const ProductGrid = ({
   onAddToCart,
   onProductClick,
   onCategoryChange,
-  categories,
+  categories = [],
+  mainCategories = [],
 }) => {
   const navigate = useNavigate();
+  const [activeCategory, setActiveCategory] = useState(null);
 
-  // Use categories from props instead of defining them here
-  const displayCategories = categories || [];
-  
-  // Memoize SEO data for home page
   const seoData = useMemo(() => generatePageSEO('home', {
     structuredData: [
       generateStructuredData('website'),
       generateStructuredData('restaurant'),
-      generateStructuredData('breadcrumb', {
-        items: [
-          { name: 'Home', url: '/' },
-        ]
-      })
+      generateStructuredData('breadcrumb', { items: [{ name: 'Home', url: '/' }] })
     ]
   }), []);
 
-  // Memoize featured products calculation
-  const featuredProducts = useMemo(() => {
-    if (!products) return [];
-    
-    const bestsellers = products.filter((product) => product.bestseller);
-    // If no bestsellers are marked, just take the first 6 products
-    return bestsellers.length > 0 ? bestsellers : products.slice(0, 6);
-  }, [products]);
+  // Default to first sub-category once data loads
+  React.useEffect(() => {
+    if (!activeCategory && categories.length > 0) {
+      setActiveCategory(categories[0].id);
+    }
+  }, [categories, activeCategory]);
+
+  // Products filtered by selected sub-category
+  const displayProducts = useMemo(() => {
+    if (!products || !activeCategory) return [];
+    return products.filter((p) => p.category === activeCategory);
+  }, [products, activeCategory]);
+
+  const featuredProducts = useMemo(() => displayProducts.slice(0, 6), [displayProducts]);
+
+  const handleCategoryClick = (catId) => {
+    setActiveCategory(catId);
+  };
 
   return (
     <div className="product-section">
@@ -48,28 +52,60 @@ const ProductGrid = ({
         url={seoData.url}
         structuredData={seoData.structuredData}
       />
-      
-      {/* Our Favorites Section */}
+
+      {/* Dynamic category filter bar */}
+      {categories.length > 0 && (
+        <div className="home-category-nav">
+          <div className="container">
+            <div className="category-tabs-horizontal">
+              {categories.map((cat) => (
+                <button
+                  key={cat.id}
+                  className={`category-tab-horizontal ${activeCategory === cat.id ? "active" : ""}`}
+                  onClick={() => handleCategoryClick(cat.id)}
+                >
+                  {cat.name}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Featured / filtered products */}
       <section className="featured-section">
         <div className="container">
           <div className="section-header">
-            <h2>Bestsellers</h2>
-            <p>
-              Discover our most loved food and drinks, crafted with care
-              and quality ingredients.
-            </p>
+            <h2>{categories.find(c => c.id === activeCategory)?.name || ""}</h2>
           </div>
 
-          <div className="featured-products-grid">
-            {featuredProducts.map((product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                onAddToCart={onAddToCart}
-                onProductClick={onProductClick}
-              />
-            ))}
-          </div>
+          {featuredProducts.length > 0 ? (
+            <div className="featured-products-grid">
+              {featuredProducts.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  onAddToCart={onAddToCart}
+                  onProductClick={onProductClick}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="menu-status-message">
+              <p>No items in this category yet.</p>
+            </div>
+          )}
+
+          {activeCategory && (
+            <div style={{ textAlign: 'center', marginTop: '32px' }}>
+              <button
+                className="learn-more-btn"
+                onClick={() => startTransition(() => navigate(`/category/${activeCategory}`))}
+              >
+                View All {categories.find(c => c.id === activeCategory)?.name}
+              </button>
+            </div>
+          )}
         </div>
       </section>
 
@@ -84,11 +120,10 @@ const ProductGrid = ({
       <section className="about-section">
         <div className="container">
           <div className="about-content">
-            <h2>
-              Welcome to Conscious Cafe, where every dish tells a story of
-              quality and care.
-            </h2>
-            <button className="learn-more-btn" onClick={() => startTransition(() => navigate("/about"))}>About Us</button>
+            <h2>Welcome to Conscious Cafe, where every dish tells a story of quality and care.</h2>
+            <button className="learn-more-btn" onClick={() => startTransition(() => navigate("/about"))}>
+              About Us
+            </button>
           </div>
         </div>
       </section>
