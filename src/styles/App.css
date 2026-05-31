@@ -509,6 +509,12 @@
   transform: scale(1.02);
 }
 
+.product-image-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #e8ede9 0%, #d4ddd5 100%);
+}
+
 .product-info {
   padding: 0;
   position: relative;

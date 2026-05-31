@@ -33,14 +33,18 @@ const ProductCard = ({ product, onAddToCart, onProductClick }) => {
       )}
       
       <div className="product-image">
-        <img
-          src={product.image}
-          loading="lazy"
-          decoding="async"
-          width="400"
-          height="300"
-          alt={`${product.name} - ${product.description || 'Artisanal vegan dish at Conscious Cafe Auroville'}`}
-        />
+        {product.image ? (
+          <img
+            src={product.image}
+            loading="lazy"
+            decoding="async"
+            width="400"
+            height="300"
+            alt={`${product.name} - ${product.description || 'Artisanal vegan dish at Conscious Cafe Auroville'}`}
+          />
+        ) : (
+          <div className="product-image-placeholder" aria-label={product.name} />
+        )}
       </div>
       
       <div className="product-info">

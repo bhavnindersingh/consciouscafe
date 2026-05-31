@@ -41,9 +41,9 @@ import FacilitatorRequests from "./pages/Dashboard/FacilitatorRequests";
 import RequestFacilitatorAccess from "./pages/Public/RequestFacilitatorAccess";
 
 // Data & Context
-import { products } from "./data/products";
 import { AuthProvider } from "./context/AuthContext";
 import { CartProvider, useCart } from "./context/CartContext";
+import { useDeliveryMenu } from "./hooks/useDeliveryMenu";
 
 function AppContent() {
   const navigate = useNavigate();
@@ -53,74 +53,16 @@ function AppContent() {
   // Use cart context instead of local state
   const { cartItems, addToCart, updateQuantity, removeFromCart, clearCart } = useCart();
 
+  // Live delivery menu from manager app's Supabase
+  const { items: products, categories: liveCategories, loading: menuLoading } = useDeliveryMenu();
+
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [isProductPageOpen, setIsProductPageOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
-  // Memoize categories to prevent unnecessary re-renders
-  const displayCategories = useMemo(() => [
-    {
-      id: "toast",
-      name: "Toast",
-      icon: "🍞",
-      description: "Artisanal toasts with various toppings",
-    },
-    {
-      id: "all-day-breakfast",
-      name: "All Day Breakfast",
-      icon: "🍳",
-      description: "Breakfast favorites served all day",
-    },
-    {
-      id: "smoothie-bowls",
-      name: "Smoothie Bowls",
-      icon: "🥣",
-      description: "Nutritious and refreshing smoothie bowls",
-    },
-    {
-      id: "earth-grills-crisps",
-      name: "Earth Grills/Crisps",
-      icon: "🌽",
-      description: "Grilled vegetables and crispy snacks",
-    },
-    {
-      id: "salads",
-      name: "Salads",
-      icon: "🥗",
-      description: "Fresh and healthy salad options",
-    },
-    {
-      id: "platters",
-      name: "Platters",
-      icon: "🍽️",
-      description: "Sharing platters for groups",
-    },
-    {
-      id: "earth-bowls",
-      name: "Earth Bowls",
-      icon: "🥙",
-      description: "Wholesome bowls packed with goodness",
-    },
-    {
-      id: "noodle-bowls",
-      name: "Noodle Bowls",
-      icon: "🍜",
-      description: "Flavorful noodle dishes from around the world",
-    },
-    {
-      id: "pasta-pizza",
-      name: "Pasta",
-      icon: "🍝",
-      description: "Italian pasta classics with a conscious twist",
-    },
-    {
-      id: "desserts",
-      name: "Desserts",
-      icon: "🍰",
-      description: "Sweet treats to end your meal",
-    },
-  ], []);
+  // Build display categories from live data
+  const displayCategories = useMemo(() => liveCategories, [liveCategories]);
 
   // Scroll to top whenever location changes
   useEffect(() => {
