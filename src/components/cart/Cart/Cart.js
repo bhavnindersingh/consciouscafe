@@ -1,152 +1,73 @@
 import React from 'react';
 
-const Cart = ({ isOpen, onClose, cartItems, onUpdateQuantity, onRemoveItem, onCheckout }) => {
-  const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  const gst = subtotal * 0.05; // 5% GST
-  const total = subtotal + gst;
+const Arrow = ({ s = 16 }) => (
+  <svg className="arr" width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
+    <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
 
-  if (!isOpen) return null;
+function imgResized(src, w = 160) {
+  if (!src) return '';
+  try {
+    const url = new URL(src);
+    url.searchParams.set('w', w);
+    url.searchParams.set('h', Math.round(w * 1.2));
+    url.searchParams.set('mode', 'crop');
+    url.searchParams.set('fm', 'auto');
+    return url.toString();
+  } catch { return src; }
+}
+
+const Cart = ({ isOpen, onClose, cartItems = [], onUpdateQuantity, onRemoveItem, onCheckout }) => {
+  const subtotal = cartItems.reduce((s, x) => s + x.price * (x.quantity || 1), 0);
 
   return (
-    <div className="cart-overlay" onClick={onClose}>
-      <div className="cart-sidebar" onClick={e => e.stopPropagation()}>
-        <div className="cart-header">
-          <div className="cart-header-content">
-            <div className="cart-icon-wrapper">
-              <svg className="cart-header-icon" viewBox="0 0 24 24" width="24" height="24">
-                <path fill="currentColor" d="M17 18a2 2 0 0 1 2 2 2 2 0 0 1-2 2 2 2 0 0 1-2-2c0-1.11.89-2 2-2M1 2h3.27l.94 2H20a1 1 0 0 1 1 1c0 .17-.05.34-.12.5l-3.58 6.47c-.34.61-1 1.03-1.8 1.03H8.1l-.9 1.63-.03.12a.25.25 0 0 0 .25.25H19v2H7a2 2 0 0 1-2-2c0-.35.09-.68.24-.96l1.36-2.45L3 4H1V2m6 16a2 2 0 0 1 2 2 2 2 0 0 1-2 2 2 2 0 0 1-2-2c0-1.11.89-2 2-2m9-7l2.78-5H6.14l4.72 5H16Z"/>
-              </svg>
-              <h2>Shopping Bag</h2>
+    <>
+      <div className={`scrim ${isOpen ? 'open' : ''}`} onClick={onClose} />
+      <aside className={`drawer ${isOpen ? 'open' : ''}`} aria-hidden={!isOpen}>
+        <div className="drawer-head">
+          <h3>Your Bag</h3>
+          <button className="x" onClick={onClose} aria-label="Close">×</button>
+        </div>
+
+        {cartItems.length === 0 ? (
+          <div className="drawer-body">
+            <div className="cart-empty">
+              <div className="ce-mark">Nothing here yet</div>
+              <p style={{ fontFamily: 'var(--serif)', fontSize: 18 }}>A quiet plate awaits. Wander the menu and gather what calls to you.</p>
             </div>
-            <button className="close-btn" onClick={onClose}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <path d="M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                <path d="M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-              </svg>
-            </button>
           </div>
-          {cartItems.length > 0 && (
-            <div className="cart-summary">
-              <span className="item-count">{cartItems.length} {cartItems.length === 1 ? 'item' : 'items'}</span>
-              <span className="cart-total-preview">₹{total.toFixed(2)}</span>
-            </div>
-          )}
-        </div>
-
-        <div className="cart-content">
-          {cartItems.length === 0 ? (
-            <div className="empty-cart">
-              <div className="empty-cart-icon">
-                <svg viewBox="0 0 24 24" width="48" height="48">
-                  <path fill="currentColor" d="M17 18a2 2 0 0 1 2 2 2 2 0 0 1-2 2 2 2 0 0 1-2-2c0-1.11.89-2 2-2M1 2h3.27l.94 2H20a1 1 0 0 1 1 1c0 .17-.05.34-.12.5l-3.58 6.47c-.34.61-1 1.03-1.8 1.03H8.1l-.9 1.63-.03.12a.25.25 0 0 0 .25.25H19v2H7a2 2 0 0 1-2-2c0-.35.09-.68.24-.96l1.36-2.45L3 4H1V2m6 16a2 2 0 0 1 2 2 2 2 0 0 1-2 2 2 2 0 0 1-2-2c0-1.11.89-2 2-2m9-7l2.78-5H6.14l4.72 5H16Z"/>
-                </svg>
-              </div>
-              <h3>Your bag is empty</h3>
-              <p>Add some delicious treats to get started!</p>
-              <button className="continue-shopping-btn" onClick={onClose}>
-                <span>Continue Shopping</span>
-              </button>
-            </div>
-          ) : (
-            <>
-              <div className="cart-items">
-                {cartItems.map(item => (
-                  <div key={item.id} className="cart-item">
-                    <div className="item-image">
-                      <img src={item.image} alt={`${item.name} from Conscious Cafe - ${item.category?.replace(/-/g, ' ') || 'artisanal'} dish`} />
-                    </div>
-                    
-                    <div className="item-details">
-                      <h4>{item.name}</h4>
-                      <p className="item-price">₹{item.price} each</p>
-                      
-                      <div className="quantity-controls">
-                        <button 
-                          className="quantity-btn"
-                          onClick={() => onUpdateQuantity(item.id, item.quantity - 1)}
-                          disabled={item.quantity <= 1}
-                        >
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                            <path d="M5 12H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                          </svg>
-                        </button>
-                        <span className="quantity-display">{item.quantity}</span>
-                        <button 
-                          className="quantity-btn"
-                          onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
-                        >
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                            <path d="M12 5V19" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                            <path d="M5 12H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                          </svg>
-                        </button>
-                      </div>
-                      
-                      <button 
-                        className="remove-btn"
-                        onClick={() => onRemoveItem(item.id)}
-                      >
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                          <path d="M3 6H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                          <path d="M19 6V20C19 21 18 22 17 22H7C6 22 5 21 5 20V6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                          <path d="M8 6V4C8 3 9 2 10 2H14C15 2 16 3 16 4V6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                        </svg>
-                        Remove
-                      </button>
-                    </div>
-                    
-                    <div className="item-total">
-                      <span className="total-label">Total</span>
-                      <span className="total-amount">₹{item.price * item.quantity}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="cart-footer">
-                <div className="cart-total-section">
-                  <div className="total-row">
-                    <span className="total-label">Subtotal</span>
-                    <span className="total-amount">₹{subtotal.toFixed(2)}</span>
-                  </div>
-                  <div className="total-row gst-row">
-                    <span className="total-label">GST (5%)</span>
-                    <span className="total-amount">₹{gst.toFixed(2)}</span>
-                  </div>
-                  <div className="total-row final-total">
-                    <span className="total-label">Total</span>
-                    <span className="total-amount">₹{total.toFixed(2)}</span>
-                  </div>
-                  <div className="total-row delivery-note">
-                    <span className="delivery-text">🚚 Free delivery on orders above ₹500</span>
+        ) : (
+          <div className="drawer-body">
+            {cartItems.map(item => (
+              <div className="cart-row" key={item.id}>
+                {item.image && <img src={imgResized(item.image, 128)} alt={item.name} />}
+                <div>
+                  <h5>{item.name}</h5>
+                  <div className="cr-meta">
+                    <button onClick={() => onUpdateQuantity(item.id, (item.quantity || 1) - 1)}>−</button>
+                    <span>{item.quantity || 1}</span>
+                    <button onClick={() => onUpdateQuantity(item.id, (item.quantity || 1) + 1)}>+</button>
+                    <button onClick={() => onRemoveItem(item.id)} style={{ marginLeft: 6 }}>remove</button>
                   </div>
                 </div>
-                
-                <div className="cart-actions">
-                  <button 
-                    className="checkout-btn"
-                    onClick={onCheckout}
-                  >
-                    <span>Proceed to Checkout</span>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                      <path d="M5 12H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                      <path d="M12 5L19 12L12 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                    </svg>
-                  </button>
-                  
-                  <button 
-                    className="continue-shopping-btn"
-                    onClick={onClose}
-                  >
-                    Continue Shopping
-                  </button>
-                </div>
+                <div className="cr-price">₹{(item.price * (item.quantity || 1)).toLocaleString('en-IN')}</div>
               </div>
-            </>
-          )}
-        </div>
-      </div>
-    </div>
+            ))}
+          </div>
+        )}
+
+        {cartItems.length > 0 && (
+          <div className="drawer-foot">
+            <div className="ftot">
+              <span className="l">Subtotal</span>
+              <span className="v">₹{subtotal.toLocaleString('en-IN')}</span>
+            </div>
+            <button className="btn solid" onClick={onCheckout}>Proceed to Checkout <Arrow /></button>
+          </div>
+        )}
+      </aside>
+    </>
   );
 };
 

@@ -1,178 +1,92 @@
-import React, { useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 
-const Header = ({ cartItems, onCartToggle, onCategoryChange, mainCategories = [], categoryGroups = {} }) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [openDropdown, setOpenDropdown] = useState(null);
-  const cartItemCount = cartItems.reduce(
-    (total, item) => total + item.quantity,
-    0,
-  );
+const Arrow = ({ s = 16 }) => (
+  <svg className="arr" width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
+    <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const NAV_ITEMS = [
+  { id: 'home', label: 'home', path: '/' },
+  { id: 'menu', label: 'menu', path: '/menu' },
+  { id: 'story', label: 'story', anchor: true },
+  { id: 'gather', label: 'sanctuary', anchor: true },
+  { id: 'visit', label: 'visit', anchor: true },
+];
+
+const Header = ({ cartItems = [], onCartToggle }) => {
+  const [solid, setSolid] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  
+
+  const cartCount = cartItems.reduce((t, i) => t + (i.quantity || 1), 0);
+  const isHome = location.pathname === '/';
+
+  useEffect(() => {
+    const onScroll = () => setSolid(window.scrollY > window.innerHeight * 0.7);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  const handleNav = (item) => {
+    setMobileOpen(false);
+    if (item.path) {
+      navigate(item.path);
+    } else if (item.anchor) {
+      if (!isHome) {
+        navigate('/');
+        setTimeout(() => scrollToAnchor(item.id), 80);
+      } else {
+        scrollToAnchor(item.id);
+      }
+    }
+  };
+
+  const scrollToAnchor = (id) => {
+    const el = document.getElementById(id);
+    if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 60, behavior: 'smooth' });
+  };
+
+  const forceSolid = location.pathname !== '/';
+  const isSolid = solid || forceSolid;
 
   return (
-    <div>
-      <a href="#main-content" className="skip-link">
-        Skip to main content
-      </a>
-      <header className="header" role="banner">
-        {/* Main Header */}
-        <div className="header-main">
-          <div className="container">
-            <div className="header-content">
-              {/* Mobile Burger Menu - Left Side */}
-              <button
-                type="button"
-                className="mobile-menu-btn"
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                aria-label="Toggle mobile menu"
-                aria-expanded={isMenuOpen}
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <path
-                    d="M3 12H21"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                  />
-                  <path
-                    d="M3 6H21"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                  />
-                  <path
-                    d="M3 18H21"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                  />
-                </svg>
-              </button>
+    <>
+      <a href="#main-content" className="skip-link">Skip to main content</a>
 
-              {/* Left Navigation - Desktop only */}
-              <nav
-                className="desktop-nav"
-                role="navigation"
-                aria-label="Main navigation"
-              >
-                {mainCategories.map((mainCat) => {
-                  const subs = categoryGroups[mainCat.id] || [];
-                  return (
-                    <div
-                      key={mainCat.id}
-                      className="nav-dropdown"
-                      onMouseEnter={() => setOpenDropdown(mainCat.id)}
-                      onMouseLeave={() => setOpenDropdown(null)}
-                    >
-                      <Link to={`/category/${mainCat.id}`} className="nav-title">
-                        {mainCat.name}
-                      </Link>
-                      {openDropdown === mainCat.id && subs.length > 0 && (
-                        <div className="dropdown-menu">
-                          {subs.map((sub) => (
-                            <Link
-                              key={sub.id}
-                              to={`/category/${sub.id}`}
-                              className="dropdown-item"
-                              onClick={() => setOpenDropdown(null)}
-                            >
-                              {sub.name}
-                            </Link>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </nav>
-
-              {/* Center Logo */}
-              <div className="logo">
-                <Link to="/">
-                  <img
-                    src="/android-icon-192x192.png"
-                    alt="Conscious Cafe"
-                    className="logo-img"
-                  />
-                </Link>
-              </div>
-
-              {/* Right Actions - Cart only */}
-              <div className="header-actions flex-gap-15">
-                <button
-                  type="button"
-                  className="cart-btn"
-                  onClick={onCartToggle}
-                  aria-label={`Shopping cart with ${cartItemCount} items`}
-                >
-                  <span className="cart-text">Bag</span>
-                  <svg
-                    className="cart-icon"
-                    viewBox="0 0 24 24"
-                    width="20"
-                    height="20"
-                  >
-                    <path
-                      fill="currentColor"
-                      d="M17 18a2 2 0 0 1 2 2 2 2 0 0 1-2 2 2 2 0 0 1-2-2c0-1.11.89-2 2-2M1 2h3.27l.94 2H20a1 1 0 0 1 1 1c0 .17-.05.34-.12.5l-3.58 6.47c-.34.61-1 1.03-1.8 1.03H8.1l-.9 1.63-.03.12a.25.25 0 0 0 .25.25H19v2H7a2 2 0 0 1-2-2c0-.35.09-.68.24-.96l1.36-2.45L3 4H1V2m6 16a2 2 0 0 1 2 2 2 2 0 0 1-2 2 2 2 0 0 1-2-2c0-1.11.89-2 2-2m9-7l2.78-5H6.14l4.72 5H16Z"
-                    />
-                  </svg>
-                  {cartItemCount > 0 && (
-                    <span className="cart-badge">{cartItemCount}</span>
-                  )}
-                </button>
-              </div>
-            </div>
-          </div>
+      <nav className={`nav ${isSolid ? 'solid' : ''}`} role="banner">
+        <div className="nav-links">
+          <button className={`nav-link ${location.pathname === '/' ? 'active' : ''}`} onClick={() => handleNav(NAV_ITEMS[0])}>home</button>
+          <button className={`nav-link ${location.pathname === '/menu' ? 'active' : ''}`} onClick={() => handleNav(NAV_ITEMS[1])}>menu</button>
+          <button className="nav-link" onClick={() => handleNav(NAV_ITEMS[2])}>story</button>
         </div>
 
-        {/* Mobile Navigation */}
-        {isMenuOpen && (
-          <div
-            className="mobile-nav"
-            role="navigation"
-            aria-label="Mobile navigation"
-          >
-            <div className="container">
-              {mainCategories.map((mainCat) => (
-                <Link
-                  key={mainCat.id}
-                  to={`/category/${mainCat.id}`}
-                  className="mobile-nav-item"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {mainCat.name}
-                </Link>
-              ))}
-              <Link
-                to="/about"
-                className="mobile-nav-item"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                About Us
-              </Link>
-              <Link
-                to="/contact"
-                className="mobile-nav-item"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Contact
-              </Link>
-              <Link
-                to="/delivery"
-                className="mobile-nav-item"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Delivery
-              </Link>
-            </div>
-          </div>
-        )}
-      </header>
-    </div>
+        <button className="brand" onClick={() => navigate('/')}>
+          <span className="b1">Conscious Café</span>
+          <span className="b2">Auroville Road · est. 2016</span>
+        </button>
+
+        <div className="nav-right">
+          <button className="nav-link" onClick={() => handleNav(NAV_ITEMS[3])}>sanctuary</button>
+          <button className="nav-link" onClick={() => handleNav(NAV_ITEMS[4])}>visit</button>
+          <button className="bag" onClick={onCartToggle} aria-label={`Shopping bag, ${cartCount} items`}>
+            bag {cartCount > 0 && <span className="count">{cartCount}</span>}
+          </button>
+          <button className="nav-burger" onClick={() => setMobileOpen(o => !o)} aria-label="Toggle menu">
+            <span /><span /><span />
+          </button>
+        </div>
+      </nav>
+
+      <div className={`mobile-menu ${mobileOpen ? 'open' : ''}`}>
+        {NAV_ITEMS.map(n => (
+          <button key={n.id} onClick={() => handleNav(n)}>{n.label}</button>
+        ))}
+      </div>
+    </>
   );
 };
 

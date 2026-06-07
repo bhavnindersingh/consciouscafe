@@ -1,347 +1,128 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import ProductCard from "../../components/products/ProductCard/ProductCard";
-import SEO from "../../components/seo/SEO/SEO";
-import { generatePageSEO, generateStructuredData } from "../../utils/seoData";
+import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
+import SEO from '../../components/seo/SEO/SEO';
+import { generatePageSEO } from '../../utils/seoData';
 
-const FoodMenuPage = ({
-  categories,
-  products,
-  onAddToCart,
-  onProductClick,
-  loading = false,
-  error = null,
-}) => {
-  const [activeCategory, setActiveCategory] = useState("all");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filteredProducts, setFilteredProducts] = useState([]);
-  const [featuredProducts, setFeaturedProducts] = useState([]);
-  const [scrollActiveCategory, setScrollActiveCategory] = useState("all");
+const Arrow = ({ s = 16 }) => (
+  <svg className="arr" width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
+    <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
 
-  // Initialize with bestsellers as featured products
-  useEffect(() => {
-    if (products && products.length > 0) {
-      const bestsellers = products.filter((product) => product.bestseller);
-      setFeaturedProducts(
-        bestsellers.length > 0 ? bestsellers : products.slice(0, 4),
-      );
-    }
+const Reveal = ({ children, className = '', delay = 0, as: Tag = 'div', style }) => (
+  <Tag style={style} className={`reveal${delay ? ` d${delay}` : ''} ${className}`}>{children}</Tag>
+);
+
+function imgUrl(src, { w, h, q = 84, mode } = {}) {
+  if (!src) return '';
+  try {
+    const url = new URL(src);
+    if (w) url.searchParams.set('w', w);
+    if (h) url.searchParams.set('h', h);
+    if (q !== undefined) url.searchParams.set('q', q);
+    if (mode) url.searchParams.set('mode', mode);
+    url.searchParams.set('fm', 'auto');
+    return url.toString();
+  } catch { return src; }
+}
+
+const catName = (slug = '') =>
+  slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+
+function DishCard({ product, onProductClick, onAddToCart }) {
+  return (
+    <div className="dish-card" onClick={() => onProductClick(product)}>
+      <div className="dc-media">
+        {product.image
+          ? <img src={imgUrl(product.image, { w: 720, h: 900, mode: 'crop' })} alt={product.name} loading="lazy" />
+          : <div style={{ width: '100%', height: '100%', background: 'var(--paper-deep)' }} />
+        }
+        <button
+          className="dc-add"
+          aria-label={`Add ${product.name}`}
+          onClick={e => { e.stopPropagation(); onAddToCart(product); }}
+        >+</button>
+      </div>
+      <div className="dc-head">
+        <h4>{product.name}</h4>
+        <span className="dc-price">₹{product.price}</span>
+      </div>
+      {product.description && <p>{product.description}</p>}
+    </div>
+  );
+}
+
+const FoodMenuPage = ({ products = [], onAddToCart, onProductClick, loading, error, initialCat }) => {
+  const seoData = generatePageSEO('menu', {});
+
+  const categories = useMemo(() => {
+    const seen = new Set();
+    const list = [];
+    products.forEach(p => {
+      if (!seen.has(p.category)) {
+        seen.add(p.category);
+        list.push({ id: p.category, name: catName(p.category) });
+      }
+    });
+    return list;
   }, [products]);
 
-  // Filter products based on search term only
-  useEffect(() => {
-    let filtered = [...products];
+  const [activeCat, setActiveCat] = useState(initialCat || null);
 
-    // Apply search filter
-    if (searchTerm.trim() !== "") {
-      filtered = filtered.filter(
-        (product) =>
-          product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          product.description.toLowerCase().includes(searchTerm.toLowerCase()),
-      );
-    }
+  React.useEffect(() => {
+    if (!activeCat && categories.length > 0) setActiveCat(categories[0].id);
+  }, [categories, activeCat]);
 
-    setFilteredProducts(filtered);
-  }, [products, searchTerm]);
+  React.useEffect(() => {
+    if (initialCat) setActiveCat(initialCat);
+  }, [initialCat]);
 
-  // Handle category change - scroll to section instead of filtering
-  const handleCategoryChange = (categoryId) => {
-    if (categoryId === "all") {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    } else {
-      const element = document.getElementById(`section-${categoryId}`);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    }
-  };
-
-  // Format category name for display
-  const formatCategoryName = (categoryId) => {
-    return categoryId
-      .replace(/-/g, " ")
-      .replace(/\b\w/g, (l) => l.toUpperCase());
-  };
-
-  // Scroll spy functionality
-  useEffect(() => {
-    const handleScroll = () => {
-      const sections = categories.map(category => ({
-        id: category.id,
-        element: document.getElementById(`section-${category.id}`)
-      })).filter(section => section.element);
-
-      // Better mobile-responsive offset calculation
-      const isMobile = window.innerWidth <= 768;
-      const headerHeight = isMobile ? 120 : 140; // Adjust for mobile header
-      const viewportHeight = window.innerHeight;
-      const scrollPosition = window.scrollY + (viewportHeight * 0.3); // Use 30% of viewport height
-      
-      let currentSection = "all";
-      
-      // Improved section detection algorithm
-      for (let i = 0; i < sections.length; i++) {
-        const section = sections[i];
-        const nextSection = sections[i + 1];
-        
-        const sectionTop = section.element.offsetTop - headerHeight;
-        const sectionBottom = nextSection 
-          ? nextSection.element.offsetTop - headerHeight
-          : document.documentElement.scrollHeight;
-        
-        // Check if scroll position is within this section's bounds
-        if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
-          currentSection = section.id;
-          break;
-        }
-      }
-      
-      setScrollActiveCategory(currentSection);
-    };
-
-    // Throttle scroll events for better performance on mobile
-    let ticking = false;
-    const throttledHandleScroll = () => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          handleScroll();
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-
-    window.addEventListener('scroll', throttledHandleScroll, { passive: true });
-    handleScroll(); // Check initial position
-
-    return () => window.removeEventListener('scroll', throttledHandleScroll);
-  }, [categories]);
-
-  // JavaScript sticky navigation - Hero visibility based
-  useEffect(() => {
-    let ticking = false;
-    
-    const calculateStickyTrigger = () => {
-      const heroElement = document.querySelector('.food-menu-hero');
-      if (!heroElement) return 150; // fallback
-      
-      const heroHeight = heroElement.offsetHeight;
-      const heroTop = heroElement.offsetTop;
-      const isMobile = window.innerWidth <= 768;
-      const triggerPercentage = isMobile ? 0.6 : 0.75;
-      
-      return heroTop + (heroHeight * triggerPercentage);
-    };
-    
-    const handleScroll = () => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          const categoryNav = document.querySelector('.category-navigation');
-          const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-          const triggerPoint = calculateStickyTrigger();
-          
-          if (categoryNav) {
-            if (scrollTop > triggerPoint) {
-              categoryNav.classList.add('sticky');
-              categoryNav.classList.remove('static');
-            } else {
-              categoryNav.classList.remove('sticky');
-              categoryNav.classList.add('static');
-            }
-          }
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-
-    // Initial calculation and event listener
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('resize', handleScroll, { passive: true }); // Recalculate on resize
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('resize', handleScroll);
-    };
-  }, []);
-
-
-  // Get the currently active category for navigation highlighting
-  const getCurrentActiveCategory = () => {
-    return scrollActiveCategory;
-  };
-
-  // Auto-scroll navigation bar to show active category
-  useEffect(() => {
-    const scrollNavigationToActive = () => {
-      const navigationContainer = document.querySelector('.category-tabs-horizontal');
-      const activeTab = document.querySelector(`.category-tab-horizontal.active`);
-      
-      if (navigationContainer && activeTab) {
-        const containerRect = navigationContainer.getBoundingClientRect();
-        const activeTabRect = activeTab.getBoundingClientRect();
-        
-        // Calculate scroll position to center the active tab
-        const scrollLeft = activeTab.offsetLeft - (containerRect.width / 2) + (activeTabRect.width / 2);
-        
-        // Smooth scroll the navigation container
-        navigationContainer.scrollTo({
-          left: scrollLeft,
-          behavior: 'smooth'
-        });
-      }
-    };
-
-    // Trigger auto-scroll when active category changes
-    scrollNavigationToActive();
-  }, [scrollActiveCategory]);
-
-  // Generate SEO data for food menu page
-  const seoData = generatePageSEO('menu', {
-    structuredData: [
-      generateStructuredData('restaurant'),
-      generateStructuredData('breadcrumb', {
-        items: [
-          { name: 'Home', url: '/' },
-          { name: 'Food Menu', url: '/menu' },
-        ]
-      })
-    ]
-  });
+  const visibleProducts = useMemo(
+    () => activeCat ? products.filter(p => p.category === activeCat) : [],
+    [products, activeCat]
+  );
 
   return (
-    <div className="food-menu-page">
-      <SEO
-        title={seoData.title}
-        description={seoData.description}
-        keywords={seoData.keywords}
-        url={seoData.url}
-        structuredData={seoData.structuredData}
-      />
-      {/* Hero Section */}
-      <div className="hero food-menu-hero">
-        <div className="hero-image">
-          <img
-            className="hero-bg-image"
-            src="/images/for food menu banner.jpg"
-            loading="eager"
-            decoding="async"
-            alt="Food Menu"
-          />
-          <div className="hero-overlay"></div>
-        </div>
-        <div className="container">
-          <div className="hero-content">
-            <h1>Food Menu</h1>
-            <p>
-              Explore our complete selection of conscious food and beverages
-            </p>
-          </div>
-        </div>
+    <div className="menu-view" id="menu">
+      <SEO title={seoData.title} description={seoData.description} keywords={seoData.keywords} url={seoData.url} />
+
+      <div className="menu-hero">
+        <Reveal><span className="eyebrow">The Menu · Auroville Road</span></Reveal>
+        <Reveal delay={1}><h1 className="display">A season,<br /><em>plated.</em></h1></Reveal>
+        <Reveal delay={2}><p className="lede">Everything is plant-forward and made in-house. The menu shifts with the harvest, so what you find today is what the land offered this week.</p></Reveal>
       </div>
 
-      {/* Category Navigation */}
-      <div className="category-navigation">
-        <div className="container">
-          <div className="category-tabs-horizontal">
-            {categories.map((category) => (
+      {loading && (
+        <div style={{ padding: 'var(--gutter)', fontFamily: 'var(--ui)', color: 'var(--ink-mute)' }}>Loading menu…</div>
+      )}
+      {error && (
+        <div style={{ padding: 'var(--gutter)', color: 'var(--ink-mute)' }}>Unable to load menu right now.</div>
+      )}
+
+      {!loading && categories.length > 0 && (
+        <div className="menu-shell">
+          <div className="menu-cats">
+            {categories.map(c => (
               <button
-                key={category.id}
-                className={`category-tab-horizontal ${getCurrentActiveCategory() === category.id ? "active" : ""}`}
-                onClick={() => handleCategoryChange(category.id)}
+                key={c.id}
+                className={`menu-cat ${activeCat === c.id ? 'active' : ''}`}
+                onClick={() => setActiveCat(c.id)}
               >
-                {category.name}
+                <span>
+                  <span className="mc-name">{c.name}</span>
+                </span>
+                <span className="mc-count">{products.filter(p => p.category === c.id).length}</span>
               </button>
             ))}
           </div>
-        </div>
-      </div>
 
-
-      {/* Loading / Error / Empty states */}
-      {loading && (
-        <div className="menu-status-message">
-          <p>Loading menu…</p>
-        </div>
-      )}
-      {!loading && error && (
-        <div className="menu-status-message">
-          <p>Could not load the menu right now. Please try again later.</p>
-        </div>
-      )}
-      {!loading && !error && products.length === 0 && (
-        <div className="menu-status-message">
-          <p>Menu coming soon. Check back shortly!</p>
-        </div>
-      )}
-
-      {/* Search Results */}
-      {!loading && searchTerm !== "" && (
-        <section className="search-results-section">
-          <div className="container">
-            <div className="section-header">
-              <h2>Search Results</h2>
-              <p>
-                {filteredProducts.length} items found for "{searchTerm}"
-              </p>
-            </div>
-
-            {filteredProducts.length > 0 ? (
-              <div className="products-grid">
-                {filteredProducts.map((product) => (
-                  <ProductCard
-                    key={product.id}
-                    product={product}
-                    onAddToCart={onAddToCart}
-                    onProductClick={onProductClick}
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="no-results">
-                <p>
-                  No items found matching your search. Try a different keyword.
-                </p>
-              </div>
-            )}
+          <div className="menu-items">
+            {visibleProducts.map(p => (
+              <DishCard key={p.id} product={p} onProductClick={onProductClick} onAddToCart={onAddToCart} />
+            ))}
           </div>
-        </section>
+        </div>
       )}
-
-      {/* Category Sections - Only show if not searching and data is loaded */}
-      {!loading && searchTerm === "" && (
-        <>
-          {categories.map((category) => {
-            // Filter products for this category
-            const categoryProducts = products.filter((product) => product.category === category.id);
-
-            if (categoryProducts.length === 0) {
-              return null;
-            }
-
-            return (
-              <section key={category.id} className="category-section" id={`section-${category.id}`}>
-                <div className="container">
-                  <div className="category-header">
-                    <h2>{category.name}</h2>
-                  </div>
-
-                  <div className="products-grid">
-                    {categoryProducts.map((product) => (
-                      <ProductCard
-                        key={product.id}
-                        product={product}
-                        onAddToCart={onAddToCart}
-                        onProductClick={onProductClick}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </section>
-            );
-          })}
-        </>
-      )}
-
     </div>
   );
 };
