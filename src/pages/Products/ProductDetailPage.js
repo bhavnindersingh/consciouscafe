@@ -36,7 +36,7 @@ function DishCard({ product, onProductClick, onAddToCart }) {
     <div className="dish-card" onClick={() => onProductClick(product)}>
       <div className="dc-media">
         {product.image
-          ? <img src={imgUrl(product.image, { w: 720, h: 900, mode: 'crop' })} alt={product.name} loading="lazy" />
+          ? <img src={imgUrl(product.image, { w: 1000, q: 85 })} alt={product.name} loading="lazy" />
           : <div style={{ width: '100%', height: '100%', background: 'var(--paper-deep)' }} />
         }
         <button className="dc-add" aria-label={`Add ${product.name}`} onClick={e => { e.stopPropagation(); onAddToCart(product); }}>+</button>
@@ -97,7 +97,7 @@ const ProductDetailPage = ({ products = [], onAddToCart }) => {
         <div className="dish-img">
           <button className="back" onClick={() => navigate('/menu')}>← Back to menu</button>
           {product.image && (
-            <img src={imgUrl(product.image, { w: 1300, h: 1500, mode: 'crop' })} alt={product.name} />
+            <img src={imgUrl(product.image, { w: 1600, q: 90 })} alt={product.name} />
           )}
         </div>
 

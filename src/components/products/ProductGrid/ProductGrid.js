@@ -28,16 +28,13 @@ function imgUrl(src, { w, h, q = 86, mode } = {}) {
 const catName = (slug = '') =>
   slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 
-const createSlug = (name = '') =>
-  name.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').trim();
-
 /* One alternating feature row */
 function FeatureRow({ product, flip, dark, index, onProductClick }) {
   return (
     <section className={`feature${flip ? ' flip' : ''}${dark ? ' dark' : ''}`}>
       <Reveal className="feature-media">
         <img
-          src={imgUrl(product.image, { w: 1100, h: 1200, mode: 'crop' })}
+          src={imgUrl(product.image, { w: 1600, q: 88 })}
           alt={product.name}
           loading="lazy"
         />
@@ -165,7 +162,7 @@ const ProductGrid = ({ products = [], onAddToCart, onProductClick }) => {
   }, [products]);
 
   return (
-    <main>
+    <>
       <Hero />
 
       {/* Manifesto */}
@@ -206,7 +203,7 @@ const ProductGrid = ({ products = [], onAddToCart, onProductClick }) => {
 
       <Pillars />
       <Gatherings />
-    </main>
+    </>
   );
 };
 

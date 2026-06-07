@@ -34,7 +34,7 @@ function DishCard({ product, onProductClick, onAddToCart }) {
     <div className="dish-card" onClick={() => onProductClick(product)}>
       <div className="dc-media">
         {product.image
-          ? <img src={imgUrl(product.image, { w: 720, h: 900, mode: 'crop' })} alt={product.name} loading="lazy" />
+          ? <img src={imgUrl(product.image, { w: 1000, q: 85 })} alt={product.name} loading="lazy" />
           : <div style={{ width: '100%', height: '100%', background: 'var(--paper-deep)' }} />
         }
         <button
