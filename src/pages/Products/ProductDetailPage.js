@@ -12,18 +12,6 @@ const Arrow = ({ s = 16 }) => (
   </svg>
 );
 
-function imgUrl(src, { w, h, q = 90, mode } = {}) {
-  if (!src) return '';
-  try {
-    const url = new URL(src);
-    if (w) url.searchParams.set('w', w);
-    if (h) url.searchParams.set('h', h);
-    if (q !== undefined) url.searchParams.set('q', q);
-    if (mode) url.searchParams.set('mode', mode);
-    url.searchParams.set('fm', 'auto');
-    return url.toString();
-  } catch { return src; }
-}
 
 const catName = (slug = '') =>
   slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
@@ -36,7 +24,7 @@ function DishCard({ product, onProductClick, onAddToCart }) {
     <div className="dish-card" onClick={() => onProductClick(product)}>
       <div className="dc-media">
         {product.image
-          ? <img src={imgUrl(product.image, { w: 1000, q: 85 })} alt={product.name} loading="lazy" />
+          ? <img src={product.image} alt={product.name} loading="lazy" />
           : <div style={{ width: '100%', height: '100%', background: 'var(--paper-deep)' }} />
         }
         <button className="dc-add" aria-label={`Add ${product.name}`} onClick={e => { e.stopPropagation(); onAddToCart(product); }}>+</button>
@@ -97,7 +85,7 @@ const ProductDetailPage = ({ products = [], onAddToCart }) => {
         <div className="dish-img">
           <button className="back" onClick={() => navigate('/menu')}>← Back to menu</button>
           {product.image && (
-            <img src={imgUrl(product.image, { w: 1600, q: 90 })} alt={product.name} />
+            <img src={product.image} alt={product.name} />
           )}
         </div>
 

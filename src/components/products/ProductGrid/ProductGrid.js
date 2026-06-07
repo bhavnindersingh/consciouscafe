@@ -12,18 +12,6 @@ const Reveal = ({ children, className = '', delay = 0, as: Tag = 'div', style })
   <Tag style={style} className={`reveal${delay ? ` d${delay}` : ''} ${className}`}>{children}</Tag>
 );
 
-function imgUrl(src, { w, h, q = 86, mode } = {}) {
-  if (!src) return '';
-  try {
-    const url = new URL(src);
-    if (w) url.searchParams.set('w', w);
-    if (h) url.searchParams.set('h', h);
-    if (q !== undefined) url.searchParams.set('q', q);
-    if (mode) url.searchParams.set('mode', mode);
-    url.searchParams.set('fm', 'auto');
-    return url.toString();
-  } catch { return src; }
-}
 
 const catName = (slug = '') =>
   slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
@@ -34,7 +22,7 @@ function FeatureRow({ product, flip, dark, index, onProductClick }) {
     <section className={`feature${flip ? ' flip' : ''}${dark ? ' dark' : ''}`}>
       <Reveal className="feature-media">
         <img
-          src={imgUrl(product.image, { w: 1600, q: 88 })}
+          src={product.image}
           alt={product.name}
           loading="lazy"
         />
