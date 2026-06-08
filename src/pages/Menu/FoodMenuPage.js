@@ -17,8 +17,26 @@ const catName = (slug = '') =>
 
 const GROUP_META = {
   food:       { name: 'Food',       note: 'Plant-forward plates, all day' },
-  drinks:     { name: 'Drinks',     note: 'Brewed, pressed & poured' },
+  drinks:     { name: 'Drinks',     note: 'Pressed, brewed & poured' },
   patisserie: { name: 'Patisserie', note: 'Fresh bakes & sweet endings' },
+};
+
+const CATEGORY_META = {
+  'toast':             { note: 'Sourdough, slow-fermented' },
+  'all-day-breakfast': { note: 'Morning, whenever it finds you' },
+  'smoothie-bowls':    { note: 'Fruit, grain & quiet ritual' },
+  'earth-grills-crisps': { note: 'Fire & root' },
+  'salads':            { note: 'Garden-led, dressed with care' },
+  'platters':          { note: 'Made to gather around' },
+  'earth-bowls':       { note: 'A continent in a single bowl' },
+  'noodle-bowls':      { note: 'Broth, brewed long' },
+  'pasta-pizza':       { note: 'Hand-finished, herb-forward' },
+  'desserts':          { note: 'A gentle, plant-based close' },
+  'juices':            { note: 'Cold-pressed, fruit-led' },
+  'mocktails':         { note: 'Shaken & sparkling' },
+  'floral-teas':       { note: 'Petal-steeped, calming' },
+  'chai':              { note: 'Spiced, brewed slow' },
+  'coffee':            { note: 'Small-batch beans' },
 };
 
 function DishCard({ product, onProductClick, onAddToCart }) {
@@ -29,6 +47,7 @@ function DishCard({ product, onProductClick, onAddToCart }) {
           ? <img src={product.image} alt={product.name} loading="lazy" />
           : <div style={{ width: '100%', height: '100%', background: 'var(--paper-deep)' }} />
         }
+        {product.bestseller && <span className="dc-bestseller">House Favourite</span>}
         <button
           className="dc-add"
           aria-label={`Add ${product.name}`}
@@ -37,9 +56,10 @@ function DishCard({ product, onProductClick, onAddToCart }) {
       </div>
       <div className="dc-head">
         <h4>{product.name}</h4>
-        <span className="dc-price">₹{product.price}</span>
+        <span className="dc-price">₹{(product.price || 0).toLocaleString('en-IN')}</span>
       </div>
       {product.description && <p>{product.description}</p>}
+      {product.diet && <span className="dc-diet">{product.diet}</span>}
     </div>
   );
 }
@@ -152,6 +172,7 @@ const FoodMenuPage = ({ products = [], onAddToCart, onProductClick, loading, err
                 >
                   <span>
                     <span className="mc-name">{c.name}</span>
+                    {CATEGORY_META[c.id]?.note && <span className="mc-note">{CATEGORY_META[c.id].note}</span>}
                   </span>
                   <span className="mc-count">{products.filter(p => p.category === c.id).length}</span>
                 </button>

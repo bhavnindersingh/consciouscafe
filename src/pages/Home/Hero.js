@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Arrow = ({ s = 16 }) => (
@@ -8,19 +8,10 @@ const Arrow = ({ s = 16 }) => (
 );
 
 const GUMLET_VIDEO = 'https://play.gumlet.io/embed/6925f88a3c99376d4fd48188?background=true&autoplay=true&loop=true&disableControls=true&muted=true&preload=true';
+const HERO_POSTER = 'https://consciouscafe.gumlet.io/EARTH%20BOWLS/Thai%20Bowl.JPG?w=2600&h=1600&mode=crop&q=80&fm=auto';
 
 const Hero = () => {
   const navigate = useNavigate();
-  const [isPhone, setIsPhone] = useState(
-    typeof window !== 'undefined' && window.matchMedia('(max-width:760px)').matches
-  );
-
-  useEffect(() => {
-    const mq = window.matchMedia('(max-width:760px)');
-    const handler = () => setIsPhone(mq.matches);
-    mq.addEventListener('change', handler);
-    return () => mq.removeEventListener('change', handler);
-  }, []);
 
   const scrollToGather = () => {
     const el = document.getElementById('gather');
@@ -30,15 +21,15 @@ const Hero = () => {
   return (
     <header className="hero" id="home">
       <div className="hero-media">
-        <div className={`hero-video${isPhone ? '' : ''}`}>
+        <div className="hero-video">
           <iframe
-            key={isPhone ? 'm' : 'd'}
             title="Conscious Café"
             src={GUMLET_VIDEO}
             allow="autoplay; encrypted-media; picture-in-picture"
             referrerPolicy="origin"
           />
         </div>
+        <img src={HERO_POSTER} alt="" aria-hidden="true" />
       </div>
       <img className="hero-flower" src="/hibiscus.png" alt="" aria-hidden="true" />
       <div className="hero-side">Auroville Road · South India</div>

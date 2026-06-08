@@ -50,23 +50,21 @@ function AppContent() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { cartItems, addToCart, updateQuantity, removeFromCart, clearCart } = useCart();
+  const { cartItems, addToCart, updateQuantity, removeFromCart, clearCart, bagOpen, setBagOpen } = useCart();
   const { items: products, loading: menuLoading, error: menuError } = useDeliveryMenu();
 
-  const [isCartOpen, setIsCartOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
 
   useEffect(() => { window.scrollTo(0, 0); }, [location.pathname]);
 
-  const handleAddToCart = (product) => { addToCart(product); setIsCartOpen(true); };
-  const handleCartToggle = () => setIsCartOpen(o => !o);
-  const handleCheckout = () => { setIsCartOpen(false); setIsCheckoutOpen(true); };
+  const handleAddToCart = (product) => { addToCart(product); setBagOpen(true); };
+  const handleCheckout = () => { setBagOpen(false); setIsCheckoutOpen(true); };
   const handleOrderComplete = () => { clearCart(); setIsCheckoutOpen(false); };
   const handleProductClick = (product) => startTransition(() => navigate(`/product/${toSlug(product.name)}`));
 
   return (
     <div className="App">
-      <Header cartItems={cartItems} onCartToggle={handleCartToggle} />
+      <Header />
 
       <main role="main" id="main-content">
         <Routes>
@@ -112,8 +110,8 @@ function AppContent() {
       <Footer />
 
       <Cart
-        isOpen={isCartOpen}
-        onClose={() => setIsCartOpen(false)}
+        isOpen={bagOpen}
+        onClose={() => setBagOpen(false)}
         cartItems={cartItems}
         onUpdateQuantity={updateQuantity}
         onRemoveItem={removeFromCart}

@@ -1,17 +1,12 @@
-import React, { createContext, useContext, useEffect } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 
 const CartContext = createContext();
 
-/**
- * CartProvider component that wraps the app and provides cart functionality
- */
 export function CartProvider({ children }) {
   const [cartItems, setCartItems] = useLocalStorage('consciousBakesCart', []);
+  const [bagOpen, setBagOpen] = useState(false);
 
-  /**
-   * Add item to cart or update quantity if it already exists
-   */
   const addToCart = (product) => {
     setCartItems((prevItems) => {
       const existingItem = prevItems.find((item) => item.id === product.id);
@@ -30,9 +25,6 @@ export function CartProvider({ children }) {
     });
   };
 
-  /**
-   * Update quantity of an item in cart
-   */
   const updateQuantity = (productId, newQuantity) => {
     if (newQuantity <= 0) {
       removeFromCart(productId);
@@ -46,69 +38,51 @@ export function CartProvider({ children }) {
     );
   };
 
-  /**
-   * Remove item from cart
-   */
   const removeFromCart = (productId) => {
     setCartItems((prevItems) => prevItems.filter((item) => item.id !== productId));
   };
 
-  /**
-   * Clear all items from cart
-   */
-  const clearCart = () => {
-    setCartItems([]);
-  };
+  const clearCart = () => { setCartItems([]); };
 
-  /**
-   * Get total number of items in cart
-   */
   const cartItemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
-
-  /**
-   * Get cart subtotal
-   */
   const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-
-  /**
-   * Get cart total with GST
-   */
-  const gst = subtotal * 0.05; // 5% GST
+  const gst = subtotal * 0.05;
   const total = subtotal + gst;
-
-  /**
-   * Check if cart is empty
-   */
   const isEmpty = cartItems.length === 0;
+  const getItem = (productId) => cartItems.find((item) => item.id === productId);
 
-  /**
-   * Get item by id
-   */
-  const getItem = (productId) => {
-    return cartItems.find((item) => item.id === productId);
+  /* Aliases used by CartDrawer / Nav */
+  const changeQty = (productId, delta) => {
+    const item = cartItems.find(i => i.id === productId);
+    if (!item) return;
+    const next = (item.quantity || 1) + delta;
+    if (next <= 0) removeFromCart(productId);
+    else updateQuantity(productId, next);
   };
 
   const value = {
     cartItems,
+    items: cartItems,
     addToCart,
     updateQuantity,
     removeFromCart,
+    removeItem: removeFromCart,
+    changeQty,
     clearCart,
     cartItemCount,
+    count: cartItemCount,
     subtotal,
     gst,
     total,
     isEmpty,
     getItem,
+    bagOpen,
+    setBagOpen,
   };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }
 
-/**
- * Custom hook to use cart context
- * @returns {Object} Cart state and methods
- */
 export function useCart() {
   const context = useContext(CartContext);
 

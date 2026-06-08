@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useCart } from '../../../context/CartContext';
 
 const BagIcon = ({ s = 17 }) => (
   <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -8,59 +9,52 @@ const BagIcon = ({ s = 17 }) => (
   </svg>
 );
 
-const NAV_ITEMS = [
-  { id: 'home', label: 'home', path: '/' },
-  { id: 'menu', label: 'menu', path: '/menu' },
-  { id: 'story', label: 'story', anchor: true },
-  { id: 'gather', label: 'sanctuary', anchor: true },
-  { id: 'visit', label: 'visit', anchor: true },
-];
+function viewFromPath(pathname) {
+  if (pathname.startsWith('/menu')) return 'menu';
+  if (pathname.startsWith('/about') || pathname.startsWith('/story')) return 'story';
+  if (pathname.startsWith('/visit')) return 'visit';
+  return 'home';
+}
 
 const MM_ITEMS = [
-  { id: 'home', label: 'Home', note: 'The kitchen, the ethos', path: '/' },
-  { id: 'menu', label: 'Menu', note: 'A season, plated', path: '/menu' },
-  { id: 'story', label: 'Story', note: 'Why we cook this way', anchor: true },
-  { id: 'gather', label: 'Sanctuary', note: 'Shala · temple · ice spa', anchor: true },
-  { id: 'visit', label: 'Visit', note: 'Auroville Road', anchor: true },
+  { id: 'home',   label: 'Home',      note: 'The kitchen, the ethos',  path: '/' },
+  { id: 'menu',   label: 'Menu',      note: 'A season, plated',         path: '/menu' },
+  { id: 'story',  label: 'Story',     note: 'Why we cook this way',     path: '/about' },
+  { id: 'gather', label: 'Sanctuary', note: 'Shala · temple · ice spa', gather: true },
+  { id: 'visit',  label: 'Visit',     note: 'Auroville Road',           path: '/visit' },
 ];
 
-const Header = ({ cartItems = [], onCartToggle }) => {
-  const [solid, setSolid] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
+const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { count, setBagOpen } = useCart();
 
-  const cartCount = cartItems.reduce((t, i) => t + (i.quantity || 1), 0);
-  const isHome = location.pathname === '/';
+  const view = viewFromPath(location.pathname);
+  const [scrolled, setScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setSolid(window.scrollY > window.innerHeight * 0.7);
+    const onScroll = () => setScrolled(window.scrollY > window.innerHeight * 0.7);
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const scrollToAnchor = (id) => {
-    const el = document.getElementById(id);
-    if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 60, behavior: 'smooth' });
+  const isSolid = scrolled || view !== 'home';
+
+  const goGather = () => {
+    navigate('/');
+    setTimeout(() => {
+      const el = document.getElementById('gather');
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }, 90);
   };
 
   const handleNav = (item) => {
     setMobileOpen(false);
-    if (item.path) {
-      navigate(item.path);
-    } else if (item.anchor) {
-      if (!isHome) {
-        navigate('/');
-        setTimeout(() => scrollToAnchor(item.id), 80);
-      } else {
-        scrollToAnchor(item.id);
-      }
-    }
+    if (item.gather) goGather();
+    else if (item.path) navigate(item.path);
   };
-
-  const forceSolid = location.pathname !== '/';
-  const isSolid = solid || forceSolid;
 
   return (
     <>
@@ -68,22 +62,21 @@ const Header = ({ cartItems = [], onCartToggle }) => {
 
       <nav className={`nav ${isSolid ? 'solid' : ''}`} role="banner">
         <div className="nav-links">
-          <button className={`nav-link ${location.pathname === '/' ? 'active' : ''}`} onClick={() => handleNav(NAV_ITEMS[0])}>home</button>
-          <button className={`nav-link ${location.pathname === '/menu' ? 'active' : ''}`} onClick={() => handleNav(NAV_ITEMS[1])}>menu</button>
-          <button className="nav-link" onClick={() => handleNav(NAV_ITEMS[2])}>story</button>
+          <button className={`nav-link ${view === 'home' ? 'active' : ''}`} onClick={() => { navigate('/'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>home</button>
+          <button className={`nav-link ${view === 'menu' ? 'active' : ''}`} onClick={() => navigate('/menu')}>menu</button>
+          <button className={`nav-link ${view === 'story' ? 'active' : ''}`} onClick={() => navigate('/about')}>story</button>
         </div>
 
-        <button className="brand" onClick={() => navigate('/')}>
+        <button className="brand" onClick={() => { navigate('/'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
           <span className="b1">Conscious Café</span>
-          <span className="b2">Auroville Road · est. 2016</span>
         </button>
 
         <div className="nav-right">
-          <button className="nav-link" onClick={() => handleNav(NAV_ITEMS[3])}>sanctuary</button>
-          <button className="nav-link" onClick={() => handleNav(NAV_ITEMS[4])}>visit</button>
-          <button className="bag" onClick={onCartToggle} aria-label={`Shopping bag, ${cartCount} items`}>
+          <button className="nav-link" onClick={goGather}>sanctuary</button>
+          <button className={`nav-link ${view === 'visit' ? 'active' : ''}`} onClick={() => navigate('/visit')}>visit</button>
+          <button className="bag" onClick={() => setBagOpen(true)} aria-label={`Shopping bag, ${count} items`}>
             <BagIcon /> <span className="bag-label">bag</span>
-            {cartCount > 0 && <span className="count">{cartCount}</span>}
+            {count > 0 && <span className="count">{count}</span>}
           </button>
           <button
             className={`nav-burger ${mobileOpen ? 'is-open' : ''}`}
@@ -114,8 +107,8 @@ const Header = ({ cartItems = [], onCartToggle }) => {
           ))}
         </nav>
         <div className="mm-foot">
-          <button className="mm-bag" onClick={() => { onCartToggle(); setMobileOpen(false); }}>
-            View bag{cartCount > 0 ? ` · ${cartCount}` : ''}
+          <button className="mm-bag" onClick={() => { setBagOpen(true); setMobileOpen(false); }}>
+            View bag{count > 0 ? ` · ${count}` : ''}
           </button>
           <div className="mm-contact">
             <a href="mailto:hello@consciouscafe.in">hello@consciouscafe.in</a>
@@ -123,6 +116,7 @@ const Header = ({ cartItems = [], onCartToggle }) => {
             <span>Daily 9:30 — 21:00 · closed Tuesdays</span>
           </div>
         </div>
+        <img className="mm-flower" src="/hibiscus.png" alt="" aria-hidden="true" />
       </div>
     </>
   );
