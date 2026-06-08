@@ -332,8 +332,8 @@ button { font-family: inherit; cursor: pointer; }
 .menu-hero h1 { font-family: var(--display); font-weight: 400; font-size: clamp(46px,8vw,128px); line-height: 0.98; letter-spacing: -.012em; }
 .menu-hero .lede { max-width: 620px; margin-top: 22px; }
 
-.menu-shell { display: grid; grid-template-columns: 1fr 2fr; gap: 0; border-top: 1px solid var(--line); min-height: 70vh; }
-.menu-cats { grid-column: 2; grid-row: 1; border-left: 1px solid var(--line); border-right: none; padding: 10px 0; position: sticky; top: 64px; align-self: start; }
+.menu-shell { display: grid; grid-template-columns: minmax(280px, 0.9fr) 1.6fr; gap: 0; border-top: 1px solid var(--line); min-height: 70vh; }
+.menu-cats { border-right: 1px solid var(--line); padding: 10px 0; position: sticky; top: 64px; align-self: start; }
 .menu-cat {
   width: 100%; text-align: left; background: none; border: none; padding: clamp(14px,1.5vw,20px) var(--gutter);
   display: flex; align-items: baseline; justify-content: space-between; gap: 16px; border-bottom: 1px solid var(--line-soft);
@@ -346,7 +346,7 @@ button { font-family: inherit; cursor: pointer; }
 .menu-cat .mc-count { font-family: var(--ui); font-size: 11px; letter-spacing: .1em; color: var(--ink-mute); }
 .menu-cat .mc-note { display:block; font-family: var(--serif); font-size: 15px; color: var(--ink-mute); font-style: italic; margin-top: 2px; }
 
-.menu-items { grid-column: 1; grid-row: 1; padding: clamp(18px,2.4vw,34px) var(--gutter); display: grid; grid-template-columns: 1fr; gap: clamp(20px,2.4vw,40px); align-content: start; }
+.menu-items { padding: clamp(18px,2.4vw,34px) var(--gutter); display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(20px,2.4vw,40px); align-content: start; }
 .dish-card { background: none; border: none; text-align: left; display: flex; flex-direction: column; cursor: pointer; }
 .dish-card .dc-media { position: relative; overflow: hidden; aspect-ratio: 4/5; background: var(--paper-2); }
 .dish-card .dc-media img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease); }
@@ -706,8 +706,8 @@ button { font-family: inherit; cursor: pointer; }
   .sa-grid2 { grid-template-columns: 1fr; }
   .footer-top { grid-template-columns: 1fr; }
   .menu-shell { grid-template-columns: 1fr; }
-  .menu-cats { grid-column: auto; grid-row: auto; position: static; border-left: none; border-right: none; border-bottom: 1px solid var(--line); }
-  .menu-items { grid-column: auto; grid-row: auto; grid-template-columns: repeat(2, 1fr); }
+  .menu-cats { position: static; border-right: none; border-bottom: 1px solid var(--line); }
+  .menu-items { grid-template-columns: repeat(2, 1fr); }
   .dish-view { grid-template-columns: 1fr; }
   .dish-img { min-height: 50vh; }
   .dish-view-wrap .menu-items { grid-template-columns: repeat(2, 1fr); }
@@ -766,11 +766,20 @@ button { font-family: inherit; cursor: pointer; }
 
   /* menu */
   .menu-hero { padding: clamp(96px,16vh,140px) var(--gutter) 18px; }
-  .group-switch { grid-template-columns: 1fr 1fr 1fr; }
-  .group-tab { padding: 16px 12px; gap: 4px; align-items: flex-start; }
-  .group-tab .gt-name { font-size: clamp(18px,5vw,26px); }
-  .group-tab .gt-note { display: none; }
-  .group-tab .gt-count { font-size: 9.5px; letter-spacing: .12em; }
+  .group-switch {
+    display: flex; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    padding: 10px var(--gutter); gap: 8px;
+  }
+  .group-switch::-webkit-scrollbar { display: none; }
+  .group-tab {
+    flex: 0 0 auto; border: 1px solid var(--line); border-radius: 99px;
+    padding: 9px 18px; white-space: nowrap;
+    display: inline-flex; align-items: center; flex-direction: row; gap: 0;
+  }
+  .group-tab:last-child { border-right: 1px solid var(--line); }
+  .group-tab .gt-idx, .group-tab .gt-note, .group-tab .gt-count { display: none; }
+  .group-tab .gt-name { font-size: 15px; line-height: 1; }
+  .group-tab.active { border-color: var(--forest); }
   .menu-cats {
     display: flex; gap: 10px; overflow-x: auto; padding: 4px var(--gutter) 14px;
     border-bottom: 1px solid var(--line); position: sticky; top: 54px; z-index: 60;
