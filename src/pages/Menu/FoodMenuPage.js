@@ -2,16 +2,6 @@ import React, { useState, useMemo } from 'react';
 import SEO from '../../components/seo/SEO/SEO';
 import { generatePageSEO } from '../../utils/seoData';
 
-const Arrow = ({ s = 16 }) => (
-  <svg className="arr" width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
-    <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-
-const Reveal = ({ children, className = '', delay = 0, as: Tag = 'div', style }) => (
-  <Tag style={style} className={`reveal${delay ? ` d${delay}` : ''} ${className}`}>{children}</Tag>
-);
-
 const catName = (slug = '') =>
   slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 
@@ -22,44 +12,102 @@ const GROUP_META = {
 };
 
 const CATEGORY_META = {
-  'toast':             { note: 'Sourdough, slow-fermented' },
-  'all-day-breakfast': { note: 'Morning, whenever it finds you' },
-  'smoothie-bowls':    { note: 'Fruit, grain & quiet ritual' },
-  'earth-grills-crisps': { note: 'Fire & root' },
-  'salads':            { note: 'Garden-led, dressed with care' },
-  'platters':          { note: 'Made to gather around' },
-  'earth-bowls':       { note: 'A continent in a single bowl' },
-  'noodle-bowls':      { note: 'Broth, brewed long' },
-  'pasta-pizza':       { note: 'Hand-finished, herb-forward' },
-  'desserts':          { note: 'A gentle, plant-based close' },
-  'juices':            { note: 'Cold-pressed, fruit-led' },
-  'mocktails':         { note: 'Shaken & sparkling' },
-  'floral-teas':       { note: 'Petal-steeped, calming' },
-  'chai':              { note: 'Spiced, brewed slow' },
-  'coffee':            { note: 'Small-batch beans' },
+  'toast':               { name: 'Toast',              note: 'Sourdough, slow-fermented' },
+  'all-day-breakfast':   { name: 'All Day Breakfast',  note: 'Morning, whenever it finds you' },
+  'smoothie-bowls':      { name: 'Smoothie Bowls',     note: 'Fruit, grain & quiet ritual' },
+  'earth-grills-crisps': { name: 'Earth Grills & Crisps', note: 'Fire & root' },
+  'salads':              { name: 'Salads',             note: 'Garden-led, dressed with care' },
+  'platters':            { name: 'Platters',           note: 'Made to gather around' },
+  'earth-bowls':         { name: 'Earth Bowls',        note: 'A continent in a single bowl' },
+  'noodle-bowls':        { name: 'Noodle Bowls',       note: 'Broth, brewed long' },
+  'pasta-pizza':         { name: 'Pasta',              note: 'Hand-finished, herb-forward' },
+  'pasta':               { name: 'Pasta',              note: 'Hand-finished, herb-forward' },
+  'desserts':            { name: 'Desserts',           note: 'A gentle, plant-based close' },
+  'juices':              { name: 'Juices',             note: 'Cold-pressed, fruit-led' },
+  'mocktails':           { name: 'Mocktails',          note: 'Shaken & sparkling' },
+  'floral-teas':         { name: 'Floral Teas',        note: 'Petal-steeped, calming' },
+  'chai':                { name: 'Chai',               note: 'Spiced, brewed slow' },
+  'coffee':              { name: 'Coffee',             note: 'Small-batch beans' },
 };
 
+const CATEGORY_ORDER = [
+  'toast', 'all-day-breakfast', 'smoothie-bowls', 'earth-grills-crisps',
+  'salads', 'platters', 'earth-bowls', 'noodle-bowls', 'pasta-pizza', 'pasta',
+  'desserts', 'juices', 'mocktails', 'floral-teas', 'chai', 'coffee',
+];
+
+/* Enrich products with bestseller + diet when Supabase doesn't carry these fields.
+   Matched by normalised product name (lowercase, trimmed). */
+const ENRICHMENT = {
+  'mushroom toast':           { diet: 'vegan' },
+  'avocado toast':            { bestseller: true, diet: 'veg / egg' },
+  'pesto cream cheese':       { diet: 'veg' },
+  'burrata bruschetta':       { diet: 'veg' },
+  'muhammara':                { diet: 'vegan' },
+  'cilbir':                   { diet: 'veg / egg' },
+  'pancake':                  { diet: 'veg / GF' },
+  'french toast':             { bestseller: true, diet: 'veg / egg' },
+  'berry blast smoothie':     { diet: 'vegan' },
+  'cocoa peanut smoothie':    { diet: 'vegan' },
+  'goodness bowl':            { bestseller: true, diet: 'veg' },
+  'fruit bliss bowl':         { diet: 'vegan' },
+  'overnight oats':           { diet: 'vegan' },
+  'matcha chia pudding':      { diet: 'vegan' },
+  'grilled sweet potato':     { diet: 'vegan / GF' },
+  'grilled tofu satay':       { bestseller: true, diet: 'vegan / GF' },
+  'taro root crisps':         { diet: 'vegan / GF' },
+  'cassava crisps':           { diet: 'vegan / GF' },
+  'watermelon feta':          { diet: 'veg / GF' },
+  'tropical salad':           { diet: 'veg / GF' },
+  'botanical balance salad':  { diet: 'veg / GF' },
+  'yogi platter':             { diet: 'vegan' },
+  'zulfi platter':            { diet: 'veg / egg' },
+  'mezze platter':            { diet: 'vegan' },
+  'thai bowl':                { bestseller: true, diet: 'vegan' },
+  'tokyo katsu':              { diet: 'vegan' },
+  'rangla punjab':            { bestseller: true, diet: 'veg' },
+  'sol bowl':                 { diet: 'vegan' },
+  'mezze kodo bowl':          { diet: 'vegan' },
+  'khao soi':                 { diet: 'vegan' },
+  'laksa':                    { bestseller: true, diet: 'vegan' },
+  'miso ramen':               { diet: 'vegan' },
+  'bibim guksu':              { diet: 'vegan' },
+  'meatless meatball':        { diet: 'veg' },
+  'zucchini zoodles':         { bestseller: true, diet: 'veg / GF' },
+  'coconut panna cotta':      { bestseller: true, diet: 'vegan' },
+  'chocolate mousse':         { diet: 'vegan' },
+  'peach ice tea':            { bestseller: true, diet: 'vegan / GF' },
+  'iced vanilla latte':       { bestseller: true, diet: 'veg' },
+};
+
+function enrich(product) {
+  const key = (product.name || '').toLowerCase().trim();
+  const extra = ENRICHMENT[key] || {};
+  return { ...extra, ...product, bestseller: product.bestseller || extra.bestseller, diet: product.diet || extra.diet };
+}
+
 function DishCard({ product, onProductClick, onAddToCart }) {
+  const p = enrich(product);
   return (
-    <div className="dish-card" onClick={() => onProductClick(product)}>
+    <div className="dish-card" onClick={() => onProductClick(p)}>
       <div className="dc-media">
-        {product.image
-          ? <img src={product.image} alt={product.name} loading="lazy" />
+        {p.image
+          ? <img src={p.image} alt={p.name} loading="lazy" />
           : <div style={{ width: '100%', height: '100%', background: 'var(--paper-deep)' }} />
         }
-        {product.bestseller && <span className="dc-bestseller">House Favourite</span>}
+        {p.bestseller && <span className="dc-bestseller">House Favourite</span>}
         <button
           className="dc-add"
-          aria-label={`Add ${product.name}`}
-          onClick={e => { e.stopPropagation(); onAddToCart(product); }}
+          aria-label={`Add ${p.name}`}
+          onClick={e => { e.stopPropagation(); onAddToCart(p); }}
         >+</button>
       </div>
       <div className="dc-head">
-        <h4>{product.name}</h4>
-        <span className="dc-price">₹{(product.price || 0).toLocaleString('en-IN')}</span>
+        <h4>{p.name}</h4>
+        <span className="dc-price">₹{(p.price || 0).toLocaleString('en-IN')}</span>
       </div>
-      {product.description && <p>{product.description}</p>}
-      {product.diet && <span className="dc-diet">{product.diet}</span>}
+      {p.description && <p>{p.description}</p>}
+      {p.diet && <span className="dc-diet">{p.diet}</span>}
     </div>
   );
 }
@@ -67,18 +115,14 @@ function DishCard({ product, onProductClick, onAddToCart }) {
 const FoodMenuPage = ({ products = [], onAddToCart, onProductClick, loading, error, initialCat }) => {
   const seoData = generatePageSEO('menu', {});
 
-  /* Derive groups from mainCategory field */
+  /* Derive groups from mainCategory field — always food → drinks → patisserie */
   const groups = useMemo(() => {
     const seen = new Set();
     const list = [];
     products.forEach(p => {
       const g = p.mainCategory || 'food';
-      if (!seen.has(g)) {
-        seen.add(g);
-        list.push(g);
-      }
+      if (!seen.has(g)) { seen.add(g); list.push(g); }
     });
-    /* Sort so food → drinks → patisserie */
     const order = ['food', 'drinks', 'patisserie'];
     return list.sort((a, b) => {
       const ai = order.indexOf(a), bi = order.indexOf(b);
@@ -92,15 +136,20 @@ const FoodMenuPage = ({ products = [], onAddToCart, onProductClick, loading, err
     if (!activeGroup && groups.length > 0) setActiveGroup(groups[0]);
   }, [groups, activeGroup]);
 
-  /* Categories within active group */
+  /* Categories within active group — sorted to reference menu order */
   const categories = useMemo(() => {
     const seen = new Set();
     const list = [];
     products.filter(p => (p.mainCategory || 'food') === activeGroup).forEach(p => {
       if (!seen.has(p.category)) {
         seen.add(p.category);
-        list.push({ id: p.category, name: catName(p.category) });
+        const meta = CATEGORY_META[p.category];
+        list.push({ id: p.category, name: meta?.name || catName(p.category) });
       }
+    });
+    list.sort((a, b) => {
+      const ai = CATEGORY_ORDER.indexOf(a.id), bi = CATEGORY_ORDER.indexOf(b.id);
+      return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
     });
     return list;
   }, [products, activeGroup]);
@@ -129,9 +178,9 @@ const FoodMenuPage = ({ products = [], onAddToCart, onProductClick, loading, err
       <SEO title={seoData.title} description={seoData.description} keywords={seoData.keywords} url={seoData.url} />
 
       <div className="menu-hero">
-        <Reveal><span className="eyebrow">The Menu · Auroville Road</span></Reveal>
-        <Reveal delay={1}><h1 className="display">A season,<br /><em>plated.</em></h1></Reveal>
-        <Reveal delay={2}><p className="lede">Everything is plant-forward and made in-house. Start with what you're after — a plate, a pour, or something sweet.</p></Reveal>
+        <span className="eyebrow">The Menu · Auroville Road</span>
+        <h1 className="display">A season,<br /><em>plated.</em></h1>
+        <p className="lede">Everything is plant-forward and made in-house. Start with what you're after — a plate, a pour, or something sweet.</p>
       </div>
 
       {loading && (
@@ -143,15 +192,14 @@ const FoodMenuPage = ({ products = [], onAddToCart, onProductClick, loading, err
 
       {!loading && groups.length > 0 && (
         <>
-          {/* Group switch: Food / Drinks / Patisserie */}
-          <div className="group-switch">
+          <div className="group-switch" style={{ gridTemplateColumns: `repeat(${groups.length}, 1fr)` }}>
             {groups.map((g, i) => {
               const meta = GROUP_META[g] || { name: catName(g), note: '' };
               return (
                 <button
                   key={g}
                   className={`group-tab ${activeGroup === g ? 'active' : ''}`}
-                  onClick={() => { setActiveGroup(g); }}
+                  onClick={() => setActiveGroup(g)}
                 >
                   <span className="gt-idx">{String(i + 1).padStart(2, '0')}</span>
                   <span className="gt-name">{meta.name}</span>
