@@ -16,6 +16,7 @@ import CategoryPage from "./pages/Menu/CategoryPage";
 import ProductDetailPage from "./pages/Products/ProductDetailPage";
 import Checkout from "./pages/Checkout/Checkout";
 import AboutUs from "./pages/Info/AboutUs";
+import VisitPage from "./pages/Info/VisitPage";
 import Contact from "./pages/Info/Contact";
 import DeliveryInfo from "./pages/Info/DeliveryInfo";
 import PrivacyPolicy from "./pages/Info/PrivacyPolicy";
@@ -82,6 +83,7 @@ function AppContent() {
             <ProductDetailPage products={products} onAddToCart={handleAddToCart} />
           } />
           <Route path="/about" element={<AboutUs />} />
+          <Route path="/visit" element={<VisitPage />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/delivery" element={<DeliveryInfo />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />

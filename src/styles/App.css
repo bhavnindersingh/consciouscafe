@@ -570,6 +570,93 @@ button { font-family: inherit; cursor: pointer; }
 .sa-done .sa-sub { margin: 0 auto 28px; }
 
 /* ============================================================
+   STORY PAGE
+   ============================================================ */
+.story-page { padding-top: 0; }
+
+.story-hero {
+  display: grid; grid-template-columns: 1.05fr 0.95fr; gap: clamp(32px, 5vw, 88px);
+  align-items: end;
+  padding: clamp(132px, 20vh, 220px) var(--gutter) clamp(56px, 9vh, 120px);
+  max-width: 1600px; margin: 0 auto;
+}
+.story-hero-head .kicker-row { margin-bottom: 26px; }
+.story-hero h1 { font-size: clamp(44px, 6.6vw, 104px); margin-bottom: clamp(22px, 3vh, 36px); }
+.story-hero .lede { max-width: 40ch; }
+.story-hero-figure { aspect-ratio: 7 / 5; overflow: hidden; background: var(--paper-2); }
+.story-hero-figure img { width: 100%; height: 100%; object-fit: cover; }
+
+.story-mission { padding-top: clamp(56px, 8vh, 110px); }
+.sm-grid {
+  display: grid; grid-template-columns: 220px 1fr; gap: clamp(28px, 5vw, 96px);
+  max-width: 1500px; margin: 0 auto; align-items: start;
+}
+.sm-aside { display: flex; flex-direction: column; gap: 18px; padding-top: 12px; }
+.sm-aside .sm-rule { height: 1px; width: 64px; background: var(--ink); opacity: .4; }
+.sm-lead {
+  font-family: var(--display); font-weight: 400; font-size: clamp(26px, 3.1vw, 46px);
+  line-height: 1.18; letter-spacing: -.01em; color: var(--ink); text-wrap: pretty;
+  margin-bottom: clamp(24px, 3.4vh, 44px);
+}
+.sm-lead em { font-style: italic; color: var(--forest); }
+.sm-para { font-size: clamp(17px, 1.35vw, 21px); line-height: 1.6; color: var(--ink-soft); max-width: 60ch; }
+
+.founders { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(20px, 2.6vw, 44px); max-width: 1500px; margin: 0 auto; }
+.founder .f-portrait { aspect-ratio: 4 / 5; overflow: hidden; background: var(--paper); margin-bottom: 20px; }
+.founder .f-portrait img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.4s var(--ease); }
+.founder:hover .f-portrait img { transform: scale(1.05); }
+.founder h3 { font-family: var(--display); font-weight: 400; font-size: clamp(24px, 2.1vw, 32px); line-height: 1.04; }
+.founder .f-role { display: block; font-family: var(--ui); font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--ink-mute); margin-top: 8px; }
+
+.val-grid { grid-template-columns: repeat(4, 1fr); }
+
+.story-close { text-align: center; }
+.story-close .eyebrow { display: block; }
+.story-close-actions { display: flex; gap: 30px; align-items: center; justify-content: center; flex-wrap: wrap; }
+
+/* ============================================================
+   VISIT PAGE
+   ============================================================ */
+.visit-view { min-height: 100vh; }
+.visit-hero { position: relative; height: 72svh; min-height: 480px; overflow: hidden; color: #fff; }
+.visit-hero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.visit-hero::after { content: ""; position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(15,17,13,0.5) 0%, rgba(15,17,13,0.1) 36%, rgba(15,17,13,0.28) 64%, rgba(15,17,13,0.72) 100%); }
+.visit-hero-inner { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; padding: 0 var(--gutter) clamp(40px,7vh,80px); }
+.visit-hero h1 { font-size: clamp(44px, 8vw, 132px); margin: 18px 0 22px; text-shadow: 0 2px 40px rgba(10,12,8,0.34); }
+.visit-hero .hero-sub { max-width: 520px; }
+
+.visit-shell { display: grid; grid-template-columns: 1fr 1.1fr; gap: clamp(34px,5vw,90px); align-items: stretch; }
+.visit-info { display: flex; flex-direction: column; }
+.visit-name { font-family: var(--display); font-weight: 400; font-size: clamp(34px,4vw,60px); line-height: 1; letter-spacing: -.01em; margin: 14px 0 22px; }
+.visit-addr { font-family: var(--serif); font-size: clamp(19px,1.5vw,24px); line-height: 1.5; color: var(--ink-soft); margin-bottom: 34px; }
+.visit-label { display: block; font-family: var(--ui); font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--sage); margin-bottom: 16px; }
+.hours-block { border-top: 1px solid var(--line); padding-top: 26px; margin-bottom: 30px; }
+.hours-row { display: flex; align-items: baseline; gap: 14px; font-family: var(--serif); font-size: clamp(17px,1.3vw,21px); color: var(--ink); padding: 8px 0; }
+.hours-row span:first-child, .hours-row span:last-child { white-space: nowrap; }
+.hours-row .dots { flex: 1; border-bottom: 1px dotted rgba(27,26,22,.25); transform: translateY(-4px); }
+.contact-block { border-top: 1px solid var(--line); padding-top: 26px; margin-bottom: 38px; display: flex; flex-direction: column; gap: 8px; }
+.contact-block a { font-family: var(--serif); font-size: clamp(17px,1.3vw,21px); color: var(--ink); text-decoration: none; width: fit-content; border-bottom: 1px solid transparent; transition: border-color .4s var(--ease); white-space: nowrap; }
+.contact-block a:hover { border-color: var(--ink); }
+.visit-cta { display: flex; gap: 14px; flex-wrap: wrap; margin-top: auto; }
+
+.visit-map { position: relative; min-height: 440px; border: 1px solid var(--line); overflow: hidden; background: var(--paper-2); }
+.visit-map iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; filter: saturate(0.92) contrast(1.02); }
+.visit-map .map-open {
+  position: absolute; left: 16px; bottom: 16px; z-index: 2;
+  font-family: var(--ui); font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--ink); background: var(--paper); border: 1px solid var(--line); padding: 10px 16px; text-decoration: none;
+  transition: background .4s var(--ease), color .4s var(--ease);
+}
+.visit-map .map-open:hover { background: var(--forest); color: var(--paper); border-color: var(--forest); }
+
+.here-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(28px,4vw,72px); max-width: 1500px; margin: 0 auto; }
+.here-card { border-top: 1px solid var(--line); padding-top: 24px; }
+.here-card .pn { font-family: var(--ui); font-size: 11px; letter-spacing: .2em; color: var(--sage); margin-bottom: 18px; }
+.here-card h4 { font-family: var(--display); font-weight: 400; font-size: clamp(23px,2.1vw,32px); line-height: 1.08; margin-bottom: 12px; }
+.here-card p { font-size: clamp(16px,1.2vw,19px); line-height: 1.5; color: var(--ink-soft); }
+
+/* ============================================================
    MENU GROUP SWITCH
    ============================================================ */
 .group-switch {
@@ -605,6 +692,13 @@ button { font-family: inherit; cursor: pointer; }
   .sig .sig-figure { aspect-ratio: 4 / 3; }
   .sig-grid { grid-template-columns: repeat(3, 1fr); }
   .pillars { grid-template-columns: 1fr; }
+  .val-grid { grid-template-columns: 1fr 1fr; }
+  .story-hero { grid-template-columns: 1fr; gap: clamp(28px, 6vw, 48px); align-items: stretch; }
+  .story-hero-figure { aspect-ratio: 16 / 10; }
+  .founders { grid-template-columns: 1fr 1fr; gap: clamp(22px, 4vw, 40px); }
+  .sm-grid { grid-template-columns: 1fr; gap: 22px; }
+  .sm-aside { flex-direction: row; align-items: center; gap: 16px; padding-top: 0; }
+  .sm-aside .sm-rule { width: 48px; }
   .gather-grid { grid-template-columns: 1fr; }
   .host-banner { flex-direction: column; align-items: flex-start; gap: 18px; }
   .host-banner > button { width: 100%; justify-content: center; }
@@ -616,6 +710,9 @@ button { font-family: inherit; cursor: pointer; }
   .dish-view { grid-template-columns: 1fr; }
   .dish-img { min-height: 50vh; }
   .dish-view-wrap .menu-items { grid-template-columns: repeat(2, 1fr); }
+  .visit-shell { grid-template-columns: 1fr; }
+  .here-grid { grid-template-columns: 1fr; }
+  .visit-map { min-height: 360px; order: -1; }
 }
 @media (max-width: 760px) {
   :root { --gutter: 20px; }
@@ -661,6 +758,13 @@ button { font-family: inherit; cursor: pointer; }
   .manifesto-foot { flex-direction: column; align-items: flex-start; }
   .feature-meta { flex-wrap: wrap; gap: 14px; }
   .dish-view-wrap .menu-items { grid-template-columns: 1fr; }
+}
+@media (max-width: 760px) {
+  .story-hero { padding-top: clamp(104px, 16vh, 132px); }
+  .story-hero h1 { font-size: clamp(38px, 11vw, 60px); }
+  .val-grid { grid-template-columns: 1fr; }
+  .story-close-actions { flex-direction: column; gap: 20px; }
+  .visit-hero h1 { font-size: clamp(40px, 13vw, 64px); }
 }
 @media (max-width: 460px) {
   .menu-items { grid-template-columns: 1fr; }
