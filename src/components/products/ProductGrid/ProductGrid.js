@@ -226,7 +226,7 @@ function Strip() {
 function Pillars() {
   const items = [
     { n: 'Plant-forward', h: 'Plates that begin with the garden', p: 'Vegetables lead, proteins follow. Vegan by default, never by compromise — flavour first, always.' },
-    { n: 'Local sourcing', h: 'Grown within reach of our doors', p: 'Millets, roots and greens from farms along Auroville Road. We cook the season, so the menu breathes with the year.' },
+    { n: 'Local sourcing', h: 'Grown within reach of our doors', p: 'Millets, roots and greens from farms from around Auroville. We cook the season, so the menu breathes with the year.' },
     { n: 'Nothing wasted', h: 'A kitchen that closes its loops', p: 'Peels become stock, stems become pesto, ferments carry nothing to the bin. Restraint is the recipe.' },
   ];
   return (

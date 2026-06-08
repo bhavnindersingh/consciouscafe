@@ -36,7 +36,7 @@ const Hero = () => {
       <div className="scroll-cue"><span>scroll</span><span className="rail" /></div>
       <div className="hero-inner">
         <div style={{ maxWidth: 1500, margin: '0 auto', width: '100%' }}>
-          <span className="eyebrow on-dark">Plant-forward kitchen · since 2016</span>
+          <span className="eyebrow on-dark">Plant-forward kitchen · since 2021</span>
           <h1 className="display reveal">Eat like the<br /><em>earth is watching.</em></h1>
           <p className="hero-sub">A slow kitchen on Auroville Road — whole foods, plant-led plates, and gatherings that move at the speed of presence.</p>
           <div className="hero-cta">

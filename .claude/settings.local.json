@@ -27,7 +27,10 @@
       "Bash(xargs kill:*)",
       "Bash(xargs -r kill -9)",
       "Bash(netstat:*)",
-      "WebFetch(domain:imagekit.io)"
+      "WebFetch(domain:imagekit.io)",
+      "Bash(python3 *)",
+      "Bash(git -C /media/bhavninder/5beb3943-a69e-4c23-95ff-16fa92d6b63a1/Repositories/consciouscafe add src/App.js src/components/layout/Header/Header.js src/context/CartContext.js src/pages/Home/Hero.js src/pages/Menu/FoodMenuPage.js src/styles/App.css src/styles/variables.css)",
+      "Bash(git -C /media/bhavninder/5beb3943-a69e-4c23-95ff-16fa92d6b63a1/Repositories/consciouscafe commit -m ' *)"
     ],
     "deny": []
   }

@@ -155,6 +155,7 @@ const FoodMenuPage = ({ products = [], onAddToCart, onProductClick, loading, err
   }, [products, activeGroup]);
 
   const [activeCat, setActiveCat] = useState(initialCat || null);
+  const [mobileOpen, setMobileOpen] = useState(null);
 
   React.useEffect(() => {
     if (initialCat) setActiveCat(initialCat);
@@ -232,6 +233,33 @@ const FoodMenuPage = ({ products = [], onAddToCart, onProductClick, loading, err
                 <DishCard key={p.id} product={p} onProductClick={onProductClick} onAddToCart={onAddToCart} />
               ))}
             </div>
+          </div>
+
+          <div className="menu-accordion">
+            {categories.map(c => {
+              const isOpen = mobileOpen === c.id;
+              return (
+                <div key={c.id} className={`acc-section${isOpen ? ' open' : ''}`}>
+                  <button
+                    className="acc-head"
+                    onClick={() => setMobileOpen(isOpen ? null : c.id)}
+                  >
+                    <span>
+                      <span className="acc-name">{c.name}</span>
+                      {CATEGORY_META[c.id]?.note && <span className="acc-note">{CATEGORY_META[c.id].note}</span>}
+                    </span>
+                    <span className="acc-chevron">{isOpen ? '−' : '+'}</span>
+                  </button>
+                  <div className="acc-body">
+                    <div className="acc-inner">
+                      {products.filter(p => p.category === c.id).map(p => (
+                        <DishCard key={p.id} product={p} onProductClick={onProductClick} onAddToCart={onAddToCart} />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </>
       )}
