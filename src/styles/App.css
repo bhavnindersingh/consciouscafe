@@ -760,7 +760,7 @@ button { font-family: inherit; cursor: pointer; }
   /* hero */
   .hero { min-height: 560px; }
   .hero-side, .scroll-cue { display: none; }
-  .hero-flower { top: clamp(72px, 10vh, 100px); right: 10px; width: clamp(78px, 22vw, 116px); }
+  .hero-flower { display: none; }
   .hero-inner { padding-bottom: clamp(40px, 7vh, 64px); }
   .hero h1 { font-size: clamp(46px, 14vw, 72px); margin-bottom: 20px; }
   .hero .hero-sub { font-size: 17px; margin-bottom: 26px; max-width: 38ch; }
