@@ -790,19 +790,21 @@ button { font-family: inherit; cursor: pointer; }
   /* menu */
   .menu-hero { padding: clamp(96px,16vh,140px) var(--gutter) 18px; }
   .group-switch {
-    display: flex; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
-    padding: 10px var(--gutter); gap: 8px;
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    overflow-x: unset; scrollbar-width: unset; padding: 0; gap: 0;
   }
-  .group-switch::-webkit-scrollbar { display: none; }
   .group-tab {
-    flex: 0 0 auto; border: 1px solid var(--line); border-radius: 99px;
-    padding: 9px 18px; white-space: nowrap;
-    display: inline-flex; align-items: center; flex-direction: row; gap: 0;
+    flex: unset; border: none; border-right: 1px solid var(--line); border-radius: 0;
+    padding: clamp(16px,4vw,22px) var(--gutter) clamp(14px,3.5vw,20px);
+    display: flex; flex-direction: column; align-items: flex-start; gap: 4px;
+    white-space: normal;
   }
-  .group-tab:last-child { border-right: 1px solid var(--line); }
-  .group-tab .gt-idx, .group-tab .gt-note, .group-tab .gt-count { display: none; }
-  .group-tab .gt-name { font-size: 15px; line-height: 1; }
-  .group-tab.active { border-color: var(--forest); }
+  .group-tab:last-child { border-right: none; }
+  .group-tab .gt-idx { display: block; }
+  .group-tab .gt-note { display: block; font-size: clamp(11px,3vw,14px); }
+  .group-tab .gt-count { display: block; }
+  .group-tab .gt-name { font-size: clamp(20px,6.5vw,32px); line-height: .94; }
+  .group-tab.active { border-color: transparent; }
   .dish-card .dc-add { opacity: 1; transform: none; width: 38px; height: 38px; font-size: 19px; }
   .dish-detail { padding: 44px var(--gutter) 64px; }
   .d-actions { width: 100%; }

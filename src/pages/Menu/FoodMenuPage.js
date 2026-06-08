@@ -221,7 +221,6 @@ const FoodMenuPage = ({ products = [], onAddToCart, onProductClick, loading, err
                 >
                   <span>
                     <span className="mc-name">{c.name}</span>
-                    {CATEGORY_META[c.id]?.note && <span className="mc-note">{CATEGORY_META[c.id].note}</span>}
                   </span>
                   <span className="mc-count">{products.filter(p => p.category === c.id).length}</span>
                 </button>
@@ -246,7 +245,6 @@ const FoodMenuPage = ({ products = [], onAddToCart, onProductClick, loading, err
                   >
                     <span>
                       <span className="acc-name">{c.name}</span>
-                      {CATEGORY_META[c.id]?.note && <span className="acc-note">{CATEGORY_META[c.id].note}</span>}
                     </span>
                     <span className="acc-chevron">{isOpen ? '−' : '+'}</span>
                   </button>

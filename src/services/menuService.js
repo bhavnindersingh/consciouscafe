@@ -20,7 +20,7 @@ const toProduct = (recipe) => ({
   taxRate: parseFloat(recipe.tax_rate) || 5,
 });
 
-/** Returns 2 top food + 1 top drinks + 1 top patisserie by order_count. */
+/** Returns 2 top food + 1 top drinks + 1 top patisserie ranked by POS sales. */
 export async function getSignatureDishes() {
   const { data, error } = await menuSupabase.rpc('get_signature_dishes');
   if (error) throw error;
