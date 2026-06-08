@@ -8,7 +8,6 @@ const Arrow = ({ s = 16 }) => (
 );
 
 const GUMLET_VIDEO = 'https://play.gumlet.io/embed/6925f88a3c99376d4fd48188?background=true&autoplay=true&loop=true&disableControls=true&muted=true&preload=true';
-const HERO_POSTER = 'https://consciouscafe.gumlet.io/EARTH%20BOWLS/Thai%20Bowl.JPG?w=2600&h=1600&mode=crop&q=80&fm=auto';
 
 const Hero = () => {
   const navigate = useNavigate();
@@ -29,7 +28,6 @@ const Hero = () => {
             referrerPolicy="origin"
           />
         </div>
-        <img src={HERO_POSTER} alt="" aria-hidden="true" />
       </div>
       <img className="hero-flower" src="/hibiscus.png" alt="" aria-hidden="true" style={{ position: 'absolute' }} />
       <div className="hero-side">Auroville Road · South India</div>
