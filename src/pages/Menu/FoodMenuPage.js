@@ -1,5 +1,4 @@
 import React, { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 import SEO from '../../components/seo/SEO/SEO';
 import { generatePageSEO } from '../../utils/seoData';
 
@@ -13,9 +12,14 @@ const Reveal = ({ children, className = '', delay = 0, as: Tag = 'div', style })
   <Tag style={style} className={`reveal${delay ? ` d${delay}` : ''} ${className}`}>{children}</Tag>
 );
 
-
 const catName = (slug = '') =>
   slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+
+const GROUP_META = {
+  food:       { name: 'Food',       note: 'Plant-forward plates, all day' },
+  drinks:     { name: 'Drinks',     note: 'Brewed, pressed & poured' },
+  patisserie: { name: 'Patisserie', note: 'Fresh bakes & sweet endings' },
+};
 
 function DishCard({ product, onProductClick, onAddToCart }) {
   return (
@@ -43,32 +47,62 @@ function DishCard({ product, onProductClick, onAddToCart }) {
 const FoodMenuPage = ({ products = [], onAddToCart, onProductClick, loading, error, initialCat }) => {
   const seoData = generatePageSEO('menu', {});
 
-  const categories = useMemo(() => {
+  /* Derive groups from mainCategory field */
+  const groups = useMemo(() => {
     const seen = new Set();
     const list = [];
     products.forEach(p => {
+      const g = p.mainCategory || 'food';
+      if (!seen.has(g)) {
+        seen.add(g);
+        list.push(g);
+      }
+    });
+    /* Sort so food → drinks → patisserie */
+    const order = ['food', 'drinks', 'patisserie'];
+    return list.sort((a, b) => {
+      const ai = order.indexOf(a), bi = order.indexOf(b);
+      return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
+    });
+  }, [products]);
+
+  const [activeGroup, setActiveGroup] = useState(null);
+
+  React.useEffect(() => {
+    if (!activeGroup && groups.length > 0) setActiveGroup(groups[0]);
+  }, [groups, activeGroup]);
+
+  /* Categories within active group */
+  const categories = useMemo(() => {
+    const seen = new Set();
+    const list = [];
+    products.filter(p => (p.mainCategory || 'food') === activeGroup).forEach(p => {
       if (!seen.has(p.category)) {
         seen.add(p.category);
         list.push({ id: p.category, name: catName(p.category) });
       }
     });
     return list;
-  }, [products]);
+  }, [products, activeGroup]);
 
   const [activeCat, setActiveCat] = useState(initialCat || null);
-
-  React.useEffect(() => {
-    if (!activeCat && categories.length > 0) setActiveCat(categories[0].id);
-  }, [categories, activeCat]);
 
   React.useEffect(() => {
     if (initialCat) setActiveCat(initialCat);
   }, [initialCat]);
 
+  React.useEffect(() => {
+    if (categories.length > 0 && (!activeCat || !categories.find(c => c.id === activeCat))) {
+      setActiveCat(categories[0].id);
+    }
+  }, [categories, activeCat]);
+
   const visibleProducts = useMemo(
     () => activeCat ? products.filter(p => p.category === activeCat) : [],
     [products, activeCat]
   );
+
+  const groupCount = (g) => products.filter(p => (p.mainCategory || 'food') === g).length;
 
   return (
     <div className="menu-view" id="menu">
@@ -77,7 +111,7 @@ const FoodMenuPage = ({ products = [], onAddToCart, onProductClick, loading, err
       <div className="menu-hero">
         <Reveal><span className="eyebrow">The Menu · Auroville Road</span></Reveal>
         <Reveal delay={1}><h1 className="display">A season,<br /><em>plated.</em></h1></Reveal>
-        <Reveal delay={2}><p className="lede">Everything is plant-forward and made in-house. The menu shifts with the harvest, so what you find today is what the land offered this week.</p></Reveal>
+        <Reveal delay={2}><p className="lede">Everything is plant-forward and made in-house. Start with what you're after — a plate, a pour, or something sweet.</p></Reveal>
       </div>
 
       {loading && (
@@ -87,29 +121,50 @@ const FoodMenuPage = ({ products = [], onAddToCart, onProductClick, loading, err
         <div style={{ padding: 'var(--gutter)', color: 'var(--ink-mute)' }}>Unable to load menu right now.</div>
       )}
 
-      {!loading && categories.length > 0 && (
-        <div className="menu-shell">
-          <div className="menu-cats">
-            {categories.map(c => (
-              <button
-                key={c.id}
-                className={`menu-cat ${activeCat === c.id ? 'active' : ''}`}
-                onClick={() => setActiveCat(c.id)}
-              >
-                <span>
-                  <span className="mc-name">{c.name}</span>
-                </span>
-                <span className="mc-count">{products.filter(p => p.category === c.id).length}</span>
-              </button>
-            ))}
+      {!loading && groups.length > 0 && (
+        <>
+          {/* Group switch: Food / Drinks / Patisserie */}
+          <div className="group-switch">
+            {groups.map((g, i) => {
+              const meta = GROUP_META[g] || { name: catName(g), note: '' };
+              return (
+                <button
+                  key={g}
+                  className={`group-tab ${activeGroup === g ? 'active' : ''}`}
+                  onClick={() => { setActiveGroup(g); }}
+                >
+                  <span className="gt-idx">{String(i + 1).padStart(2, '0')}</span>
+                  <span className="gt-name">{meta.name}</span>
+                  <span className="gt-note">{meta.note}</span>
+                  <span className="gt-count">{groupCount(g)} items</span>
+                </button>
+              );
+            })}
           </div>
 
-          <div className="menu-items">
-            {visibleProducts.map(p => (
-              <DishCard key={p.id} product={p} onProductClick={onProductClick} onAddToCart={onAddToCart} />
-            ))}
+          <div className="menu-shell">
+            <div className="menu-cats" key={activeGroup}>
+              {categories.map(c => (
+                <button
+                  key={c.id}
+                  className={`menu-cat ${activeCat === c.id ? 'active' : ''}`}
+                  onClick={() => setActiveCat(c.id)}
+                >
+                  <span>
+                    <span className="mc-name">{c.name}</span>
+                  </span>
+                  <span className="mc-count">{products.filter(p => p.category === c.id).length}</span>
+                </button>
+              ))}
+            </div>
+
+            <div className="menu-items" key={activeCat}>
+              {visibleProducts.map(p => (
+                <DishCard key={p.id} product={p} onProductClick={onProductClick} onAddToCart={onAddToCart} />
+              ))}
+            </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   );

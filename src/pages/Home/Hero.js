@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Arrow = ({ s = 16 }) => (
@@ -11,6 +11,16 @@ const GUMLET_VIDEO = 'https://play.gumlet.io/embed/6925f88a3c99376d4fd48188?back
 
 const Hero = () => {
   const navigate = useNavigate();
+  const [isPhone, setIsPhone] = useState(
+    typeof window !== 'undefined' && window.matchMedia('(max-width:760px)').matches
+  );
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width:760px)');
+    const handler = () => setIsPhone(mq.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
 
   const scrollToGather = () => {
     const el = document.getElementById('gather');
@@ -20,12 +30,15 @@ const Hero = () => {
   return (
     <header className="hero" id="home">
       <div className="hero-media">
-        <iframe
-          title="Conscious Café"
-          src={GUMLET_VIDEO}
-          allow="autoplay; encrypted-media; picture-in-picture"
-          referrerPolicy="origin"
-        />
+        <div className={`hero-video${isPhone ? '' : ''}`}>
+          <iframe
+            key={isPhone ? 'm' : 'd'}
+            title="Conscious Café"
+            src={GUMLET_VIDEO}
+            allow="autoplay; encrypted-media; picture-in-picture"
+            referrerPolicy="origin"
+          />
+        </div>
       </div>
       <div className="hero-side">Auroville Road · South India</div>
       <div className="scroll-cue"><span>scroll</span><span className="rail" /></div>

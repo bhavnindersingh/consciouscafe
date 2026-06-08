@@ -29,14 +29,15 @@ const Footer = () => {
           <div className="col-label">Visit</div>
           <p className="line">Kuilapalayam Main Road</p>
           <p className="line">Auroville Road, Tamil Nadu 605101</p>
-          <p className="line" style={{ marginTop: 14 }}>Daily · 8:00 — 22:00 · Closed Tuesday</p>
+          <p className="line" style={{ marginTop: 14 }}>Daily 9:30 — 21:00 · Closed Tuesday</p>
           <a href={MAPS} target="_blank" rel="noopener noreferrer" style={{ marginTop: 14 }}>Get directions →</a>
         </div>
 
         <div>
           <div className="col-label">Connect</div>
-          <a href="https://instagram.com/consciouscafe.kavas" target="_blank" rel="noopener noreferrer">Instagram</a>
+          <a href="https://www.instagram.com/consciouscafe.sanctuary/" target="_blank" rel="noopener noreferrer">Instagram</a>
           <a href="mailto:hello@consciouscafe.in">hello@consciouscafe.in</a>
+          <a href="tel:+918754561269">+91 87545 61269</a>
           <div style={{ marginTop: 24 }}>
             <Link to="/privacy-policy" style={{ fontSize: 14, opacity: .6 }}>Privacy Policy</Link>
             {'  ·  '}
