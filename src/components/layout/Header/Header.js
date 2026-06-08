@@ -61,6 +61,15 @@ const Header = () => {
       <a href="#main-content" className="skip-link">Skip to main content</a>
 
       <nav className={`nav ${isSolid ? 'solid' : ''}`} role="banner">
+        <button
+          className={`nav-burger ${mobileOpen ? 'is-open' : ''}`}
+          onClick={() => setMobileOpen(o => !o)}
+          aria-label="Toggle menu"
+          aria-expanded={mobileOpen}
+        >
+          <span /><span /><span />
+        </button>
+
         <div className="nav-links">
           <button className={`nav-link ${view === 'home' ? 'active' : ''}`} onClick={() => { navigate('/'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>home</button>
           <button className={`nav-link ${view === 'menu' ? 'active' : ''}`} onClick={() => navigate('/menu')}>menu</button>
@@ -77,14 +86,6 @@ const Header = () => {
           <button className="bag" onClick={() => setBagOpen(true)} aria-label={`Shopping bag, ${count} items`}>
             <BagIcon /> <span className="bag-label">bag</span>
             {count > 0 && <span className="count">{count}</span>}
-          </button>
-          <button
-            className={`nav-burger ${mobileOpen ? 'is-open' : ''}`}
-            onClick={() => setMobileOpen(o => !o)}
-            aria-label="Toggle menu"
-            aria-expanded={mobileOpen}
-          >
-            <span /><span /><span />
           </button>
         </div>
       </nav>

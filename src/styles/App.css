@@ -741,7 +741,7 @@ button { font-family: inherit; cursor: pointer; }
   :root { --gutter: 20px; }
 
   /* nav */
-  .nav { padding: 14px var(--gutter); justify-content: flex-end; }
+  .nav { padding: 14px var(--gutter); justify-content: space-between; }
   .nav.solid { padding-top: 12px; padding-bottom: 12px; }
   .nav-links { display: none; }
   .nav-right .nav-link { display: none; }

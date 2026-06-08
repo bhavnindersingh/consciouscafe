@@ -31,7 +31,7 @@ const Hero = () => {
         </div>
         <img src={HERO_POSTER} alt="" aria-hidden="true" />
       </div>
-      <img className="hero-flower" src="/hibiscus.png" alt="" aria-hidden="true" />
+      <img className="hero-flower" src="/hibiscus.png" alt="" aria-hidden="true" style={{ position: 'absolute' }} />
       <div className="hero-side">Auroville Road · South India</div>
       <div className="scroll-cue"><span>scroll</span><span className="rail" /></div>
       <div className="hero-inner">
