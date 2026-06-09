@@ -46,7 +46,5 @@ export async function getDeliveryMenu() {
     .order('name');
 
   if (error) throw error;
-  return (data || [])
-    .filter(recipe => IMAGE_MAP[toSlug(recipe.name)])
-    .map(toProduct);
+  return (data || []).map(toProduct);
 }
