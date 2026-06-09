@@ -22,7 +22,8 @@ const toProduct = (recipe) => {
     category: toSlug(recipe.sub_category || recipe.category),
     image: localPath
       ? getGumletUrl(localPath, { width: 1200, height: 900, mode: 'crop', quality: 90, format: 'auto' })
-      : (recipe.image_url || recipe.delivery_image_url || null),
+      : (recipe.image_url || null),
+    deliveryPackagingImage: recipe.delivery_image_url || null,
     sku: recipe.sku || null,
     taxRate: parseFloat(recipe.tax_rate) || 5,
   };
