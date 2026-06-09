@@ -1,6 +1,6 @@
 import { menuSupabase } from './supabase/menuClient';
 import { IMAGE_MAP } from '../data/imageMap';
-import { getGumletUrl, gumletPresets } from '../utils/gumlet';
+import { getGumletUrl } from '../utils/gumlet';
 
 const toSlug = (str) =>
   (str || '')
@@ -21,7 +21,7 @@ const toProduct = (recipe) => {
     mainCategory: toSlug(recipe.category),
     category: toSlug(recipe.sub_category || recipe.category),
     image: localPath
-      ? getGumletUrl(localPath, gumletPresets.productCard)
+      ? getGumletUrl(localPath, { width: 1200, height: 900, mode: 'crop', quality: 90, format: 'auto' })
       : (recipe.image_url || recipe.delivery_image_url || null),
     sku: recipe.sku || null,
     taxRate: parseFloat(recipe.tax_rate) || 5,
