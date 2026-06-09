@@ -41,39 +41,27 @@ const DeliveryInfo = () => {
       {/* Quick Delivery Overview */}
       <section className="values-section">
         <div className="container">
-          <h2>Delivery Areas & Fees</h2>
+          <h2>Delivery Areas</h2>
           <div className="values-grid">
             <div className="value-card">
               <div className="value-icon">🏛️</div>
               <h3>Auroville Community</h3>
-              <p>
-                Free delivery within Auroville<br />
-                <em>Supporting our local community</em>
-              </p>
+              <p><em>Supporting our local community</em></p>
+            </div>
+            <div className="value-card">
+              <div className="value-icon">🏡</div>
+              <h3>Kuilapalayam &amp; Nearby</h3>
+              <p><em>Local neighborhoods welcome</em></p>
             </div>
             <div className="value-card">
               <div className="value-icon">🌊</div>
               <h3>Pondicherry City</h3>
-              <p>
-                ₹50 delivery fee<br />
-                <em>Serving the French Quarter & beyond</em>
-              </p>
-            </div>
-            <div className="value-card">
-              <div className="value-icon">🏡</div>
-              <h3>Kuilapalayam & Nearby</h3>
-              <p>
-                ₹30 delivery fee<br />
-                <em>Local neighborhoods welcome</em>
-              </p>
+              <p><em>Serving the French Quarter &amp; beyond</em></p>
             </div>
             <div className="value-card">
               <div className="value-icon">🌾</div>
               <h3>Extended Areas</h3>
-              <p>
-                ₹80 delivery fee<br />
-                <em>Reaching rural communities</em>
-              </p>
+              <p><em>Contact us to confirm availability</em></p>
             </div>
           </div>
         </div>
@@ -128,8 +116,8 @@ const DeliveryInfo = () => {
               <div className="value-icon">🕐</div>
               <h3>Delivery Hours</h3>
               <p>
-                Mon-Fri: 11:00 AM - 9:00 PM<br />
-                Sat-Sun: 10:00 AM - 10:00 PM<br />
+                Mon &amp; Wed–Sun during cafe hours<br />
+                Tuesday: Closed<br />
                 <em>30-45 minutes estimated delivery</em>
               </p>
             </div>
@@ -138,9 +126,7 @@ const DeliveryInfo = () => {
               <div className="value-icon">💰</div>
               <h3>Order Requirements</h3>
               <p>
-                ₹300 minimum order<br />
-                Free delivery for Auroville<br />
-                <em>Supporting local community</em>
+                <em>Contact us for minimum order and fee details</em>
               </p>
             </div>
 
@@ -161,47 +147,6 @@ const DeliveryInfo = () => {
                 Cards, UPI, Cash on Delivery<br />
                 Digital wallets accepted<br />
                 <em>Choose your preferred method</em>
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Special Offers Section */}
-      <section className="founders-section">
-        <div className="container">
-          <h2>Special Delivery Offers</h2>
-          <div className="founders-grid">
-            <div className="founder-card">
-              <div className="founder-image">
-                <span style={{fontSize: '48px', color: '#26532B'}}>🎁</span>
-              </div>
-              <h3>Free Delivery Friday</h3>
-              <p>
-                Every Friday, enjoy free delivery on orders above ₹500 to any location! 
-                Perfect for weekend meal planning with friends and family.
-              </p>
-            </div>
-
-            <div className="founder-card">
-              <div className="founder-image">
-                <span style={{fontSize: '48px', color: '#26532B'}}>📦</span>
-              </div>
-              <h3>Conscious Community Orders</h3>
-              <p>
-                Order together with neighbors! 10% discount on bulk orders above ₹1000 
-                plus free delivery. Perfect for office lunches or community gatherings.
-              </p>
-            </div>
-
-            <div className="founder-card">
-              <div className="founder-image">
-                <span style={{fontSize: '48px', color: '#26532B'}}>🌱</span>
-              </div>
-              <h3>First-Time Delivery</h3>
-              <p>
-                New to our delivery service? Get ₹50 off your first order above ₹400. 
-                Experience conscious dining from the comfort of your space.
               </p>
             </div>
           </div>
@@ -273,7 +218,7 @@ const DeliveryInfo = () => {
             </div>
             <div style={{marginTop: '40px', padding: '20px', background: 'rgba(38, 83, 43, 0.1)', borderRadius: '12px'}}>
               <p style={{margin: '0', color: '#26532B', fontWeight: '600'}}>
-                💡 <strong>Pro Tip:</strong> Follow us on Instagram <strong>@consciouscafe.kavas</strong> for daily 
+                💡 <strong>Pro Tip:</strong> Follow us on Instagram <strong>@consciouscafe.sanctuary</strong> for daily
                 specials, behind-the-scenes content, and updates on our sustainability initiatives.
               </p>
             </div>

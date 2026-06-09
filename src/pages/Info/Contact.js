@@ -70,8 +70,9 @@ const Contact = () => {
               <div className="value-icon">🏠</div>
               <h3>Visit Our Cafe</h3>
               <p>
-                Auroville Road, Kuilapalayam<br />
-                Daily: 8:00 AM - 9:00 PM<br />
+                Kuilapalayam Main Road, Auroville Road<br />
+                Mon &amp; Wed–Sun: 9:30 AM – 9:00 PM<br />
+                Tuesday: Closed<br />
                 <em>Walk-ins welcome, no reservation needed</em>
               </p>
             </div>
@@ -80,9 +81,9 @@ const Contact = () => {
               <div className="value-icon">📱</div>
               <h3>Follow Us Online</h3>
               <p>
-                Instagram: @consciouscafe.kavas<br />
+                Instagram: @consciouscafe.sanctuary<br />
                 Website: consciouscafe.in<br />
-                <em>Daily specials & event updates</em>
+                <em>Daily specials &amp; event updates</em>
               </p>
             </div>
 
@@ -202,38 +203,6 @@ const Contact = () => {
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Community Activities Section */}
-      <section className="founders-section">
-        <div className="container">
-          <h2>Join Our Community Activities</h2>
-          <div className="founders-grid">
-            <div className="founder-card">
-              <div className="founder-image">
-                <span style={{fontSize: '48px'}}>🧘‍♀️</span>
-              </div>
-              <h3>Weekly Yoga Sessions</h3>
-              <p>Every Tuesday & Thursday at 7:00 AM. Start your day mindfully with community yoga practice in our garden space.</p>
-            </div>
-
-            <div className="founder-card">
-              <div className="founder-image">
-                <span style={{fontSize: '48px'}}>🌱</span>
-              </div>
-              <h3>Sustainability Workshops</h3>
-              <p>Monthly workshops on composting, zero-waste living, and conscious consumption. Learn practical skills for sustainable living.</p>
-            </div>
-
-            <div className="founder-card">
-              <div className="founder-image">
-                <span style={{fontSize: '48px'}}>🎪</span>
-              </div>
-              <h3>Community Events</h3>
-              <p>Regular potlucks, live music evenings, and seasonal celebrations. Check our Instagram for upcoming events and gatherings.</p>
             </div>
           </div>
         </div>

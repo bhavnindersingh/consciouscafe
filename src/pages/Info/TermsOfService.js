@@ -201,8 +201,8 @@ const TermsOfService = () => {
             Near Auroville, Pondicherry, Puducherry, Tamil Nadu 605101, India</p>
             
             <p>Email: hello@consciouscafe.in<br />
-            Phone: +91-XXX-XXX-XXXX<br />
-            WhatsApp: +91-XXX-XXX-XXXX</p>
+            Phone: +91 87545 61269<br />
+            WhatsApp: +91 87545 61269</p>
             
             <p><em>Serving award-winning conscious vegetarian cuisine, premium artisanal coffee, and exclusive wellness experiences to the vibrant Auroville, Pondicherry, and Puducherry community. Join us at the best cafe in Auroville and top vegetarian restaurant in Pondicherry and Puducherry for elite consciously sourced vegetarian breakfast, gourmet mindful vegetarian lunch, luxury nourishing vegetarian dinner, yoga-inspired fine vegetarian dining, and sustainable vegetarian food experiences crafted by our master chef team across Tamil Nadu.</em></p>
           </div>

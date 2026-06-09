@@ -28,12 +28,8 @@ import DashboardLayout from "./pages/Dashboard/DashboardLayout";
 import DashboardHome from "./pages/Dashboard/DashboardHome";
 import Login from "./pages/Dashboard/Login";
 import Register from "./pages/Dashboard/Register";
-import WorkshopList from "./pages/Dashboard/WorkshopList";
-import WorkshopManager from "./pages/Dashboard/WorkshopManager";
-import EventList from "./pages/Dashboard/EventList";
-import EventManager from "./pages/Dashboard/EventManager";
-import RetreatList from "./pages/Dashboard/RetreatList";
-import RetreatManager from "./pages/Dashboard/RetreatManager";
+import OfferingList from "./pages/Dashboard/OfferingList";
+import OfferingManager from "./pages/Dashboard/OfferingManager";
 import RSVPList from "./pages/Dashboard/RSVPList";
 import FacilitatorRequests from "./pages/Dashboard/FacilitatorRequests";
 import RequestFacilitatorAccess from "./pages/Public/RequestFacilitatorAccess";
@@ -92,15 +88,15 @@ function AppContent() {
           <Route path="/dashboard" element={<DashboardLayout />}>
             <Route index element={<DashboardHome />} />
             <Route path="rsvps" element={<RSVPList />} />
-            <Route path="workshops" element={<WorkshopList />} />
-            <Route path="create-workshop" element={<WorkshopManager />} />
-            <Route path="edit-workshop/:id" element={<WorkshopManager />} />
-            <Route path="events" element={<EventList />} />
-            <Route path="create-event" element={<EventManager />} />
-            <Route path="edit-event/:id" element={<EventManager />} />
-            <Route path="retreats" element={<RetreatList />} />
-            <Route path="create-retreat" element={<RetreatManager />} />
-            <Route path="edit-retreat/:id" element={<RetreatManager />} />
+            <Route path="workshops" element={<OfferingList type="workshop" />} />
+            <Route path="create-workshop" element={<OfferingManager type="workshop" />} />
+            <Route path="edit-workshop/:id" element={<OfferingManager type="workshop" />} />
+            <Route path="events" element={<OfferingList type="event" />} />
+            <Route path="create-event" element={<OfferingManager type="event" />} />
+            <Route path="edit-event/:id" element={<OfferingManager type="event" />} />
+            <Route path="retreats" element={<OfferingList type="retreat" />} />
+            <Route path="create-retreat" element={<OfferingManager type="retreat" />} />
+            <Route path="edit-retreat/:id" element={<OfferingManager type="retreat" />} />
             <Route path="facilitator-requests" element={<FacilitatorRequests />} />
           </Route>
           <Route path="*" element={<NotFound />} />

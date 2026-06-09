@@ -154,7 +154,7 @@ const RequestFacilitatorAccess = () => {
                                 name="phone_number"
                                 required
                                 className="auth-input"
-                                placeholder="+1 (555) 123-4567"
+                                placeholder="+91 XXXXX XXXXX"
                                 value={formData.phone_number}
                                 onChange={handleChange}
                                 disabled={loading}

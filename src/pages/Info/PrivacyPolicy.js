@@ -141,7 +141,7 @@ const PrivacyPolicy = () => {
             Near Auroville, Pondicherry, Tamil Nadu, India</p>
             
             <p>Email: hello@consciouscafe.in<br />
-            Phone: +91-XXX-XXX-XXXX</p>
+            Phone: +91 87545 61269</p>
             
             <p><em>Experience conscious dining with our consciously sourced coffee, non-processed vegetarian cuisine, and yoga-inspired wellness bowls in the heart of Pondicherry, near the Auroville community.</em></p>
           </div>
