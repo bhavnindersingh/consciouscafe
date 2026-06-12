@@ -14,6 +14,7 @@ const toSlug = (str) =>
 const toProduct = (recipe) => {
   const slug = toSlug(recipe.name);
   const localPath = IMAGE_MAP[slug];
+  const fallback = recipe.image_url || null;
   return {
     id: recipe.id,
     name: recipe.name,
@@ -21,9 +22,14 @@ const toProduct = (recipe) => {
     price: parseFloat(recipe.selling_price) || 0,
     mainCategory: toSlug(recipe.category),
     category: toSlug(recipe.sub_category || recipe.category),
+    // 800×1000 portrait (4:5) — matches card/sig-figure containers, sharp at 2× retina on ~400px cards
     image: localPath
-      ? getGumletUrl(localPath, { width: 1200, height: 900, mode: 'crop', quality: 90, format: 'auto' })
-      : (recipe.image_url || null),
+      ? getGumletUrl(localPath, { width: 800, height: 1000, mode: 'crop', quality: 90, format: 'auto' })
+      : fallback,
+    // 1600×2000 portrait — covers the full-height detail panel at 2× retina on wide screens
+    imageDetail: localPath
+      ? getGumletUrl(localPath, { width: 1600, height: 2000, mode: 'crop', quality: 90, format: 'auto' })
+      : fallback,
     deliveryPackagingImage: recipe.delivery_image_url || null,
     sku: recipe.sku || null,
     taxRate: parseFloat(recipe.tax_rate) || 5,

@@ -85,7 +85,7 @@ const ProductDetailPage = ({ products = [], onAddToCart }) => {
         <div className="dish-img">
           <button className="back" onClick={() => navigate('/menu')}>← Back to menu</button>
           {product.image && (
-            <img src={product.image} alt={product.name} />
+            <img src={product.imageDetail || product.image} alt={product.name} />
           )}
         </div>
 
