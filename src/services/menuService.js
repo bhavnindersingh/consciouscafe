@@ -4,11 +4,12 @@ import { getGumletUrl } from '../utils/gumlet';
 
 const toSlug = (str) =>
   (str || '')
+    .trim()
     .toLowerCase()
     .replace(/[^a-z0-9\s-]/g, '')
     .replace(/\s+/g, '-')
     .replace(/-+/g, '-')
-    .trim();
+    .replace(/^-+|-+$/g, '');
 
 const toProduct = (recipe) => {
   const slug = toSlug(recipe.name);
