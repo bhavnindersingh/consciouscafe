@@ -22,13 +22,13 @@ const toProduct = (recipe) => {
     price: parseFloat(recipe.selling_price) || 0,
     mainCategory: toSlug(recipe.category),
     category: toSlug(recipe.sub_category || recipe.category),
-    // 800×1000 portrait (4:5) — matches card/sig-figure containers, sharp at 2× retina on ~400px cards
+    // 900×1200 portrait (3:4) — matches phone photo ratio, no cropping, sharp at 2× retina
     image: localPath
-      ? getGumletUrl(localPath, { width: 800, height: 1000, mode: 'crop', quality: 90, format: 'auto' })
+      ? getGumletUrl(localPath, { width: 900, height: 1200, mode: 'fit', quality: 90, format: 'auto' })
       : fallback,
-    // 1600×2000 portrait — covers the full-height detail panel at 2× retina on wide screens
+    // 1800×2400 portrait — same 3:4 ratio, 2× size for the full-height detail panel
     imageDetail: localPath
-      ? getGumletUrl(localPath, { width: 1600, height: 2000, mode: 'crop', quality: 90, format: 'auto' })
+      ? getGumletUrl(localPath, { width: 1800, height: 2400, mode: 'fit', quality: 90, format: 'auto' })
       : fallback,
     deliveryPackagingImage: recipe.delivery_image_url || null,
     sku: recipe.sku || null,

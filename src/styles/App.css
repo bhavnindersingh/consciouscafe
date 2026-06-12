@@ -348,8 +348,8 @@ button { font-family: inherit; cursor: pointer; }
 .menu-cat .mc-note { display:block; font-family: var(--serif); font-size: 15px; color: var(--ink-mute); font-style: italic; margin-top: 2px; }
 
 .dish-card { background: none; border: none; text-align: left; display: flex; flex-direction: column; cursor: pointer; }
-.dish-card .dc-media { position: relative; overflow: hidden; aspect-ratio: 4/5; background: var(--paper-2); }
-.dish-card .dc-media img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease); }
+.dish-card .dc-media { position: relative; overflow: hidden; aspect-ratio: 3/4; background: var(--paper-2); }
+.dish-card .dc-media img { width: 100%; height: 100%; object-fit: contain; transition: transform 1.2s var(--ease); }
 .dish-card:hover .dc-media img { transform: scale(1.05); }
 .dish-card .dc-bestseller { position: absolute; top: 14px; left: 14px; font-family: var(--ui); font-size: 9.5px; letter-spacing: .2em; text-transform: uppercase; background: var(--paper); color: var(--ink); padding: 6px 11px; }
 .dish-card .dc-add {
@@ -494,9 +494,9 @@ button { font-family: inherit; cursor: pointer; }
 }
 .sig-figure {
   position: relative; overflow: hidden; background: var(--paper-2);
-  aspect-ratio: 4 / 5; cursor: pointer;
+  aspect-ratio: 3 / 4; cursor: pointer;
 }
-.sig-figure img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 1.6s var(--ease); }
+.sig-figure img { width: 100%; height: 100%; object-fit: contain; display: block; transition: transform 1.6s var(--ease); }
 .sig-figure:hover img { transform: scale(1.045); }
 .sig-figure .tag {
   position: absolute; top: 20px; left: 20px; font-family: var(--ui); font-size: 10px; letter-spacing: .26em;
@@ -513,7 +513,7 @@ button { font-family: inherit; cursor: pointer; }
   gap: clamp(20px, 2.6vw, 44px);
   max-width: 1500px; margin: clamp(44px, 6.5vh, 84px) auto 0;
 }
-.sig-card .sig-figure { aspect-ratio: 5 / 6; }
+.sig-card .sig-figure { aspect-ratio: 3 / 4; }
 .sig-card .sc-body { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding-top: 16px; margin-top: 16px; border-top: 1px solid var(--line); cursor: pointer; }
 .sig-card .sc-body > div { min-width: 0; }
 .sig-card h4 { font-family: var(--display); font-weight: 400; font-size: clamp(21px, 1.7vw, 27px); line-height: 1.05; text-wrap: balance; }
@@ -712,7 +712,7 @@ button { font-family: inherit; cursor: pointer; }
   .feature.flip .feature-media { order: 0; }
   .feature-media { min-height: 56vh; }
   .sig { grid-template-columns: 1fr; gap: clamp(24px, 4vw, 40px); }
-  .sig .sig-figure { aspect-ratio: 4 / 3; }
+  .sig .sig-figure { aspect-ratio: 3 / 4; }
   .sig-grid { grid-template-columns: repeat(3, 1fr); }
   .pillars { grid-template-columns: 1fr; }
   .val-grid { grid-template-columns: 1fr 1fr; }
