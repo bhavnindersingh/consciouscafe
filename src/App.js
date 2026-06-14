@@ -22,6 +22,7 @@ import DeliveryInfo from "./pages/Info/DeliveryInfo";
 import PrivacyPolicy from "./pages/Info/PrivacyPolicy";
 import TermsOfService from "./pages/Info/TermsOfService";
 import NotFound from "./pages/NotFound/NotFound";
+import PrintMenuPage from "./pages/Print/PrintMenuPage";
 
 // Dashboard
 import DashboardLayout from "./pages/Dashboard/DashboardLayout";
@@ -50,6 +51,7 @@ function AppContent() {
   const { items: products, loading: menuLoading, error: menuError } = useDeliveryMenu();
 
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const isPrintRoute = location.pathname === '/print-menu';
 
   useEffect(() => { window.scrollTo(0, 0); }, [location.pathname]);
 
@@ -57,6 +59,14 @@ function AppContent() {
   const handleCheckout = () => { setBagOpen(false); setIsCheckoutOpen(true); };
   const handleOrderComplete = () => { clearCart(); setIsCheckoutOpen(false); };
   const handleProductClick = (product) => startTransition(() => navigate(`/product/${toSlug(product.name)}`));
+
+  if (isPrintRoute) {
+    return (
+      <Routes>
+        <Route path="/print-menu" element={<PrintMenuPage />} />
+      </Routes>
+    );
+  }
 
   return (
     <div className="App">
@@ -69,6 +79,15 @@ function AppContent() {
           } />
           <Route path="/menu" element={
             <FoodMenuPage products={products} onAddToCart={handleAddToCart} onProductClick={handleProductClick} loading={menuLoading} error={menuError} />
+          } />
+          <Route path="/menu/food" element={
+            <FoodMenuPage products={products} onAddToCart={handleAddToCart} onProductClick={handleProductClick} loading={menuLoading} error={menuError} initialGroup="food" />
+          } />
+          <Route path="/menu/drinks" element={
+            <FoodMenuPage products={products} onAddToCart={handleAddToCart} onProductClick={handleProductClick} loading={menuLoading} error={menuError} initialGroup="drinks" />
+          } />
+          <Route path="/menu/patisserie" element={
+            <FoodMenuPage products={products} onAddToCart={handleAddToCart} onProductClick={handleProductClick} loading={menuLoading} error={menuError} initialGroup="patisserie" />
           } />
           <Route path="/category/:categoryId" element={
             <CategoryPage products={products} onAddToCart={handleAddToCart} onProductClick={handleProductClick} loading={menuLoading} error={menuError} />

@@ -1,6 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const Arrow = ({ s = 16 }) => (
   <svg className="arr" width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
@@ -43,6 +42,14 @@ const Footer = () => {
             {'  ·  '}
             <Link to="/terms-of-service" style={{ fontSize: 14, opacity: .6 }}>Terms</Link>
           </div>
+        </div>
+
+        <div>
+          <div className="col-label">Menu</div>
+          <Link to="/menu/food">Food</Link>
+          <Link to="/menu/drinks">Drinks</Link>
+          <Link to="/menu/patisserie">Patisserie</Link>
+          <Link to="/menu" style={{ marginTop: 10, opacity: .6, fontSize: 14 }}>Full menu →</Link>
         </div>
       </div>
 

@@ -1,93 +1,22 @@
 import React, { useState, useMemo } from 'react';
 import SEO from '../../components/seo/SEO/SEO';
 import { generatePageSEO } from '../../utils/seoData';
+import { CATEGORY_META, CATEGORY_ORDER, MAIN_CATEGORY_META as GROUP_META } from '../../utils/menuEnrichment';
 
 const catName = (slug = '') =>
   slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 
-const GROUP_META = {
-  food:       { name: 'Food',       note: 'Plant-forward plates, all day' },
-  drinks:     { name: 'Drinks',     note: 'Pressed, brewed & poured' },
-  patisserie: { name: 'Patisserie', note: 'Fresh bakes & sweet endings' },
+const DIETARY_LABELS = {
+  vegetarian:        { label: 'Vegetarian',          emoji: '🟢'   },
+  vegan:             { label: 'Vegan',               emoji: '🌱'   },
+  contains_egg:      { label: 'Contains Egg',        emoji: '🥚'   },
+  gluten_free:       { label: 'Gluten-Free',         emoji: '🌾🚫' },
+  contains_dairy:    { label: 'Contains Dairy',      emoji: '🥛'   },
+  contains_nuts_soy: { label: 'Contains Nuts / Soy', emoji: '🥜'   },
+  spicy:             { label: 'Spicy',               emoji: '🌶️'   },
 };
 
-const CATEGORY_META = {
-  'toast':               { name: 'Toast',              note: 'Sourdough, slow-fermented' },
-  'all-day-breakfast':   { name: 'All Day Breakfast',  note: 'Morning, whenever it finds you' },
-  'smoothie-bowls':      { name: 'Smoothie Bowls',     note: 'Fruit, grain & quiet ritual' },
-  'earth-grills-crisps': { name: 'Earth Grills & Crisps', note: 'Fire & root' },
-  'salads':              { name: 'Salads',             note: 'Garden-led, dressed with care' },
-  'platters':            { name: 'Platters',           note: 'Made to gather around' },
-  'earth-bowls':         { name: 'Earth Bowls',        note: 'A continent in a single bowl' },
-  'noodle-bowls':        { name: 'Noodle Bowls',       note: 'Broth, brewed long' },
-  'pasta-pizza':         { name: 'Pasta',              note: 'Hand-finished, herb-forward' },
-  'pasta':               { name: 'Pasta',              note: 'Hand-finished, herb-forward' },
-  'desserts':            { name: 'Desserts',           note: 'A gentle, plant-based close' },
-  'juices':              { name: 'Juices',             note: 'Cold-pressed, fruit-led' },
-  'mocktails':           { name: 'Mocktails',          note: 'Shaken & sparkling' },
-  'floral-teas':         { name: 'Floral Teas',        note: 'Petal-steeped, calming' },
-  'chai':                { name: 'Chai',               note: 'Spiced, brewed slow' },
-  'coffee':              { name: 'Coffee',             note: 'Small-batch beans' },
-};
-
-const CATEGORY_ORDER = [
-  'toast', 'all-day-breakfast', 'smoothie-bowls', 'earth-grills-crisps',
-  'salads', 'platters', 'earth-bowls', 'noodle-bowls', 'pasta-pizza', 'pasta',
-  'desserts', 'juices', 'mocktails', 'floral-teas', 'chai', 'coffee',
-];
-
-/* Enrich products with bestseller + diet when Supabase doesn't carry these fields.
-   Matched by normalised product name (lowercase, trimmed). */
-const ENRICHMENT = {
-  'mushroom toast':           { diet: 'vegan' },
-  'avocado toast':            { bestseller: true, diet: 'veg / egg' },
-  'pesto cream cheese':       { diet: 'veg' },
-  'burrata bruschetta':       { diet: 'veg' },
-  'muhammara':                { diet: 'vegan' },
-  'cilbir':                   { diet: 'veg / egg' },
-  'pancake':                  { diet: 'veg / GF' },
-  'french toast':             { bestseller: true, diet: 'veg / egg' },
-  'berry blast smoothie':     { diet: 'vegan' },
-  'cocoa peanut smoothie':    { diet: 'vegan' },
-  'goodness bowl':            { bestseller: true, diet: 'veg' },
-  'fruit bliss bowl':         { diet: 'vegan' },
-  'overnight oats':           { diet: 'vegan' },
-  'matcha chia pudding':      { diet: 'vegan' },
-  'grilled sweet potato':     { diet: 'vegan / GF' },
-  'grilled tofu satay':       { bestseller: true, diet: 'vegan / GF' },
-  'taro root crisps':         { diet: 'vegan / GF' },
-  'cassava crisps':           { diet: 'vegan / GF' },
-  'watermelon feta':          { diet: 'veg / GF' },
-  'tropical salad':           { diet: 'veg / GF' },
-  'botanical balance salad':  { diet: 'veg / GF' },
-  'yogi platter':             { diet: 'vegan' },
-  'zulfi platter':            { diet: 'veg / egg' },
-  'mezze platter':            { diet: 'vegan' },
-  'thai bowl':                { bestseller: true, diet: 'vegan' },
-  'tokyo katsu':              { diet: 'vegan' },
-  'rangla punjab':            { bestseller: true, diet: 'veg' },
-  'sol bowl':                 { diet: 'vegan' },
-  'mezze kodo bowl':          { diet: 'vegan' },
-  'khao soi':                 { diet: 'vegan' },
-  'laksa':                    { bestseller: true, diet: 'vegan' },
-  'miso ramen':               { diet: 'vegan' },
-  'bibim guksu':              { diet: 'vegan' },
-  'meatless meatball':        { diet: 'veg' },
-  'zucchini zoodles':         { bestseller: true, diet: 'veg / GF' },
-  'coconut panna cotta':      { bestseller: true, diet: 'vegan' },
-  'chocolate mousse':         { diet: 'vegan' },
-  'peach ice tea':            { bestseller: true, diet: 'vegan / GF' },
-  'iced vanilla latte':       { bestseller: true, diet: 'veg' },
-};
-
-function enrich(product) {
-  const key = (product.name || '').toLowerCase().trim();
-  const extra = ENRICHMENT[key] || {};
-  return { ...extra, ...product, bestseller: product.bestseller || extra.bestseller, diet: product.diet || extra.diet };
-}
-
-function DishCard({ product, onProductClick, onAddToCart }) {
-  const p = enrich(product);
+function DishCard({ product: p, onProductClick, onAddToCart }) {
   return (
     <div className="dish-card" onClick={() => onProductClick(p)}>
       <div className="dc-media">
@@ -95,7 +24,6 @@ function DishCard({ product, onProductClick, onAddToCart }) {
           ? <img src={p.image} alt={p.name} loading="lazy" />
           : <div style={{ width: '100%', height: '100%', background: 'var(--paper-deep)' }} />
         }
-        {p.bestseller && <span className="dc-bestseller">House Favourite</span>}
         <button
           className="dc-add"
           aria-label={`Add ${p.name}`}
@@ -107,12 +35,24 @@ function DishCard({ product, onProductClick, onAddToCart }) {
         <span className="dc-price">₹{(p.price || 0).toLocaleString('en-IN')}</span>
       </div>
       {p.description && <p>{p.description}</p>}
-      {p.diet && <span className="dc-diet">{p.diet}</span>}
+      {p.dietaryLabels?.length > 0 && (
+        <div className="dc-labels">
+          {p.dietaryLabels.map(key => {
+            const def = DIETARY_LABELS[key] || { label: key, emoji: '' };
+            return <span key={key} className="dc-diet">{def.emoji} {def.label}</span>;
+          })}
+        </div>
+      )}
+      {p.variations?.length > 0 && (
+        <div className="dc-variations">
+          {p.variations.map(v => <span key={v.id} className="dc-variation">{v.name}</span>)}
+        </div>
+      )}
     </div>
   );
 }
 
-const FoodMenuPage = ({ products = [], onAddToCart, onProductClick, loading, error, initialCat }) => {
+const FoodMenuPage = ({ products = [], onAddToCart, onProductClick, loading, error, initialCat, initialGroup }) => {
   const seoData = generatePageSEO('menu', {});
 
   /* Derive groups from mainCategory field — always food → drinks → patisserie */
@@ -130,11 +70,12 @@ const FoodMenuPage = ({ products = [], onAddToCart, onProductClick, loading, err
     });
   }, [products]);
 
-  const [activeGroup, setActiveGroup] = useState(null);
+  const [activeGroup, setActiveGroup] = useState(initialGroup || null);
 
   React.useEffect(() => {
+    if (initialGroup) { setActiveGroup(initialGroup); return; }
     if (!activeGroup && groups.length > 0) setActiveGroup(groups[0]);
-  }, [groups, activeGroup]);
+  }, [groups, activeGroup, initialGroup]);
 
   /* Categories within active group — sorted to reference menu order */
   const categories = useMemo(() => {
