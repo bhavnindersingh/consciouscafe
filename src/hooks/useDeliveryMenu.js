@@ -1,13 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { getDeliveryMenu } from '../services/menuService';
-
-const toSlug = (name) =>
-  (name || '')
-    .toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, '')
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-')
-    .trim();
+import { toSlug } from '../utils/slug';
 
 export function useDeliveryMenu() {
   const [items, setItems] = useState([]);

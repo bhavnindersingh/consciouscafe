@@ -1,15 +1,7 @@
-import { menuSupabase } from './supabase/menuClient';
+import { supabase } from './supabase/supabaseClient';
 import { IMAGE_MAP } from '../data/imageMap';
 import { getGumletUrl } from '../utils/gumlet';
-
-const toSlug = (str) =>
-  (str || '')
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, '')
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-+|-+$/g, '');
+import { toSlug } from '../utils/slug';
 
 const toProduct = (recipe) => {
   const slug = toSlug(recipe.name);
@@ -42,13 +34,13 @@ const toProduct = (recipe) => {
 
 /** Returns 2 top food + 1 top drinks + 1 top patisserie ranked by POS sales. */
 export async function getSignatureDishes() {
-  const { data, error } = await menuSupabase.rpc('get_signature_dishes');
+  const { data, error } = await supabase.rpc('get_signature_dishes');
   if (error) throw error;
   return (data || []).map(toProduct);
 }
 
 export async function getDeliveryMenu() {
-  const { data, error } = await menuSupabase
+  const { data, error } = await supabase
     .from('recipes')
     .select(
       'id, name, description, selling_price, category, sub_category, image_url, delivery_image_url, sku, tax_rate, dietary_labels, recipe_variations(id, name, selling_price, sort_order)'

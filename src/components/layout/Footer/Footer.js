@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const Arrow = ({ s = 16 }) => (
   <svg className="arr" width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
@@ -7,10 +7,16 @@ const Arrow = ({ s = 16 }) => (
   </svg>
 );
 
+const Printer = ({ s = 15 }) => (
+  <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2" />
+    <rect x="6" y="14" width="12" height="7" rx="1" />
+  </svg>
+);
+
 const MAPS = 'https://maps.google.com/?q=Conscious+Cafe+Auroville+Road+Tamil+Nadu';
 
 const Footer = () => {
-  const navigate = useNavigate();
   return (
     <footer className="footer" id="visit">
       <div className="footer-top">
@@ -18,9 +24,9 @@ const Footer = () => {
           <span className="eyebrow on-dark" style={{ color: 'rgba(255,255,255,.55)' }}>Come sit a while</span>
           <h3 style={{ marginTop: 18 }}>Find us under<br /><em style={{ fontStyle: 'italic' }}>the canopy.</em></h3>
           <div style={{ marginTop: 30 }}>
-            <button className="btn on-dark" onClick={() => navigate('/menu')}>
+            <Link className="btn on-dark" to="/menu" style={{ display: 'inline-flex', fontSize: 12, marginBottom: 0 }}>
               Explore the Menu <Arrow />
-            </button>
+            </Link>
           </div>
         </div>
 
@@ -46,9 +52,23 @@ const Footer = () => {
 
         <div>
           <div className="col-label">Menu</div>
-          <Link to="/menu/food">Food</Link>
-          <Link to="/menu/drinks">Drinks</Link>
-          <Link to="/menu/patisserie">Patisserie</Link>
+          {[
+            { id: 'food', label: 'Food' },
+            { id: 'drinks', label: 'Drinks' },
+            { id: 'patisserie', label: 'Patisserie' },
+          ].map(({ id, label }) => (
+            <div key={id} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <Link to={`/menu/${id}`} style={{ margin: 0 }}>{label}</Link>
+              <Link
+                to={`/print-menu?focus=${id}`}
+                title={`Print ${label} menu (PDF)`}
+                aria-label={`Print ${label} menu`}
+                style={{ display: 'inline-flex', margin: 0, color: 'rgba(255,255,255,.45)' }}
+              >
+                <Printer s={13} />
+              </Link>
+            </div>
+          ))}
           <Link to="/menu" style={{ marginTop: 10, opacity: .6, fontSize: 14 }}>Full menu →</Link>
         </div>
       </div>

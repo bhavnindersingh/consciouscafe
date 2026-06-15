@@ -37,15 +37,15 @@ function DishCard({ product: p, onProductClick, onAddToCart }) {
       {p.description && <p>{p.description}</p>}
       {p.dietaryLabels?.length > 0 && (
         <div className="dc-labels">
-          {p.dietaryLabels.map(key => {
+          {p.dietaryLabels.map((key, i) => {
             const def = DIETARY_LABELS[key] || { label: key, emoji: '' };
-            return <span key={key} className="dc-diet">{def.emoji} {def.label}</span>;
+            return <span key={key ?? i} className="dc-diet">{def.emoji} {def.label}</span>;
           })}
         </div>
       )}
       {p.variations?.length > 0 && (
         <div className="dc-variations">
-          {p.variations.map(v => <span key={v.id} className="dc-variation">{v.name}</span>)}
+          {p.variations.map(v => <span key={v.id ?? v.name} className="dc-variation">{v.name}</span>)}
         </div>
       )}
     </div>
@@ -139,7 +139,7 @@ const FoodMenuPage = ({ products = [], onAddToCart, onProductClick, loading, err
               const meta = GROUP_META[g] || { name: catName(g), note: '' };
               return (
                 <button
-                  key={g}
+                  key={g || `group-${i}`}
                   className={`group-tab ${activeGroup === g ? 'active' : ''}`}
                   onClick={() => setActiveGroup(g)}
                 >
@@ -153,10 +153,10 @@ const FoodMenuPage = ({ products = [], onAddToCart, onProductClick, loading, err
           </div>
 
           <div className="menu-shell">
-            <div className="menu-cats" key={activeGroup}>
-              {categories.map(c => (
+            <div className="menu-cats" key={`cats-${activeGroup}`}>
+              {categories.map((c, i) => (
                 <button
-                  key={c.id}
+                  key={c.id || `cat-${i}`}
                   className={`menu-cat ${activeCat === c.id ? 'active' : ''}`}
                   onClick={() => setActiveCat(c.id)}
                 >
@@ -168,18 +168,19 @@ const FoodMenuPage = ({ products = [], onAddToCart, onProductClick, loading, err
               ))}
             </div>
 
-            <div className="menu-items" key={activeCat}>
-              {visibleProducts.map(p => (
-                <DishCard key={p.id} product={p} onProductClick={onProductClick} onAddToCart={onAddToCart} />
+            <div className="menu-items" key={`items-${activeCat}`}>
+              {visibleProducts.map((p, i) => (
+                <DishCard key={p.id ?? p.name ?? i} product={p} onProductClick={onProductClick} onAddToCart={onAddToCart} />
               ))}
             </div>
           </div>
 
           <div className="menu-accordion">
-            {categories.map(c => {
+            {categories.map((c, i) => {
               const isOpen = mobileOpen === c.id;
+              const accKey = c.id || `cat-${i}`;
               return (
-                <div key={c.id} className={`acc-section${isOpen ? ' open' : ''}`}>
+                <div key={accKey} className={`acc-section${isOpen ? ' open' : ''}`}>
                   <button
                     className="acc-head"
                     onClick={() => setMobileOpen(isOpen ? null : c.id)}
@@ -191,8 +192,8 @@ const FoodMenuPage = ({ products = [], onAddToCart, onProductClick, loading, err
                   </button>
                   <div className="acc-body">
                     <div className="acc-inner">
-                      {products.filter(p => p.category === c.id).map(p => (
-                        <DishCard key={p.id} product={p} onProductClick={onProductClick} onAddToCart={onAddToCart} />
+                      {products.filter(p => p.category === c.id).map((p, i) => (
+                        <DishCard key={p.id ?? p.name ?? i} product={p} onProductClick={onProductClick} onAddToCart={onAddToCart} />
                       ))}
                     </div>
                   </div>

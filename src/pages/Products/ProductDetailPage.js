@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import SEO from '../../components/seo/SEO/SEO';
+import { toSlug } from '../../utils/slug';
 
 const Reveal = ({ children, className = '', delay = 0, as: Tag = 'div', style }) => (
   <Tag style={style} className={`reveal${delay ? ` d${delay}` : ''} ${className}`}>{children}</Tag>
@@ -15,9 +16,6 @@ const Arrow = ({ s = 16 }) => (
 
 const catName = (slug = '') =>
   slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-
-const toSlug = (name = '') =>
-  name.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').trim();
 
 function DishCard({ product, onProductClick, onAddToCart }) {
   return (

@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState, useCallback } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useDeliveryMenu } from '../../hooks/useDeliveryMenu';
 import {
@@ -48,7 +48,8 @@ function cardHTML(p) {
     const def = DIETARY_LABELS[key] || { label: key, emoji: '' };
     return esc(`${def.emoji} ${def.label}`.trim());
   }).join(' · ');
-  const src = esc(p.image || '');
+  // Print uses the high-res 1800×2400 variant — ~847 DPI on the 54mm card.
+  const src = esc(p.imageDetail || p.image || '');
   const ph = phSrc(p.name);
   return `<div class="pm-card">
   <div class="pm-card-pol">
@@ -56,64 +57,90 @@ function cardHTML(p) {
   </div>
   <div class="pm-card-head">
     <span class="pm-card-name">${esc(p.name)}</span>
-    <span class="pm-card-lead"></span>
     <span class="pm-card-price"><span class="pm-card-cur">₹</span>${p.price}</span>
   </div>
-  ${labels ? `<div class="pm-card-diet">${labels}</div>` : ''}
+  <div class="pm-card-rule"></div>
   ${p.description ? `<div class="pm-card-desc">${esc(p.description)}</div>` : ''}
+  ${labels ? `<div class="pm-card-diet">${labels}</div>` : ''}
 </div>`;
 }
 
 function catHead(idx, name, note, isCont) {
   return `<div class="pm-chead">
-  <span class="pm-ch-num">${idx}</span>
   <span class="pm-ch-name">${esc(name)}</span>
   <span class="pm-ch-note">${isCont ? 'continued' : esc(note)}</span>
   <div class="pm-ch-rule"></div>
 </div>`;
 }
 
-function rhead() {
-  return `<div class="pm-rhead">
-  <div class="pm-rh-left"><span class="pm-rh-brand">Conscious Café</span></div>
-  <span class="pm-rh-tag">The Menu · Auroville Road</span>
-</div>`;
-}
-
 function folio(num) {
   return `<div class="pm-folio">
-  <span>The Menu · Auroville Road</span>
-  <span class="pm-folio-dot"></span>
   <span>Page ${num}</span>
 </div>`;
 }
 
-function coverHTML(mainCounts, catseq, catCounts) {
-  const mainPills = MAIN_CATEGORY_ORDER
-    .filter(m => mainCounts[m])
-    .map(m => {
-      const meta = MAIN_CATEGORY_META[m];
-      return `<span class="pm-cv-pill">${esc(meta.name)} · <b>${mainCounts[m]}</b></span>`;
-    })
+// Drinks cover — split-screen lemon illustration + centred branding panel.
+function drinksCoverHTML(meta, cats, catCounts) {
+  const catPills = cats
+    .map(c => `<span class="pm-cv-pill">${esc(c.name)} · ${catCounts[c.id] || 0}</span>`)
     .join('');
 
-  const catPills = catseq
+  return `<section class="pm-page pm-cover pm-cover-drinks" data-main="drinks">
+  <div class="pm-cv-split">
+    <div class="pm-cv-art">
+      <img src="/watermelon.webp" alt="" />
+      <span class="pm-cv-art-cap">Watermelon · Anny Cecilia Walter</span>
+    </div>
+    <div class="pm-cv">
+      <div class="pm-cv-header">
+        <img class="pm-cv-flower" src="/hibiscus.png" alt="" />
+        <span class="pm-cv-wordmark">Conscious Café</span>
+        <span class="pm-cv-loc">Auroville Road · Pondicherry</span>
+      </div>
+      <div class="pm-cv-mid">
+        <div class="pm-cv-eyebrow">The Drinks List</div>
+        <div class="pm-cv-title">Drinks<em>.</em></div>
+        <p class="pm-cv-sub">Pressed, brewed &amp; poured — plant-led and unhurried, from cold-pressed juices to small-batch coffee.</p>
+      </div>
+      <div class="pm-cv-foot">
+        <div class="pm-cv-craft">
+          <span class="pm-cv-craft-lbl">The Craft</span>
+          <div class="pm-cv-craft-row">
+            <span>Cold-Pressed</span><span class="pm-cv-craft-dot">✦</span><span>Petal-Steeped</span><span class="pm-cv-craft-dot">✦</span><span>Small-Batch</span>
+          </div>
+        </div>
+        <div class="pm-cv-cat-pills">${catPills}</div>
+        <div class="pm-cv-foot-row">
+          <span class="pm-cv-foot-note">All prices in ₹ · taxes additional</span>
+          <span class="pm-cv-foot-url">consciouscafe.in</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>`;
+}
+
+// Per-category cover — one self-contained title page per main category.
+function coverHTML(main, meta, cats, catCounts, total) {
+  if (main === 'drinks') return drinksCoverHTML(meta, cats, catCounts);
+
+  const catPills = cats
     .map(c => `<span class="pm-cv-cat-pill">${esc(c.name)} <b>${catCounts[c.id] || 0}</b></span>`)
     .join('');
 
-  return `<section class="pm-page pm-cover">
+  return `<section class="pm-page pm-cover" data-main="${main}">
   <div class="pm-cv">
     <div class="pm-cv-header">
       <span class="pm-cv-wordmark">Conscious Café</span>
       <span class="pm-cv-loc">Auroville Road · Pondicherry</span>
     </div>
     <div class="pm-cv-mid">
-      <div class="pm-cv-eyebrow">The Complete Menu</div>
-      <div class="pm-cv-title">The<br/>Menu<em>.</em></div>
-      <p class="pm-cv-sub">Plant-forward, made in-house — from cold-pressed juices to slow-braised bowls.</p>
+      <div class="pm-cv-eyebrow">The ${esc(meta.name)} Menu</div>
+      <div class="pm-cv-title">${esc(meta.name)}<em>.</em></div>
+      <p class="pm-cv-sub">${esc(meta.note)}.</p>
     </div>
     <div class="pm-cv-foot">
-      <div class="pm-cv-pills">${mainPills}</div>
+      <div class="pm-cv-pills"><span class="pm-cv-pill">${esc(meta.name)} · <b>${total}</b></span></div>
       <div class="pm-cv-cat-pills">${catPills}</div>
       <div class="pm-cv-foot-row">
         <span class="pm-cv-foot-note">All prices in ₹ · taxes additional</span>
@@ -124,8 +151,9 @@ function coverHTML(mainCounts, catseq, catCounts) {
 </section>`;
 }
 
-function backHTML() {
-  return `<section class="pm-page pm-back">
+// Per-category end page — repeated at the close of every booklet.
+function backHTML(main) {
+  return `<section class="pm-page pm-back" data-main="${main}">
   <div class="pm-pad">
     <div class="pm-bk-top">
       <div class="pm-bk-word">Conscious Café</div>
@@ -169,25 +197,10 @@ function backHTML() {
 // Measures each card row's real pixel height and packs rows into A4 pages.
 // Returns { html: string, catseq: Array }.
 
-function buildDocument(items, measDiv) {
-  // px-per-mm calibration
-  const probe = document.createElement('div');
-  probe.style.cssText = 'position:absolute;left:-9999px;top:0;width:100mm;visibility:hidden';
-  document.body.appendChild(probe);
-  const MM = probe.offsetWidth / 100;
-  probe.remove();
-  const mm = v => v * MM;
-
-  // Height measure: insert one element, read offsetHeight
-  const H = (html) => {
-    measDiv.innerHTML = html;
-    return (measDiv.firstElementChild?.offsetHeight) || 0;
-  };
-
-  const GAP = mm(7);
-  const rheadH = H(rhead());
-  // A4 = 297mm, padding top+bottom = 13mm each = 26mm, folio safety = 7mm
-  const availH = mm(297 - 26) - rheadH - mm(6) - mm(7);
+function buildDocument(items, measDiv, focusMain) {
+  // Fixed layout: every content page shows two equal card bands (2 rows × 3
+  // cards). CSS stretches the bands to fill the page height, so no dynamic
+  // height measurement or packing is needed.
 
   // Build per-category lookup
   const byCategory = {};
@@ -228,80 +241,65 @@ function buildDocument(items, measDiv) {
     });
   });
 
-  // Flatten into rows of up to 3 cards each
-  const rows = [];
-  catseq.forEach(c => {
-    chunk(byCategory[c.id] || [], 3).forEach((cards, i) => {
-      rows.push({ id: c.id, idx: c.idx, name: c.name, note: c.note, mainCat: c.mainCat, cards, firstOfCat: i === 0 });
+  // Pack one main category's rows into A4 content pages — two card-rows per
+  // page, forming equal top/bottom bands. Booklets never share a page.
+  const packCats = (cats) => {
+    const rows = [];
+    cats.forEach(c => {
+      chunk(byCategory[c.id] || [], 3).forEach((cards, i) => {
+        rows.push({ id: c.id, idx: c.idx, name: c.name, note: c.note, cards, firstOfCat: i === 0 });
+      });
     });
-  });
 
-  // Pack rows into pages
-  const pages = [];
-  let cur = null;
-  let curCat = null;
-
-  const startPage = () => {
-    cur = { blocks: [], used: 0, cats: [], mains: [] };
-    pages.push(cur);
-    curCat = null;
-  };
-
-  const add = (html, h) => {
-    cur.used += (cur.blocks.length ? GAP : 0) + h;
-    cur.blocks.push(html);
-  };
-
-  rows.forEach(r => {
-    const gridHtml = `<div class="pm-grid">${r.cards.map(cardHTML).join('')}</div>`;
-    const rH = H(gridHtml);
-    const headHtml = catHead(r.idx, r.name, r.note, !r.firstOfCat);
-    let placed = false;
-
-    if (cur) {
-      const needHdr = curCat !== r.id;
-      const hH = needHdr ? H(headHtml) : 0;
-      const extra = needHdr
-        ? (cur.blocks.length ? GAP : 0) + hH + GAP + rH
-        : (cur.blocks.length ? GAP : 0) + rH;
-
-      if (cur.used + extra <= availH) {
-        if (needHdr) add(headHtml, hH);
-        add(gridHtml, rH);
-        if (!cur.cats.includes(r.id)) cur.cats.push(r.id);
-        if (!cur.mains.includes(r.mainCat)) cur.mains.push(r.mainCat);
-        curCat = r.id;
-        placed = true;
-      }
+    const pages = [];
+    for (let i = 0; i < rows.length; i += 2) {
+      const pageRows = rows.slice(i, i + 2);
+      const blocks = [];
+      pageRows.forEach((r, j) => {
+        // A category header leads the first band of every page (marked
+        // "continued" when a category spills over) and any band where the
+        // category changes mid-page.
+        const needHdr = j === 0 || pageRows[j - 1].id !== r.id;
+        if (needHdr) blocks.push(catHead(r.idx, r.name, r.note, !r.firstOfCat));
+        blocks.push(`<div class="pm-grid">${r.cards.map(cardHTML).join('')}</div>`);
+      });
+      // Stretch bands to fill the page only when the page is full (2 rows); a
+      // lone trailing row sits at its natural height instead of ballooning.
+      pages.push({ blocks, fill: pageRows.length === 2 });
     }
 
-    if (!placed) {
-      startPage();
-      const hh = H(headHtml);
-      add(headHtml, hh);
-      add(gridHtml, rH);
-      cur.cats.push(r.id);
-      cur.mains.push(r.mainCat);
-      curCat = r.id;
-    }
+    return pages;
+  };
+
+  // Build a self-contained booklet per main category: cover → content → end.
+  // When focusMain is given, only that category's booklet is built — each
+  // category is its own standalone menu document.
+  const mainsToBuild = (focusMain && MAIN_CATEGORY_ORDER.includes(focusMain))
+    ? [focusMain]
+    : MAIN_CATEGORY_ORDER;
+
+  let html = '';
+  mainsToBuild.forEach(main => {
+    const cats = catseq.filter(c => c.mainCat === main);
+    if (!cats.length) return;
+    const meta = MAIN_CATEGORY_META[main];
+    const pages = packCats(cats);
+
+    html += coverHTML(main, meta, cats, catCounts, mainCounts[main] || 0);
+    html += pages
+      .map((p, i) =>
+        `<section class="pm-page" data-main="${main}">
+  <div class="pm-pad"><div class="pm-flow${p.fill ? ' pm-flow-fill' : ''}">${p.blocks.join('')}</div></div>
+  ${folio(i + 2)}
+</section>`
+      )
+      .join('');
+    html += backHTML(main);
   });
 
   measDiv.innerHTML = '';
 
-  // Render pages to HTML
-  const contentHTML = pages
-    .map((p, i) =>
-      `<section class="pm-page" data-cats="${p.cats.join(' ')}" data-main="${p.mains.join(' ')}">
-  <div class="pm-pad">${rhead()}<div class="pm-flow">${p.blocks.join('')}</div></div>
-  ${folio(i + 2)}
-</section>`
-    )
-    .join('');
-
-  return {
-    html: coverHTML(mainCounts, catseq, catCounts) + contentHTML + backHTML(),
-    catseq,
-  };
+  return { html, catseq };
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -309,51 +307,23 @@ function buildDocument(items, measDiv) {
 export default function PrintMenuPage() {
   const { items, loading, error } = useDeliveryMenu();
   const [searchParams] = useSearchParams();
-  const focus = searchParams.get('focus'); // 'food' | 'drinks' | 'patisserie'
+  const rawFocus = searchParams.get('focus'); // 'food' | 'drinks' | 'patisserie'
+  const focus = MAIN_CATEGORY_ORDER.includes(rawFocus) ? rawFocus : null;
   const docRef = useRef(null);
   const measRef = useRef(null);
   const [built, setBuilt] = useState(false);
   const [catseq, setCatseq] = useState([]);
 
-  // Define print helpers first so the auto-print effect can reference them
-  const printMain = useCallback((mainId) => {
-    const pgs = document.querySelectorAll('.pm-page[data-main]');
-    const visible = [];
-    pgs.forEach(pg => {
-      if ((pg.dataset.main || '').split(' ').includes(mainId)) {
-        pg.classList.add('cat-visible');
-        visible.push(pg);
-      }
-    });
-    document.body.classList.add('printing-cat');
-    window.print();
-    document.body.classList.remove('printing-cat');
-    visible.forEach(pg => pg.classList.remove('cat-visible'));
-  }, []);
-
-  const printCat = useCallback((catId) => {
-    const pgs = document.querySelectorAll('.pm-page[data-cats]');
-    const visible = [];
-    pgs.forEach(pg => {
-      if ((pg.dataset.cats || '').split(' ').includes(catId)) {
-        pg.classList.add('cat-visible');
-        visible.push(pg);
-      }
-    });
-    document.body.classList.add('printing-cat');
-    window.print();
-    document.body.classList.remove('printing-cat');
-    visible.forEach(pg => pg.classList.remove('cat-visible'));
-  }, []);
-
-  // Build A4 pages after data + fonts load
+  // Build A4 pages after data + fonts load. When `focus` is set, only that
+  // category's standalone booklet is built — rebuilds whenever focus changes.
   useEffect(() => {
     if (loading || !items.length || !docRef.current || !measRef.current) return;
     let cancelled = false;
+    setBuilt(false);
 
     document.fonts.ready.then(() => {
       if (cancelled) return;
-      const result = buildDocument(items, measRef.current);
+      const result = buildDocument(items, measRef.current, focus);
       if (docRef.current) {
         docRef.current.innerHTML = result.html;
         setCatseq(result.catseq);
@@ -362,24 +332,19 @@ export default function PrintMenuPage() {
     });
 
     return () => { cancelled = true; };
-  }, [items, loading]);
+  }, [items, loading, focus]);
 
-  // Auto-trigger print for a specific main category when opened via footer link
+  // Auto-open the print dialog once a focused (single-category) menu is built
   useEffect(() => {
     if (!built || !focus) return;
-    if (!MAIN_CATEGORY_ORDER.includes(focus)) return;
-    const timer = setTimeout(() => printMain(focus), 300);
+    const timer = setTimeout(() => window.print(), 400);
     return () => clearTimeout(timer);
-  }, [built, focus, printMain]);
+  }, [built, focus]);
 
-  // Group catseq by main category for the printbar
-  const printbarGroups = MAIN_CATEGORY_ORDER
-    .map(main => ({
-      main,
-      meta: MAIN_CATEGORY_META[main],
-      cats: catseq.filter(c => c.mainCat === main),
-    }))
-    .filter(g => g.cats.length > 0);
+  // Main categories that actually have items — one standalone menu per booklet
+  const printbarMains = MAIN_CATEGORY_ORDER
+    .map(main => ({ main, meta: MAIN_CATEGORY_META[main] }))
+    .filter(g => catseq.some(c => c.mainCat === g.main));
 
   return (
     <div className="pm-root">
@@ -393,23 +358,22 @@ export default function PrintMenuPage() {
       <div ref={docRef} id="pm-doc" />
 
       {/* Print controls — hidden during print via @media print */}
-      {built && (
+      {built && focus && (
         <div className="pm-printbar">
-          <button className="pm-btn-primary" onClick={() => window.print()}>
-            ↓ Print All
+          <button className="pm-btn-main" onClick={() => window.print()}>
+            ↓ Print {MAIN_CATEGORY_META[focus].name} Menu
           </button>
+          <a href="/print-menu" className="pm-back-link">← All menus</a>
+          <a href="/" className="pm-back-link">← Back to site</a>
+        </div>
+      )}
 
-          {printbarGroups.map(g => (
-            <div key={g.main} className="pm-printbar-group">
-              <button className="pm-btn-main" onClick={() => printMain(g.main)}>
-                {g.meta.name}
-              </button>
-              {g.cats.map(c => (
-                <button key={c.id} className="pm-btn-cat" onClick={() => printCat(c.id)}>
-                  {c.name}
-                </button>
-              ))}
-            </div>
+      {built && !focus && (
+        <div className="pm-printbar">
+          {printbarMains.map(g => (
+            <a key={g.main} href={`/print-menu?focus=${g.main}`} className="pm-btn-main">
+              ↓ {g.meta.name} Menu
+            </a>
           ))}
 
           <a href="/" className="pm-back-link">← Back to site</a>

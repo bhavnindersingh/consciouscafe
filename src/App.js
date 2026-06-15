@@ -39,9 +39,7 @@ import RequestFacilitatorAccess from "./pages/Public/RequestFacilitatorAccess";
 import { AuthProvider } from "./context/AuthContext";
 import { CartProvider, useCart } from "./context/CartContext";
 import { useDeliveryMenu } from "./hooks/useDeliveryMenu";
-
-const toSlug = (name = "") =>
-  name.toLowerCase().replace(/[^a-z0-9\s-]/g, "").replace(/\s+/g, "-").replace(/-+/g, "-").trim();
+import { toSlug } from "./utils/slug";
 
 function AppContent() {
   const navigate = useNavigate();
