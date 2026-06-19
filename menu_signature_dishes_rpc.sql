@@ -1,7 +1,7 @@
 -- ============================================================================
 -- CONSCIOUS CAFÉ — Signature Dishes RPC
--- Run this in the Supabase SQL Editor for your MENU project
--- (REACT_APP_MENU_SUPABASE_URL — project: hxpbrlqclyujirspuuav)
+-- Run this in the Supabase SQL Editor
+-- (REACT_APP_SUPABASE_URL — project: hxpbrlqclyujirspuuav)
 --
 -- No schema changes needed. Reads the existing `sales` column on `recipes`
 -- which is already populated by the POS.
