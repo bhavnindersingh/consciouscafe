@@ -28,7 +28,12 @@ const toProduct = (recipe) => {
     dietaryLabels: recipe.dietary_labels || [],
     variations: (recipe.recipe_variations || [])
       .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
-      .map(v => ({ id: v.id, name: (v.name || '').trim(), price: parseFloat(v.selling_price) || 0 })),
+      .map(v => ({
+        id: v.id,
+        name: (v.name || '').trim(),
+        price: parseFloat(v.selling_price) || 0,
+        dietaryLabels: v.dietary_labels || [],
+      })),
   };
 };
 
@@ -43,7 +48,7 @@ export async function getDeliveryMenu() {
   const { data, error } = await supabase
     .from('recipes')
     .select(
-      'id, name, description, selling_price, category, sub_category, image_url, delivery_image_url, sku, tax_rate, dietary_labels, recipe_variations(id, name, selling_price, sort_order)'
+      'id, name, description, selling_price, category, sub_category, image_url, delivery_image_url, sku, tax_rate, dietary_labels, recipe_variations(id, name, selling_price, sort_order, dietary_labels)'
     )
     .eq('is_production_recipe', true)
     .order('category')

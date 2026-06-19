@@ -43,11 +43,25 @@ function phSrc(name) {
 
 // ── HTML block builders ───────────────────────────────────────────────────────
 
-function cardHTML(p) {
-  const labels = (p.dietaryLabels || []).map(key => {
+function dietLine(keys) {
+  return (keys || []).map(key => {
     const def = DIETARY_LABELS[key] || { label: key, emoji: '' };
     return esc(`${def.emoji} ${def.label}`.trim());
   }).join(' · ');
+}
+
+function cardHTML(p) {
+  const labels = dietLine(p.dietaryLabels);
+  // Variations straight from POS — name, price and legend exactly as stored.
+  const varRows = (p.variations || []).map(v => {
+    const vdiet = dietLine(v.dietaryLabels);
+    return `<div class="pm-card-var">
+    <span class="pm-var-name">${esc(v.name)}</span>
+    <span class="pm-var-lead"></span>
+    ${vdiet ? `<span class="pm-var-diet">${vdiet}</span>` : ''}
+    <span class="pm-var-price"><span class="pm-card-cur">₹</span>${v.price}</span>
+  </div>`;
+  }).join('');
   // Print uses the high-res 1800×2400 variant — ~847 DPI on the 54mm card.
   const src = esc(p.imageDetail || p.image || '');
   const ph = phSrc(p.name);
@@ -61,7 +75,10 @@ function cardHTML(p) {
   </div>
   <div class="pm-card-rule"></div>
   ${p.description ? `<div class="pm-card-desc">${esc(p.description)}</div>` : ''}
-  ${labels ? `<div class="pm-card-diet">${labels}</div>` : ''}
+  ${(varRows || labels) ? `<div class="pm-card-foot">
+    ${varRows ? `<div class="pm-card-vars"><span class="pm-card-vars-lbl">Options</span>${varRows}</div>` : ''}
+    ${labels ? `<div class="pm-card-diet">${labels}</div>` : ''}
+  </div>` : ''}
 </div>`;
 }
 
@@ -112,7 +129,7 @@ function drinksCoverHTML(meta, cats, catCounts) {
         <div class="pm-cv-cat-pills">${catPills}</div>
         <div class="pm-cv-foot-row">
           <span class="pm-cv-foot-note">All prices in ₹ · taxes additional</span>
-          <span class="pm-cv-foot-url">consciouscafe.in</span>
+          <a class="pm-cv-foot-url" href="https://consciouscafe.in">consciouscafe.in</a>
         </div>
       </div>
     </div>
@@ -144,7 +161,7 @@ function coverHTML(main, meta, cats, catCounts, total) {
       <div class="pm-cv-cat-pills">${catPills}</div>
       <div class="pm-cv-foot-row">
         <span class="pm-cv-foot-note">All prices in ₹ · taxes additional</span>
-        <span class="pm-cv-foot-url">consciouscafe.in</span>
+        <a class="pm-cv-foot-url" href="https://consciouscafe.in">consciouscafe.in</a>
       </div>
     </div>
   </div>
@@ -172,9 +189,9 @@ function backHTML(main) {
       </div>
       <div class="pm-bk-block">
         <div class="pm-bk-lbl">Reach us</div>
-        <span>+91 87545 61269</span>
-        <span>hello@consciouscafe.in</span>
-        <span>consciouscafe.in</span>
+        <a href="tel:+918754561269">+91 87545 61269</a>
+        <a href="mailto:hello@consciouscafe.in">hello@consciouscafe.in</a>
+        <a href="https://consciouscafe.in">consciouscafe.in</a>
       </div>
       <div class="pm-bk-block">
         <div class="pm-bk-lbl">Good to know</div>
