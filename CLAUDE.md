@@ -38,8 +38,6 @@ src/
 └── config/             # Configuration files
 ```
 
-**For detailed structure information, see [STRUCTURE.md](STRUCTURE.md)**
-
 ### Component Organization
 
 - **pages/** - Full page components for each route:
@@ -166,12 +164,6 @@ Products include:
 
 ## Adding New Features
 
-When adding new features or code, refer to [STRUCTURE.md](STRUCTURE.md) for:
-- Where to place new files
-- Naming conventions
-- Import patterns
-- Best practices
-
 ### Quick Reference
 
 - **New Page** → `src/pages/PageName/PageName.js`
@@ -190,4 +182,4 @@ When adding new features or code, refer to [STRUCTURE.md](STRUCTURE.md) for:
 - **RSVP System**: Complete RSVP management with approval workflow
 - **Login**: `/login` route for authentication
 - **Protected Routes**: Dashboard routes require authentication
-- **Database Setup**: Run `SUPABASE_SETUP_COMPLETE.sql` in Supabase SQL Editor to set up all tables
+- **Supabase project**: single project `hxpbrlqclyujirspuuav` (auth, dashboard & menu); the public anon key is the default in `services/supabase/supabaseClient.js`, overridable via `REACT_APP_SUPABASE_URL` / `REACT_APP_SUPABASE_ANON_KEY`
