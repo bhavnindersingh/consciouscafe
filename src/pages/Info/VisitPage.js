@@ -14,7 +14,7 @@ const Reveal = ({ children, className = '', delay = 0, as: Tag = 'div', style })
   <Tag style={style} className={`reveal${delay ? ` d${delay}` : ''} ${className}`}>{children}</Tag>
 );
 
-const HERO_IMG = "images/Food Menu Conscious Cafe August'25/PLATTERS/Mezze platter/Mezze Platter.JPG";
+const HERO_IMG = "images/menu-photos/food/mezze platter.JPG";
 
 const HOURS = [
   { d: 'Mon, Wed — Sun', h: '9:30 — 21:00' },
