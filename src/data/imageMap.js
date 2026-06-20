@@ -60,7 +60,7 @@ export const IMAGE_MAP = {
   'sheetali-paan-thandai':                   `${DRINKS}/Sheetali Paan Thandai.JPG`,
   'strawberry-blue-spirulina':               `${DRINKS}/Strawberry Blue Spirulina.JPG`,
   'strawberry-spritzer':                     `${DRINKS}/Strawberry Spritzer.JPG`,
-  'summer-blossoms-iced-tea':                `${DRINKS}/Summer Blossoms Iced Tea.JPG`,
+  'summer-blossom-iced-tea':                 `${DRINKS}/Summer Blossom Iced Tea.JPG`,
   'tamarind-ginger-fizz':                    `${DRINKS}/Tamarind Ginger Fizz.JPG`,
   'watermelon-mint-fizz':                    `${DRINKS}/Watermelon Mint Fizz.jpg`,
   // ── Teas ──
