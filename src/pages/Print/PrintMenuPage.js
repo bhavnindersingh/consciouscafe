@@ -50,11 +50,22 @@ function dietLine(keys) {
   }).join(' · ');
 }
 
+// Same as dietLine, but drops any label whose word the name already carries —
+// e.g. "Flat White Vegan - Coconut Milk" needs no separate "🌱 Vegan" tag.
+// Keeps the legend where the variation name gives no dietary signal of its own.
+function dietLineFor(keys, name) {
+  const lname = (name || '').toLowerCase();
+  return dietLine((keys || []).filter(key => {
+    const def = DIETARY_LABELS[key] || { label: key, emoji: '' };
+    return !lname.includes(def.label.toLowerCase());
+  }));
+}
+
 function cardHTML(p) {
   const labels = dietLine(p.dietaryLabels);
   // Variations straight from POS — name, price and legend exactly as stored.
   const varRows = (p.variations || []).map(v => {
-    const vdiet = dietLine(v.dietaryLabels);
+    const vdiet = dietLineFor(v.dietaryLabels, v.name);
     return `<div class="pm-card-var">
     <span class="pm-var-name">${esc(v.name)}</span>
     <span class="pm-var-lead"></span>

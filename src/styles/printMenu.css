@@ -453,11 +453,10 @@
   flex-shrink: 0;
 }
 .pm-card-cur { font-size: 10pt; color: var(--ink-mute); margin-right: 0.3mm; }
-/* Footer groups variations + legend and pins them to the card's bottom so the
-   rows align across a band; on stretched (filled) cards the slack falls between
-   the description and this footer. */
+/* Footer groups variations + legend directly under the description. It is not
+   pinned to the card bottom — on stretched (filled) cards the slack pools below
+   the footer instead of opening a gap mid-card, so legends no longer hang. */
 .pm-card-foot {
-  margin-top: auto;
   padding-top: 2mm;
   display: flex;
   flex-direction: column;
