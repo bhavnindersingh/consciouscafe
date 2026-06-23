@@ -98,7 +98,7 @@ const TermsOfService = () => {
             <li>Auroville community and surrounding residential areas</li>
             <li>Pondicherry city center, White Town, and French Quarter</li>
             <li>Puducherry outer areas and neighboring villages across the Puducherry region</li>
-            <li>Tamil Nadu coastal areas within 15 km of our restaurant location serving Auroville, Pondicherry, and Puducherry</li>
+            <li>Tamil Nadu coastal areas within 6 km of our restaurant location serving Auroville, Pondicherry, and Puducherry</li>
             <li>Yoga centers, wellness retreats, and meditation spaces across Auroville, Pondicherry, and Puducherry region</li>
             <li>Eco-friendly accommodations and sustainable living communities in Auroville, Pondicherry, and Puducherry territories</li>
           </ul>

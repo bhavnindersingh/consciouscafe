@@ -7,14 +7,10 @@ export const formatWhatsAppMessage = (cartItems, customerInfo) => {
   message += `Phone: ${customerInfo.phone}\n`;
   message += `Email: ${customerInfo.email}\n`;
   
-  // Add order type specific info
-  message += `📦 *Order Type:* ${customerInfo.orderType === 'cafe' ? '🏪 Cafe Guest' : '🚚 Delivery'}\n`;
-  if (customerInfo.orderType === 'cafe') {
-    message += `🪑 Table Number: ${customerInfo.tableNumber}\n\n`;
-  } else {
-    message += `📍 Address: ${customerInfo.address}\n`;
-    message += `📏 Distance: ${customerInfo.distance} km\n\n`;
-  }
+  // Delivery details
+  message += `📦 *Order Type:* 🚚 Delivery\n`;
+  message += `📍 Address: ${customerInfo.address}\n`;
+  message += `📏 Distance: ${customerInfo.distance} km\n\n`;
   
   message += `🛒 *Order Details:*\n`;
   

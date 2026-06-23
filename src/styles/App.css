@@ -447,6 +447,52 @@ button { font-family: inherit; cursor: pointer; }
 .cart-empty { text-align: center; padding: 80px 24px; color: var(--ink-mute); }
 .cart-empty .ce-mark { font-family: var(--display); font-style: italic; font-size: 28px; color: var(--ink); margin-bottom: 12px; }
 
+/* ============================================================
+   CHECKOUT DRAWER (extends .drawer)
+   ============================================================ */
+.checkout-drawer { width: min(480px, 94vw); }
+.co-form { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+
+.co-sec-label {
+  font-family: var(--ui); font-size: 11px; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--ink-mute); padding-bottom: 12px; margin-bottom: 4px; border-bottom: 1px solid var(--line);
+}
+
+/* Order summary */
+.co-summary { padding: 18px 0 24px; }
+.co-sum-row {
+  display: flex; justify-content: space-between; gap: 16px; align-items: baseline;
+  font-family: var(--serif); font-size: 18px; color: var(--ink); padding: 8px 0;
+}
+.co-sum-row.muted { color: var(--ink-mute); font-size: 16px; }
+.co-summary .co-sum-row.muted:first-of-type { border-top: 1px solid var(--line-soft); margin-top: 8px; padding-top: 14px; }
+
+/* Form fields */
+.co-fields { padding: 8px 0 12px; }
+.co-group { margin-top: 20px; display: flex; flex-direction: column; }
+.co-group label {
+  font-family: var(--ui); font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--ink-soft); margin-bottom: 8px;
+}
+.co-input {
+  font-family: var(--ui); font-size: 15px; color: var(--ink); background: transparent;
+  border: 1px solid var(--line); border-radius: 0; padding: 13px 14px; width: 100%;
+  transition: border-color .25s var(--ease);
+}
+.co-input::placeholder { color: var(--ink-mute); }
+.co-input:focus { outline: none; border-color: var(--forest); }
+.co-input.error { border-color: #b23b2e; }
+.co-textarea { resize: vertical; line-height: 1.5; }
+.co-error { font-family: var(--ui); font-size: 12px; color: #b23b2e; margin-top: 6px; }
+.co-hint { font-family: var(--ui); font-size: 12px; color: var(--ink-mute); margin-top: 8px; line-height: 1.4; }
+
+/* Footer submit */
+.co-submit { gap: 10px; }
+.co-note {
+  font-family: var(--serif); font-size: 14px; color: var(--ink-mute);
+  text-align: center; margin-top: 14px; line-height: 1.45;
+}
+
 /* toast */
 .toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px); z-index: 400;
   background: var(--ink); color: var(--paper); font-family: var(--ui); font-size: 12px; letter-spacing: .14em; text-transform: uppercase;
