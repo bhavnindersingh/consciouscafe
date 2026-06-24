@@ -5,6 +5,10 @@ import { getGumletUrl } from '../../utils/gumlet';
 // Decorative flower — served optimised (≈37 KB webp vs the 1 MB source PNG).
 const HIBISCUS = getGumletUrl('hibiscus.png', { width: 760, quality: 72, format: 'auto' });
 
+// Hero poster — paints immediately as the LCP element while the background
+// video loads on top. Preloaded in index.html (URL must stay in sync).
+const HERO_POSTER = getGumletUrl('images/hero-poster.jpg', { width: 1600, quality: 70, format: 'auto' });
+
 const Arrow = ({ s = 16 }) => (
   <svg className="arr" width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
     <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
@@ -24,12 +28,14 @@ const Hero = () => {
   return (
     <header className="hero" id="home">
       <div className="hero-media">
+        <img className="hero-poster" src={HERO_POSTER} alt="" aria-hidden="true" fetchpriority="high" decoding="async" />
         <div className="hero-video">
           <iframe
             title="Conscious Café"
             src={GUMLET_VIDEO}
             allow="autoplay; encrypted-media; picture-in-picture"
             referrerPolicy="origin"
+            loading="lazy"
           />
         </div>
       </div>

@@ -24,6 +24,9 @@
     <link rel="preconnect" href="https://consciouscafe.gumlet.io" crossorigin>
     <link rel="dns-prefetch" href="https://play.gumlet.io">
 
+    <!-- Preload the hero poster (LCP element). Keep this URL in sync with Hero.js -->
+    <link rel="preload" as="image" href="https://consciouscafe.gumlet.io/images/hero-poster.jpg?w=1600&q=70&fm=auto" fetchpriority="high">
+
     <!-- Critical CSS — minimal above-fold styles before React CSS loads -->
     <style>
       *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
