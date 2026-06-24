@@ -1,41 +1,46 @@
-import React, { useState, useEffect, startTransition } from "react";
+import React, { useState, useEffect, startTransition, lazy, Suspense } from "react";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 
-// Layout
+// Layout — always needed, kept in the main bundle
 import Header from "./components/layout/Header/Header";
 import Footer from "./components/layout/Footer/Footer";
 
-// Product / Cart
+// Product / Cart — homepage + cart are the common first paint, kept eager
 import ProductGrid from "./components/products/ProductGrid/ProductGrid";
 import Cart from "./components/cart/Cart/Cart";
-
-// Pages
-import FoodMenuPage from "./pages/Menu/FoodMenuPage";
-import CategoryPage from "./pages/Menu/CategoryPage";
-import ProductDetailPage from "./pages/Products/ProductDetailPage";
+// Checkout is an always-mounted animated drawer, so it stays eager (its
+// enter/exit transition depends on staying in the tree).
 import Checkout from "./pages/Checkout/Checkout";
-import AboutUs from "./pages/Info/AboutUs";
-import VisitPage from "./pages/Info/VisitPage";
-import Contact from "./pages/Info/Contact";
-import DeliveryInfo from "./pages/Info/DeliveryInfo";
-import PrivacyPolicy from "./pages/Info/PrivacyPolicy";
-import TermsOfService from "./pages/Info/TermsOfService";
-import NotFound from "./pages/NotFound/NotFound";
-import PrintMenuPage from "./pages/Print/PrintMenuPage";
-import LandingPage from "./pages/Landing/LandingPage";
 import LANDING_PAGES from "./data/landingPages.json";
 
-// Dashboard
-import DashboardLayout from "./pages/Dashboard/DashboardLayout";
-import DashboardHome from "./pages/Dashboard/DashboardHome";
-import Login from "./pages/Dashboard/Login";
-import Register from "./pages/Dashboard/Register";
-import OfferingList from "./pages/Dashboard/OfferingList";
-import OfferingManager from "./pages/Dashboard/OfferingManager";
-import RSVPList from "./pages/Dashboard/RSVPList";
-import FacilitatorRequests from "./pages/Dashboard/FacilitatorRequests";
-import RequestFacilitatorAccess from "./pages/Public/RequestFacilitatorAccess";
+// Everything below is route-level code split so it isn't shipped on first load.
+const FoodMenuPage = lazy(() => import("./pages/Menu/FoodMenuPage"));
+const CategoryPage = lazy(() => import("./pages/Menu/CategoryPage"));
+const ProductDetailPage = lazy(() => import("./pages/Products/ProductDetailPage"));
+const AboutUs = lazy(() => import("./pages/Info/AboutUs"));
+const VisitPage = lazy(() => import("./pages/Info/VisitPage"));
+const Contact = lazy(() => import("./pages/Info/Contact"));
+const DeliveryInfo = lazy(() => import("./pages/Info/DeliveryInfo"));
+const PrivacyPolicy = lazy(() => import("./pages/Info/PrivacyPolicy"));
+const TermsOfService = lazy(() => import("./pages/Info/TermsOfService"));
+const NotFound = lazy(() => import("./pages/NotFound/NotFound"));
+const PrintMenuPage = lazy(() => import("./pages/Print/PrintMenuPage"));
+const LandingPage = lazy(() => import("./pages/Landing/LandingPage"));
+
+// Dashboard — heavy, auth-gated, never part of a public first paint
+const DashboardLayout = lazy(() => import("./pages/Dashboard/DashboardLayout"));
+const DashboardHome = lazy(() => import("./pages/Dashboard/DashboardHome"));
+const Login = lazy(() => import("./pages/Dashboard/Login"));
+const Register = lazy(() => import("./pages/Dashboard/Register"));
+const OfferingList = lazy(() => import("./pages/Dashboard/OfferingList"));
+const OfferingManager = lazy(() => import("./pages/Dashboard/OfferingManager"));
+const RSVPList = lazy(() => import("./pages/Dashboard/RSVPList"));
+const FacilitatorRequests = lazy(() => import("./pages/Dashboard/FacilitatorRequests"));
+const RequestFacilitatorAccess = lazy(() => import("./pages/Public/RequestFacilitatorAccess"));
+
+// Minimal, layout-stable fallback (avoids CLS while a chunk loads)
+const RouteFallback = () => <div style={{ minHeight: "60vh" }} aria-busy="true" />;
 
 // Context / data
 import { AuthProvider } from "./context/AuthContext";
@@ -62,9 +67,11 @@ function AppContent() {
 
   if (isPrintRoute) {
     return (
-      <Routes>
-        <Route path="/print-menu" element={<PrintMenuPage />} />
-      </Routes>
+      <Suspense fallback={<RouteFallback />}>
+        <Routes>
+          <Route path="/print-menu" element={<PrintMenuPage />} />
+        </Routes>
+      </Suspense>
     );
   }
 
@@ -73,6 +80,7 @@ function AppContent() {
       <Header />
 
       <main role="main" id="main-content">
+        <Suspense fallback={<RouteFallback />}>
         <Routes>
           <Route path="/" element={
             <ProductGrid products={products} onAddToCart={handleAddToCart} onProductClick={handleProductClick} />
@@ -134,6 +142,7 @@ function AppContent() {
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
+        </Suspense>
       </main>
 
       <Footer />

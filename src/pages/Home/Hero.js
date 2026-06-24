@@ -1,5 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getGumletUrl } from '../../utils/gumlet';
+
+// Decorative flower — served optimised (≈37 KB webp vs the 1 MB source PNG).
+const HIBISCUS = getGumletUrl('hibiscus.png', { width: 760, quality: 72, format: 'auto' });
 
 const Arrow = ({ s = 16 }) => (
   <svg className="arr" width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
@@ -29,7 +33,7 @@ const Hero = () => {
           />
         </div>
       </div>
-      <img className="hero-flower" src="/hibiscus.png" alt="" aria-hidden="true" style={{ position: 'absolute' }} />
+      <img className="hero-flower" src={HIBISCUS} alt="" aria-hidden="true" loading="lazy" decoding="async" style={{ position: 'absolute' }} />
       <div className="hero-side">Auroville Road · South India</div>
       <div className="scroll-cue"><span>scroll</span><span className="rail" /></div>
       <div className="hero-inner">

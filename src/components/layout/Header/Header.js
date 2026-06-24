@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '../../../context/CartContext';
+import { getGumletUrl } from '../../../utils/gumlet';
+
+const HIBISCUS = getGumletUrl('hibiscus.png', { width: 600, quality: 72, format: 'auto' });
 
 const BagIcon = ({ s = 17 }) => (
   <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -117,7 +120,7 @@ const Header = () => {
             <span>Daily 9:30 — 21:00 · closed Tuesdays</span>
           </div>
         </div>
-        <img className="mm-flower" src="/hibiscus.png" alt="" aria-hidden="true" />
+        <img className="mm-flower" src={HIBISCUS} alt="" aria-hidden="true" loading="lazy" decoding="async" />
       </div>
     </>
   );
