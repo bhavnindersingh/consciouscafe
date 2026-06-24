@@ -1,42 +1,28 @@
-# Robots.txt for Conscious Cafe - Artisanal Vegetarian Restaurant Auroville
+# Robots.txt for Conscious Cafe — Vegetarian & Vegan Restaurant, Auroville
 # https://consciouscafe.in
 
 User-agent: *
 Allow: /
-Crawl-delay: 1
 
-# Block private/admin areas (if any in future)
-Disallow: /admin/
-Disallow: /private/
-Disallow: /checkout/
-Disallow: /cart/
+# Private / app areas — no SEO value, keep out of the index
+Disallow: /dashboard
+Disallow: /facilitator-login
+Disallow: /register
+Disallow: /request-facilitator-access
+Disallow: /print-menu
 
-# Allow important pages
-Allow: /menu/
-Allow: /about/
-Allow: /contact/
-Allow: /delivery/
-Allow: /product/
-Allow: /privacy-policy/
-Allow: /terms-of-service/
-
-# Sitemap location
-Sitemap: https://consciouscafe.in/sitemap.xml
-
-# Search engine specific rules
-User-agent: Googlebot
+# AI SEARCH crawlers — allowed, so the cafe surfaces in AI-powered search/answers
+User-agent: OAI-SearchBot
 Allow: /
-Crawl-delay: 1
 
-User-agent: Bingbot
+User-agent: PerplexityBot
 Allow: /
-Crawl-delay: 1
 
-User-agent: Slurp
+User-agent: Google-Extended
 Allow: /
-Crawl-delay: 1
 
-# Block AI scrapers (optional)
+# AI TRAINING scrapers — blocked (no search/discovery benefit). Remove these
+# blocks if you decide you're happy for the content to be used for model training.
 User-agent: GPTBot
 Disallow: /
 
@@ -45,3 +31,6 @@ Disallow: /
 
 User-agent: CCBot
 Disallow: /
+
+# Sitemap
+Sitemap: https://consciouscafe.in/sitemap.xml

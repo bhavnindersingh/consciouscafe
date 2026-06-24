@@ -23,6 +23,8 @@ import PrivacyPolicy from "./pages/Info/PrivacyPolicy";
 import TermsOfService from "./pages/Info/TermsOfService";
 import NotFound from "./pages/NotFound/NotFound";
 import PrintMenuPage from "./pages/Print/PrintMenuPage";
+import LandingPage from "./pages/Landing/LandingPage";
+import LANDING_PAGES from "./data/landingPages.json";
 
 // Dashboard
 import DashboardLayout from "./pages/Dashboard/DashboardLayout";
@@ -99,6 +101,20 @@ function AppContent() {
           <Route path="/delivery" element={<DeliveryInfo />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-of-service" element={<TermsOfService />} />
+          {LANDING_PAGES.map((p) => (
+            <Route
+              key={p.slug}
+              path={`/${p.slug}`}
+              element={
+                <LandingPage
+                  page={p}
+                  products={products}
+                  onAddToCart={handleAddToCart}
+                  onProductClick={handleProductClick}
+                />
+              }
+            />
+          ))}
           <Route path="/request-facilitator-access" element={<RequestFacilitatorAccess />} />
           <Route path="/facilitator-login" element={<Login />} />
           <Route path="/register" element={<Register />} />

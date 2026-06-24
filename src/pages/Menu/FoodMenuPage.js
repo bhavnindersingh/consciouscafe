@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import SEO from '../../components/seo/SEO/SEO';
-import { generatePageSEO } from '../../utils/seoData';
+import { generatePageSEO, generateStructuredData, breadcrumb } from '../../utils/seoData';
 import { CATEGORY_META, CATEGORY_ORDER, MAIN_CATEGORY_META as GROUP_META } from '../../utils/menuEnrichment';
 
 const catName = (slug = '') =>
@@ -53,7 +53,15 @@ function DishCard({ product: p, onProductClick, onAddToCart }) {
 }
 
 const FoodMenuPage = ({ products = [], onAddToCart, onProductClick, loading, error, initialCat, initialGroup }) => {
-  const seoData = generatePageSEO('menu', {});
+  // Distinct SEO per menu section (food / drinks / patisserie) when arrived via
+  // a dedicated route; otherwise the combined menu page.
+  const seoKey = ['food', 'drinks', 'patisserie'].includes(initialGroup) ? initialGroup : 'menu';
+  const seoData = generatePageSEO(seoKey, {
+    url: `https://consciouscafe.in/${seoKey === 'menu' ? 'menu' : `menu/${seoKey}`}`,
+  });
+  const trail = seoKey === 'menu'
+    ? [{ name: 'Home', path: '/' }, { name: 'Menu', path: '/menu' }]
+    : [{ name: 'Home', path: '/' }, { name: 'Menu', path: '/menu' }, { name: seoKey[0].toUpperCase() + seoKey.slice(1), path: `/menu/${seoKey}` }];
 
   /* Derive groups from mainCategory field — always food → drinks → patisserie */
   const groups = useMemo(() => {
@@ -117,7 +125,13 @@ const FoodMenuPage = ({ products = [], onAddToCart, onProductClick, loading, err
 
   return (
     <div className="menu-view" id="menu">
-      <SEO title={seoData.title} description={seoData.description} keywords={seoData.keywords} url={seoData.url} />
+      <SEO
+        title={seoData.title}
+        description={seoData.description}
+        keywords={seoData.keywords}
+        url={seoData.url}
+        structuredData={[generateStructuredData('restaurant'), breadcrumb(trail)]}
+      />
 
       <div className="menu-hero">
         <span className="eyebrow">The Menu · Auroville Road</span>

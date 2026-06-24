@@ -1,0 +1,276 @@
+[
+  {
+    "slug": "vegetarian-restaurant-auroville",
+    "eyebrow": "Vegetarian · Auroville Road",
+    "title": "Vegetarian Restaurant in Auroville | Conscious Cafe",
+    "h1": "A vegetarian kitchen, all day long",
+    "description": "Conscious Cafe is a fully vegetarian restaurant in Auroville. Artisanal, plant-forward food made in-house from consciously sourced, non-processed ingredients. Open Wed–Mon.",
+    "keywords": "vegetarian restaurant auroville, veg restaurant auroville, vegetarian food auroville, plant-based restaurant pondicherry, healthy vegetarian food",
+    "intro": "Every plate at Conscious Cafe is vegetarian — no exceptions, no afterthoughts. We cook plant-forward food from scratch, leaning on seasonal produce, slow-fermented sourdough and ingredients we can trace. It's the kind of food that happens to be vegetarian, rather than vegetarian food trying to be something else.",
+    "sections": [
+      { "heading": "Vegetarian, by design", "body": [
+        "We built the whole menu around vegetables, grains, legumes and good fats — so there's nothing to substitute and nothing missing. From a Mezze Platter to a Tokyo Katsu Bowl, dishes are composed to be satisfying in their own right.",
+        "Eggs and dairy appear where they belong and are always labelled, and a large share of the menu is fully vegan — so whether you're vegetarian, eggetarian or plant-curious, you'll eat well."
+      ] },
+      { "heading": "Consciously sourced, made in-house", "body": [
+        "Bread is slow-fermented, sauces are made in our kitchen, and we choose non-processed ingredients wherever we can. The result is food that feels light and tastes deliberate.",
+        "It's a calm room on Auroville Road — an open courtyard under the trees where a quick lunch can easily become a slow afternoon."
+      ] }
+    ],
+    "highlights": ["Mezze Platter", "Avocado Toast with Egg", "Mushroom Alfredo Pasta", "Tokyo Katsu Bowl", "Burrata Bruschetta", "Tres Leches"],
+    "faqs": [
+      { "q": "Is Conscious Cafe fully vegetarian?", "a": "Yes — the entire menu is vegetarian. A large portion is also vegan, and every dish that contains egg or dairy is clearly labelled." },
+      { "q": "Where is the restaurant?", "a": "On Kuilapalayam Main Road (Auroville Road), Auroville, Tamil Nadu 605101 — a short drive from Pondicherry. Open Wednesday to Monday, 9:30am–9pm." }
+    ],
+    "relatedPages": ["vegan-restaurant-auroville", "healthy-breakfast-auroville", "best-cafe-auroville"],
+    "menuCta": { "label": "See the full menu", "to": "/menu" }
+  },
+  {
+    "slug": "vegan-restaurant-auroville",
+    "eyebrow": "Vegan · Auroville Road",
+    "title": "Vegan Food & Restaurant in Auroville | Conscious Cafe",
+    "h1": "Vegan food that doesn't compromise",
+    "description": "Looking for vegan food in Auroville? Conscious Cafe serves dozens of fully plant-based dishes and drinks — toasts, bowls, shakes, cakes and kombucha. Clearly labelled, made in-house.",
+    "keywords": "vegan food auroville, vegan restaurant auroville, plant-based food auroville, vegan cafe pondicherry, vegan cake auroville, vegan options auroville",
+    "intro": "More than half of our menu is fully vegan — and we mean properly vegan, not a salad and an apology. Plant-based toasts, earth bowls, health shakes, cold-pressed juices, kombucha and even cake, all clearly marked so you never have to interrogate the staff.",
+    "sections": [
+      { "heading": "Dozens of plant-based dishes", "body": [
+        "Vegan choices run right across the menu — from Avocado Toast and Berry Blast Smoothie bowls to a Vegan Iced Latte made with plant milk and a proper Vegan Chocolate Cake for the sweet finish.",
+        "Everything vegan is labelled on the menu and in the cafe, so ordering is effortless."
+      ] },
+      { "heading": "Plant milks, house ferments & cold-pressed juice", "body": [
+        "Our baristas pour plant-milk coffees, we brew our own kombucha, and the juice bar is entirely cold-pressed — so the drinks list is as plant-friendly as the food.",
+        "It's vegan food made by people who genuinely love cooking it — which is exactly why it tastes like more than the sum of its plants."
+      ] }
+    ],
+    "highlights": ["Vegan Chocolate Cake", "Vegan Iced Latte", "Avocado Toast", "Berry Blast Smoothie", "Date and Coconut Shake", "Green Glow"],
+    "faqs": [
+      { "q": "How much of the menu is vegan?", "a": "A large share — well over half of the dishes and drinks are fully vegan, and each one is clearly labelled on the menu." },
+      { "q": "Do you have vegan cake and desserts?", "a": "Yes, including a Vegan Chocolate Cake and several plant-based bakes from our patisserie." },
+      { "q": "Do you use plant milks for coffee?", "a": "Yes — our baristas make plant-milk coffees, including a Vegan Iced Latte." }
+    ],
+    "relatedPages": ["vegetarian-restaurant-auroville", "kombucha-auroville", "smoothie-bowls-auroville"],
+    "menuCta": { "label": "Browse vegan-friendly dishes", "to": "/menu" }
+  },
+  {
+    "slug": "kombucha-auroville",
+    "eyebrow": "House ferments · Auroville",
+    "title": "Kombucha in Auroville — House-Brewed | Conscious Cafe",
+    "h1": "Kombucha, brewed in-house",
+    "description": "House-brewed, probiotic kombucha in Auroville — Alphonso Mango, Rose, Berry Mix, Passion Blossom and Black Detox. Living, lightly fizzy and naturally vegan at Conscious Cafe.",
+    "keywords": "kombucha auroville, kombucha pondicherry, probiotic drinks auroville, fermented drinks, buy kombucha auroville, alphonso mango kombucha",
+    "intro": "We brew our own kombucha in small batches — living, lightly sparkling and gently sour. It's the easy-drinking, gut-friendly alternative to a soft drink, and every flavour is naturally vegan.",
+    "sections": [
+      { "heading": "Five flavours, all fermented here", "body": [
+        "Our rotating line-up includes a fragrant Alphonso Mango Kombucha, a floral Rose Kombucha, a fruity Berry Mix, an aromatic Passion Blossom and a deep Black Detox.",
+        "Each is fermented in-house and finished with real fruit and botanicals — nothing from a concentrate bottle."
+      ] },
+      { "heading": "Why kombucha", "body": [
+        "Naturally fizzy and full of live cultures, kombucha is a refreshing way to drink something interesting that isn't sugary or alcoholic. It pairs beautifully with our toasts, bowls and platters.",
+        "Pull up a chair in the courtyard and have a glass cold, or take a few flavours to go."
+      ] }
+    ],
+    "highlights": ["Alphonso Mango Kombucha", "Rose Kombucha", "Berry Mix Kombucha", "Passion Blossom Kombucha", "Black Detox Kombucha"],
+    "faqs": [
+      { "q": "Do you brew your own kombucha?", "a": "Yes — every flavour is fermented in-house in small batches and finished with real fruit and botanicals." },
+      { "q": "Is your kombucha vegan?", "a": "Yes, all of our kombucha flavours are naturally vegan." }
+    ],
+    "relatedPages": ["cold-pressed-juice-auroville", "vegan-restaurant-auroville", "specialty-coffee-auroville"],
+    "menuCta": { "label": "See the drinks menu", "to": "/menu/drinks" }
+  },
+  {
+    "slug": "cold-pressed-juice-auroville",
+    "eyebrow": "Juice bar · Auroville",
+    "title": "Cold-Pressed Juice in Auroville | Conscious Cafe",
+    "h1": "Cold-pressed, fruit-led juices",
+    "description": "Cold-pressed juices in Auroville — Green Glow, Immunity Punch, Antioxidant, Detoxifier and more. Fresh produce, pressed to order, naturally vegan at Conscious Cafe.",
+    "keywords": "cold pressed juice auroville, fresh juice auroville, green juice auroville, healthy juice pondicherry, detox juice, immunity juice",
+    "intro": "Our juice bar is entirely cold-pressed — fruit and vegetables pressed slowly so you keep the colour, the nutrients and the bright, honest taste. No added sugar, no concentrate, just produce.",
+    "sections": [
+      { "heading": "Pressed for what you need", "body": [
+        "Reach for a Green Glow when you want greens, an Immunity Punch when you feel something coming on, or a Detoxifier and Antioxidant to reset. Morning Radiance and Vitamin C round out the line-up.",
+        "Each blend is built around fresh produce and pressed to order."
+      ] },
+      { "heading": "A clean, plant-based pour", "body": [
+        "All of our juices are naturally vegan and free of refined sugar — a genuinely good-for-you drink to start the day or carry through a long afternoon in the courtyard.",
+        "Pair one with a smoothie bowl or an avocado toast for a breakfast that actually keeps you going."
+      ] }
+    ],
+    "highlights": ["Green Glow", "Immunity Punch", "Antioxidant", "Detoxifier", "Morning Radiance", "Vitamin C"],
+    "faqs": [
+      { "q": "Are your juices cold-pressed?", "a": "Yes — the entire juice menu is cold-pressed from fresh produce and made to order, with no added sugar or concentrate." }
+    ],
+    "relatedPages": ["smoothie-bowls-auroville", "kombucha-auroville", "healthy-breakfast-auroville"],
+    "menuCta": { "label": "See all juices", "to": "/menu/drinks" }
+  },
+  {
+    "slug": "smoothie-bowls-auroville",
+    "eyebrow": "Bowls · Auroville",
+    "title": "Smoothie Bowls in Auroville | Conscious Cafe",
+    "h1": "Smoothie bowls & a quiet ritual",
+    "description": "Thick, fruit-led smoothie bowls in Auroville — Berry Blast, Goodness Bowl, Cocoa Peanut Butter, Matcha Chia Pudding and Overnight Oats. Plant-forward breakfast at Conscious Cafe.",
+    "keywords": "smoothie bowls auroville, acai bowl auroville, healthy breakfast auroville, smoothie bowl pondicherry, vegan breakfast bowl",
+    "intro": "Spoonable, fruit-led and topped with intent — our smoothie bowls are the breakfast people come back for. Thick blended bases, real fruit, seeds and grains, built to be both beautiful and genuinely filling.",
+    "sections": [
+      { "heading": "A bowl for every mood", "body": [
+        "Go bright with a Berry Blast Smoothie, wholesome with a Goodness Bowl or Fruit Bliss Bowl, indulgent with Cocoa Peanut Butter, or slow and steady with Overnight Oats and a Matcha Chia Pudding.",
+        "Most are vegan or easily made so — just ask."
+      ] },
+      { "heading": "Breakfast, whenever it finds you", "body": [
+        "We serve bowls all day, because mornings don't always start on time. They pair perfectly with a cold-pressed juice or a specialty coffee.",
+        "It's the kind of breakfast that feels like a small ritual — exactly the point."
+      ] }
+    ],
+    "highlights": ["Berry Blast Smoothie", "Goodness Bowl", "Fruit Bliss Bowl", "Cocoa Peanut Butter Smoothie", "Matcha Chia Pudding", "Overnight Oats"],
+    "relatedPages": ["healthy-breakfast-auroville", "cold-pressed-juice-auroville", "vegan-restaurant-auroville"],
+    "menuCta": { "label": "See breakfast & bowls", "to": "/menu/food" }
+  },
+  {
+    "slug": "specialty-coffee-auroville",
+    "eyebrow": "Coffee · Auroville",
+    "title": "Specialty Coffee in Auroville | Conscious Cafe",
+    "h1": "Small-batch beans, properly poured",
+    "description": "Specialty coffee in Auroville — espresso, flat white, cortado, Vietnam iced coffee and matcha lattes, with plant-milk options. Small-batch beans at Conscious Cafe on Auroville Road.",
+    "keywords": "specialty coffee auroville, best coffee auroville, cafe auroville, espresso auroville, flat white, iced coffee pondicherry, matcha latte auroville",
+    "intro": "Coffee here is made with care, not in a hurry. Small-batch beans, dialled-in shots and proper milk texture — plus a full iced and matcha line-up for the Tamil Nadu heat. Plant milks always available.",
+    "sections": [
+      { "heading": "The classics, done well", "body": [
+        "Order an Espresso or Cortado for something short and honest, a Flat White or Cappuccino for the everyday, or stretch out with a Vietnam Iced Coffee or a Mont Blanc.",
+        "Not a coffee person? Our Iced Matcha Latte and matcha specialities are a beautiful alternative."
+      ] },
+      { "heading": "Plant-milk friendly", "body": [
+        "Every milk drink can be made with plant milk, and we pour a dedicated Vegan Iced Latte for the days that call for it.",
+        "Find a seat in the courtyard, and let the afternoon take its time."
+      ] }
+    ],
+    "highlights": ["Espresso", "Flat White", "Cortado", "Cappuccino", "Vietnam Iced Coffee", "Iced Matcha Latte"],
+    "relatedPages": ["best-cafe-auroville", "kombucha-auroville", "healthy-breakfast-auroville"],
+    "menuCta": { "label": "See the coffee menu", "to": "/menu/drinks" }
+  },
+  {
+    "slug": "healthy-breakfast-auroville",
+    "eyebrow": "Breakfast · Auroville",
+    "title": "Healthy Breakfast in Auroville | Conscious Cafe",
+    "h1": "Breakfast worth waking up for",
+    "description": "Healthy breakfast in Auroville — avocado toast, smoothie bowls, overnight oats, French toast and cold-pressed juice. Plant-forward, made in-house at Conscious Cafe. Served all day.",
+    "keywords": "healthy breakfast auroville, breakfast auroville, brunch auroville, vegan breakfast auroville, avocado toast, breakfast pondicherry",
+    "intro": "A good breakfast sets the tone, so we take ours seriously — slow-fermented sourdough toasts, fruit-led smoothie bowls, overnight oats and cold-pressed juice, all served all day for the people who run on their own clock.",
+    "sections": [
+      { "heading": "From quick to lingering", "body": [
+        "Keep it simple with an Avocado Toast, go wholesome with Overnight Oats or a Goodness Bowl, or treat yourself to French Toast and a smoothie. There's something for early risers and late starters alike.",
+        "Add a cold-pressed juice or a specialty coffee and you've got a breakfast that actually carries you to lunch."
+      ] },
+      { "heading": "Plant-forward & consciously sourced", "body": [
+        "Most of the breakfast menu is vegetarian-by-default and easily made vegan, built on non-processed ingredients and house-baked bread.",
+        "Mornings here are unhurried — exactly how the first meal of the day should feel."
+      ] }
+    ],
+    "highlights": ["Avocado Toast", "Overnight Oats", "Goodness Bowl", "Berry Blast Smoothie", "French Toast", "Muhammara"],
+    "relatedPages": ["smoothie-bowls-auroville", "specialty-coffee-auroville", "vegetarian-restaurant-auroville"],
+    "menuCta": { "label": "See the breakfast menu", "to": "/menu/food" }
+  },
+  {
+    "slug": "best-cafe-auroville",
+    "eyebrow": "The cafe · Auroville Road",
+    "title": "Best Cafe in Auroville | Conscious Cafe",
+    "h1": "A cafe to lose an afternoon in",
+    "description": "Conscious Cafe is an artisanal, plant-forward cafe on Auroville Road — specialty coffee, house kombucha, smoothie bowls, vegetarian & vegan food and a courtyard under the trees.",
+    "keywords": "best cafe auroville, cafe auroville, coffee shop auroville, places to eat auroville, restaurant auroville road, cafe near pondicherry",
+    "intro": "Part kitchen, part courtyard, part slow afternoon — Conscious Cafe is where you come for an exceptional flat white and stay for the food, the trees and the unhurried pace of the place.",
+    "sections": [
+      { "heading": "Everything under one canopy", "body": [
+        "Specialty coffee and house-brewed kombucha, cold-pressed juices, smoothie bowls, mezze platters, earth bowls, pastas and a patisserie counter — it's a full day of good eating in one calm room.",
+        "The whole menu is vegetarian, with a big vegan selection, and everything is made in-house from consciously sourced ingredients."
+      ] },
+      { "heading": "Find us on Auroville Road", "body": [
+        "We're on Kuilapalayam Main Road, a short drive from Pondicherry and minutes from the Visitor Centre. Walk-ins are always welcome.",
+        "Open Wednesday to Monday, 9:30am to 9pm — closed Tuesdays."
+      ] }
+    ],
+    "highlights": ["Mezze Platter", "Avocado Toast", "Alphonso Mango Kombucha", "Iced Matcha Latte", "San Sebastian", "Goodness Bowl"],
+    "faqs": [
+      { "q": "What makes Conscious Cafe different?", "a": "It's a fully vegetarian, plant-forward cafe where coffee, kombucha, juice, food and patisserie are all made in-house from consciously sourced ingredients — in a courtyard setting under the trees." },
+      { "q": "Where is it and when are you open?", "a": "Kuilapalayam Main Road (Auroville Road), Auroville, Tamil Nadu — open Wednesday to Monday, 9:30am to 9pm, closed Tuesdays." }
+    ],
+    "relatedPages": ["specialty-coffee-auroville", "vegetarian-restaurant-auroville", "kombucha-auroville"],
+    "menuCta": { "label": "Explore the menu", "to": "/menu" }
+  },
+  {
+    "slug": "yoga-auroville",
+    "eyebrow": "The Sanctuary · Opening 2026",
+    "title": "Yoga in Auroville — Yogashala | Conscious Sanctuary",
+    "h1": "Yoga, coming to the Sanctuary",
+    "description": "A yogashala is coming to the Conscious Sanctuary in Auroville — a calm, light-filled space for practice beside the cafe on Auroville Road. Opening in 2026. Join the waitlist.",
+    "keywords": "yoga auroville, yogashala auroville, yoga classes auroville, yoga retreat auroville, yoga near pondicherry, meditation auroville",
+    "intro": "Beside the cafe, the Conscious Sanctuary is taking shape — and a yogashala is at the heart of it. A calm, light-filled space designed for practice, breath and stillness, opening in 2026. Join the waitlist to be first on the mat.",
+    "sections": [
+      { "heading": "A space being made for practice", "body": [
+        "The shala is being built around natural light, open air and quiet underfoot — designed to disappear so the practice can come forward, whether you're deep into your asana or rolling out a mat for the first time.",
+        "When it opens, practice will flow naturally into the rest of the sanctuary: a sauna and ice bath to recover, and the cafe for a nourishing meal after."
+      ] },
+      { "heading": "Rooted in Auroville", "body": [
+        "We're on Auroville Road, minutes from the township and a short drive from Pondicherry — an easy place to make practice part of your day.",
+        "The Sanctuary opens in 2026. Join the waitlist and we'll let you know the moment classes and retreats are announced — with an early window before anyone else."
+      ] }
+    ],
+    "highlights": [],
+    "faqs": [
+      { "q": "When is the yogashala opening?", "a": "The Conscious Sanctuary, including the yogashala, is opening in 2026. Join the waitlist and we'll be in touch the moment classes and retreats are announced." },
+      { "q": "Where will it be?", "a": "At the Conscious Sanctuary on Auroville Road (Kuilapalayam Main Road), beside Conscious Cafe — a short drive from Pondicherry." }
+    ],
+    "relatedPages": ["ice-bath-auroville", "sauna-auroville", "best-cafe-auroville"],
+    "menuCta": { "label": "Join the waitlist", "to": "/contact" }
+  },
+  {
+    "slug": "ice-bath-auroville",
+    "eyebrow": "The Sanctuary · Opening 2026",
+    "title": "Ice Bath & Cold Plunge in Auroville | Conscious Sanctuary",
+    "h1": "The cold plunge, coming soon",
+    "description": "An ice bath and cold plunge are coming to the Conscious Sanctuary in Auroville — deliberate cold for recovery and focus, beside the cafe on Auroville Road. Opening in 2026. Join the waitlist.",
+    "keywords": "ice bath auroville, cold plunge auroville, cold therapy auroville, ice bath near pondicherry, recovery auroville, contrast therapy",
+    "intro": "Deliberate cold, on purpose — coming to the Conscious Sanctuary in 2026. The ice bath will be a place to meet the cold, steady the breath and step out sharper than you went in, part of a wellness ritual paired with the sauna next door.",
+    "sections": [
+      { "heading": "Why the cold", "body": [
+        "A few minutes in cold water is a reset for body and mind — it can support recovery, lift your mood and build a quiet kind of resilience you carry into the rest of the day.",
+        "We're designing it to be simple and well-held, so first-timers and regulars alike can settle in and breathe."
+      ] },
+      { "heading": "Hot, then cold", "body": [
+        "The ice bath will sit alongside our sauna, so you'll be able to move between heat and cold — the contrast ritual so many people come back for — and finish in the cafe with a kombucha or a cold-pressed juice.",
+        "The Sanctuary opens in 2026. Join the waitlist for an early window before the doors open."
+      ] }
+    ],
+    "highlights": [],
+    "faqs": [
+      { "q": "When does the ice bath open?", "a": "It's part of the Conscious Sanctuary, opening in 2026. Join the waitlist and we'll let you know the moment sessions can be booked." },
+      { "q": "Will the sauna and ice bath be together?", "a": "Yes — the sauna and ice bath are being built side by side, so you can enjoy the hot-and-cold contrast ritual." }
+    ],
+    "relatedPages": ["sauna-auroville", "yoga-auroville", "best-cafe-auroville"],
+    "menuCta": { "label": "Join the waitlist", "to": "/contact" }
+  },
+  {
+    "slug": "sauna-auroville",
+    "eyebrow": "The Sanctuary · Opening 2026",
+    "title": "Sauna in Auroville | Conscious Sanctuary",
+    "h1": "A sauna, coming to the Sanctuary",
+    "description": "A sauna is coming to the Conscious Sanctuary in Auroville — deep, dry heat to relax and reset, paired with an ice bath and the cafe on Auroville Road. Opening in 2026. Join the waitlist.",
+    "keywords": "sauna auroville, sauna near pondicherry, wellness auroville, sweat session auroville, sauna and ice bath auroville, spa auroville",
+    "intro": "There's little a good sweat won't soften. A sauna is coming to the Conscious Sanctuary in 2026 — deep, dry warmth to slow your breathing, let the day go and reset, on its own or as half of a hot-and-cold ritual with the ice bath.",
+    "sections": [
+      { "heading": "A proper sweat", "body": [
+        "Quiet, warm and unhurried, the sauna is being built for letting go — the kind of place where ten minutes in, your shoulders drop on their own.",
+        "A simple, restorative pleasure, and an easy thing to fold into a visit to Auroville."
+      ] },
+      { "heading": "Pair it with the plunge", "body": [
+        "When it opens you'll be able to move from the heat of the sauna to the shock of the ice bath and back again — the contrast ritual is invigorating and oddly addictive — then round it off with something cold and good from the cafe.",
+        "The Sanctuary opens in 2026. Join the waitlist to be among the first through the doors."
+      ] }
+    ],
+    "highlights": [],
+    "faqs": [
+      { "q": "When does the sauna open?", "a": "The sauna is part of the Conscious Sanctuary, opening in 2026. Join the waitlist and we'll let you know the moment it's ready." },
+      { "q": "Where will it be?", "a": "At the Conscious Sanctuary on Auroville Road, beside Conscious Cafe and the ice bath — a short drive from Pondicherry." }
+    ],
+    "relatedPages": ["ice-bath-auroville", "yoga-auroville", "best-cafe-auroville"],
+    "menuCta": { "label": "Join the waitlist", "to": "/contact" }
+  }
+]

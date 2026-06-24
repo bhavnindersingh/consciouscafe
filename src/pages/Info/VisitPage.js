@@ -1,6 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getGumletUrl } from '../../utils/gumlet';
+import SEO from '../../components/seo/SEO/SEO';
+import { generatePageSEO, generateStructuredData, breadcrumb, FAQS } from '../../utils/seoData';
 
 const MAPS_URL = 'https://maps.google.com/?q=Conscious+Cafe+Auroville';
 
@@ -29,9 +31,21 @@ const NOTES = [
 
 const VisitPage = () => {
   const navigate = useNavigate();
+  const seo = generatePageSEO('visit');
 
   return (
     <main className="visit-view">
+      <SEO
+        title={seo.title}
+        description={seo.description}
+        keywords={seo.keywords}
+        url={seo.url}
+        structuredData={[
+          generateStructuredData('restaurant'),
+          generateStructuredData('faq'),
+          breadcrumb([{ name: 'Home', path: '/' }, { name: 'Visit', path: '/visit' }]),
+        ]}
+      />
       <header className="visit-hero">
         <img
           src={getGumletUrl(HERO_IMG, { w: 1920, h: 1080, mode: 'crop', q: 88 })}
@@ -107,6 +121,23 @@ const VisitPage = () => {
               <div className="pn">0{i + 1}</div>
               <h4>{n.k}</h4>
               <p>{n.t}</p>
+            </Reveal>
+          ))}
+        </div>
+      </section>
+
+      <section className="section faq-section">
+        <Reveal>
+          <div className="kicker-row">
+            <span className="idx">Good to know</span>
+            <span className="eyebrow">Questions</span>
+          </div>
+        </Reveal>
+        <div style={{ maxWidth: 820, margin: '0 auto' }}>
+          {FAQS.map((f, i) => (
+            <Reveal className="faq-item" delay={i + 1} key={f.q} style={{ padding: '22px 0', borderTop: i === 0 ? 'none' : '1px solid rgba(27,26,22,0.12)' }}>
+              <h3 style={{ fontFamily: 'var(--display)', fontSize: 'clamp(20px,2.4vw,28px)', marginBottom: 8 }}>{f.q}</h3>
+              <p style={{ fontFamily: 'var(--ui)', lineHeight: 1.6, color: 'var(--ink-mute)' }}>{f.a}</p>
             </Reveal>
           ))}
         </div>

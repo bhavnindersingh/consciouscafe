@@ -1,6 +1,8 @@
 import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Hero from '../../../pages/Home/Hero';
+import SEO from '../../seo/SEO/SEO';
+import { pageData, generateStructuredData, siteConfig } from '../../../utils/seoData';
 
 const Arrow = ({ s = 16 }) => (
   <svg className="arr" width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
@@ -321,6 +323,14 @@ const ProductGrid = ({ products = [], onAddToCart, onProductClick }) => {
 
   return (
     <>
+      <SEO
+        title={pageData.home.title}
+        description={pageData.home.description}
+        keywords={pageData.home.keywords}
+        url={siteConfig.url}
+        structuredData={generateStructuredData('home')}
+      />
+
       <Hero />
 
       {/* Manifesto */}

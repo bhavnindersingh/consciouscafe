@@ -2,6 +2,10 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import SEO from '../../components/seo/SEO/SEO';
 import { toSlug } from '../../utils/slug';
+import { generateStructuredData, breadcrumb } from '../../utils/seoData';
+
+// Map our dietary-label keys to schema.org RestrictedDiet values.
+const DIET_SCHEMA = { vegan: 'VeganDiet', vegetarian: 'VegetarianDiet', gluten_free: 'GlutenFreeDiet' };
 
 const Reveal = ({ children, className = '', delay = 0, as: Tag = 'div', style }) => (
   <Tag style={style} className={`reveal${delay ? ` d${delay}` : ''} ${className}`}>{children}</Tag>
@@ -72,10 +76,28 @@ const ProductDetailPage = ({ products = [], onAddToCart }) => {
   return (
     <div className="dish-view-wrap">
       <SEO
-        title={`${product.name} — Conscious Café`}
-        description={product.description}
+        title={`${product.name} — Conscious Cafe Auroville`}
+        description={product.description || `${product.name} — a consciously made dish at Conscious Cafe Auroville.`}
         url={`/product/${productId}`}
         image={product.image}
+        type="product"
+        structuredData={[
+          generateStructuredData('menuItem', {
+            id: productId,
+            name: product.name,
+            description: product.description,
+            price: product.price,
+            image: product.imageDetail || product.image,
+            dietary: (product.dietaryLabels || [])
+              .map(d => DIET_SCHEMA[d])
+              .filter(Boolean),
+          }),
+          breadcrumb([
+            { name: 'Home', path: '/' },
+            { name: 'Menu', path: '/menu' },
+            { name: product.name, path: `/product/${productId}` },
+          ]),
+        ]}
       />
 
       <div className="dish-view">

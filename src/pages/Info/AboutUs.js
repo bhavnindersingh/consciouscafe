@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getGumletUrl } from '../../utils/gumlet';
+import SEO from '../../components/seo/SEO/SEO';
+import { generatePageSEO, generateStructuredData, breadcrumb } from '../../utils/seoData';
 
 const GUMLET_BASE = 'https://consciouscafe.gumlet.io/';
 const gumletImg = (path, opts = {}) => getGumletUrl(path, opts);
@@ -40,9 +42,21 @@ function Portrait({ src, alt, local, opts }) {
 
 const AboutUs = () => {
   const navigate = useNavigate();
+  const seo = generatePageSEO('about');
 
   return (
     <main className="story-page">
+      <SEO
+        title={seo.title}
+        description={seo.description}
+        keywords={seo.keywords}
+        url={seo.url}
+        type="article"
+        structuredData={[
+          generateStructuredData('restaurant'),
+          breadcrumb([{ name: 'Home', path: '/' }, { name: 'About', path: '/about' }]),
+        ]}
+      />
       {/* Editorial hero */}
       <header className="story-hero">
         <div className="story-hero-head">

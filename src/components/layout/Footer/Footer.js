@@ -1,5 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import LANDING_PAGES from '../../../data/landingPages.json';
+
+const shortLabel = (slug) =>
+  slug.replace(/-auroville$/, '').replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 
 const Arrow = ({ s = 16 }) => (
   <svg className="arr" width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
@@ -70,6 +74,28 @@ const Footer = () => {
             </div>
           ))}
           <Link to="/menu" style={{ marginTop: 10, opacity: .6, fontSize: 14 }}>Full menu →</Link>
+        </div>
+      </div>
+
+      <div
+        className="footer-explore"
+        style={{
+          borderTop: '1px solid rgba(255,255,255,.12)',
+          margin: '0 0 0',
+          padding: '28px 0 4px',
+        }}
+      >
+        <div className="col-label" style={{ marginBottom: 14 }}>Explore</div>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px 22px' }}>
+          {LANDING_PAGES.map(p => (
+            <Link
+              key={p.slug}
+              to={`/${p.slug}`}
+              style={{ margin: 0, fontSize: 14, opacity: .7 }}
+            >
+              {shortLabel(p.slug)}
+            </Link>
+          ))}
         </div>
       </div>
 
