@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import SEO from '../../components/seo/SEO/SEO';
 import { toSlug } from '../../utils/slug';
 import { variationCartItem } from '../../utils/cartItem';
+import { useVariationPicker } from '../../components/products/VariationPicker/VariationPicker';
 import { generateStructuredData, breadcrumb } from '../../utils/seoData';
 
 const inr = n => `₹${(n || 0).toLocaleString('en-IN')}`;
@@ -71,6 +72,10 @@ const ProductDetailPage = ({ products = [], onAddToCart, loading = false }) => {
     if (!product) return [];
     return products.filter(p => p.category === product.category && p.id !== product.id).slice(0, 3);
   }, [products, product]);
+
+  // The related cards' "+" opens the picker for dishes with variations; the main
+  // Add-to-Bag button above keeps its own selector and isn't routed through this.
+  const { requestAdd, picker } = useVariationPicker(onAddToCart);
 
   const handleProductClick = (p) => {
     navigate(`/product/${toSlug(p.name)}`);
@@ -203,11 +208,13 @@ const ProductDetailPage = ({ products = [], onAddToCart, loading = false }) => {
           </Reveal>
           <div className="menu-items" style={{ padding: 0, gridTemplateColumns: 'repeat(3,1fr)' }}>
             {related.map(r => (
-              <DishCard key={r.id} product={r} onProductClick={handleProductClick} onAddToCart={onAddToCart} />
+              <DishCard key={r.id} product={r} onProductClick={handleProductClick} onAddToCart={requestAdd} />
             ))}
           </div>
         </section>
       )}
+
+      {picker}
     </div>
   );
 };

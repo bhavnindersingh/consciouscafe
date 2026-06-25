@@ -26,6 +26,9 @@ const toProduct = (recipe) => {
     imageHero: localPath
       ? getGumletUrl(localPath, { width: 2000, height: 1120, mode: 'crop', quality: 82, format: 'auto' })
       : fallback,
+    // True when a Gumlet-optimised local photo backs image/imageHero; false means
+    // image* are a raw, unsized fallback URL that pixelates if stretched full-bleed.
+    hasLocalImage: Boolean(localPath),
     deliveryPackagingImage: recipe.delivery_image_url || null,
     sku: recipe.sku || null,
     taxRate: parseFloat(recipe.tax_rate) || 5,

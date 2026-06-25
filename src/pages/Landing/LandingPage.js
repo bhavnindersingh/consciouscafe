@@ -4,6 +4,7 @@ import SEO from '../../components/seo/SEO/SEO';
 import { siteConfig, generateStructuredData, breadcrumb } from '../../utils/seoData';
 import { getGumletUrl } from '../../utils/gumlet';
 import { toSlug } from '../../utils/slug';
+import { useVariationPicker } from '../../components/products/VariationPicker/VariationPicker';
 import LANDING_PAGES from '../../data/landingPages.json';
 
 const Arrow = ({ s = 16 }) => (
@@ -26,10 +27,16 @@ const LandingPage = ({ page, products = [], onAddToCart, onProductClick }) => {
   const resolve = (name) => products.find(p => toSlug(p.name) === toSlug(name));
   const picks = (page.highlights || []).map(resolve).filter(Boolean);
 
-  const heroSrc = picks[0]?.imageHero || picks[0]?.image || fallbackHero;
+  // Use the first highlight with a real local photo for the full-bleed hero —
+  // products without one only have a low-res raw URL that pixelates when stretched.
+  const heroPick = picks.find(p => p.hasLocalImage && p.imageHero);
+  const heroSrc = heroPick?.imageHero || fallbackHero;
 
   const handlePick = (p) =>
     onProductClick ? onProductClick(p) : navigate(`/product/${toSlug(p.name)}`);
+
+  // "+" on a highlight with variations opens the picker; plain dishes add directly.
+  const { requestAdd, picker } = useVariationPicker(onAddToCart || (() => {}));
 
   const faqSchema = page.faqs && page.faqs.length
     ? {
@@ -117,7 +124,7 @@ const LandingPage = ({ page, products = [], onAddToCart, onProductClick }) => {
                     <button
                       className="dc-add"
                       aria-label={`Add ${p.name}`}
-                      onClick={e => { e.stopPropagation(); onAddToCart(p); }}
+                      onClick={e => { e.stopPropagation(); requestAdd(p); }}
                     >+</button>
                   )}
                 </div>
@@ -163,6 +170,8 @@ const LandingPage = ({ page, products = [], onAddToCart, onProductClick }) => {
           </div>
         </section>
       )}
+
+      {picker}
     </main>
   );
 };

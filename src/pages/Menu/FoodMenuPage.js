@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import SEO from '../../components/seo/SEO/SEO';
 import { generatePageSEO, generateStructuredData, breadcrumb } from '../../utils/seoData';
 import { CATEGORY_META, CATEGORY_ORDER, MAIN_CATEGORY_META as GROUP_META } from '../../utils/menuEnrichment';
-import { variationCartItem } from '../../utils/cartItem';
+import { useVariationPicker } from '../../components/products/VariationPicker/VariationPicker';
 
 const inr = n => `₹${(n || 0).toLocaleString('en-IN')}`;
 
@@ -35,7 +35,9 @@ function DishCard({ product: p, onProductClick, onAddToCart }) {
       </div>
       <div className="dc-head">
         <h4>{p.name}</h4>
-        <span className="dc-price">{inr(p.price)}</span>
+        <span className="dc-price">
+          {p.variations?.length > 0 && <span className="dc-from">from </span>}{inr(p.price)}
+        </span>
       </div>
       {p.description && <p>{p.description}</p>}
       {p.dietaryLabels?.length > 0 && (
@@ -44,23 +46,6 @@ function DishCard({ product: p, onProductClick, onAddToCart }) {
             const def = DIETARY_LABELS[key] || { label: key, emoji: '' };
             return <span key={key ?? i} className="dc-diet">{def.emoji} {def.label}</span>;
           })}
-        </div>
-      )}
-      {p.variations?.length > 0 && (
-        <div className="dc-variations">
-          <span className="dc-variations-lbl">Options</span>
-          {p.variations.map(v => (
-            <button
-              key={v.id ?? v.name}
-              type="button"
-              className="dc-variation"
-              onClick={e => { e.stopPropagation(); onAddToCart(variationCartItem(p, v)); }}
-            >
-              <span className="dcv-name">{(v.name || '').trim()}</span>
-              <span className="dcv-price">{inr(v.price || p.price)}</span>
-              <span className="dcv-add" aria-hidden="true">+</span>
-            </button>
-          ))}
         </div>
       )}
     </div>
@@ -138,6 +123,9 @@ const FoodMenuPage = ({ products = [], onAddToCart, onProductClick, loading, err
 
   const groupCount = (g) => products.filter(p => (p.mainCategory || 'food') === g).length;
 
+  // A "+" on a dish with variations opens the picker; plain dishes add directly.
+  const { requestAdd, picker } = useVariationPicker(onAddToCart);
+
   return (
     <div className="menu-view" id="menu">
       <SEO
@@ -199,7 +187,7 @@ const FoodMenuPage = ({ products = [], onAddToCart, onProductClick, loading, err
 
             <div className="menu-items" key={`items-${activeCat}`}>
               {visibleProducts.map((p, i) => (
-                <DishCard key={p.id ?? p.name ?? i} product={p} onProductClick={onProductClick} onAddToCart={onAddToCart} />
+                <DishCard key={p.id ?? p.name ?? i} product={p} onProductClick={onProductClick} onAddToCart={requestAdd} />
               ))}
             </div>
           </div>
@@ -222,7 +210,7 @@ const FoodMenuPage = ({ products = [], onAddToCart, onProductClick, loading, err
                   <div className="acc-body">
                     <div className="acc-inner">
                       {products.filter(p => p.category === c.id).map((p, i) => (
-                        <DishCard key={p.id ?? p.name ?? i} product={p} onProductClick={onProductClick} onAddToCart={onAddToCart} />
+                        <DishCard key={p.id ?? p.name ?? i} product={p} onProductClick={onProductClick} onAddToCart={requestAdd} />
                       ))}
                     </div>
                   </div>
@@ -232,6 +220,8 @@ const FoodMenuPage = ({ products = [], onAddToCart, onProductClick, loading, err
           </div>
         </>
       )}
+
+      {picker}
     </div>
   );
 };

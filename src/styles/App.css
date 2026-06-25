@@ -403,18 +403,6 @@ button { font-family: inherit; cursor: pointer; }
 .dish-card p { font-size: 16px; line-height: 1.42; color: var(--ink-soft); margin-top: 7px; max-width: 42ch; }
 .dc-labels { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
 .dish-card .dc-diet { font-family: var(--ui); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--sage); }
-.dc-variations { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 12px; }
-.dc-variations-lbl { font-family: var(--ui); font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-mute); width: 100%; }
-.dc-variation {
-  display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
-  font-family: var(--ui); font-size: 12px; letter-spacing: .02em; color: var(--ink);
-  background: var(--paper-2); border: 1px solid var(--line); padding: 7px 11px; border-radius: 99px;
-  transition: background .25s var(--ease), color .25s var(--ease), border-color .25s var(--ease);
-}
-.dc-variation .dcv-price { color: var(--ink-mute); }
-.dc-variation .dcv-add { font-size: 15px; line-height: 1; opacity: .55; }
-.dc-variation:hover { background: var(--forest); border-color: var(--forest); color: #fff; }
-.dc-variation:hover .dcv-price, .dc-variation:hover .dcv-add { color: #fff; opacity: 1; }
 
 /* Detail-page option selector */
 .d-variations { margin: 22px 0 4px; }
@@ -700,6 +688,23 @@ button { font-family: inherit; cursor: pointer; }
 .sa-done .sa-tick { display: inline-flex; align-items: center; justify-content: center; width: 64px; height: 64px; border-radius: 50%; background: rgba(35,63,44,.08); color: var(--forest); margin-bottom: 22px; }
 .sa-done h3 { margin-top: 0; }
 .sa-done .sa-sub { margin: 0 auto 28px; }
+
+/* Variation picker — reuses .sa-overlay / .sa-panel / .sa-close chrome */
+.vp-panel { width: min(480px, 100%); padding: clamp(24px,3.4vw,38px); }
+.vp-head { display: flex; gap: 18px; align-items: flex-start; padding-right: 34px; }
+.vp-media { flex: none; width: 92px; height: 110px; overflow: hidden; background: var(--paper-2); border-radius: 3px; }
+.vp-media img { width: 100%; height: 100%; object-fit: cover; }
+.vp-title { font-size: clamp(24px,3vw,34px); margin: 10px 0 8px; }
+.vp-desc { font-family: var(--serif); font-size: 16px; line-height: 1.45; color: var(--ink-soft); max-width: 36ch; }
+.vp-opts { display: flex; flex-direction: column; gap: 10px; margin: clamp(20px,3vh,28px) 0; }
+.vp-opts .dv-opt { justify-content: space-between; width: 100%; padding: 13px 18px; }
+.vp-foot { display: flex; gap: 14px; align-items: center; }
+.vp-add { flex: 1; justify-content: center; }
+.dc-from { font-family: var(--ui); font-size: .62em; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-mute); }
+@media (max-width: 480px) {
+  .vp-foot { flex-wrap: wrap; }
+  .vp-add { width: 100%; flex: none; }
+}
 
 /* ============================================================
    STORY PAGE
