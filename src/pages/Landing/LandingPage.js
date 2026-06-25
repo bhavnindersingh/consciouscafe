@@ -16,7 +16,7 @@ const Reveal = ({ children, className = '', delay = 0, style }) => (
   <div style={style} className={`reveal${delay ? ` d${delay}` : ''} ${className}`}>{children}</div>
 );
 
-const fallbackHero = getGumletUrl('images/hero-poster.jpg', { w: 1920, h: 1080, mode: 'crop', q: 85 });
+const fallbackHero = getGumletUrl('images/hero-poster.jpg', { width: 1920, height: 1080, mode: 'crop', quality: 85, format: 'auto' });
 
 const LandingPage = ({ page, products = [], onAddToCart, onProductClick }) => {
   const navigate = useNavigate();
@@ -26,7 +26,7 @@ const LandingPage = ({ page, products = [], onAddToCart, onProductClick }) => {
   const resolve = (name) => products.find(p => toSlug(p.name) === toSlug(name));
   const picks = (page.highlights || []).map(resolve).filter(Boolean);
 
-  const heroSrc = picks[0]?.image || fallbackHero;
+  const heroSrc = picks[0]?.imageHero || picks[0]?.image || fallbackHero;
 
   const handlePick = (p) =>
     onProductClick ? onProductClick(p) : navigate(`/product/${toSlug(p.name)}`);

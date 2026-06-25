@@ -16,6 +16,7 @@ function viewFromPath(pathname) {
   if (pathname.startsWith('/menu')) return 'menu';
   if (pathname.startsWith('/about') || pathname.startsWith('/story')) return 'story';
   if (pathname.startsWith('/visit')) return 'visit';
+  if (pathname.startsWith('/privacy') || pathname.startsWith('/terms')) return 'legal';
   return 'home';
 }
 

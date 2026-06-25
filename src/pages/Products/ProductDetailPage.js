@@ -2,7 +2,10 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import SEO from '../../components/seo/SEO/SEO';
 import { toSlug } from '../../utils/slug';
+import { variationCartItem } from '../../utils/cartItem';
 import { generateStructuredData, breadcrumb } from '../../utils/seoData';
+
+const inr = n => `₹${(n || 0).toLocaleString('en-IN')}`;
 
 // Map our dietary-label keys to schema.org RestrictedDiet values.
 const DIET_SCHEMA = { vegan: 'VeganDiet', vegetarian: 'VegetarianDiet', gluten_free: 'GlutenFreeDiet' };
@@ -33,24 +36,36 @@ function DishCard({ product, onProductClick, onAddToCart }) {
       </div>
       <div className="dc-head">
         <h4>{product.name}</h4>
-        <span className="dc-price">₹{product.price}</span>
+        <span className="dc-price">{inr(product.price)}</span>
       </div>
       {product.description && <p>{product.description}</p>}
     </div>
   );
 }
 
-const ProductDetailPage = ({ products = [], onAddToCart }) => {
+const ProductDetailPage = ({ products = [], onAddToCart, loading = false }) => {
   const { productId } = useParams();
   const navigate = useNavigate();
   const [qty, setQty] = useState(1);
+  // null = the default form (base product); otherwise a chosen variation.
+  const [variation, setVariation] = useState(null);
 
   const product = useMemo(
     () => products.find(p => toSlug(p.name) === productId) || null,
     [products, productId]
   );
 
-  useEffect(() => { window.scrollTo(0, 0); setQty(1); }, [productId]);
+  useEffect(() => { window.scrollTo(0, 0); setQty(1); setVariation(null); }, [productId]);
+
+  const variations = product?.variations || [];
+  const hasVariations = variations.length > 0;
+  const unitPrice = (variation ? variation.price : product?.price) || product?.price || 0;
+
+  const addSelected = () => {
+    if (!product) return;
+    if (variation) onAddToCart(variationCartItem(product, variation, qty));
+    else onAddToCart({ ...product, quantity: qty });
+  };
 
   const related = useMemo(() => {
     if (!product) return [];
@@ -62,10 +77,19 @@ const ProductDetailPage = ({ products = [], onAddToCart }) => {
   };
 
   if (!product) {
+    // While the menu is still loading, the slug simply hasn't resolved yet —
+    // show a neutral placeholder rather than a misleading "not found".
+    if (loading || products.length === 0) {
+      return <div style={{ minHeight: '60vh' }} aria-busy="true" />;
+    }
+    // Genuinely unknown slug: a real not-found, kept out of the index.
     return (
-      <div style={{ padding: 'clamp(120px,18vh,200px) var(--gutter)', fontFamily: 'var(--display)', fontSize: 'clamp(30px,4vw,56px)' }}>
-        Dish not found.
-      </div>
+      <>
+        <SEO title="Dish not found — Conscious Cafe Auroville" url={`/product/${productId}`} noIndex />
+        <div style={{ padding: 'clamp(120px,18vh,200px) var(--gutter)', fontFamily: 'var(--display)', fontSize: 'clamp(30px,4vw,56px)' }}>
+          Dish not found.
+        </div>
+      </>
     );
   }
 
@@ -115,7 +139,34 @@ const ProductDetailPage = ({ products = [], onAddToCart }) => {
             <span className="eyebrow">{catName(product.category)}</span>
             <h1>{product.name}</h1>
             {product.description && <p className="d-desc">{product.description}</p>}
-            <div className="d-price">₹{product.price.toLocaleString('en-IN')}</div>
+            <div className="d-price">{inr(unitPrice)}</div>
+
+            {hasVariations && (
+              <div className="d-variations">
+                <span className="dv-label">Choose your option</span>
+                <div className="dv-opts">
+                  <button
+                    type="button"
+                    className={`dv-opt ${variation === null ? 'active' : ''}`}
+                    onClick={() => setVariation(null)}
+                  >
+                    <span className="dvo-name">{product.name}</span>
+                    <span className="dvo-price">{inr(product.price)}</span>
+                  </button>
+                  {variations.map(v => (
+                    <button
+                      key={v.id ?? v.name}
+                      type="button"
+                      className={`dv-opt ${variation && (variation.id ?? variation.name) === (v.id ?? v.name) ? 'active' : ''}`}
+                      onClick={() => setVariation(v)}
+                    >
+                      <span className="dvo-name">{(v.name || '').trim()}</span>
+                      <span className="dvo-price">{inr(v.price || product.price)}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {nutri.length > 0 && (
               <div className="d-nutri">
@@ -134,8 +185,8 @@ const ProductDetailPage = ({ products = [], onAddToCart }) => {
                 <span className="qv">{qty}</span>
                 <button onClick={() => setQty(q => q + 1)}>+</button>
               </div>
-              <button className="btn forest" onClick={() => onAddToCart({ ...product, quantity: qty })}>
-                Add to Bag · ₹{(product.price * qty).toLocaleString('en-IN')}
+              <button className="btn forest" onClick={addSelected}>
+                Add to Bag · {inr(unitPrice * qty)}
               </button>
             </div>
           </Reveal>

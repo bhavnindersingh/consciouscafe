@@ -2,6 +2,9 @@ import React, { useState, useMemo } from 'react';
 import SEO from '../../components/seo/SEO/SEO';
 import { generatePageSEO, generateStructuredData, breadcrumb } from '../../utils/seoData';
 import { CATEGORY_META, CATEGORY_ORDER, MAIN_CATEGORY_META as GROUP_META } from '../../utils/menuEnrichment';
+import { variationCartItem } from '../../utils/cartItem';
+
+const inr = n => `₹${(n || 0).toLocaleString('en-IN')}`;
 
 const catName = (slug = '') =>
   slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
@@ -32,7 +35,7 @@ function DishCard({ product: p, onProductClick, onAddToCart }) {
       </div>
       <div className="dc-head">
         <h4>{p.name}</h4>
-        <span className="dc-price">₹{(p.price || 0).toLocaleString('en-IN')}</span>
+        <span className="dc-price">{inr(p.price)}</span>
       </div>
       {p.description && <p>{p.description}</p>}
       {p.dietaryLabels?.length > 0 && (
@@ -45,7 +48,19 @@ function DishCard({ product: p, onProductClick, onAddToCart }) {
       )}
       {p.variations?.length > 0 && (
         <div className="dc-variations">
-          {p.variations.map(v => <span key={v.id ?? v.name} className="dc-variation">{v.name}</span>)}
+          <span className="dc-variations-lbl">Options</span>
+          {p.variations.map(v => (
+            <button
+              key={v.id ?? v.name}
+              type="button"
+              className="dc-variation"
+              onClick={e => { e.stopPropagation(); onAddToCart(variationCartItem(p, v)); }}
+            >
+              <span className="dcv-name">{(v.name || '').trim()}</span>
+              <span className="dcv-price">{inr(v.price || p.price)}</span>
+              <span className="dcv-add" aria-hidden="true">+</span>
+            </button>
+          ))}
         </div>
       )}
     </div>

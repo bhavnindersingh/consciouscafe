@@ -5,6 +5,7 @@ import { HelmetProvider } from "react-helmet-async";
 // Layout — always needed, kept in the main bundle
 import Header from "./components/layout/Header/Header";
 import Footer from "./components/layout/Footer/Footer";
+import ErrorBoundary from "./components/common/ErrorBoundary/ErrorBoundary";
 
 // Product / Cart — homepage + cart are the common first paint, kept eager
 import ProductGrid from "./components/products/ProductGrid/ProductGrid";
@@ -67,11 +68,13 @@ function AppContent() {
 
   if (isPrintRoute) {
     return (
-      <Suspense fallback={<RouteFallback />}>
-        <Routes>
-          <Route path="/print-menu" element={<PrintMenuPage />} />
-        </Routes>
-      </Suspense>
+      <ErrorBoundary>
+        <Suspense fallback={<RouteFallback />}>
+          <Routes>
+            <Route path="/print-menu" element={<PrintMenuPage />} />
+          </Routes>
+        </Suspense>
+      </ErrorBoundary>
     );
   }
 
@@ -80,6 +83,7 @@ function AppContent() {
       <Header />
 
       <main role="main" id="main-content">
+        <ErrorBoundary>
         <Suspense fallback={<RouteFallback />}>
         <Routes>
           <Route path="/" element={
@@ -101,7 +105,7 @@ function AppContent() {
             <CategoryPage products={products} onAddToCart={handleAddToCart} onProductClick={handleProductClick} loading={menuLoading} error={menuError} />
           } />
           <Route path="/product/:productId" element={
-            <ProductDetailPage products={products} onAddToCart={handleAddToCart} />
+            <ProductDetailPage products={products} onAddToCart={handleAddToCart} loading={menuLoading} />
           } />
           <Route path="/about" element={<AboutUs />} />
           <Route path="/visit" element={<VisitPage />} />
@@ -143,6 +147,7 @@ function AppContent() {
           <Route path="*" element={<NotFound />} />
         </Routes>
         </Suspense>
+        </ErrorBoundary>
       </main>
 
       <Footer />

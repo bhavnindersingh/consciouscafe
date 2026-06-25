@@ -22,6 +22,10 @@ const toProduct = (recipe) => {
     imageDetail: localPath
       ? getGumletUrl(localPath, { width: 1800, height: 2400, mode: 'fit', quality: 90, format: 'auto' })
       : fallback,
+    // 2000×1120 landscape (≈16:9) crop for full-bleed hero headers — sharp on wide screens
+    imageHero: localPath
+      ? getGumletUrl(localPath, { width: 2000, height: 1120, mode: 'crop', quality: 82, format: 'auto' })
+      : fallback,
     deliveryPackagingImage: recipe.delivery_image_url || null,
     sku: recipe.sku || null,
     taxRate: parseFloat(recipe.tax_rate) || 5,

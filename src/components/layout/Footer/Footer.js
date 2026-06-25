@@ -24,75 +24,57 @@ const Footer = () => {
   return (
     <footer className="footer" id="visit">
       <div className="footer-top">
-        <div>
-          <span className="eyebrow on-dark" style={{ color: 'rgba(255,255,255,.55)' }}>Come sit a while</span>
-          <h3 style={{ marginTop: 18 }}>Find us under<br /><em style={{ fontStyle: 'italic' }}>the canopy.</em></h3>
-          <div style={{ marginTop: 30 }}>
-            <Link className="btn on-dark" to="/menu" style={{ display: 'inline-flex', fontSize: 12, marginBottom: 0 }}>
-              Explore the Menu <Arrow />
-            </Link>
-          </div>
+        <div className="ft-brand">
+          <span className="eyebrow on-dark ft-eyebrow">Come sit a while</span>
+          <h3 className="ft-statement">Find us under<br /><em>the canopy.</em></h3>
+          <Link className="btn on-dark ft-cta" to="/menu">
+            Explore the Menu <Arrow />
+          </Link>
         </div>
 
-        <div>
+        <div className="ft-col">
           <div className="col-label">Visit</div>
           <p className="line">Kuilapalayam Main Road</p>
           <p className="line">Auroville Road, Tamil Nadu 605101</p>
-          <p className="line" style={{ marginTop: 14 }}>Daily 9:30 — 21:00 · Closed Tuesday</p>
-          <a href={MAPS} target="_blank" rel="noopener noreferrer" style={{ marginTop: 14 }}>Get directions →</a>
+          <p className="line ft-hours">Daily 9:30 — 21:00 · Closed Tuesday</p>
+          <a className="ft-arrow" href={MAPS} target="_blank" rel="noopener noreferrer">Get directions →</a>
         </div>
 
-        <div>
+        <div className="ft-col">
           <div className="col-label">Connect</div>
           <a href="https://www.instagram.com/consciouscafe.sanctuary/" target="_blank" rel="noopener noreferrer">Instagram</a>
           <a href="mailto:hello@consciouscafe.in">hello@consciouscafe.in</a>
           <a href="tel:+918754561269">+91 87545 61269</a>
-          <div style={{ marginTop: 24 }}>
-            <Link to="/privacy-policy" style={{ fontSize: 14, opacity: .6 }}>Privacy Policy</Link>
-            {'  ·  '}
-            <Link to="/terms-of-service" style={{ fontSize: 14, opacity: .6 }}>Terms</Link>
-          </div>
         </div>
 
-        <div>
+        <div className="ft-col">
           <div className="col-label">Menu</div>
           {[
             { id: 'food', label: 'Food' },
             { id: 'drinks', label: 'Drinks' },
             { id: 'patisserie', label: 'Patisserie' },
           ].map(({ id, label }) => (
-            <div key={id} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <Link to={`/menu/${id}`} style={{ margin: 0 }}>{label}</Link>
+            <div key={id} className="ft-menu-row">
+              <Link className="ft-menu-link" to={`/menu/${id}`}>{label}</Link>
               <Link
+                className="ft-print"
                 to={`/print-menu?focus=${id}`}
                 title={`Print ${label} menu (PDF)`}
                 aria-label={`Print ${label} menu`}
-                style={{ display: 'inline-flex', margin: 0, color: 'rgba(255,255,255,.45)' }}
               >
                 <Printer s={13} />
               </Link>
             </div>
           ))}
-          <Link to="/menu" style={{ marginTop: 10, opacity: .6, fontSize: 14 }}>Full menu →</Link>
+          <Link className="ft-arrow" to="/menu">Full menu →</Link>
         </div>
       </div>
 
-      <div
-        className="footer-explore"
-        style={{
-          borderTop: '1px solid rgba(255,255,255,.12)',
-          margin: '0 0 0',
-          padding: '28px 0 4px',
-        }}
-      >
-        <div className="col-label" style={{ marginBottom: 14 }}>Explore</div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px 22px' }}>
+      <div className="footer-explore">
+        <div className="col-label">Explore</div>
+        <div className="ft-explore-tags">
           {LANDING_PAGES.map(p => (
-            <Link
-              key={p.slug}
-              to={`/${p.slug}`}
-              style={{ margin: 0, fontSize: 14, opacity: .7 }}
-            >
+            <Link key={p.slug} className="ft-tag" to={`/${p.slug}`}>
               {shortLabel(p.slug)}
             </Link>
           ))}
@@ -100,8 +82,13 @@ const Footer = () => {
       </div>
 
       <div className="footer-bottom">
-        <span>© 2026 Conscious Café · Auroville Road</span>
-        <span>Plant-forward · Slow-made · Earth-first</span>
+        <span className="ft-copy">© 2026 Conscious Café · Auroville Road</span>
+        <nav className="ft-legal" aria-label="Legal">
+          <Link to="/privacy-policy">Privacy</Link>
+          <span aria-hidden="true">·</span>
+          <Link to="/terms-of-service">Terms</Link>
+        </nav>
+        <span className="ft-tagline">Plant-forward · Slow-made · Earth-first</span>
       </div>
     </footer>
   );

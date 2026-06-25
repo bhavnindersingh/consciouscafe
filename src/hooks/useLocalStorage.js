@@ -30,16 +30,16 @@ export function useLocalStorage(key, initialValue) {
   // persists the new value to localStorage.
   const setValue = (value) => {
     try {
-      // Allow value to be a function so we have same API as useState
-      const valueToStore = value instanceof Function ? value(storedValue) : value;
-
-      // Save state
-      setStoredValue(valueToStore);
-
-      // Save to local storage
-      if (typeof window !== 'undefined') {
-        window.localStorage.setItem(key, JSON.stringify(valueToStore));
-      }
+      // Resolve functional updates against the *latest* state inside React's
+      // updater (not the stale closure value) so rapid successive updates —
+      // e.g. double-tapping "+" in the cart — never drop one another.
+      setStoredValue((prev) => {
+        const valueToStore = value instanceof Function ? value(prev) : value;
+        if (typeof window !== 'undefined') {
+          window.localStorage.setItem(key, JSON.stringify(valueToStore));
+        }
+        return valueToStore;
+      });
     } catch (error) {
       // A more advanced implementation would handle the error case
       console.error(`Error setting localStorage key "${key}":`, error);

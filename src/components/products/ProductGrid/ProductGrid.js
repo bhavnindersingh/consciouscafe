@@ -174,7 +174,10 @@ function Signatures({ products, onProductClick }) {
       <div className="sig">
         <Reveal className="sig-lead">
           <div className="sig-figure" role="button" tabIndex={0} onClick={() => onProductClick(lead)}>
-            <img src={lead.image} alt={lead.name} loading="lazy" />
+            {/* Lead figure renders ~660px wide — on a high-DPI 27" display the
+                900px `image` looks soft, so use the 1800px `imageDetail` here.
+                The smaller trio/menu cards stay on `image` to avoid bloat. */}
+            <img src={lead.imageDetail || lead.image} alt={lead.name} loading="lazy" />
             <span className="tag">{catName(lead.category)}</span>
           </div>
         </Reveal>

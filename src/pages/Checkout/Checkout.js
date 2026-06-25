@@ -70,7 +70,7 @@ const Checkout = ({ isOpen, onClose, cartItems = [], onOrderComplete }) => {
 
     // Distance validation
     const distance = parseFloat(customerInfo.distance);
-    if (!customerInfo.distance.trim() || isNaN(distance)) {
+    if (!customerInfo.distance.trim() || isNaN(distance) || distance <= 0) {
       setDistanceError('Please enter a valid distance');
       setErrors(newErrors);
       return false;
