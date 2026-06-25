@@ -403,6 +403,18 @@ button { font-family: inherit; cursor: pointer; }
 .dish-card p { font-size: 16px; line-height: 1.42; color: var(--ink-soft); margin-top: 7px; max-width: 42ch; }
 .dc-labels { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
 .dish-card .dc-diet { font-family: var(--ui); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--sage); }
+.dc-variations { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 12px; }
+.dc-variations-lbl { font-family: var(--ui); font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-mute); width: 100%; }
+.dc-variation {
+  display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
+  font-family: var(--ui); font-size: 12px; letter-spacing: .02em; color: var(--ink);
+  background: var(--paper-2); border: 1px solid var(--line); padding: 7px 11px; border-radius: 99px;
+  transition: background .25s var(--ease), color .25s var(--ease), border-color .25s var(--ease);
+}
+.dc-variation .dcv-price { color: var(--ink-mute); }
+.dc-variation .dcv-add { font-size: 15px; line-height: 1; opacity: .55; }
+.dc-variation:hover { background: var(--forest); border-color: var(--forest); color: #fff; }
+.dc-variation:hover .dcv-price, .dc-variation:hover .dcv-add { color: #fff; opacity: 1; }
 
 /* Detail-page option selector */
 .d-variations { margin: 22px 0 4px; }

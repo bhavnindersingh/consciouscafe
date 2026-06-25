@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import SEO from '../../components/seo/SEO/SEO';
 import { generatePageSEO, generateStructuredData, breadcrumb } from '../../utils/seoData';
 import { CATEGORY_META, CATEGORY_ORDER, MAIN_CATEGORY_META as GROUP_META } from '../../utils/menuEnrichment';
+import { variationCartItem } from '../../utils/cartItem';
 import { useVariationPicker } from '../../components/products/VariationPicker/VariationPicker';
 
 const inr = n => `₹${(n || 0).toLocaleString('en-IN')}`;
@@ -44,6 +45,23 @@ function DishCard({ product: p, onProductClick, onAddToCart }) {
             const def = DIETARY_LABELS[key] || { label: key, emoji: '' };
             return <span key={key ?? i} className="dc-diet">{def.emoji} {def.label}</span>;
           })}
+        </div>
+      )}
+      {p.variations?.length > 0 && (
+        <div className="dc-variations">
+          <span className="dc-variations-lbl">Options</span>
+          {p.variations.map(v => (
+            <button
+              key={v.id ?? v.name}
+              type="button"
+              className="dc-variation"
+              onClick={e => { e.stopPropagation(); onAddToCart(variationCartItem(p, v)); }}
+            >
+              <span className="dcv-name">{(v.name || '').trim()}</span>
+              <span className="dcv-price">{inr(v.price || p.price)}</span>
+              <span className="dcv-add" aria-hidden="true">+</span>
+            </button>
+          ))}
         </div>
       )}
     </div>
