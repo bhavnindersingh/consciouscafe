@@ -700,7 +700,6 @@ button { font-family: inherit; cursor: pointer; }
 .vp-opts .dv-opt { justify-content: space-between; width: 100%; padding: 13px 18px; }
 .vp-foot { display: flex; gap: 14px; align-items: center; }
 .vp-add { flex: 1; justify-content: center; }
-.dc-from { font-family: var(--ui); font-size: .62em; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-mute); }
 @media (max-width: 480px) {
   .vp-foot { flex-wrap: wrap; }
   .vp-add { width: 100%; flex: none; }

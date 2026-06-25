@@ -35,9 +35,7 @@ function DishCard({ product: p, onProductClick, onAddToCart }) {
       </div>
       <div className="dc-head">
         <h4>{p.name}</h4>
-        <span className="dc-price">
-          {p.variations?.length > 0 && <span className="dc-from">from </span>}{inr(p.price)}
-        </span>
+        <span className="dc-price">{inr(p.price)}</span>
       </div>
       {p.description && <p>{p.description}</p>}
       {p.dietaryLabels?.length > 0 && (
