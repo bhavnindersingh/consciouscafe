@@ -645,23 +645,44 @@
   position: relative;
   z-index: 1;
 }
+.pm-bk-leg-lbl {
+  text-align: center;
+  margin-bottom: 2.5mm;
+}
 .pm-bk-legend {
   display: flex;
   justify-content: center;
-  gap: 5mm;
+  gap: 3mm 6mm;
   flex-wrap: wrap;
   font-family: var(--ui);
-  font-size: 5.8pt;
-  letter-spacing: 0.12em;
+  font-size: 6.6pt;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--sage);
-  margin-bottom: 2mm;
+  color: var(--ink-soft);
+  margin-bottom: 3mm;
+}
+.pm-bk-leg-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.4mm;
+  white-space: nowrap;
+}
+.pm-bk-leg-em {
+  font-size: 8pt;
+  letter-spacing: 0;
 }
 .pm-bk-allergen p {
   font-family: var(--serif);
   font-size: 9pt;
   line-height: 1.38;
   color: var(--ink-mute);
+}
+.pm-bk-admission {
+  margin-top: 1.5mm;
+  font-style: italic;
+  font-size: 8pt;
+  letter-spacing: 0.02em;
+  color: var(--sage);
 }
 
 /* ═══════════════════════

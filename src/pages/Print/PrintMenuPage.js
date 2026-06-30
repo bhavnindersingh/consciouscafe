@@ -179,6 +179,14 @@ function coverHTML(main, meta, cats, catCounts, total) {
 </section>`;
 }
 
+// Legend built straight from DIETARY_LABELS so the key on the back page always
+// matches the markers printed on the cards — one source of truth.
+function legendHTML() {
+  return Object.values(DIETARY_LABELS).map(def =>
+    `<span class="pm-bk-leg-item"><span class="pm-bk-leg-em">${def.emoji}</span>${esc(def.label)}</span>`
+  ).join('');
+}
+
 // Per-category end page — repeated at the close of every booklet.
 function backHTML(main) {
   return `<section class="pm-page pm-back" data-main="${main}">
@@ -191,7 +199,8 @@ function backHTML(main) {
     <div class="pm-bk-grid">
       <div class="pm-bk-block">
         <div class="pm-bk-lbl">Hours</div>
-        <div class="pm-bk-row"><span>Mon, Wed — Sun</span><span class="pm-bd"></span><span>9:30 — 21:00</span></div>
+        <div class="pm-bk-row"><span>Mon, Wed — Fri</span><span class="pm-bd"></span><span>9:30 — 21:00</span></div>
+        <div class="pm-bk-row"><span>Sat — Sun</span><span class="pm-bd"></span><span>9:30 — 22:00</span></div>
         <div class="pm-bk-row"><span>Tuesday</span><span class="pm-bd"></span><span>Closed</span></div>
       </div>
       <div class="pm-bk-block">
@@ -210,12 +219,10 @@ function backHTML(main) {
       </div>
     </div>
     <div class="pm-bk-allergen">
-      <div class="pm-bk-legend">
-        <span>vegan — fully plant-based</span>
-        <span>gf — gluten-free</span>
-        <span>veg — contains dairy or egg</span>
-      </div>
+      <div class="pm-bk-lbl pm-bk-leg-lbl">Dietary Key</div>
+      <div class="pm-bk-legend">${legendHTML()}</div>
       <p>All prices in ₹, exclusive of applicable taxes. Please inform your server about any allergies.</p>
+      <p class="pm-bk-admission">The right of admission is reserved, at the discretion of the management.</p>
     </div>
   </div>
 </section>`;
