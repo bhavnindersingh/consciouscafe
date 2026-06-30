@@ -224,9 +224,13 @@
   text-align: center;
 }
 .pm-cover-drinks .pm-cv-flower {
-  width: 13mm;
+  width: 32mm;
   height: auto;
-  margin-bottom: 1mm;
+  margin-bottom: 2.5mm;
+}
+.pm-cover-drinks .pm-cv-wordmark {
+  font-size: 19pt;
+  letter-spacing: 0.5em;
 }
 .pm-cover-drinks .pm-cv-mid {
   align-items: center;
