@@ -216,6 +216,7 @@ function backHTML(main) {
       <div class="pm-bk-block">
         <div class="pm-bk-lbl">Good to know</div>
         <p>Walk-ins always welcome. For large groups a quick message helps us hold the right space.</p>
+        <p>Ask our team about the Conscious loyalty card — a little thank-you for returning.</p>
       </div>
     </div>
     <div class="pm-bk-allergen">
