@@ -86,9 +86,9 @@ function cardHTML(p) {
   </div>
   <div class="pm-card-rule"></div>
   ${p.description ? `<div class="pm-card-desc">${esc(p.description)}</div>` : ''}
-  ${(varRows || labels) ? `<div class="pm-card-foot">
-    ${varRows ? `<div class="pm-card-vars"><span class="pm-card-vars-lbl">Options</span>${varRows}</div>` : ''}
-    ${labels ? `<div class="pm-card-diet">${labels}</div>` : ''}
+  ${labels ? `<div class="pm-card-diet">${labels}</div>` : ''}
+  ${varRows ? `<div class="pm-card-foot">
+    <div class="pm-card-vars"><span class="pm-card-vars-lbl">Options</span>${varRows}</div>
   </div>` : ''}
 </div>`;
 }

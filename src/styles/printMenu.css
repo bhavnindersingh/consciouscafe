@@ -466,7 +466,9 @@
   flex-direction: column;
   gap: 2mm;
 }
+/* Main dietary legend — sits with the description, above the Options block */
 .pm-card-diet {
+  margin-top: 2mm;
   font-family: var(--ui);
   font-size: 6.8pt;
   letter-spacing: 0.16em;
