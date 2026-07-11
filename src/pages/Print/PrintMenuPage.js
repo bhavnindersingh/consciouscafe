@@ -187,7 +187,10 @@ function legendHTML() {
   ).join('');
 }
 
-// Per-category end page — repeated at the close of every booklet.
+// Per-category end page. The drinks booklet closes on its last content page —
+// it ships alongside the food menu, which already carries this information.
+const NO_BACK_PAGE = new Set(['drinks']);
+
 function backHTML(main) {
   return `<section class="pm-page pm-back" data-main="${main}">
   <div class="pm-pad">
@@ -330,7 +333,7 @@ function buildDocument(items, measDiv, focusMain) {
 </section>`
       )
       .join('');
-    html += backHTML(main);
+    if (!NO_BACK_PAGE.has(main)) html += backHTML(main);
   });
 
   measDiv.innerHTML = '';
