@@ -527,23 +527,6 @@
   overflow-wrap: anywhere;
 }
 
-/* Folio (page number strip at bottom) */
-.pm-folio {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 6mm;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 15mm;
-  font-family: var(--ui);
-  font-size: 6pt;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--ink-mute);
-}
-
 /* ═══════════════════════
    BACK PAGE
 ═══════════════════════ */

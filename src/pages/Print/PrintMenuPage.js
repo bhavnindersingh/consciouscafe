@@ -101,12 +101,6 @@ function catHead(idx, name, note, isCont) {
 </div>`;
 }
 
-function folio(num) {
-  return `<div class="pm-folio">
-  <span>Page ${num}</span>
-</div>`;
-}
-
 // Drinks cover — split-screen lemon illustration + centred branding panel.
 function drinksCoverHTML(meta, cats, catCounts) {
   const catPills = cats
@@ -326,10 +320,9 @@ function buildDocument(items, measDiv, focusMain) {
 
     html += coverHTML(main, meta, cats, catCounts, mainCounts[main] || 0);
     html += pages
-      .map((p, i) =>
+      .map(p =>
         `<section class="pm-page" data-main="${main}">
   <div class="pm-pad"><div class="pm-flow${p.fill ? ' pm-flow-fill' : ''}">${p.blocks.join('')}</div></div>
-  ${folio(i + 2)}
 </section>`
       )
       .join('');
