@@ -6,10 +6,14 @@ const Arrow = ({ s = 16 }) => (
   </svg>
 );
 
+// Resize params are Gumlet's. Dishes with no curated photo fall back to a raw
+// Supabase Storage URL, which ignores them — appending there just makes the URL
+// look transformed when it isn't, so leave those alone.
 function imgResized(src, w = 160) {
   if (!src) return '';
   try {
     const url = new URL(src);
+    if (!url.hostname.endsWith('.gumlet.io')) return src;
     url.searchParams.set('w', w);
     url.searchParams.set('h', Math.round(w * 1.2));
     url.searchParams.set('mode', 'crop');
