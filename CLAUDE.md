@@ -67,9 +67,10 @@ src/
 - Product navigation using React Router with dynamic URLs
 
 ### Data Structure
-- **products.js** - Centralized product data with categories, pricing, descriptions, and images
-- Categories: Toast, All Day Breakfast, Smoothie Bowls, Earth Grills/Crisps, Salads, Platters, Earth Bowls, Noodle Bowls, Pasta/Pizza, Desserts
-- Drink categories managed separately in drink menu components
+- **The menu is live from Supabase — there is no static product file.** `hooks/useDeliveryMenu.js` → `services/menuService.js` reads `recipes` where `is_production_recipe = true` on every page load, and `toProduct()` maps a POS row to the shape components consume.
+- The same Supabase project backs the POS (`Manager Conscious Cafe`), so a name, description, price, category, dietary label or variation edited in the POS appears on the site immediately — no rebuild.
+- **Photos are the exception** — see "Dish Photos" below.
+- Categories come from `recipes.category` / `sub_category`, slugged. They are not hardcoded here.
 
 ### Routing Architecture
 - React Router v6 with slug-based product URLs
@@ -138,17 +139,40 @@ The application uses Gumlet CDN for all media delivery:
 - **getResponsiveImageSet()**: Creates srcset for responsive images
 - **Important**: Uses `fm` parameter (not `format`) for format transformations
 
-## Data Management
+## Dish Photos
 
-### Product Data Structure
-Products include:
-- Categories and subcategories
-- Pricing (including dietary-specific prices)
-- Nutritional information
-- Image URLs (Gumlet CDN with transformations)
-- SEO-optimized descriptions
+**Changing a dish photo in the POS does not change it on the website.** POS uploads are downscaled to 600px at WebP q0.60 (`Manager Conscious Cafe/frontend/src/utils/imageUtils.js`) — right for a POS tile, far too small for the 1800×2400 detail panel or the 2000×1120 full-bleed hero. So the curated shoots in `public/images/menu-photos/{food,drinks}/` are the real source:
 
-### Cart Functionality
+- `src/data/imageMap.js` maps **`recipes.sku` → photo path**. `menuService.toProduct()` looks up `IMAGE_MAP[recipe.sku]`; when it hits, all three sizes are generated through Gumlet. `recipes.image_url` is only the fallback when a dish has no curated photo.
+- **Keyed by SKU on purpose.** A SKU is assigned once by a `BEFORE INSERT` trigger and is read-only in the POS recipe form, so renaming a dish cannot silently detach its photo. Do not re-key this by name. (No DB constraint forbids an `UPDATE` to `sku`; nothing in the app issues one, and `check:images` fails loudly if one ever happens.)
+- `hasLocalImage` tells consumers whether they hold a real Gumlet photo. Gate anything full-bleed on it — the fallback is a 600px image that pixelates when stretched (`LandingPage.js` does this for its hero).
+
+### Run `npm run check:images` after touching any of this
+
+It validates all three joins that can rot silently — nothing throws, a photo just quietly vanishes:
+
+| Join | Breaks when |
+|---|---|
+| `IMAGE_MAP` key → `recipes.sku` | dish retired |
+| `IMAGE_MAP` value → file in `public/` | typo, or **case mismatch** (`.JPG`/`.jpg` — works locally, 404s on Netlify) |
+| `landingPages.json` `highlights` → `recipes.name` | **dish renamed in the POS** (still name-matched, silently `.filter(Boolean)`-ed away) |
+| `toSlug(recipes.name)` uniqueness | two POS dishes slug to the same `/product/` URL — one page silently unreachable |
+
+It also warns on **undersized photos** (mapped JPEGs narrower than the 1800px detail panel — Gumlet won't upscale, they render soft) and on SKU whitespace/case drift. The SKU join itself is whitespace/case-tolerant on both sides (`menuService.js` `normSku` mirrors the script), so drift can no longer detach a photo — it's just reported for cleanup.
+
+Exits 1 on a real break; missing photos and unreferenced files are warnings. Not wired into `prebuild` — it needs network and a Supabase blip must never break a deploy.
+
+### Supabase outage → stale menu, not a blank page
+`useDeliveryMenu` caches the last good menu in localStorage (`cc_menu_cache_v1`). If the live fetch fails, returning visitors get the cached menu with `stale: true` instead of an error; `error` is only set when there's nothing cached (first-ever visit during an outage).
+
+### Replacing a photo needs a new filename
+
+`netlify.toml` serves `/images/*` as `max-age=31536000, immutable` with Gumlet caching on top. Dropping a new file in at the same name keeps serving the old picture. Give it a different filename and update `imageMap.js`. (The POS fallback path is immune by accident — `uploadImage()` mints a random filename per upload.)
+
+### Product fields
+`toProduct()` returns: `id`, `name`, `description`, `price`, `mainCategory`, `category`, `image` / `imageDetail` / `imageHero`, `hasLocalImage`, `sku`, `taxRate`, `dietaryLabels`, `variations[]`.
+
+## Cart Functionality
 - localStorage persistence
 - Quantity management
 - Checkout integration
@@ -159,7 +183,7 @@ Products include:
 - **NEVER run `npm start` automatically** - User will start the development server manually when needed
 - Always run builds locally before deployment to catch CSS syntax errors
 - Product URLs are auto-generated from product names using slug conversion
-- Category definitions in `App.js` must match product categories in `data/products.js`
+- Category definitions in `App.js` must match the POS values in `recipes.category` / `sub_category` (slugged) — categories are not defined in this repo
 - SEO data should be updated with actual business information before production use
 
 ## Adding New Features
