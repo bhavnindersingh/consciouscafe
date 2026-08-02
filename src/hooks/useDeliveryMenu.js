@@ -2,16 +2,55 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { getDeliveryMenu } from '../services/menuService';
 import { toSlug } from '../utils/slug';
 
+// Last good menu, so a Supabase blip degrades to a stale menu instead of a
+// blank page. Prices/names may be minutes old; the alternative is nothing.
+const CACHE_KEY = 'cc_menu_cache_v1';
+
+const readCache = () => {
+  try {
+    const raw = localStorage.getItem(CACHE_KEY);
+    const parsed = raw ? JSON.parse(raw) : null;
+    return Array.isArray(parsed?.items) && parsed.items.length ? parsed.items : null;
+  } catch {
+    return null;
+  }
+};
+
+const writeCache = (items) => {
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify({ at: Date.now(), items }));
+  } catch {
+    // Storage full or blocked — the cache is best-effort only.
+  }
+};
+
 export function useDeliveryMenu() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  // True when items came from the cache because the live fetch failed.
+  const [stale, setStale] = useState(false);
 
   useEffect(() => {
+    let cancelled = false;
     getDeliveryMenu()
-      .then(setItems)
-      .catch(setError)
-      .finally(() => setLoading(false));
+      .then((fresh) => {
+        if (cancelled) return;
+        setItems(fresh);
+        if (fresh.length) writeCache(fresh);
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        const cached = readCache();
+        if (cached) {
+          setItems(cached);
+          setStale(true);
+        } else {
+          setError(err);
+        }
+      })
+      .finally(() => !cancelled && setLoading(false));
+    return () => { cancelled = true; };
   }, []);
 
   const toLabel = (slug) =>
@@ -85,5 +124,5 @@ export function useDeliveryMenu() {
     [items]
   );
 
-  return { items, loading, error, categories, mainCategories, categoryGroups, getByCategory, getBySlug, searchItems };
+  return { items, loading, error, stale, categories, mainCategories, categoryGroups, getByCategory, getBySlug, searchItems };
 }

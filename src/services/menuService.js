@@ -3,9 +3,17 @@ import { IMAGE_MAP } from '../data/imageMap';
 import { getGumletUrl } from '../utils/gumlet';
 import { toSlug } from '../utils/slug';
 
+// SKUs come from a POS trigger, but nothing in the DB forbids stray whitespace
+// or case drift on either side of the join. Normalise both so 'dhb 030 ' still
+// finds its photo instead of silently falling back to the 600px POS upload.
+const normSku = (sku) => (sku || '').trim().toUpperCase().replace(/\s+/g, ' ');
+const PHOTO_BY_SKU = Object.fromEntries(
+  Object.entries(IMAGE_MAP).map(([sku, path]) => [normSku(sku), path])
+);
+
 const toProduct = (recipe) => {
-  const slug = toSlug(recipe.name);
-  const localPath = IMAGE_MAP[slug];
+  // Photos are keyed by SKU, not name — a POS rename must not detach a photo.
+  const localPath = PHOTO_BY_SKU[normSku(recipe.sku)];
   const fallback = recipe.image_url || null;
   return {
     id: recipe.id,
@@ -29,7 +37,6 @@ const toProduct = (recipe) => {
     // True when a Gumlet-optimised local photo backs image/imageHero; false means
     // image* are a raw, unsized fallback URL that pixelates if stretched full-bleed.
     hasLocalImage: Boolean(localPath),
-    deliveryPackagingImage: recipe.delivery_image_url || null,
     sku: recipe.sku || null,
     taxRate: parseFloat(recipe.tax_rate) || 5,
     dietaryLabels: recipe.dietary_labels || [],
@@ -44,18 +51,11 @@ const toProduct = (recipe) => {
   };
 };
 
-/** Returns 2 top food + 1 top drinks + 1 top patisserie ranked by POS sales. */
-export async function getSignatureDishes() {
-  const { data, error } = await supabase.rpc('get_signature_dishes');
-  if (error) throw error;
-  return (data || []).map(toProduct);
-}
-
 export async function getDeliveryMenu() {
   const { data, error } = await supabase
     .from('recipes')
     .select(
-      'id, name, description, selling_price, category, sub_category, image_url, delivery_image_url, sku, tax_rate, dietary_labels, recipe_variations(id, name, selling_price, sort_order, dietary_labels)'
+      'id, name, description, selling_price, category, sub_category, image_url, sku, tax_rate, dietary_labels, recipe_variations(id, name, selling_price, sort_order, dietary_labels)'
     )
     .eq('is_production_recipe', true)
     .order('category')
