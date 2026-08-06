@@ -26,6 +26,11 @@ const USE_GUMLET = process.env.REACT_APP_USE_GUMLET !== 'false';
  * @param {boolean} options.thumbnail - Generate video thumbnail (video only)
  * @param {string} type - Asset type: 'image' or 'video'
  * @returns {string} Optimized Gumlet URL or original path if Gumlet is disabled
+ *
+ * The Gumlet-native short names (w/h/q/fm) are accepted as aliases of
+ * width/height/quality/format. Call sites had been passing them for a while and
+ * they were being dropped silently — the request then carried only `mode`, so
+ * Gumlet re-encoded the full-size original instead of resizing it.
  */
 export const getGumletUrl = (assetPath, options = {}, type = 'image') => {
   // If Gumlet is disabled or no base URL, return original path
@@ -39,24 +44,30 @@ export const getGumletUrl = (assetPath, options = {}, type = 'image') => {
   // Build query parameters for Gumlet transformations
   const params = new URLSearchParams();
 
+  // Long form wins; the short form is the alias.
+  const width = options.width ?? options.w;
+  const height = options.height ?? options.h;
+  const quality = options.quality ?? options.q;
+  const format = options.format ?? options.fm;
+
   if (type === 'image') {
     // Image-specific transformations
-    if (options.width) params.append('w', options.width);
-    if (options.height) params.append('h', options.height);
-    if (options.quality) params.append('q', options.quality);
-    if (options.format) params.append('fm', options.format);
+    if (width) params.append('w', width);
+    if (height) params.append('h', height);
+    if (quality) params.append('q', quality);
+    if (format) params.append('fm', format);
     if (options.mode) params.append('mode', options.mode);
     if (options.dpr) params.append('dpr', options.dpr);
 
     // Always use auto format for best optimization if not specified
-    if (!options.format) params.append('fm', 'auto');
+    if (!format) params.append('fm', 'auto');
   } else if (type === 'video') {
     // Video-specific transformations
-    if (options.quality) params.append('quality', options.quality);
-    if (options.format) params.append('fm', options.format);
+    if (quality) params.append('quality', quality);
+    if (format) params.append('fm', format);
     if (options.thumbnail) params.append('thumbnail', 'true');
-    if (options.width) params.append('w', options.width);
-    if (options.height) params.append('h', options.height);
+    if (width) params.append('w', width);
+    if (height) params.append('h', height);
   }
 
   // URL encode the path to handle spaces and special characters
