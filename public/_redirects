@@ -1,4 +1,5 @@
-# The old dummy contact page now lives at /visit (address, hours, map, reach us)
+# Kept in sync with netlify.toml, which is evaluated first — see the comment
+# there. /contact was a dummy form page and now folds into /visit.
 /contact  /visit  301
 
 /* /index.html 200

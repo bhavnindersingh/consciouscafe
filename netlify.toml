@@ -25,6 +25,16 @@
 [context.branch-deploy]
   environment = { NODE_ENV = "production" }
 
+# Redirects declared here are evaluated BEFORE public/_redirects, and the first
+# match wins — so anything more specific than the SPA catch-all has to live here,
+# above it, or the catch-all swallows it and returns the app shell with a 200.
+
+# The old /contact page (a dummy form) folded into /visit.
+[[redirects]]
+  from = "/contact"
+  to = "/visit"
+  status = 301
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
