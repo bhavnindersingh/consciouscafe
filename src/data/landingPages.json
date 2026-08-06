@@ -219,7 +219,7 @@
       { "q": "Where will it be?", "a": "At the Conscious Sanctuary on Auroville Road (Kuilapalayam Main Road), beside Conscious Cafe — a short drive from Pondicherry." }
     ],
     "relatedPages": ["ice-bath-auroville", "sauna-auroville", "best-cafe-auroville"],
-    "menuCta": { "label": "Join the waitlist", "to": "/contact" }
+    "menuCta": { "label": "Join the waitlist", "to": "mailto:hello@consciouscafe.in?subject=Sanctuary%20waitlist" }
   },
   {
     "slug": "ice-bath-auroville",
@@ -245,7 +245,7 @@
       { "q": "Will the sauna and ice bath be together?", "a": "Yes — the sauna and ice bath are being built side by side, so you can enjoy the hot-and-cold contrast ritual." }
     ],
     "relatedPages": ["sauna-auroville", "yoga-auroville", "best-cafe-auroville"],
-    "menuCta": { "label": "Join the waitlist", "to": "/contact" }
+    "menuCta": { "label": "Join the waitlist", "to": "mailto:hello@consciouscafe.in?subject=Sanctuary%20waitlist" }
   },
   {
     "slug": "sauna-auroville",
@@ -271,6 +271,6 @@
       { "q": "Where will it be?", "a": "At the Conscious Sanctuary on Auroville Road, beside Conscious Cafe and the ice bath — a short drive from Pondicherry." }
     ],
     "relatedPages": ["ice-bath-auroville", "yoga-auroville", "best-cafe-auroville"],
-    "menuCta": { "label": "Join the waitlist", "to": "/contact" }
+    "menuCta": { "label": "Join the waitlist", "to": "mailto:hello@consciouscafe.in?subject=Sanctuary%20waitlist" }
   }
 ]

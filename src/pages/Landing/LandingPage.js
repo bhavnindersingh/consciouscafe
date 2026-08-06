@@ -17,6 +17,8 @@ const Reveal = ({ children, className = '', delay = 0, style }) => (
   <div style={style} className={`reveal${delay ? ` d${delay}` : ''} ${className}`}>{children}</div>
 );
 
+const isExternal = (to = '') => /^(mailto:|tel:|https?:)/i.test(to);
+
 const fallbackHero = getGumletUrl('images/hero-poster.jpg', { width: 1920, height: 1080, mode: 'crop', quality: 85, format: 'auto' });
 
 const LandingPage = ({ page, products = [], onAddToCart, onProductClick }) => {
@@ -93,9 +95,16 @@ const LandingPage = ({ page, products = [], onAddToCart, onProductClick }) => {
           ))}
 
           <div className="visit-cta" style={{ marginTop: 8 }}>
-            <button className="btn forest" onClick={() => navigate(page.menuCta.to)}>
-              {page.menuCta.label} <Arrow />
-            </button>
+            {/* menuCta.to is usually an internal route, but may be a mailto:/https: link */}
+            {isExternal(page.menuCta.to) ? (
+              <a className="btn forest" href={page.menuCta.to}>
+                {page.menuCta.label} <Arrow />
+              </a>
+            ) : (
+              <button className="btn forest" onClick={() => navigate(page.menuCta.to)}>
+                {page.menuCta.label} <Arrow />
+              </button>
+            )}
           </div>
         </div>
       </section>

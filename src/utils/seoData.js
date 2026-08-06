@@ -78,15 +78,11 @@ export const pageData = {
     description: 'Discover Conscious Cafe Auroville\'s mission of sustainable, conscious eating. Located at Kavas Yoga Retreat, we serve artisanal vegetarian & vegan food with love.',
     keywords: 'about conscious cafe auroville, sustainable restaurant, consciously sourced food philosophy, kavas yoga retreat, conscious eating, eco-friendly dining, vegetarian vegan restaurant story',
   },
+  // /contact 301s here — its keywords are folded in below.
   visit: {
-    title: 'Visit Us — Location, Hours & Sanctuary | Conscious Cafe Auroville',
-    description: 'Visit Conscious Cafe at Kavas Yoga Retreat, Auroville Road. Find our hours, directions, and the sanctuary — ice bath, sauna and yogashala. Open Wed–Mon, 9:30am–9pm.',
-    keywords: 'conscious cafe location, auroville restaurant directions, kavas yoga retreat, ice bath sauna auroville, yogashala, cafe hours auroville',
-  },
-  contact: {
-    title: 'Contact & Location | Conscious Cafe Auroville',
-    description: 'Visit Conscious Cafe at Kavas Yoga Retreat, Auroville. Get directions, hours, phone & reservation info. Best vegetarian & vegan restaurant in Auroville Tamil Nadu.',
-    keywords: 'conscious cafe location, auroville restaurant address, kavas yoga retreat, contact details, restaurant hours, reservations auroville, directions',
+    title: 'Visit & Contact Us — Location, Hours & Sanctuary | Conscious Cafe Auroville',
+    description: 'Visit Conscious Cafe at Kavas Yoga Retreat, Auroville Road. Address, map, directions, hours, phone and email — plus the sanctuary: ice bath, sauna and yogashala. Open Wed–Mon, 9:30am–9pm.',
+    keywords: 'conscious cafe location, conscious cafe contact, auroville restaurant address, auroville restaurant directions, kavas yoga retreat, contact details, cafe hours auroville, reservations auroville, ice bath sauna auroville, yogashala',
   },
   delivery: {
     title: 'Food Delivery Auroville | Conscious Cafe Online Order',

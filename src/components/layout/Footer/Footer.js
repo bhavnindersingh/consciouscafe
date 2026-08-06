@@ -45,6 +45,7 @@ const Footer = () => {
           <a href="https://www.instagram.com/consciouscafe.sanctuary/" target="_blank" rel="noopener noreferrer">Instagram</a>
           <a href="mailto:hello@consciouscafe.in">hello@consciouscafe.in</a>
           <a href="tel:+918754561269">+91 87545 61269</a>
+          <Link className="ft-arrow" to="/visit">Contact us →</Link>
         </div>
 
         <div className="ft-col">

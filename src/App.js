@@ -1,5 +1,5 @@
 import React, { useState, useEffect, startTransition, lazy, Suspense } from "react";
-import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import { Routes, Route, Navigate, useNavigate, useLocation } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 
 // Layout — always needed, kept in the main bundle
@@ -21,7 +21,6 @@ const CategoryPage = lazy(() => import("./pages/Menu/CategoryPage"));
 const ProductDetailPage = lazy(() => import("./pages/Products/ProductDetailPage"));
 const AboutUs = lazy(() => import("./pages/Info/AboutUs"));
 const VisitPage = lazy(() => import("./pages/Info/VisitPage"));
-const Contact = lazy(() => import("./pages/Info/Contact"));
 const DeliveryInfo = lazy(() => import("./pages/Info/DeliveryInfo"));
 const PrivacyPolicy = lazy(() => import("./pages/Info/PrivacyPolicy"));
 const TermsOfService = lazy(() => import("./pages/Info/TermsOfService"));
@@ -109,7 +108,8 @@ function AppContent() {
           } />
           <Route path="/about" element={<AboutUs />} />
           <Route path="/visit" element={<VisitPage />} />
-          <Route path="/contact" element={<Contact />} />
+          {/* /contact was a dummy form page — the real one is /visit (address, hours, map, reach us) */}
+          <Route path="/contact" element={<Navigate to="/visit" replace />} />
           <Route path="/delivery" element={<DeliveryInfo />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-of-service" element={<TermsOfService />} />

@@ -5,6 +5,8 @@ import SEO from '../../components/seo/SEO/SEO';
 import { generatePageSEO, generateStructuredData, breadcrumb, FAQS } from '../../utils/seoData';
 
 const MAPS_URL = 'https://maps.google.com/?q=Conscious+Cafe+Auroville';
+const WHATSAPP_URL = 'https://wa.me/918754561269';
+const INSTAGRAM_URL = 'https://www.instagram.com/consciouscafe.sanctuary/';
 
 const Arrow = ({ s = 16 }) => (
   <svg className="arr" width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
@@ -81,10 +83,12 @@ const VisitPage = () => {
             ))}
           </div>
 
-          <div className="contact-block">
+          <div className="contact-block" id="contact">
             <span className="visit-label">Reach us</span>
             <a href="mailto:hello@consciouscafe.in">hello@consciouscafe.in</a>
             <a href="tel:+918754561269">+91 87545 61269</a>
+            <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">WhatsApp us</a>
+            <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">@consciouscafe.sanctuary</a>
           </div>
 
           <div className="visit-cta">

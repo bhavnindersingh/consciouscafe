@@ -46,7 +46,7 @@ const NotFound = () => {
             <div className="suggestion-card">
               <h3>📍 Visit Us</h3>
               <p>Find our location at Kavas Yoga Retreat in Auroville and plan your visit.</p>
-              <Link to="/contact" className="cta-btn">
+              <Link to="/visit" className="cta-btn">
                 Contact & Location
               </Link>
             </div>
@@ -84,7 +84,7 @@ const NotFound = () => {
               <p>If you think this page should exist or you're experiencing technical issues, please let us know!</p>
               <div className="help-links">
                 <Link to="/about" className="help-link">About Conscious Cafe</Link>
-                <Link to="/contact" className="help-link">Contact Us</Link>
+                <Link to="/visit" className="help-link">Contact Us</Link>
               </div>
             </div>
           </div>

@@ -109,12 +109,11 @@ const STATIC_ROUTES = [
   { path: '/about', priority: '0.7', changefreq: 'monthly',
     title: 'About Conscious Cafe | Sustainable Dining Auroville',
     description: "Discover Conscious Cafe Auroville's mission of sustainable, conscious eating. Located at Kavas Yoga Retreat, we serve artisanal vegetarian & vegan food with love." },
+  // /contact 301s to /visit in public/_redirects — deliberately not prerendered
+  // here, since a static /contact.html would shadow the (non-forced) redirect.
   { path: '/visit', priority: '0.7', changefreq: 'monthly',
-    title: 'Visit Us — Location, Hours & Sanctuary | Conscious Cafe Auroville',
-    description: 'Visit Conscious Cafe at Kavas Yoga Retreat, Auroville Road. Find our hours, directions, and the sanctuary — ice bath, sauna and yogashala. Open Wed–Mon, 9:30am–9pm.' },
-  { path: '/contact', priority: '0.6', changefreq: 'monthly',
-    title: 'Contact & Location | Conscious Cafe Auroville',
-    description: 'Visit Conscious Cafe at Kavas Yoga Retreat, Auroville. Get directions, hours, phone & reservation info. Best vegetarian & vegan restaurant in Auroville Tamil Nadu.' },
+    title: 'Visit & Contact Us — Location, Hours & Sanctuary | Conscious Cafe Auroville',
+    description: 'Visit Conscious Cafe at Kavas Yoga Retreat, Auroville Road. Address, map, directions, hours, phone and email — plus the sanctuary: ice bath, sauna and yogashala. Open Wed–Mon, 9:30am–9pm.' },
   { path: '/delivery', priority: '0.6', changefreq: 'monthly',
     title: 'Food Delivery Auroville | Conscious Cafe Online Order',
     description: 'Order healthy vegetarian & vegan food delivery from Conscious Cafe Auroville. Fresh, consciously sourced non-processed meals delivered to your door. Serving Auroville and nearby areas.' },
@@ -184,7 +183,6 @@ function crumbsFor(routePath) {
     '/menu/patisserie': [{ name: 'Home', path: '/' }, { name: 'Menu', path: '/menu' }, { name: 'Patisserie', path: '/menu/patisserie' }],
     '/about': [{ name: 'Home', path: '/' }, { name: 'About', path: '/about' }],
     '/visit': [{ name: 'Home', path: '/' }, { name: 'Visit', path: '/visit' }],
-    '/contact': [{ name: 'Home', path: '/' }, { name: 'Contact', path: '/contact' }],
     '/delivery': [{ name: 'Home', path: '/' }, { name: 'Delivery', path: '/delivery' }],
   };
   return labels[routePath] ? [crumb(labels[routePath])] : [];
