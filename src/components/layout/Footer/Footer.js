@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import LANDING_PAGES from '../../../data/landingPages.json';
+import { maps } from '../../../utils/seoData';
 
 const shortLabel = (slug) =>
   slug.replace(/-auroville$/, '').replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
@@ -17,8 +18,6 @@ const Printer = ({ s = 15 }) => (
     <rect x="6" y="14" width="12" height="7" rx="1" />
   </svg>
 );
-
-const MAPS = 'https://maps.google.com/?q=Conscious+Cafe+Auroville+Road+Tamil+Nadu';
 
 const Footer = () => {
   return (
@@ -37,7 +36,7 @@ const Footer = () => {
           <p className="line">Kuilapalayam Main Road</p>
           <p className="line">Auroville Road, Tamil Nadu 605101</p>
           <p className="line ft-hours">Daily 9:30 — 21:00 · Closed Tuesday</p>
-          <a className="ft-arrow" href={MAPS} target="_blank" rel="noopener noreferrer">Get directions →</a>
+          <a className="ft-arrow" href={maps.directions} target="_blank" rel="noopener noreferrer">Get directions →</a>
         </div>
 
         <div className="ft-col">

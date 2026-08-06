@@ -2,9 +2,8 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getGumletUrl } from '../../utils/gumlet';
 import SEO from '../../components/seo/SEO/SEO';
-import { generatePageSEO, generateStructuredData, breadcrumb, FAQS } from '../../utils/seoData';
+import { generatePageSEO, generateStructuredData, breadcrumb, FAQS, maps } from '../../utils/seoData';
 
-const MAPS_URL = 'https://maps.google.com/?q=Conscious+Cafe+Auroville';
 const WHATSAPP_URL = 'https://wa.me/918754561269';
 const INSTAGRAM_URL = 'https://www.instagram.com/consciouscafe.sanctuary/';
 
@@ -92,7 +91,7 @@ const VisitPage = () => {
           </div>
 
           <div className="visit-cta">
-            <a className="btn forest" href={MAPS_URL} target="_blank" rel="noopener noreferrer">
+            <a className="btn forest" href={maps.directions} target="_blank" rel="noopener noreferrer">
               Get directions <Arrow />
             </a>
             <button className="btn" onClick={() => navigate('/menu')}>View the menu <Arrow /></button>
@@ -102,11 +101,11 @@ const VisitPage = () => {
         <Reveal delay={1} className="visit-map">
           <iframe
             title="Conscious Café location"
-            src="https://www.google.com/maps?q=Conscious%20Cafe%20Auroville&output=embed"
+            src={maps.embed}
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
           />
-          <a className="map-open" href={MAPS_URL} target="_blank" rel="noopener noreferrer">
+          <a className="map-open" href={maps.place} target="_blank" rel="noopener noreferrer">
             Open in Google Maps ↗
           </a>
         </Reveal>

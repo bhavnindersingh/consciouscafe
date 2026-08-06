@@ -33,6 +33,10 @@ export const siteConfig = {
     },
     phone: '+91 87545 61269',
     email: 'hello@consciouscafe.in',
+    // Verified against the street address: reverse-geocoding these lands on
+    // Auroville Main Road, Kuilapalayam 605101. (The previous 11.9996/79.8083
+    // pointed at Crown Road / Harmony Centre, ~1.3 km inside the township.)
+    geo: { lat: 11.99256, lng: 79.817522 },
     hours: {
       monday: '9:30 AM - 9:00 PM',
       tuesday: 'closed',
@@ -45,6 +49,30 @@ export const siteConfig = {
     cuisine: ['Organic', 'Healthy', 'Vegetarian', 'Vegan', 'Continental', 'Local', 'Sustainable'],
     priceRange: '₹₹',
   },
+};
+
+// Every Google Maps link and embed on the site comes from here, so the pin can
+// never drift between the footer, the visit page and the structured data.
+//
+// Both identifiers below address our own Google Business listing directly, so
+// nothing depends on Google text-matching the words "Conscious Cafe" — the two
+// are the same place in two encodings (PLACE_ID base64-decodes to the CID's
+// feature id, 0x3a53670278673d7d:0x715f7846d64ce8c4).
+const PLACE_ID = 'ChIJfT1neAJnUzoRxOhM1kZ4X3E'; // Maps URLs API (links)
+const CID = '8169380494711777476';             // classic maps.google.com (embed)
+const PLACE_NAME = 'Conscious Cafe';
+const { lat, lng } = siteConfig.business.geo;
+
+export const maps = {
+  lat,
+  lng,
+  // Opens the business listing — photos, hours, reviews — in Maps or the app.
+  place: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(PLACE_NAME)}&query_place_id=${PLACE_ID}`,
+  // Turn-by-turn directions from wherever the visitor is.
+  directions: `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(PLACE_NAME)}&destination_place_id=${PLACE_ID}`,
+  // Keyless iframe embed. The cid form renders the named business pin (a bare
+  // lat/lng q= renders an unlabelled marker instead).
+  embed: `https://maps.google.com/maps?cid=${CID}&hl=en&z=16&output=embed`,
 };
 
 export const pageData = {
@@ -132,10 +160,10 @@ const restaurantSchema = () => ({
   },
   geo: {
     '@type': 'GeoCoordinates',
-    latitude: 11.9996,
-    longitude: 79.8083,
+    latitude: siteConfig.business.geo.lat,
+    longitude: siteConfig.business.geo.lng,
   },
-  hasMap: 'https://maps.app.goo.gl/BJQxMdC',
+  hasMap: maps.place,
   areaServed: ['Auroville', 'Kuilapalayam', 'Pondicherry', 'Tamil Nadu'],
   keywords: siteConfig.keywords,
   servesCuisine: siteConfig.business.cuisine,
