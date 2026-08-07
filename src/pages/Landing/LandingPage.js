@@ -6,6 +6,7 @@ import { getGumletUrl } from '../../utils/gumlet';
 import { toSlug } from '../../utils/slug';
 import { useVariationPicker } from '../../components/products/VariationPicker/VariationPicker';
 import LANDING_PAGES from '../../data/landingPages.json';
+import PhotoPending from '../../components/common/PhotoPending/PhotoPending';
 
 const Arrow = ({ s = 16 }) => (
   <svg className="arr" width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
@@ -129,6 +130,7 @@ const LandingPage = ({ page, products = [], onAddToCart, onProductClick }) => {
                   {p.image
                     ? <img src={p.image} alt={p.name} loading="lazy" />
                     : <div style={{ width: '100%', height: '100%', background: 'var(--paper-deep)' }} />}
+                  <PhotoPending hasPhoto={p.hasLocalImage} />
                   {onAddToCart && (
                     <button
                       className="dc-add"

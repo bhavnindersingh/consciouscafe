@@ -1,4 +1,6 @@
-export const formatWhatsAppMessage = (cartItems, customerInfo) => {
+import { calcTotals } from './totals';
+
+export const formatWhatsAppMessage = (cartItems, customerInfo, packagingRates = null) => {
   const businessPhone = "+918148132442"; // WhatsApp business number
   
   let message = `🥗 New Order from Consciouscafe.in \n\n`;
@@ -14,21 +16,24 @@ export const formatWhatsAppMessage = (cartItems, customerInfo) => {
   
   message += `🛒 *Order Details:*\n`;
   
-  let subtotal = 0;
   cartItems.forEach((item, index) => {
     const itemTotal = item.price * item.quantity;
-    subtotal += itemTotal;
     message += `${index + 1}. ${item.name}\n`;
     message += `   Qty: ${item.quantity} × ₹${item.price.toFixed(2)} = ₹${itemTotal.toFixed(2)}\n\n`;
   });
-  
-  const gst = subtotal * 0.05; // 5% GST
-  const total = subtotal + gst;
-  
+
+  // Same numbers the checkout drawer showed — this message is what the cafe
+  // bills from, so it must never compute its own total.
+  const { subtotal, packaging, packagingKnown, gst, total } = calcTotals(cartItems, packagingRates);
+
   message += `💰 *Bill Summary:*\n`;
   message += `Subtotal: ₹${subtotal.toFixed(2)}\n`;
+  message += packagingKnown
+    ? `Packaging: ₹${packaging.toFixed(2)}\n`
+    : `Packaging: to be added on confirmation\n`;
   message += `GST (5%): ₹${gst.toFixed(2)}\n`;
-  message += `*Total Amount: ₹${total.toFixed(2)}*\n\n`;
+  message += `*Total Amount: ₹${total.toFixed(2)}*`;
+  message += packagingKnown ? `\n\n` : ` _(before packaging)_\n\n`;
   
   if (customerInfo.notes && customerInfo.notes.trim()) {
     message += `📝 *Special Instructions:*\n${customerInfo.notes}\n\n`;
@@ -52,8 +57,8 @@ export const formatWhatsAppMessage = (cartItems, customerInfo) => {
   }
 };
 
-export const sendToWhatsApp = (cartItems, customerInfo) => {
-  const { phone, message } = formatWhatsAppMessage(cartItems, customerInfo);
+export const sendToWhatsApp = (cartItems, customerInfo, packagingRates = null) => {
+  const { phone, message } = formatWhatsAppMessage(cartItems, customerInfo, packagingRates);
   const whatsappUrl = `https://wa.me/${phone.replace('+', '')}?text=${message}`;
   window.open(whatsappUrl, '_blank');
 };

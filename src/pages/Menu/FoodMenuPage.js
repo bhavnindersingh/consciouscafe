@@ -4,6 +4,7 @@ import { generatePageSEO, generateStructuredData, breadcrumb } from '../../utils
 import { CATEGORY_META, CATEGORY_ORDER, MAIN_CATEGORY_META as GROUP_META } from '../../utils/menuEnrichment';
 import { variationCartItem } from '../../utils/cartItem';
 import { useVariationPicker } from '../../components/products/VariationPicker/VariationPicker';
+import PhotoPending from '../../components/common/PhotoPending/PhotoPending';
 
 const inr = n => `₹${(n || 0).toLocaleString('en-IN')}`;
 
@@ -28,6 +29,7 @@ function DishCard({ product: p, onProductClick, onAddToCart }) {
           ? <img src={p.image} alt={p.name} loading="lazy" />
           : <div style={{ width: '100%', height: '100%', background: 'var(--paper-deep)' }} />
         }
+        <PhotoPending hasPhoto={p.hasLocalImage} />
         <button
           className="dc-add"
           aria-label={`Add ${p.name}`}
@@ -163,6 +165,20 @@ const FoodMenuPage = ({ products = [], onAddToCart, onProductClick, loading, err
       )}
       {error && (
         <div style={{ padding: 'var(--gutter)', color: 'var(--ink-mute)' }}>Unable to load menu right now.</div>
+      )}
+
+      {/* A section can be empty even with the menu loaded: /menu/patisserie is a
+          real route, but the POS decides per dish what goes out for delivery, so
+          a whole group can be switched off. Say so rather than render a bare
+          page — and never imply the kitchen stopped making it. */}
+      {!loading && !error && activeGroup && groups.length > 0 && !groups.includes(activeGroup) && (
+        <div className="menu-empty">
+          <p className="lede">
+            Nothing from {(GROUP_META[activeGroup] || { name: catName(activeGroup) }).name.toLowerCase()} is
+            going out for delivery today. It's still on the menu in the cafe — message us and we'll tell you
+            what's ready.
+          </p>
+        </div>
       )}
 
       {!loading && groups.length > 0 && (

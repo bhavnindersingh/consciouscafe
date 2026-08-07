@@ -337,7 +337,10 @@ function buildDocument(items, measDiv, focusMain) {
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export default function PrintMenuPage() {
-  const { items, loading, error } = useDeliveryMenu();
+  // The printed menu is the in-cafe menu: everything the kitchen cooks, not
+  // just what travels. It deliberately ignores the delivery gate the website
+  // applies (add-on categories still drop out below, via MAIN_CATEGORY_ORDER).
+  const { items, loading, error } = useDeliveryMenu('all');
   const [searchParams] = useSearchParams();
   const rawFocus = searchParams.get('focus'); // 'food' | 'drinks' | 'patisserie'
   const focus = MAIN_CATEGORY_ORDER.includes(rawFocus) ? rawFocus : null;

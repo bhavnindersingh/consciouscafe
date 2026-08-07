@@ -67,6 +67,7 @@ const Cart = ({ isOpen, onClose, cartItems = [], onUpdateQuantity, onRemoveItem,
               <span className="l">Subtotal</span>
               <span className="v">₹{subtotal.toLocaleString('en-IN')}</span>
             </div>
+            <p className="co-note" style={{ margin: '0 0 12px' }}>Packaging and GST are added at checkout.</p>
             <button className="btn solid" onClick={onCheckout}>Proceed to Checkout <Arrow /></button>
           </div>
         )}

@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { sendToWhatsApp } from '../../utils/whatsapp';
+import { usePackagingRates } from '../../hooks/usePackagingRates';
+import { calcTotals } from '../../utils/totals';
 
 const money = (n) =>
   `₹${Number(n).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -23,9 +25,14 @@ const Checkout = ({ isOpen, onClose, cartItems = [], onOrderComplete }) => {
   const [errors, setErrors] = useState({});
   const [distanceError, setDistanceError] = useState('');
 
-  const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  const gst = subtotal * 0.05; // 5% GST
-  const total = subtotal + gst;
+  // Every order here is a delivery, so every dish is packed and carries its
+  // category's packaging charge — the same rate card the POS bills from, read
+  // live from Supabase each time this drawer opens.
+  const { rates: packagingRates, loading: ratesLoading } = usePackagingRates(isOpen);
+  const { subtotal, packaging, packagingKnown, gst, total } = calcTotals(cartItems, packagingRates);
+  // Rates still in flight are not a failure — only warn once the fetch is done
+  // and we still have nothing, so the wording doesn't flash on every open.
+  const packagingPending = !packagingKnown && !ratesLoading;
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -91,7 +98,7 @@ const Checkout = ({ isOpen, onClose, cartItems = [], onOrderComplete }) => {
 
     if (validateForm()) {
       // Send order to WhatsApp
-      sendToWhatsApp(cartItems, customerInfo);
+      sendToWhatsApp(cartItems, customerInfo, packagingRates);
 
       // Clear cart and close checkout
       onOrderComplete();
@@ -125,6 +132,12 @@ const Checkout = ({ isOpen, onClose, cartItems = [], onOrderComplete }) => {
               <div className="co-sum-row muted">
                 <span>Subtotal</span>
                 <span>{money(subtotal)}</span>
+              </div>
+              <div className="co-sum-row muted">
+                <span>Packaging</span>
+                <span>
+                  {packagingKnown ? money(packaging) : ratesLoading ? '…' : 'Confirmed on order'}
+                </span>
               </div>
               <div className="co-sum-row muted">
                 <span>GST (5%)</span>
@@ -224,7 +237,7 @@ const Checkout = ({ isOpen, onClose, cartItems = [], onOrderComplete }) => {
 
           <div className="drawer-foot">
             <div className="ftot">
-              <span className="l">Total</span>
+              <span className="l">{packagingPending ? 'Subtotal + GST' : 'Total'}</span>
               <span className="v">{money(total)}</span>
             </div>
             <button type="submit" className="btn solid co-submit">
@@ -232,7 +245,9 @@ const Checkout = ({ isOpen, onClose, cartItems = [], onOrderComplete }) => {
               <span>Send Order via WhatsApp</span>
             </button>
             <p className="co-note">
-              Your order is sent via WhatsApp — we'll confirm availability and arrange delivery.
+              {packagingPending
+                ? "Packaging for delivery is charged per dish and will be added when we confirm, so the total above is not yet final. Your order is sent via WhatsApp — we'll confirm availability and arrange delivery."
+                : "Delivery orders travel in packaging charged per dish. Your order is sent via WhatsApp — we'll confirm availability and arrange delivery."}
             </p>
           </div>
         </form>

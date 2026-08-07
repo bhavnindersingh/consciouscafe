@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Hero from '../../../pages/Home/Hero';
 import SEO from '../../seo/SEO/SEO';
 import { pageData, generateStructuredData, siteConfig } from '../../../utils/seoData';
+import PhotoPending from '../../common/PhotoPending/PhotoPending';
 
 const Arrow = ({ s = 16 }) => (
   <svg className="arr" width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
@@ -178,6 +179,7 @@ function Signatures({ products, onProductClick }) {
                 900px `image` looks soft, so use the 1800px `imageDetail` here.
                 The smaller trio/menu cards stay on `image` to avoid bloat. */}
             <img src={lead.imageDetail || lead.image} alt={lead.name} loading="lazy" />
+            <PhotoPending hasPhoto={lead.hasLocalImage} className="photo-pending--lg" />
             <span className="tag">{catName(lead.category)}</span>
           </div>
         </Reveal>
@@ -200,6 +202,7 @@ function Signatures({ products, onProductClick }) {
             <Reveal className="sig-card" delay={i + 1} key={p.id}>
               <div className="sig-figure" role="button" tabIndex={0} onClick={() => onProductClick(p)}>
                 <img src={p.image} alt={p.name} loading="lazy" />
+                <PhotoPending hasPhoto={p.hasLocalImage} />
               </div>
               <div className="sc-body" onClick={() => onProductClick(p)}>
                 <div>

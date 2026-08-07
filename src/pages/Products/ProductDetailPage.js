@@ -5,6 +5,7 @@ import { toSlug } from '../../utils/slug';
 import { variationCartItem } from '../../utils/cartItem';
 import { useVariationPicker } from '../../components/products/VariationPicker/VariationPicker';
 import { generateStructuredData, breadcrumb } from '../../utils/seoData';
+import PhotoPending from '../../components/common/PhotoPending/PhotoPending';
 
 const inr = n => `₹${(n || 0).toLocaleString('en-IN')}`;
 
@@ -33,6 +34,7 @@ function DishCard({ product, onProductClick, onAddToCart }) {
           ? <img src={product.image} alt={product.name} loading="lazy" />
           : <div style={{ width: '100%', height: '100%', background: 'var(--paper-deep)' }} />
         }
+        <PhotoPending hasPhoto={product.hasLocalImage} />
         <button className="dc-add" aria-label={`Add ${product.name}`} onClick={e => { e.stopPropagation(); onAddToCart(product); }}>+</button>
       </div>
       <div className="dc-head">
@@ -136,6 +138,7 @@ const ProductDetailPage = ({ products = [], onAddToCart, loading = false }) => {
           {product.image && (
             <img src={product.imageDetail || product.image} alt={product.name} />
           )}
+          <PhotoPending hasPhoto={product.hasLocalImage} className="photo-pending--lg" />
         </div>
 
         {/* Right: details */}

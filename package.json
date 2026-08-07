@@ -8,6 +8,7 @@
     "build": "react-scripts build",
     "postbuild": "node scripts/generate-seo.js",
     "check:images": "node scripts/check-image-map.js",
+    "check:menu": "node scripts/check-menu-sync.js",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

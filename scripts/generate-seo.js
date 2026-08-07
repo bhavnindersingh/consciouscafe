@@ -50,28 +50,43 @@ const esc = (s = '') =>
 const today = new Date().toISOString().slice(0, 10);
 
 // Pretty section names (mirror of src/utils/menuEnrichment.js CATEGORY_META).
+// `npm run check:menu` fails if this drifts from the live POS sub-categories.
 const SECTION_NAMES = {
-  'toast': 'Toast',
+  'toasts': 'Toasts',
   'all-day-breakfast': 'All Day Breakfast',
   'smoothie-bowls': 'Smoothie Bowls',
-  'earth-grills-crisps': 'Earth Grills & Crisps',
+  'earth-grills': 'Earth Grills',
+  'earth-crisps': 'Earth Crisps',
   'salads': 'Salads',
   'platters': 'Platters',
   'earth-bowls': 'Earth Bowls',
   'noodle-bowls': 'Noodle Bowls',
-  'pasta-pizza': 'Pasta',
-  'pasta': 'Pasta',
-  'desserts': 'Desserts',
+  'thai-favourites': 'Thai Favourites',
+  'pastas': 'Pastas',
+  'sandwiches': 'Sandwiches',
   'juices': 'Juices',
   'mocktails': 'Mocktails',
-  'floral-teas': 'Floral Teas',
-  'chai': 'Chai',
-  'coffee': 'Coffee',
+  'kombucha': 'Kombucha',
+  'health-shakes': 'Health Shakes',
+  'teas': 'Teas',
+  'hot-coffees': 'Hot Coffees',
+  'iced-coffees': 'Iced Coffees',
+  'matcha-specialities': 'Matcha Specialities',
+  'cocoa': 'Cocoa',
+  'cakes': 'Cakes',
+  'cheesecakes': 'Cheesecakes',
+  'cookies': 'Cookies',
+  'brownies': 'Brownies',
+  'tarts': 'Tarts',
+  'eclair': 'Eclair',
 };
 const SECTION_ORDER = [
-  'toast', 'all-day-breakfast', 'smoothie-bowls', 'earth-grills-crisps',
-  'salads', 'platters', 'earth-bowls', 'noodle-bowls', 'pasta-pizza', 'pasta',
-  'desserts', 'juices', 'mocktails', 'floral-teas', 'chai', 'coffee',
+  'toasts', 'all-day-breakfast', 'smoothie-bowls', 'earth-grills', 'earth-crisps',
+  'salads', 'platters', 'earth-bowls', 'noodle-bowls', 'thai-favourites',
+  'pastas', 'sandwiches',
+  'juices', 'mocktails', 'kombucha', 'health-shakes', 'teas',
+  'hot-coffees', 'iced-coffees', 'matcha-specialities', 'cocoa',
+  'cakes', 'cheesecakes', 'cookies', 'brownies', 'tarts', 'eclair',
 ];
 const titleCase = (slug = '') => slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 
@@ -195,12 +210,19 @@ function buildSitemap(urls) {
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${body}\n</urlset>\n`;
 }
 
+// Mirror of isWebsiteSellable() in src/services/menuService.js — keep in sync.
+// A dish the site won't render must not get a sitemap entry, a /product/ page
+// or a MenuItem in the schema, or we publish URLs that resolve to Not Found.
+const ADDON_CATEGORIES = ['Extras'];
+
 async function fetchProducts() {
   const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   const { data, error } = await supabase
     .from('recipes')
     .select('id, name, description, selling_price, category, sub_category')
     .eq('is_production_recipe', true)
+    .eq('available_for_delivery', true)
+    .not('category', 'in', `(${ADDON_CATEGORIES.join(',')})`)
     .order('name');
   if (error) throw error;
   return (data || [])

@@ -1,10 +1,14 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { getDeliveryMenu } from '../services/menuService';
+import { getDeliveryMenu, isWebsiteSellable } from '../services/menuService';
 import { toSlug } from '../utils/slug';
 
 // Last good menu, so a Supabase blip degrades to a stale menu instead of a
 // blank page. Prices/names may be minutes old; the alternative is nothing.
-const CACHE_KEY = 'cc_menu_cache_v1';
+// v2: products gained `availableForDelivery` / `posCategory`. A v1 entry has
+// neither, so every dish in it would fail the website filter and a returning
+// visitor would meet an empty menu — bump the key whenever the product shape
+// grows a field the filters read.
+const CACHE_KEY = 'cc_menu_cache_v2';
 
 const readCache = () => {
   try {
@@ -24,26 +28,43 @@ const writeCache = (items) => {
   }
 };
 
-export function useDeliveryMenu() {
-  const [items, setItems] = useState([]);
+/**
+ * The live menu.
+ *
+ * @param {'website'|'all'} scope — 'website' (default) returns only what a
+ *   visitor can actually order: the POS's "Available for Delivery" dishes, minus
+ *   add-on categories. 'all' returns every production recipe, for surfaces that
+ *   describe the kitchen rather than sell from it — the in-cafe print menu is
+ *   the whole menu regardless of what travels.
+ *
+ * The cache always holds the unfiltered list, so both scopes share one fetch
+ * and a POS switch flipped mid-session applies on the next load either way.
+ */
+export function useDeliveryMenu(scope = 'website') {
+  const [all, setAll] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   // True when items came from the cache because the live fetch failed.
   const [stale, setStale] = useState(false);
+
+  const items = useMemo(
+    () => (scope === 'all' ? all : all.filter(isWebsiteSellable)),
+    [all, scope]
+  );
 
   useEffect(() => {
     let cancelled = false;
     getDeliveryMenu()
       .then((fresh) => {
         if (cancelled) return;
-        setItems(fresh);
+        setAll(fresh);
         if (fresh.length) writeCache(fresh);
       })
       .catch((err) => {
         if (cancelled) return;
         const cached = readCache();
         if (cached) {
-          setItems(cached);
+          setAll(cached);
           setStale(true);
         } else {
           setError(err);

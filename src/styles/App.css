@@ -371,6 +371,9 @@ button { font-family: inherit; cursor: pointer; }
 .menu-hero h1 { font-family: var(--display); font-weight: 400; font-size: clamp(46px,8vw,128px); line-height: 0.98; letter-spacing: -.012em; }
 .menu-hero .lede { max-width: 620px; margin-top: 22px; }
 
+.menu-empty { padding: 0 var(--gutter) clamp(30px,4vh,56px); }
+.menu-empty .lede { max-width: 620px; }
+
 .menu-shell { display: grid; grid-template-columns: minmax(280px, 0.9fr) 1.6fr; gap: 0; border-top: 1px solid var(--line); min-height: 70vh; }
 .menu-cats { grid-column: 1; grid-row: 1; border-right: 1px solid var(--line); padding: 0; position: sticky; top: 64px; align-self: start; }
 .menu-items { grid-column: 2; grid-row: 1; padding: clamp(18px,2.4vw,34px) var(--gutter); display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: clamp(20px,2.4vw,40px); align-content: start; }
@@ -387,6 +390,22 @@ button { font-family: inherit; cursor: pointer; }
 .menu-cat .mc-note { display:block; font-family: var(--serif); font-size: 15px; color: var(--ink-mute); font-style: italic; margin-top: 2px; }
 
 .dish-card { background: none; border: none; text-align: left; display: flex; flex-direction: column; cursor: pointer; }
+/* Dish still on its low-res POS upload rather than a curated photo. Sits on the
+   image itself so it is impossible to miss when browsing the live site — the
+   same fact `npm run check:images` prints. Every host (.dc-media, .sig-figure,
+   .dish-img) is position: relative. */
+.photo-pending {
+  position: absolute; top: 10px; left: 10px; z-index: 3; pointer-events: none;
+  display: inline-flex; align-items: center; gap: 5px;
+  font-family: var(--ui); font-size: 9px; letter-spacing: .18em; text-transform: uppercase;
+  padding: 5px 9px; border-radius: 2px;
+  background: rgba(178, 59, 46, .92); color: #fff;
+}
+/* Large surfaces anchor bottom-left: the detail page's top-left holds the back
+   button (pushed clear of the header) and the signature figure holds its
+   category tag. */
+.photo-pending--lg { top: auto; bottom: 18px; left: 18px; font-size: 10px; padding: 7px 12px; }
+
 .dish-card .dc-media { position: relative; overflow: hidden; aspect-ratio: 3/4; background: var(--paper-2); }
 .dish-card .dc-media img { width: 100%; height: 100%; object-fit: contain; transition: transform 1.2s var(--ease); }
 .dish-card:hover .dc-media img { transform: scale(1.05); }

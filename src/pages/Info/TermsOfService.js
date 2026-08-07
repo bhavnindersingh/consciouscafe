@@ -60,8 +60,10 @@ const sections = [
           guarantee — preparation time, weather and traffic can affect them.
         </p>
         <p>
-          We use eco-friendly packaging where we can. Some items, such as cold-pressed
-          juices, are best enjoyed soon after delivery.
+          We use eco-friendly packaging where we can, and a packaging charge applies per
+          dish on delivery and takeaway orders — it is itemised on your bill at checkout,
+          before GST. Some items, such as cold-pressed juices, are best enjoyed soon after
+          delivery.
         </p>
       </>
     ),

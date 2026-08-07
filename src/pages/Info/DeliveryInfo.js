@@ -41,7 +41,7 @@ const STEPS = [
 ];
 
 const NOTES = [
-  { k: 'Packed to travel', t: 'Biodegradable containers, no single-use plastic, and dishes chosen so they arrive the way they left the kitchen.' },
+  { k: 'Packed to travel', t: 'Biodegradable containers, no single-use plastic, and dishes chosen so they arrive the way they left the kitchen. Packaging is charged per dish and shown on your bill before you send the order.' },
   { k: 'Cooked to order', t: 'Nothing sits under a lamp waiting for a driver. Bread, sauces and ferments are made in-house, the same as they are in the courtyard.' },
   { k: 'Minimums & fees', t: 'These depend on distance. Message us before you order if you are further out and we will tell you exactly where you stand.' },
 ];

@@ -46,8 +46,9 @@ export function CartProvider({ children }) {
 
   const cartItemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
   const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const gst = subtotal * 0.05;
-  const total = subtotal + gst;
+  // Deliberately no gst/total here. The bill needs the live packaging rate card
+  // (utils/totals.js + usePackagingRates), and a second formula that silently
+  // omitted packaging is exactly how the site's total drifted from the POS bill.
   const isEmpty = cartItems.length === 0;
   const getItem = (productId) => cartItems.find((item) => item.id === productId);
 
@@ -72,8 +73,6 @@ export function CartProvider({ children }) {
     cartItemCount,
     count: cartItemCount,
     subtotal,
-    gst,
-    total,
     isEmpty,
     getItem,
     bagOpen,
