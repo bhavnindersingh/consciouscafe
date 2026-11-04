@@ -1,8 +1,9 @@
 /**
  * Conscious Sanctuary data — the POS database's sanctuary_* objects
- * (Manager Conscious Cafe, migration 20261104200000_sanctuary.sql).
+ * (Manager Conscious Cafe, migrations 20261104200000_sanctuary.sql and
+ * 20261105000000_sanctuary_v2.sql).
  *
- * Visitors (anon or signed in) only ever call the three public functions;
+ * Visitors (anon or signed in) only ever call the public functions;
  * the tables themselves are host- and admin-only under RLS. Hosts read and
  * write their own rows directly with their Google session.
  */
@@ -25,6 +26,22 @@ export async function listGatherings() {
 export async function getGathering(id) {
   const rows = unwrap(await supabase.rpc('sanctuary_offering', { p_id: id })) || [];
   return rows[0] || null;
+}
+
+/** Upcoming dates of one weekly series. */
+export async function listSeriesDates(seriesId) {
+  return unwrap(await supabase.rpc('sanctuary_listings').eq('series_id', seriesId)) || [];
+}
+
+/** An approved host's public page: { id, display_name, bio, link } or null. */
+export async function getHost(id) {
+  const rows = unwrap(await supabase.rpc('sanctuary_host', { p_id: id })) || [];
+  return rows[0] || null;
+}
+
+/** That host's upcoming gatherings. */
+export async function listHostGatherings(hostId) {
+  return unwrap(await supabase.rpc('sanctuary_listings').eq('host_id', hostId)) || [];
 }
 
 /**
@@ -90,6 +107,44 @@ export async function saveGathering(hostId, row, id = null) {
     ? supabase.from('sanctuary_offerings').update(row).eq('id', id)
     : supabase.from('sanctuary_offerings').insert({ ...row, host_id: hostId });
   return unwrap(await q.select('*').single());
+}
+
+/** A weekly series in one insert (all or nothing). `rows` from seriesRows(). */
+export async function createSeries(hostId, rows) {
+  return unwrap(await supabase.from('sanctuary_offerings')
+    .insert(rows.map((r) => ({ ...r, host_id: hostId }))).select('id')) || [];
+}
+
+/**
+ * "This and following": every not-cancelled date of the series from `fromIso`
+ * on takes `value`'s details and its IST start time and length; each keeps its
+ * own day. Returns how many dates changed.
+ */
+export async function updateSeries(seriesId, fromIso, value, startTime, minutes) {
+  return unwrap(await supabase.rpc('sanctuary_update_series', {
+    p_series_id: seriesId,
+    p_from: fromIso,
+    p_kind: value.kind,
+    p_title: value.title,
+    p_description: value.description,
+    p_location: value.location,
+    p_image_path: value.image_path,
+    p_price_inr: value.price_inr,
+    p_capacity: value.capacity,
+    p_start_time: startTime,
+    p_minutes: minutes,
+  }));
+}
+
+/** Move every date of a series that is `from` and not yet started to `to`. */
+export async function setSeriesStatus(seriesId, from, to) {
+  return unwrap(await supabase.from('sanctuary_offerings').update({ status: to })
+    .eq('series_id', seriesId).eq('status', from).gt('starts_at', new Date().toISOString()).select('id')) || [];
+}
+
+/** The series' drafts (the database refuses to delete anything else). */
+export async function deleteSeriesDrafts(seriesId) {
+  unwrap(await supabase.from('sanctuary_offerings').delete().eq('series_id', seriesId).eq('status', 'draft'));
 }
 
 export async function setGatheringStatus(id, status) {

@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import SEO from '../../components/seo/SEO/SEO';
 import { breadcrumb } from '../../utils/seoData';
-import { getGathering, reservePlaces, imageUrl } from '../../services/sanctuaryService';
+import { getGathering, reservePlaces, imageUrl, listSeriesDates } from '../../services/sanctuaryService';
 import { LIMITS } from '../../constants/sanctuary';
 import {
   formatWhen, priceLabel, isFree, seatsLabel, rsvpState, validateRsvp, rsvpErrorMessage,
-  googleCalendarUrl, isUuid, kindLabel,
+  googleCalendarUrl, isUuid, kindLabel, repeatLabel, weekdaysOf,
 } from '../../utils/sanctuary';
-import { Arrow, Reveal, DateTile, KindTag, Field, Spinner } from './parts';
+import { Arrow, Reveal, DateTile, KindTag, Field, Spinner, GatheringRow } from './parts';
 import './sanctuary.css';
 
 const WHATSAPP_URL = 'https://wa.me/918754561269';
@@ -81,13 +81,18 @@ const GatheringPage = () => {
   const [g, setG] = useState(undefined); // undefined = loading, null = not found
   const [error, setError] = useState(null);
   const [done, setDone] = useState(null);
+  const [series, setSeries] = useState([]); // every upcoming date of its weekly series
 
   useEffect(() => {
     let alive = true;
-    setG(undefined); setError(null); setDone(null);
+    setG(undefined); setError(null); setDone(null); setSeries([]);
     if (!isUuid(id)) { setG(null); return undefined; }
     getGathering(id)
-      .then((row) => alive && setG(row))
+      .then((row) => {
+        if (!alive) return;
+        setG(row);
+        if (row?.series_id) listSeriesDates(row.series_id).then((d) => alive && setSeries(d)).catch(() => {});
+      })
       .catch((e) => alive && setError(e));
     return () => { alive = false; };
   }, [id]);
@@ -121,6 +126,8 @@ const GatheringPage = () => {
   const pageUrl = `${window.location.origin}/sanctuary/${g.id}`;
   const img = imageUrl(g.image_path);
   const when = formatWhen(g.starts_at, g.ends_at);
+  const repeat = series.length > 1 ? repeatLabel(weekdaysOf(series)) : '';
+  const otherDates = series.filter((o) => o.id !== g.id).slice(0, 6);
 
   return (
     <main className="sn-view sn-detail-view">
@@ -161,7 +168,10 @@ const GatheringPage = () => {
           <Reveal delay={1} className="sn-detail-head">
             <DateTile iso={g.starts_at} />
             <div>
-              <KindTag kind={g.kind} />
+              <span className="sn-row-tags">
+                <KindTag kind={g.kind} />
+                {repeat && <span className="sn-repeat">{repeat}</span>}
+              </span>
               <h1 className="display sn-detail-title">{g.title}</h1>
             </div>
           </Reveal>
@@ -178,11 +188,21 @@ const GatheringPage = () => {
           {g.host_name && (
             <Reveal delay={3} className="sn-hostline">
               <span className="sn-label">Your host</span>
-              <span className="sn-hostname">{g.host_name}</span>
+              {g.host_id
+                ? <Link className="sn-hostname" to={`/sanctuary/hosts/${g.host_id}`}>{g.host_name}</Link>
+                : <span className="sn-hostname">{g.host_name}</span>}
               {g.host_link && /^https?:\/\//i.test(g.host_link) && (
                 <a href={g.host_link} target="_blank" rel="noopener noreferrer nofollow">{g.host_link.replace(/^https?:\/\/(www\.)?/i, '')} ↗</a>
               )}
             </Reveal>
+          )}
+          {otherDates.length > 0 && (
+            <section className="sn-more" aria-labelledby="sn-more-h">
+              <h2 id="sn-more-h" className="sn-more-h">More dates</h2>
+              <ul className="sn-list">
+                {otherDates.map((o) => <li key={o.id}><GatheringRow o={o} showHost={false} compact /></li>)}
+              </ul>
+            </section>
           )}
         </div>
 

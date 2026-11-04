@@ -34,7 +34,20 @@ export const LIMITS = {
   linkMax: 300,
   hostPhoneMax: 20,
   codeResendSeconds: 60, // Supabase's default gap between two sign-in emails to one address
+  seriesMaxDates: 26,    // a weekly series: at most this many dates in one go
+  seriesMaxWeeks: 26,    // …and no further out than this
 };
+
+// Weekdays as JavaScript numbers them (0 = Sunday), listed Monday first.
+export const WEEKDAYS = [
+  { value: 1, short: 'Mon', name: 'Monday' },
+  { value: 2, short: 'Tue', name: 'Tuesday' },
+  { value: 3, short: 'Wed', name: 'Wednesday' },
+  { value: 4, short: 'Thu', name: 'Thursday' },
+  { value: 5, short: 'Fri', name: 'Friday' },
+  { value: 6, short: 'Sat', name: 'Saturday' },
+  { value: 0, short: 'Sun', name: 'Sunday' },
+];
 
 export const DEFAULT_LOCATION = 'Conscious Sanctuary, Auroville Road';
 export const IMAGE_BUCKET = 'sanctuary-images';

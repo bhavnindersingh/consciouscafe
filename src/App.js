@@ -33,6 +33,7 @@ const LandingPage = lazy(() => import("./pages/Landing/LandingPage"));
 const SanctuaryPage = lazy(() => import("./pages/Sanctuary/SanctuaryPage"));
 const GatheringPage = lazy(() => import("./pages/Sanctuary/GatheringPage"));
 const HostPage = lazy(() => import("./pages/Sanctuary/HostPage"));
+const HostProfilePage = lazy(() => import("./pages/Sanctuary/HostProfilePage"));
 
 // Minimal, layout-stable fallback (avoids CLS while a chunk loads)
 const RouteFallback = () => <div style={{ minHeight: "60vh" }} aria-busy="true" />;
@@ -123,6 +124,7 @@ function AppContent() {
             />
           ))}
           <Route path="/sanctuary" element={<SanctuaryPage />} />
+          <Route path="/sanctuary/hosts/:hostId" element={<HostProfilePage />} />
           <Route path="/sanctuary/host/*" element={<HostPage />} />
           <Route path="/sanctuary/:id" element={<GatheringPage />} />
           {/* The old facilitator dashboard (its tables never existed in this project) */}

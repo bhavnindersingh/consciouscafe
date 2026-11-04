@@ -5,12 +5,15 @@ import { useAuth } from '../../context/AuthContext';
 import {
   getMyHost, requestToHost, updateMyHost, listMyGatherings, getMyGathering, saveGathering,
   setGatheringStatus, deleteDraft, listRsvps, setRsvpStatus, uploadImage, imageUrl,
+  createSeries, updateSeries, setSeriesStatus, deleteSeriesDrafts,
 } from '../../services/sanctuaryService';
-import { OFFERING_KINDS, LIMITS, IMAGE_TYPES, HOST_AUTH_COPY } from '../../constants/sanctuary';
+import { OFFERING_KINDS, LIMITS, IMAGE_TYPES, HOST_AUTH_COPY, WEEKDAYS } from '../../constants/sanctuary';
 import {
   emptyOfferingForm, offeringToForm, duplicateForm, validateOffering, splitHostOfferings,
   seatsTaken, formatWhen, canPublish, isPast, isUuid, formatDay, formatClock,
   cleanEmail, cleanCode, authErrorKind,
+  groupHostSeries, repeatLabel, weekdaysOf, weekdayOf, addDays, validateRepeat, seriesRows,
+  seriesSummary, durationMinutes,
 } from '../../utils/sanctuary';
 import { Arrow, DateTile, KindTag, Field, Spinner } from './parts';
 import './sanctuary.css';
@@ -216,6 +219,87 @@ function StatusPanel({ host, onSignOut }) {
 
 // ── The dashboard ───────────────────────────────────────────────────────────
 
+/** One gathering on the host's dashboard, with its actions. */
+function HostRow({ o, taken, copied, onCopy, act, nested = false }) {
+  const t = taken[o.id] || 0;
+  const past = isPast(o);
+  return (
+    <li className={`sn-hrow st-${o.status}${nested ? ' nested' : ''}`}>
+      <DateTile iso={o.starts_at} small />
+      <div className="sn-hrow-main">
+        <div className="sn-hrow-tags">
+          {!nested && <KindTag kind={o.kind} />}
+          <span className={`sn-status st-${o.status}`}>{{ draft: 'Draft', published: past ? 'Done' : 'Live', cancelled: 'Cancelled' }[o.status]}</span>
+        </div>
+        {!nested && <span className="sn-row-title">{o.title}</span>}
+        <span className="sn-row-meta">
+          {formatWhen(o.starts_at, o.ends_at)} · {o.capacity ? `${t} of ${o.capacity} reserved` : `${t} reserved`}
+        </span>
+      </div>
+      <div className="sn-hrow-acts">
+        <Link className="sn-act" to={`/sanctuary/host/rsvps/${o.id}`}>Guests ({t})</Link>
+        {!past && o.status !== 'cancelled' && <Link className="sn-act" to={`/sanctuary/host/edit/${o.id}`}>Edit</Link>}
+        {!nested && <Link className="sn-act" to="/sanctuary/host/new" state={{ duplicateOf: o.id }}>Duplicate</Link>}
+        {o.status === 'published' && !past && (
+          <button className="sn-act" onClick={() => onCopy(o.id)}>{copied === o.id ? 'Copied' : 'Copy link'}</button>
+        )}
+        {o.status === 'draft' && canPublish(o) && (
+          <button className="sn-act strong" onClick={() => act(() => setGatheringStatus(o.id, 'published'))}>Publish</button>
+        )}
+        {o.status === 'published' && !past && (
+          <ArmButton armed="Tap again to cancel it" onConfirm={() => act(() => setGatheringStatus(o.id, 'cancelled'))}>Cancel</ArmButton>
+        )}
+        {o.status === 'draft' && (
+          <ArmButton armed="Tap again to delete" onConfirm={() => act(() => deleteDraft(o.id))}>Delete</ArmButton>
+        )}
+      </div>
+    </li>
+  );
+}
+
+/** A weekly series as one entry; its dates open underneath. */
+function SeriesGroup({ rows, tab, taken, copied, onCopy, act }) {
+  const [open, setOpen] = useState(false);
+  const first = rows[0];
+  const booked = rows.reduce((n, o) => n + (taken[o.id] || 0), 0);
+  const live = rows.filter((o) => o.status === 'published' && !isPast(o));
+  return (
+    <li className="sn-hseries">
+      <div className={`sn-hrow st-${first.status}`}>
+        <DateTile iso={first.starts_at} small />
+        <div className="sn-hrow-main">
+          <div className="sn-hrow-tags">
+            <KindTag kind={first.kind} />
+            <span className="sn-repeat">{repeatLabel(weekdaysOf(rows))}</span>
+          </div>
+          <span className="sn-row-title">{first.title}</span>
+          <span className="sn-row-meta">
+            {rows.length} dates · next {formatWhen(first.starts_at, first.ends_at)} · {booked} reserved
+          </span>
+        </div>
+        <div className="sn-hrow-acts">
+          <button className="sn-act" aria-expanded={open} onClick={() => setOpen((v) => !v)}>{open ? 'Hide dates' : 'Show dates'}</button>
+          {tab !== 'past' && <Link className="sn-act" to={`/sanctuary/host/edit/${first.id}`} state={{ scope: 'following' }}>Edit all</Link>}
+          {tab === 'drafts' && (
+            <button className="sn-act strong" onClick={() => act(() => setSeriesStatus(first.series_id, 'draft', 'published'))}>Publish all</button>
+          )}
+          {tab === 'drafts' && (
+            <ArmButton armed="Tap again to delete every draft" onConfirm={() => act(() => deleteSeriesDrafts(first.series_id))}>Delete all</ArmButton>
+          )}
+          {tab === 'upcoming' && live.length > 0 && (
+            <ArmButton armed={`Tap again to cancel ${live.length} dates`} onConfirm={() => act(() => setSeriesStatus(first.series_id, 'published', 'cancelled'))}>Cancel all</ArmButton>
+          )}
+        </div>
+      </div>
+      {open && (
+        <ul className="sn-hlist sn-hlist-nested">
+          {rows.map((o) => <HostRow key={o.id} o={o} taken={taken} copied={copied} onCopy={onCopy} act={act} nested />)}
+        </ul>
+      )}
+    </li>
+  );
+}
+
 function Dashboard({ host, onSignOut }) {
   const navigate = useNavigate();
   const [rows, setRows] = useState(null);
@@ -247,6 +331,9 @@ function Dashboard({ host, onSignOut }) {
 
   const TABS = [['upcoming', 'Upcoming'], ['drafts', 'Drafts'], ['past', 'Past']];
   const list = split[tab];
+  // Past stays date by date; upcoming and drafts show a weekly class once.
+  const entries = useMemo(() => (tab === 'past' ? list.map((o) => ({ key: o.id, row: o })) : groupHostSeries(list)), [list, tab]);
+  const shared = { taken, copied, onCopy: copyLink, act };
 
   return (
     <div className="sn-dash">
@@ -257,6 +344,7 @@ function Dashboard({ host, onSignOut }) {
         </div>
         <div className="sn-dash-tools">
           <button className="btn forest" onClick={() => navigate('/sanctuary/host/new')}>New gathering <Arrow /></button>
+          <Link className="sn-act" to={`/sanctuary/hosts/${host.user_id}`}>Your public page</Link>
           <Link className="sn-act" to="/sanctuary/host/profile">Your details</Link>
           <button className="sn-act" onClick={onSignOut}>Sign out</button>
         </div>
@@ -265,7 +353,7 @@ function Dashboard({ host, onSignOut }) {
       <div className="sn-filters" role="tablist">
         {TABS.map(([k, label]) => (
           <button key={k} role="tab" aria-selected={tab === k} className={`sn-chip${tab === k ? ' on' : ''}`} onClick={() => setTab(k)}>
-            {label}<span className="sn-chip-n">{rows ? split[k].length : '–'}</span>
+            {label}<span className="sn-chip-n">{rows ? (k === 'past' ? split[k].length : groupHostSeries(split[k]).length) : '–'}</span>
           </button>
         ))}
       </div>
@@ -279,42 +367,9 @@ function Dashboard({ host, onSignOut }) {
         </div>
       ) : (
         <ul className="sn-hlist">
-          {list.map((o) => {
-            const t = taken[o.id] || 0;
-            const past = isPast(o);
-            return (
-              <li key={o.id} className={`sn-hrow st-${o.status}`}>
-                <DateTile iso={o.starts_at} small />
-                <div className="sn-hrow-main">
-                  <div className="sn-hrow-tags">
-                    <KindTag kind={o.kind} />
-                    <span className={`sn-status st-${o.status}`}>{{ draft: 'Draft', published: past ? 'Done' : 'Live', cancelled: 'Cancelled' }[o.status]}</span>
-                  </div>
-                  <span className="sn-row-title">{o.title}</span>
-                  <span className="sn-row-meta">
-                    {formatWhen(o.starts_at, o.ends_at)} · {o.capacity ? `${t} of ${o.capacity} reserved` : `${t} reserved`}
-                  </span>
-                </div>
-                <div className="sn-hrow-acts">
-                  <Link className="sn-act" to={`/sanctuary/host/rsvps/${o.id}`}>Guests ({t})</Link>
-                  {!past && o.status !== 'cancelled' && <Link className="sn-act" to={`/sanctuary/host/edit/${o.id}`}>Edit</Link>}
-                  <Link className="sn-act" to="/sanctuary/host/new" state={{ duplicateOf: o.id }}>Duplicate</Link>
-                  {o.status === 'published' && !past && (
-                    <button className="sn-act" onClick={() => copyLink(o.id)}>{copied === o.id ? 'Copied' : 'Copy link'}</button>
-                  )}
-                  {o.status === 'draft' && canPublish(o) && (
-                    <button className="sn-act strong" onClick={() => act(() => setGatheringStatus(o.id, 'published'))}>Publish</button>
-                  )}
-                  {o.status === 'published' && !past && (
-                    <ArmButton armed="Tap again to cancel it" onConfirm={() => act(() => setGatheringStatus(o.id, 'cancelled'))}>Cancel</ArmButton>
-                  )}
-                  {o.status === 'draft' && (
-                    <ArmButton armed="Tap again to delete" onConfirm={() => act(() => deleteDraft(o.id))}>Delete</ArmButton>
-                  )}
-                </div>
-              </li>
-            );
-          })}
+          {entries.map((e) => (e.series
+            ? <SeriesGroup key={e.key} rows={e.series} tab={tab} {...shared} />
+            : <HostRow key={e.key} o={e.row} {...shared} />))}
         </ul>
       )}
     </div>
@@ -323,12 +378,17 @@ function Dashboard({ host, onSignOut }) {
 
 // ── Create / edit ───────────────────────────────────────────────────────────
 
+// A new gathering happens once unless the host says otherwise.
+const NO_REPEAT = { repeat: 'once', weekdays: [], untilDate: '' };
+
 function Editor({ userId }) {
   const { gid } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
   const duplicateOf = location.state?.duplicateOf;
-  const [form, setForm] = useState(gid || duplicateOf ? null : emptyOfferingForm());
+  const [form, setForm] = useState(gid || duplicateOf ? null : { ...emptyOfferingForm(), ...NO_REPEAT });
+  // Editing one date of a weekly series: just it, or it and every later date.
+  const [scope, setScope] = useState(location.state?.scope === 'following' ? 'following' : 'one');
   const [original, setOriginal] = useState(null);
   const [errors, setErrors] = useState({});
   const [failure, setFailure] = useState(null);
@@ -341,7 +401,7 @@ function Editor({ userId }) {
     if (!isUuid(src)) { navigate('/sanctuary/host', { replace: true }); return; }
     getMyGathering(src).then((row) => {
       if (!row) { navigate('/sanctuary/host', { replace: true }); return; }
-      if (gid) { setOriginal(row); setForm(offeringToForm(row)); } else { setForm(duplicateForm(row)); }
+      if (gid) { setOriginal(row); setForm(offeringToForm(row)); } else { setForm({ ...duplicateForm(row), ...NO_REPEAT }); }
     }).catch((e) => setFailure(e.message));
   }, [gid, duplicateOf, navigate]);
 
@@ -349,6 +409,24 @@ function Editor({ userId }) {
 
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
   const isPublished = original?.status === 'published';
+  const inSeries = Boolean(gid && original?.series_id);
+  const following = inSeries && scope === 'following';
+  const weekly = !gid && form.repeat === 'weekly';
+  const repeatCheck = weekly ? validateRepeat(form) : null;
+
+  const setRepeat = (repeat) => setForm((f) => {
+    if (repeat !== 'weekly') return { ...f, repeat };
+    const wd = weekdayOf(f.startDate);
+    return {
+      ...f,
+      repeat,
+      weekdays: f.weekdays.length ? f.weekdays : (wd === null ? [] : [wd]),
+      untilDate: f.untilDate || (f.startDate ? addDays(f.startDate, 49) : ''),
+    };
+  });
+  const toggleDay = (v) => setForm((f) => ({
+    ...f, weekdays: f.weekdays.includes(v) ? f.weekdays.filter((d) => d !== v) : [...f.weekdays, v],
+  }));
 
   const onImage = async (e) => {
     const file = e.target.files?.[0];
@@ -361,12 +439,21 @@ function Editor({ userId }) {
 
   const save = async (status) => {
     const { errors: errs, value } = validateOffering(form);
+    const rep = weekly ? validateRepeat(form) : { errors: {}, dates: [] };
+    Object.assign(errs, rep.errors);
     if (status === 'published' && value.starts_at && !canPublish(value)) errs.start = 'That time has already passed.';
     setErrors(errs); setFailure(null);
     if (Object.keys(errs).length) { window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
     setBusy(true);
+    const row = { ...value, ...(status ? { status } : {}) };
     try {
-      await saveGathering(userId, { ...value, ...(status ? { status } : {}) }, gid || null);
+      if (following) {
+        await updateSeries(original.series_id, original.starts_at, value, form.startTime, durationMinutes(value));
+      } else if (weekly) {
+        await createSeries(userId, seriesRows(form, row, rep.dates, crypto.randomUUID()));
+      } else {
+        await saveGathering(userId, row, gid || null);
+      }
       navigate('/sanctuary/host');
     } catch (err) {
       setFailure(err.message || 'Could not save. Please try again.');
@@ -377,10 +464,25 @@ function Editor({ userId }) {
   return (
     <div className="sn-editor">
       <Link className="sn-back" to="/sanctuary/host">← Your gatherings</Link>
-      <h1 className="display sn-dash-h">{gid ? 'Edit gathering' : duplicateOf ? 'Duplicate gathering' : 'New gathering'}</h1>
+      <h1 className="display sn-dash-h">{following ? 'Edit every later date' : gid ? 'Edit gathering' : duplicateOf ? 'Duplicate gathering' : 'New gathering'}</h1>
       {duplicateOf && <p className="sn-hint">Same details, one week later — change anything before you save.</p>}
+      {inSeries && (
+        <div className="sn-scope">
+          <div className="sn-seg" role="radiogroup" aria-label="Change">
+            {[['one', 'This date only'], ['following', 'This and later dates']].map(([v, label]) => (
+              <button type="button" key={v} role="radio" aria-checked={scope === v}
+                className={`sn-seg-opt${scope === v ? ' on' : ''}`} onClick={() => setScope(v)}>{label}</button>
+            ))}
+          </div>
+          <p className="sn-hint">
+            {following
+              ? 'Every later date keeps its own day and takes these details, start time and length. Cancelled dates are left alone.'
+              : 'Only this date changes. The rest of the series stays as it is.'}
+          </p>
+        </div>
+      )}
 
-      <form className="sn-form sn-form-wide" onSubmit={(e) => { e.preventDefault(); save(isPublished ? undefined : 'draft'); }} noValidate>
+      <form className="sn-form sn-form-wide" onSubmit={(e) => { e.preventDefault(); save(isPublished || following ? undefined : 'draft'); }} noValidate>
         <Field label="Kind" error={errors.kind}>
           <div className="sn-seg" role="radiogroup">
             {OFFERING_KINDS.map((k) => (
@@ -396,8 +498,8 @@ function Editor({ userId }) {
         </Field>
 
         <div className="sn-grid3">
-          <Field label="Date" error={errors.start} htmlFor="sn-e-date">
-            <input id="sn-e-date" type="date" value={form.startDate} onChange={set('startDate')} />
+          <Field label={weekly ? 'First date' : 'Date'} error={errors.start} htmlFor="sn-e-date">
+            <input id="sn-e-date" type="date" value={form.startDate} onChange={set('startDate')} disabled={following} />
           </Field>
           <Field label="Starts" htmlFor="sn-e-start">
             <input id="sn-e-start" type="time" value={form.startTime} onChange={set('startTime')} />
@@ -407,8 +509,41 @@ function Editor({ userId }) {
           </Field>
         </div>
         <Field label="Ends on a later day? (optional)" hint="For a weekend or multi-day workshop. Times are Auroville time." htmlFor="sn-e-enddate">
-          <input id="sn-e-enddate" type="date" value={form.endDate} min={form.startDate || undefined} onChange={set('endDate')} />
+          <input id="sn-e-enddate" type="date" value={form.endDate} min={form.startDate || undefined} onChange={set('endDate')} disabled={following} />
         </Field>
+
+        {!gid && (
+          <Field label="Repeats" error={errors.repeat}>
+            <div className="sn-seg" role="radiogroup" aria-label="Repeats">
+              {[['once', 'Once'], ['weekly', 'Weekly']].map(([v, label]) => (
+                <button type="button" key={v} role="radio" aria-checked={form.repeat === v}
+                  className={`sn-seg-opt${form.repeat === v ? ' on' : ''}`} onClick={() => setRepeat(v)}>{label}</button>
+              ))}
+            </div>
+          </Field>
+        )}
+        {weekly && (
+          <div className="sn-repeatbox">
+            <Field label="On these days">
+              <div className="sn-days" role="group" aria-label="Days of the week">
+                {WEEKDAYS.map((w) => (
+                  <button type="button" key={w.value} aria-pressed={form.weekdays.includes(w.value)} aria-label={w.name}
+                    className={`sn-day${form.weekdays.includes(w.value) ? ' on' : ''}`} onClick={() => toggleDay(w.value)}>
+                    {w.short}
+                  </button>
+                ))}
+              </div>
+            </Field>
+            <Field label="Last date" htmlFor="sn-e-until">
+              <input id="sn-e-until" type="date" value={form.untilDate} min={form.startDate || undefined} onChange={set('untilDate')} />
+            </Field>
+            <p className="sn-repeat-preview" aria-live="polite">
+              {repeatCheck && !repeatCheck.errors.repeat
+                ? <><strong>{repeatLabel(form.weekdays)}</strong> — {seriesSummary(repeatCheck.dates)}. Each date has its own places and guest list.</>
+                : repeatCheck?.errors.repeat}
+            </p>
+          </div>
+        )}
 
         <Field label="Where" error={errors.location} htmlFor="sn-e-loc">
           <input id="sn-e-loc" value={form.location} onChange={set('location')} maxLength={LIMITS.locationMax} />
@@ -440,11 +575,13 @@ function Editor({ userId }) {
 
         {failure && <p className="sn-failure" role="alert">{failure}</p>}
         <div className="sn-editor-acts">
-          {isPublished ? (
+          {following ? (
+            <button type="submit" className="btn forest" disabled={busy || uploading}>{busy ? 'Saving…' : 'Save every later date'}</button>
+          ) : isPublished ? (
             <button type="submit" className="btn forest" disabled={busy || uploading}>{busy ? 'Saving…' : 'Save changes'}</button>
           ) : (
             <>
-              <button type="button" className="btn forest" disabled={busy || uploading} onClick={() => save('published')}>{busy ? 'Saving…' : 'Publish'} <Arrow /></button>
+              <button type="button" className="btn forest" disabled={busy || uploading} onClick={() => save('published')}>{busy ? 'Saving…' : weekly ? 'Publish all dates' : 'Publish'} <Arrow /></button>
               <button type="submit" className="btn" disabled={busy || uploading}>Save as draft</button>
             </>
           )}

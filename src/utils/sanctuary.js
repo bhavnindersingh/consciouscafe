@@ -6,7 +6,7 @@
  * into an instant with an explicit +05:30, so a browser in another timezone
  * can't shift it. Never `new Date('YYYY-MM-DD')` — that is midnight UTC.
  */
-import { OFFERING_KINDS, LIMITS, DEFAULT_LOCATION, RSVP_ERROR_COPY } from '../constants/sanctuary';
+import { OFFERING_KINDS, LIMITS, DEFAULT_LOCATION, RSVP_ERROR_COPY, WEEKDAYS } from '../constants/sanctuary';
 
 const TZ = 'Asia/Kolkata';
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
@@ -329,4 +329,169 @@ export function authErrorKind(e) {
   if (/email_address_invalid|email address .* is invalid/i.test(s)) return 'bad_email';
   if (/otp_expired|token has expired|is invalid/i.test(s)) return 'bad_code';
   return 'other';
+}
+
+// ── Weekly series ───────────────────────────────────────────────────────────
+// A weekly class is N ordinary gatherings sharing a series_id. Dates here are
+// calendar dates ('YYYY-MM-DD', as on the wall in Auroville), so the maths is
+// done in UTC on purpose — no timezone can shift a day.
+
+const dayNum = (date) => (DATE_RE.test(date || '') ? new Date(`${date}T00:00:00Z`) : null);
+
+/** 0 = Sunday … 6 = Saturday, for a calendar date. */
+export function weekdayOf(date) {
+  const d = dayNum(date);
+  return d && valid(d) ? d.getUTCDay() : null;
+}
+
+export function addDays(date, n) {
+  const d = dayNum(date);
+  if (!d || !valid(d)) return '';
+  return new Date(d.getTime() + n * DAY_MS).toISOString().slice(0, 10);
+}
+
+const daysBetween = (a, b) => Math.round((dayNum(b) - dayNum(a)) / DAY_MS);
+
+/**
+ * Every date from `start` to `until` (both included) that falls on one of
+ * `weekdays`. Stops one past the limit so callers can tell "too many".
+ */
+export function seriesDates(start, until, weekdays) {
+  const out = [];
+  if (weekdayOf(start) === null || weekdayOf(until) === null || !weekdays?.length) return out;
+  const want = new Set(weekdays.map(Number));
+  for (let d = start; d <= until && out.length <= LIMITS.seriesMaxDates; d = addDays(d, 1)) {
+    if (want.has(weekdayOf(d))) out.push(d);
+  }
+  return out;
+}
+
+/** "Every Tue & Thu" — from weekday numbers, Monday first. */
+export function repeatLabel(weekdays) {
+  const names = WEEKDAYS.filter((w) => weekdays.includes(w.value)).map((w) => w.short);
+  if (!names.length) return '';
+  if (names.length === 7) return 'Every day';
+  return `Every ${names.length === 1 ? names[0] : `${names.slice(0, -1).join(', ')} & ${names[names.length - 1]}`}`;
+}
+
+/** The IST weekdays a set of gatherings fall on — for repeatLabel(). */
+export const weekdaysOf = (rows) => [...new Set(rows.map((o) => weekdayOf(isoToIstParts(o.starts_at).date)))];
+
+/**
+ * The repeat part of the editor → { errors, dates }. `form.repeat` is 'once' or
+ * 'weekly'; weekly needs days and an end date, and gives 2..seriesMaxDates dates.
+ */
+export function validateRepeat(form) {
+  const errors = {};
+  if (form.repeat !== 'weekly') return { errors, dates: [form.startDate] };
+  if (!form.weekdays?.length) errors.repeat = 'Pick at least one day.';
+  else if (!DATE_RE.test(form.untilDate || '')) errors.repeat = 'Pick the last date.';
+  else if (form.untilDate < form.startDate) errors.repeat = 'The last date comes after the first.';
+  else if (daysBetween(form.startDate, form.untilDate) > LIMITS.seriesMaxWeeks * 7) {
+    errors.repeat = `Up to ${LIMITS.seriesMaxWeeks} weeks ahead at a time.`;
+  }
+  if (errors.repeat) return { errors, dates: [] };
+  const dates = seriesDates(form.startDate, form.untilDate, form.weekdays);
+  if (dates.length < 2) errors.repeat = 'That gives only one date — choose “Once”, or more days.';
+  else if (dates.length > LIMITS.seriesMaxDates) errors.repeat = `That’s more than ${LIMITS.seriesMaxDates} dates — pick an earlier last date.`;
+  return { errors, dates };
+}
+
+/** One saved row per date: same times, same span (a multi-day one stays multi-day). */
+export function seriesRows(form, value, dates, seriesId) {
+  const span = form.endDate ? daysBetween(form.startDate, form.endDate) : 0;
+  return dates.map((date) => ({
+    ...value,
+    series_id: seriesId,
+    starts_at: istToIso(date, form.startTime),
+    ends_at: istToIso(addDays(date, span), form.endTime),
+  }));
+}
+
+/** "8 dates · Tue 10 Nov → Tue 29 Dec" */
+export function seriesSummary(dates) {
+  if (!dates.length) return '';
+  const day = (d) => formatDay(istToIso(d, '12:00'));
+  return `${dates.length} dates · ${day(dates[0])} → ${day(dates[dates.length - 1])}`;
+}
+
+/** Minutes between a row's start and end — what "this and following" keeps. */
+export const durationMinutes = (value) => Math.round((new Date(value.ends_at) - new Date(value.starts_at)) / 60000);
+
+/**
+ * Public list: one entry per weekly series (its next date) plus every one-off,
+ * in date order. Each series entry carries `more` (other dates) and `repeat`.
+ */
+export function collapseSeries(items) {
+  const seen = new Map();
+  const out = [];
+  for (const o of items) {
+    if (!o.series_id) { out.push(o); continue; }
+    const head = seen.get(o.series_id);
+    if (head) { head.more += 1; head.dates.push(o); continue; }
+    const entry = { ...o, more: 0, dates: [o] };
+    seen.set(o.series_id, entry);
+    out.push(entry);
+  }
+  for (const e of seen.values()) e.repeat = repeatLabel(weekdaysOf(e.dates));
+  return out;
+}
+
+/**
+ * Host dashboard: a series becomes one group at the place of its first date;
+ * one-offs stay single. → [{ key, row }] | [{ key, series: rows[] }]
+ */
+export function groupHostSeries(rows) {
+  const groups = new Map();
+  const out = [];
+  for (const o of rows) {
+    if (!o.series_id) { out.push({ key: o.id, row: o }); continue; }
+    let g = groups.get(o.series_id);
+    if (!g) { g = { key: o.series_id, series: [] }; groups.set(o.series_id, g); out.push(g); }
+    g.series.push(o);
+  }
+  // A "series" left with one date in this tab reads better as a plain row.
+  return out.map((g) => (g.series && g.series.length === 1 ? { key: g.series[0].id, row: g.series[0] } : g));
+}
+
+// ── Calendar view ───────────────────────────────────────────────────────────
+
+/** Today's date in Auroville. */
+export const istToday = (now = Date.now()) => isoToIstParts(new Date(now).toISOString()).date;
+
+/** 'YYYY-MM' of a date, and n months on. */
+export const monthOf = (date) => String(date || '').slice(0, 7);
+export function shiftMonth(ym, n) {
+  const [y, m] = ym.split('-').map(Number);
+  const d = new Date(Date.UTC(y, m - 1 + n, 1));
+  return d.toISOString().slice(0, 7);
+}
+
+/** "November 2026" for 'YYYY-MM'. */
+export const monthTitle = (ym) => monthLabel(`${ym}-15T06:30:00Z`);
+
+/** Weeks of a month, Monday first: [[{ date, day, inMonth }, ×7], …]. */
+export function monthGrid(ym) {
+  const first = `${ym}-01`;
+  const lead = (weekdayOf(first) + 6) % 7; // days before the 1st, Monday first
+  let d = addDays(first, -lead);
+  const weeks = [];
+  do {
+    const week = [];
+    for (let i = 0; i < 7; i += 1, d = addDays(d, 1)) {
+      week.push({ date: d, day: Number(d.slice(8)), inMonth: monthOf(d) === ym });
+    }
+    weeks.push(week);
+  } while (monthOf(d) === ym);
+  return weeks;
+}
+
+/** { 'YYYY-MM-DD': gatherings[] } by IST start date. */
+export function byDay(items) {
+  const out = {};
+  for (const o of items) {
+    const k = isoToIstParts(o.starts_at).date;
+    (out[k] = out[k] || []).push(o);
+  }
+  return out;
 }

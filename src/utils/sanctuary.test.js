@@ -4,6 +4,8 @@ import {
   validateRsvp, validateOffering, emptyOfferingForm, offeringToForm, duplicateForm,
   splitHostOfferings, seatsTaken, rsvpErrorMessage, googleCalendarUrl, isUuid, canPublish,
   cleanEmail, cleanCode, authErrorKind,
+  weekdayOf, addDays, seriesDates, repeatLabel, weekdaysOf, validateRepeat, seriesRows, seriesSummary,
+  durationMinutes, collapseSeries, groupHostSeries, istToday, shiftMonth, monthTitle, monthGrid, byDay,
 } from './sanctuary';
 import { OFFERING_KINDS, RSVP_ERROR_COPY, HOST_AUTH_COPY } from '../constants/sanctuary';
 
@@ -284,5 +286,111 @@ describe('host sign-in by email code', () => {
 
   test('every kind has copy', () => {
     for (const k of ['not_open', 'slow_down', 'bad_code', 'bad_email', 'other']) expect(HOST_AUTH_COPY[k]).toBeTruthy();
+  });
+});
+
+describe('weekly series', () => {
+  test('calendar-date maths ignores timezones', () => {
+    expect(weekdayOf('2026-11-10')).toBe(2); // a Tuesday
+    expect(weekdayOf('nope')).toBeNull();
+    expect(addDays('2026-12-30', 3)).toBe('2027-01-02');
+    expect(addDays('2026-03-28', 2)).toBe('2026-03-30'); // across a DST change elsewhere
+  });
+
+  test('seriesDates picks the chosen weekdays, both ends included', () => {
+    expect(seriesDates('2026-11-10', '2026-11-24', [2])).toEqual(['2026-11-10', '2026-11-17', '2026-11-24']);
+    expect(seriesDates('2026-11-10', '2026-11-19', [2, 4])).toEqual(['2026-11-10', '2026-11-12', '2026-11-17', '2026-11-19']);
+    expect(seriesDates('2026-11-10', '2026-11-09', [2])).toEqual([]);
+    expect(seriesDates('2026-11-10', '2026-11-24', [])).toEqual([]);
+  });
+
+  test('repeatLabel reads naturally, Monday first', () => {
+    expect(repeatLabel([2])).toBe('Every Tue');
+    expect(repeatLabel([4, 2])).toBe('Every Tue & Thu');
+    expect(repeatLabel([1, 3, 5])).toBe('Every Mon, Wed & Fri');
+    expect(repeatLabel([0, 1, 2, 3, 4, 5, 6])).toBe('Every day');
+  });
+
+  test('weekdaysOf reads the IST day, not the UTC one', () => {
+    // 05:00 IST Wed = 23:30 UTC Tue
+    expect(weekdaysOf([{ starts_at: '2026-11-10T23:30:00Z' }])).toEqual([3]);
+  });
+
+  const base = { repeat: 'weekly', startDate: '2026-11-10', weekdays: [2], untilDate: '2026-12-29' };
+  test('validateRepeat: once, weekly, and the limits', () => {
+    expect(validateRepeat({ repeat: 'once', startDate: '2026-11-10' })).toEqual({ errors: {}, dates: ['2026-11-10'] });
+    expect(validateRepeat(base).dates).toHaveLength(8);
+    expect(validateRepeat({ ...base, weekdays: [] }).errors.repeat).toMatch(/at least one day/);
+    expect(validateRepeat({ ...base, untilDate: '' }).errors.repeat).toMatch(/last date/);
+    expect(validateRepeat({ ...base, untilDate: '2026-11-01' }).errors.repeat).toMatch(/after the first/);
+    expect(validateRepeat({ ...base, untilDate: '2026-11-12' }).errors.repeat).toMatch(/only one date/);
+    expect(validateRepeat({ ...base, untilDate: '2027-12-01' }).errors.repeat).toMatch(/26 weeks/);
+    expect(validateRepeat({ ...base, weekdays: [1, 2, 3, 4, 5, 6, 0], untilDate: '2027-01-30' }).errors.repeat).toMatch(/more than 26/);
+  });
+
+  test('seriesRows: same IST times on every date; a multi-day span is kept', () => {
+    const form = { startDate: '2026-11-10', startTime: '07:00', endDate: '', endTime: '08:15' };
+    const rows = seriesRows(form, { title: 'Hatha', starts_at: 'x', ends_at: 'y' }, ['2026-11-10', '2026-11-17'], 'S1');
+    expect(rows).toEqual([
+      { title: 'Hatha', series_id: 'S1', starts_at: '2026-11-10T01:30:00.000Z', ends_at: '2026-11-10T02:45:00.000Z' },
+      { title: 'Hatha', series_id: 'S1', starts_at: '2026-11-17T01:30:00.000Z', ends_at: '2026-11-17T02:45:00.000Z' },
+    ]);
+    const weekend = seriesRows({ startDate: '2026-11-14', startTime: '10:00', endDate: '2026-11-15', endTime: '17:00' }, {}, ['2026-11-21'], 'S2');
+    expect(weekend[0].ends_at).toBe('2026-11-22T11:30:00.000Z');
+  });
+
+  test('seriesSummary and durationMinutes', () => {
+    expect(seriesSummary(['2026-11-10', '2026-11-17', '2026-12-29'])).toBe('3 dates · Tue 10 Nov → Tue 29 Dec');
+    expect(durationMinutes({ starts_at: '2026-11-10T01:30:00Z', ends_at: '2026-11-10T02:45:00Z' })).toBe(75);
+  });
+
+  test('collapseSeries keeps one entry per series, in date order', () => {
+    const items = [
+      { id: 'a', series_id: 'S', starts_at: '2026-11-10T01:30:00Z' },
+      { id: 'b', series_id: null, starts_at: '2026-11-11T12:00:00Z' },
+      { id: 'c', series_id: 'S', starts_at: '2026-11-12T01:30:00Z' },
+      { id: 'd', series_id: 'S', starts_at: '2026-11-17T01:30:00Z' },
+    ];
+    const out = collapseSeries(items);
+    expect(out.map((o) => o.id)).toEqual(['a', 'b']);
+    expect(out[0].more).toBe(2);
+    expect(out[0].repeat).toBe('Every Tue & Thu');
+  });
+
+  test('groupHostSeries groups a series where it first appears; a lone date stays a row', () => {
+    const rows = [
+      { id: 'a', series_id: 'S' }, { id: 'b', series_id: null }, { id: 'c', series_id: 'S' }, { id: 'd', series_id: 'T' },
+    ];
+    const g = groupHostSeries(rows);
+    expect(g.map((x) => x.key)).toEqual(['S', 'b', 'd']);
+    expect(g[0].series.map((o) => o.id)).toEqual(['a', 'c']);
+    expect(g[2].row.id).toBe('d');
+  });
+});
+
+describe('calendar view', () => {
+  test('istToday is the Auroville date', () => {
+    expect(istToday(Date.parse('2026-11-10T19:00:00Z'))).toBe('2026-11-11'); // 00:30 IST next day
+  });
+
+  test('month helpers', () => {
+    expect(shiftMonth('2026-12', 1)).toBe('2027-01');
+    expect(shiftMonth('2026-01', -1)).toBe('2025-12');
+    expect(monthTitle('2026-11')).toBe('November 2026');
+  });
+
+  test('monthGrid: Monday-first weeks covering the whole month', () => {
+    const g = monthGrid('2026-11'); // 1 Nov 2026 is a Sunday
+    expect(g[0][0]).toEqual({ date: '2026-10-26', day: 26, inMonth: false });
+    expect(g[0][6]).toEqual({ date: '2026-11-01', day: 1, inMonth: true });
+    expect(g[g.length - 1].some((c) => c.date === '2026-11-30')).toBe(true);
+    expect(g.every((w) => w.length === 7)).toBe(true);
+    expect(monthGrid('2027-02')).toHaveLength(4); // Feb 2027 starts on a Monday and ends on a Sunday
+  });
+
+  test('byDay buckets by the IST date', () => {
+    const m = byDay([{ id: 'x', starts_at: '2026-11-10T19:00:00Z' }, { id: 'y', starts_at: '2026-11-11T03:00:00Z' }]);
+    expect(Object.keys(m)).toEqual(['2026-11-11']);
+    expect(m['2026-11-11'].map((o) => o.id)).toEqual(['x', 'y']);
   });
 });
