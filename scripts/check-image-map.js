@@ -118,9 +118,9 @@ const MIN_DETAIL_WIDTH = 1800;
 async function fetchRecipes() {
   const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   const { data, error } = await supabase
-    .from('recipes')
+    // The POS's public contract (get_public_menu): production dishes only.
+    .rpc('get_public_menu')
     .select('name, sku, category, sub_category, image_url')
-    .eq('is_production_recipe', true)
     .order('category')
     .order('name');
   if (error) throw error;

@@ -78,13 +78,22 @@ export const ADDON_CATEGORIES = ['Extras'];
 export const isWebsiteSellable = (product) =>
   product.availableForDelivery && !ADDON_CATEGORIES.includes(product.posCategory);
 
+/**
+ * Every production dish, through the POS's public contract `get_public_menu()`
+ * (Manager Conscious Cafe, migration 20261104000000) — not the `recipes` table.
+ * A Sanctuary host signed in on this site is `authenticated`, and the POS
+ * tables are staff-only for that role; the function answers anon and
+ * signed-in visitors alike. It already returns production dishes only (there
+ * is no `is_production_recipe` column to filter on — adding one is a 42703),
+ * and `recipe_variations` is a plain jsonb column, not an embed, with the same
+ * keys inside, so toProduct() reads it unchanged.
+ */
 export async function getDeliveryMenu() {
   const { data, error } = await supabase
-    .from('recipes')
+    .rpc('get_public_menu')
     .select(
-      'id, name, description, selling_price, category, sub_category, image_url, sku, tax_rate, dietary_labels, available_for_delivery, recipe_variations(id, name, selling_price, sort_order, dietary_labels)'
+      'id, name, description, selling_price, category, sub_category, image_url, sku, tax_rate, dietary_labels, available_for_delivery, recipe_variations'
     )
-    .eq('is_production_recipe', true)
     .order('category')
     .order('name');
 
@@ -97,14 +106,12 @@ export async function getDeliveryMenu() {
  * keyed by the raw `recipes.category`. Editable in the POS under Settings, so
  * a rate change lands on the site with no rebuild — same contract as the menu.
  * A category absent from the map packs free (POS behaviour, not an oversight).
+ * Read through `get_packaging_charges()` (same contract as the menu): `data`
+ * IS the map, and the rest of app_settings never leaves the database.
  */
 export async function getPackagingRates() {
-  const { data, error } = await supabase
-    .from('app_settings')
-    .select('value')
-    .eq('key', 'packaging_charges')
-    .single();
+  const { data, error } = await supabase.rpc('get_packaging_charges');
 
   if (error) throw error;
-  return data?.value || {};
+  return data || {};
 }

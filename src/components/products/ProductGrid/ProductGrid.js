@@ -309,7 +309,7 @@ function Gatherings() {
             <span className="eyebrow">Private &amp; group bookings</span>
             <h4>Planning a workshop or retreat? Host it at the Sanctuary.</h4>
           </div>
-          <button className="btn" onClick={() => setIntent('host')}>Host at the Sanctuary <Arrow /></button>
+          <button className="btn" onClick={() => navigate('/sanctuary/host')}>Host at the Sanctuary <Arrow /></button>
         </div>
       </div>
 

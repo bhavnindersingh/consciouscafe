@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a React-based platform for Conscious Sanctuary, featuring workshops, events, and retreats with a facilitator dashboard. The platform includes an e-commerce menu for the cafe, product browsing, cart functionality, checkout process, facilitator management dashboard, and comprehensive SEO optimization.
+The public website for Conscious Cafe and Conscious Sanctuary: the live delivery menu (cart → WhatsApp checkout), the Sanctuary calendar (`/sanctuary` — classes, workshops and events published by outside hosts who sign in with Google or an emailed code; visitors RSVP), and SEO landing pages.
 
 ## Development Commands
 
@@ -41,7 +41,7 @@ src/
 ### Component Organization
 
 - **pages/** - Full page components for each route:
-  - `Home/`, `Menu/`, `Products/`, `Checkout/`, `Info/`, `Dashboard/`, `Auth/`, `NotFound/`
+  - `Home/`, `Menu/`, `Products/`, `Checkout/`, `Info/`, `Sanctuary/`, `Landing/`, `Print/`, `NotFound/`
 
 - **components/** - Reusable components organized by domain:
   - `layout/` - Header, Footer, Hero
@@ -67,7 +67,8 @@ src/
 - Product navigation using React Router with dynamic URLs
 
 ### Data Structure
-- **The menu is live from Supabase — there is no static product file.** `hooks/useDeliveryMenu.js` → `services/menuService.js` reads `recipes` where `is_production_recipe = true` on every page load, and `toProduct()` maps a POS row to the shape components consume.
+- **The menu is live from Supabase — there is no static product file.** `hooks/useDeliveryMenu.js` → `services/menuService.js` calls the POS's public contract **`get_public_menu()`** (production dishes only) on every page load, and `toProduct()` maps a row to the shape components consume. Packaging rates come from **`get_packaging_charges()`** (`data` is the map).
+- **Never read `recipes`, `recipe_variations` or `app_settings` directly** — in `src/` or `scripts/`. Those tables are staff-only for a signed-in user (a Sanctuary host is signed in), and the POS's lockdown plan removes anon's direct reads too. The two functions are defined in `Manager Conscious Cafe/backend/supabase/migrations/20261104000000_public_menu_contract.sql`; its header lists what a caller must not do (no `is_production_recipe` filter — it's a 42703; `recipe_variations` is a jsonb column, not an embed).
 - The same Supabase project backs the POS (`Manager Conscious Cafe`), so a name, description, price, category, dietary label or variation edited in the POS appears on the site immediately — no rebuild.
 - **Photos are the exception** — see "Dish Photos" below.
 - Categories come from `recipes.category` / `sub_category`, slugged. They are not hardcoded here.
@@ -101,7 +102,8 @@ Run **`npm run check:menu`** after touching any of this, or when a dish is missi
 - Category-based navigation: `/category/:categoryId`
 - Product detail pages: `/product/:productSlug`
 - Menu pages: `/menu` (food), `/drinks` (beverages)
-- Static pages: `/about`, `/contact`, `/delivery`
+- Static pages: `/about`, `/visit` (`/contact` redirects), `/delivery`
+- Sanctuary: `/sanctuary`, `/sanctuary/:id` (uuid), `/sanctuary/host/*` (the old `/dashboard`, `/facilitator-login`, `/register`, `/request-facilitator-access` redirect there)
 
 ## SEO Implementation
 
@@ -238,10 +240,16 @@ Rates are live from `app_settings.packaging_charges` in Supabase (`getPackagingR
 
 ### Authentication & Database
 
-- **Auth**: Supabase authentication via `context/AuthContext.js`
-- **Database**: Supabase client at `services/supabase/supabaseClient.js`
-- **Offerings Management**: Facilitator dashboard at `/dashboard` for creating/managing workshops, events, and retreats
-- **RSVP System**: Complete RSVP management with approval workflow
-- **Login**: `/login` route for authentication
-- **Protected Routes**: Dashboard routes require authentication
-- **Supabase project**: single project `hxpbrlqclyujirspuuav` (auth, dashboard & menu); the public anon key is the default in `services/supabase/supabaseClient.js`, overridable via `REACT_APP_SUPABASE_URL` / `REACT_APP_SUPABASE_ANON_KEY`
+- **Database**: Supabase client at `services/supabase/supabaseClient.js` (PKCE auth flow)
+- **Supabase project**: single project `hxpbrlqclyujirspuuav`, shared with the POS; the public anon key is the default in `services/supabase/supabaseClient.js`, overridable via `REACT_APP_SUPABASE_URL` / `REACT_APP_SUPABASE_ANON_KEY`
+
+## Conscious Sanctuary (`/sanctuary`)
+
+- **Who signs in:** only hosts — Google (`signInWithGoogle`) or a one-time code emailed to them (`sendEmailCode` → `verifyEmailCode`), both in `context/AuthContext.js`. Visitors never sign in. `AuthProvider` never blocks rendering — pages that need the session read `loading`.
+- **Email sign-in is a code, not a link:** under PKCE a link only works in the browser that asked for it, and hosts read mail on their phones. Supabase sends it through **Resend** (custom SMTP, from `@consciouscafe.in`); the Supabase *Magic Link* and *Confirm signup* templates must show `{{ .Token }}` — a template with only `{{ .ConfirmationURL }}` leaves the host with nothing to type. Auth errors map to copy via `authErrorKind()` → `HOST_AUTH_COPY`.
+- **Backend:** `Manager Conscious Cafe/backend/supabase/migrations/20261104200000_sanctuary.sql` — tables `sanctuary_hosts` / `sanctuary_offerings` / `sanctuary_rsvps`, bucket `sanctuary-images`. Visitors only call RPCs: `sanctuary_listings()`, `sanctuary_offering(id)`, `sanctuary_rsvp(...)`. Hosts read/write their own rows under RLS. All access is in `services/sanctuaryService.js`.
+- **Vocabularies** (kind event/class/workshop, host/offering/RSVP statuses, limits, the RPC's error words) live in `constants/sanctuary.js` — the JS twin of that migration's CHECKs. Change both together.
+- **All rules are pure functions with tests** in `utils/sanctuary.js` (IST date maths, labels, validation, `rsvpState()` mirroring the RPC's refusals). Times are stored as timestamptz and shown in Asia/Kolkata; a host types wall-clock IST and `istToIso()` adds `+05:30`. Never `new Date('YYYY-MM-DD')`.
+- **Hosts:** request → an admin approves (in the POS database, `sanctuary_hosts.status`) → publish. A paused/declined host's gatherings vanish from the calendar. Weekly classes repeat with **Duplicate** (+7 days) — there is no schedule model.
+- **No payments.** `price_inr` is display only ("pay at the venue").
+- **Sign-ups must stay off (Google and email alike)** until the POS's stage-4 migration (`20261104100000_stage4_authenticated_means_staff.sql`) is live: before it, any signed-in account is treated as staff by the POS database.

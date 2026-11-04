@@ -117,6 +117,11 @@ export const pageData = {
     description: 'Order healthy vegetarian & vegan food delivery from Conscious Cafe Auroville. Fresh, consciously sourced non-processed meals delivered to your door. Serving Auroville and nearby areas.',
     keywords: 'food delivery auroville, vegetarian vegan food delivery, conscious cafe delivery, online food order, healthy meal delivery, consciously sourced food delivery, plant-based takeout auroville',
   },
+  sanctuary: {
+    title: 'Events, Classes & Workshops in Auroville | Conscious Sanctuary',
+    description: 'Yoga and movement classes, workshops and gatherings at Conscious Sanctuary beside Conscious Cafe on Auroville Road. See what’s on and reserve a place.',
+    keywords: 'auroville events, auroville workshops, yoga class auroville, auroville classes, conscious sanctuary, things to do auroville, sound bath auroville, meditation auroville',
+  },
   'privacy-policy': {
     title: 'Privacy Policy | Conscious Cafe Auroville',
     description: 'Privacy Policy for Conscious Cafe, Auroville. Learn how we collect, use, and protect your personal information.',

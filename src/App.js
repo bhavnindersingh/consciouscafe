@@ -28,16 +28,11 @@ const NotFound = lazy(() => import("./pages/NotFound/NotFound"));
 const PrintMenuPage = lazy(() => import("./pages/Print/PrintMenuPage"));
 const LandingPage = lazy(() => import("./pages/Landing/LandingPage"));
 
-// Dashboard — heavy, auth-gated, never part of a public first paint
-const DashboardLayout = lazy(() => import("./pages/Dashboard/DashboardLayout"));
-const DashboardHome = lazy(() => import("./pages/Dashboard/DashboardHome"));
-const Login = lazy(() => import("./pages/Dashboard/Login"));
-const Register = lazy(() => import("./pages/Dashboard/Register"));
-const OfferingList = lazy(() => import("./pages/Dashboard/OfferingList"));
-const OfferingManager = lazy(() => import("./pages/Dashboard/OfferingManager"));
-const RSVPList = lazy(() => import("./pages/Dashboard/RSVPList"));
-const FacilitatorRequests = lazy(() => import("./pages/Dashboard/FacilitatorRequests"));
-const RequestFacilitatorAccess = lazy(() => import("./pages/Public/RequestFacilitatorAccess"));
+// Conscious Sanctuary — the public calendar, one gathering, and the hosts' side
+// (Google sign-in). The old facilitator dashboard's routes redirect to the host page.
+const SanctuaryPage = lazy(() => import("./pages/Sanctuary/SanctuaryPage"));
+const GatheringPage = lazy(() => import("./pages/Sanctuary/GatheringPage"));
+const HostPage = lazy(() => import("./pages/Sanctuary/HostPage"));
 
 // Minimal, layout-stable fallback (avoids CLS while a chunk loads)
 const RouteFallback = () => <div style={{ minHeight: "60vh" }} aria-busy="true" />;
@@ -127,23 +122,14 @@ function AppContent() {
               }
             />
           ))}
-          <Route path="/request-facilitator-access" element={<RequestFacilitatorAccess />} />
-          <Route path="/facilitator-login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/dashboard" element={<DashboardLayout />}>
-            <Route index element={<DashboardHome />} />
-            <Route path="rsvps" element={<RSVPList />} />
-            <Route path="workshops" element={<OfferingList type="workshop" />} />
-            <Route path="create-workshop" element={<OfferingManager type="workshop" />} />
-            <Route path="edit-workshop/:id" element={<OfferingManager type="workshop" />} />
-            <Route path="events" element={<OfferingList type="event" />} />
-            <Route path="create-event" element={<OfferingManager type="event" />} />
-            <Route path="edit-event/:id" element={<OfferingManager type="event" />} />
-            <Route path="retreats" element={<OfferingList type="retreat" />} />
-            <Route path="create-retreat" element={<OfferingManager type="retreat" />} />
-            <Route path="edit-retreat/:id" element={<OfferingManager type="retreat" />} />
-            <Route path="facilitator-requests" element={<FacilitatorRequests />} />
-          </Route>
+          <Route path="/sanctuary" element={<SanctuaryPage />} />
+          <Route path="/sanctuary/host/*" element={<HostPage />} />
+          <Route path="/sanctuary/:id" element={<GatheringPage />} />
+          {/* The old facilitator dashboard (its tables never existed in this project) */}
+          <Route path="/request-facilitator-access" element={<Navigate to="/sanctuary/host" replace />} />
+          <Route path="/facilitator-login" element={<Navigate to="/sanctuary/host" replace />} />
+          <Route path="/register" element={<Navigate to="/sanctuary/host" replace />} />
+          <Route path="/dashboard/*" element={<Navigate to="/sanctuary/host" replace />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
         </Suspense>

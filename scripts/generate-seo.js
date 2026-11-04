@@ -129,6 +129,11 @@ const STATIC_ROUTES = [
   { path: '/visit', priority: '0.7', changefreq: 'monthly',
     title: 'Visit & Contact Us — Location, Hours & Sanctuary | Conscious Cafe Auroville',
     description: 'Visit Conscious Cafe at Kavas Yoga Retreat, Auroville Road. Address, map, directions, hours, phone and email — plus the sanctuary: ice bath, sauna and yogashala. Open Wed–Mon, 9:30am–9pm.' },
+  // The calendar changes as hosts publish; individual /sanctuary/:id pages are
+  // client-rendered (they come and go) and are not prerendered or listed here.
+  { path: '/sanctuary', priority: '0.7', changefreq: 'daily',
+    title: 'Events, Classes & Workshops in Auroville | Conscious Sanctuary',
+    description: 'Yoga and movement classes, workshops and gatherings at Conscious Sanctuary beside Conscious Cafe on Auroville Road. See what’s on and reserve a place.' },
   { path: '/delivery', priority: '0.6', changefreq: 'monthly',
     title: 'Food Delivery Auroville | Conscious Cafe Online Order',
     description: 'Order healthy vegetarian & vegan food delivery from Conscious Cafe Auroville. Fresh, consciously sourced non-processed meals delivered to your door. Serving Auroville and nearby areas.' },
@@ -199,6 +204,7 @@ function crumbsFor(routePath) {
     '/about': [{ name: 'Home', path: '/' }, { name: 'About', path: '/about' }],
     '/visit': [{ name: 'Home', path: '/' }, { name: 'Visit', path: '/visit' }],
     '/delivery': [{ name: 'Home', path: '/' }, { name: 'Delivery', path: '/delivery' }],
+    '/sanctuary': [{ name: 'Home', path: '/' }, { name: 'Sanctuary', path: '/sanctuary' }],
   };
   return labels[routePath] ? [crumb(labels[routePath])] : [];
 }
@@ -218,9 +224,9 @@ const ADDON_CATEGORIES = ['Extras'];
 async function fetchProducts() {
   const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   const { data, error } = await supabase
-    .from('recipes')
+    // The POS's public contract (get_public_menu): production dishes only.
+    .rpc('get_public_menu')
     .select('id, name, description, selling_price, category, sub_category')
-    .eq('is_production_recipe', true)
     .eq('available_for_delivery', true)
     .not('category', 'in', `(${ADDON_CATEGORIES.join(',')})`)
     .order('name');

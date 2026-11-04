@@ -8,9 +8,7 @@ import './styles/variables.css';  // 2. CSS custom properties
 import './styles/typography.css'; // 3. Font definitions
 import './styles/global.css';     // 4. Base global styles
 import './styles/utilities.css';  // 5. Utility classes
-import './styles/auth.css';       // 6. Authentication pages
-import './styles/dashboard.css';  // 7. Dashboard pages
-import './styles/App.css';        // 8. Component-specific styles
+import './styles/App.css';        // 6. Component-specific styles
 
 import App from './App';
 

@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Single Supabase project for auth, dashboard and the delivery menu.
+// Single Supabase project for the delivery menu and the Sanctuary (hosts sign
+// in with Google; visitors never sign in).
 // The anon key is a PUBLIC client key (role: anon) — it ships in the JS
 // bundle by design; Row-Level Security protects the data. We hardcode the
 // real project as the default so the app works even when env vars aren't
@@ -13,4 +14,13 @@ const SUPABASE_ANON_KEY =
 const supabaseUrl = process.env.REACT_APP_SUPABASE_URL || SUPABASE_URL;
 const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY || SUPABASE_ANON_KEY;
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// PKCE: Google sends the host back with a one-time ?code= that the client
+// exchanges itself (detectSessionInUrl), so no token ever sits in the URL.
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    flowType: 'pkce',
+    detectSessionInUrl: true,
+    persistSession: true,
+    autoRefreshToken: true,
+  },
+});

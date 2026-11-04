@@ -16,6 +16,7 @@ function viewFromPath(pathname) {
   if (pathname.startsWith('/menu')) return 'menu';
   if (pathname.startsWith('/about') || pathname.startsWith('/story')) return 'story';
   if (pathname.startsWith('/visit')) return 'visit';
+  if (pathname.startsWith('/sanctuary')) return 'sanctuary';
   if (pathname.startsWith('/privacy') || pathname.startsWith('/terms')) return 'legal';
   return 'home';
 }
@@ -24,7 +25,7 @@ const MM_ITEMS = [
   { id: 'home',   label: 'Home',      note: 'The kitchen, the ethos',  path: '/' },
   { id: 'menu',   label: 'Menu',      note: 'A season, plated',         path: '/menu' },
   { id: 'story',  label: 'Story',     note: 'Why we cook this way',     path: '/about' },
-  { id: 'gather', label: 'Sanctuary', note: 'Shala · temple · ice spa', gather: true },
+  { id: 'sanctuary', label: 'Sanctuary', note: 'Classes · workshops · events', path: '/sanctuary' },
   { id: 'visit',  label: 'Visit',     note: 'Auroville Road',           path: '/visit' },
 ];
 
@@ -46,18 +47,9 @@ const Header = () => {
 
   const isSolid = scrolled || view !== 'home';
 
-  const goGather = () => {
-    navigate('/');
-    setTimeout(() => {
-      const el = document.getElementById('gather');
-      if (el) el.scrollIntoView({ behavior: 'smooth' });
-    }, 90);
-  };
-
   const handleNav = (item) => {
     setMobileOpen(false);
-    if (item.gather) goGather();
-    else if (item.path) navigate(item.path);
+    if (item.path) navigate(item.path);
   };
 
   return (
@@ -85,7 +77,7 @@ const Header = () => {
         </button>
 
         <div className="nav-right">
-          <button className="nav-link" onClick={goGather}>sanctuary</button>
+          <button className={`nav-link ${view === 'sanctuary' ? 'active' : ''}`} onClick={() => navigate('/sanctuary')}>sanctuary</button>
           <button className={`nav-link ${view === 'visit' ? 'active' : ''}`} onClick={() => navigate('/visit')}>visit</button>
           <button className="bag" onClick={() => setBagOpen(true)} aria-label={`Shopping bag, ${count} items`}>
             <BagIcon /> <span className="bag-label">bag</span>

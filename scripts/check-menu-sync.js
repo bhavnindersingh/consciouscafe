@@ -106,18 +106,19 @@ const notes = [];
 async function main() {
   const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  const [{ data: recipes, error: recipeErr }, { data: settings }] = await Promise.all([
+  // The POS's public contract (get_public_menu / get_packaging_charges):
+  // production dishes only, and the packaging map itself — no app_settings row.
+  const [{ data: recipes, error: recipeErr }, { data: rates }] = await Promise.all([
     supabase
-      .from('recipes')
+      .rpc('get_public_menu')
       .select('name, category, sub_category, available_for_delivery, dietary_labels, selling_price')
-      .eq('is_production_recipe', true)
       .order('name'),
-    supabase.from('app_settings').select('value').eq('key', 'packaging_charges').single(),
+    supabase.rpc('get_packaging_charges'),
   ]);
   if (recipeErr) throw recipeErr;
 
   const live = recipes || [];
-  const packagingRates = settings?.value || {};
+  const packagingRates = rates || {};
 
   const isAddon = (r) => ADDON_CATEGORIES.includes((r.category || '').trim());
   const sellable = live.filter((r) => r.available_for_delivery && !isAddon(r));
