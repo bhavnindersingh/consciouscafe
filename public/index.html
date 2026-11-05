@@ -13,7 +13,14 @@
     </script>
 
     <meta charset="utf-8" />
-    <link rel="icon" href="/android-icon-192x192.png" />
+    <!-- Tab icon: the same per-size, full-bleed files Mise OS uses (copied from
+         its frontend/public — keep the two byte-identical). The 192 is framed
+         for a home screen, with a wide margin, so a browser shrinking it to a
+         16px tab drew a tiny flower; sized links make it pick these instead. -->
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/android-icon-192x192.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     
     <!-- Preload critical fonts -->
