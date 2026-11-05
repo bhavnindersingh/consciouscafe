@@ -13,8 +13,6 @@ import { toSlug } from './slug';
 // carries its category's packaging rate. In the POS that flag is per item
 // (`needs_packaging`, auto-on for takeaway); here it is implicit.
 
-export const GST_RATE = 0.05;
-
 const round2 = (n) => parseFloat(n.toFixed(2));
 
 /**
