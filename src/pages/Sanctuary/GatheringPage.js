@@ -162,49 +162,26 @@ const GatheringPage = () => {
         ]}
       />
 
+      {/* Grid areas (sanctuary.css): back, head and photo in column one, the reserve
+          panel spanning column two; on one column this source order puts the panel
+          right under the title and photo, before the prose. */}
       <div className="sn-detail">
-        <div className="sn-detail-main">
-          <Reveal><Link className="sn-back" to="/sanctuary">← All gatherings</Link></Reveal>
-          <Reveal delay={1} className="sn-detail-head">
-            <DateTile iso={g.starts_at} />
-            <div>
-              <span className="sn-row-tags">
-                <KindTag kind={g.kind} />
-                {repeat && <span className="sn-repeat">{repeat}</span>}
-              </span>
-              <h1 className="display sn-detail-title">{g.title}</h1>
-            </div>
+        <Reveal className="sn-detail-back"><Link className="sn-back" to="/sanctuary">← All gatherings</Link></Reveal>
+        <Reveal delay={1} className="sn-detail-head">
+          <DateTile iso={g.starts_at} />
+          <div>
+            <span className="sn-row-tags">
+              <KindTag kind={g.kind} />
+              {repeat && <span className="sn-repeat">{repeat}</span>}
+            </span>
+            <h1 className="display sn-detail-title">{g.title}</h1>
+          </div>
+        </Reveal>
+        {img && (
+          <Reveal delay={2} className="sn-detail-img">
+            <img src={img} alt="" loading="eager" />
           </Reveal>
-          {img && (
-            <Reveal delay={2} className="sn-detail-img">
-              <img src={img} alt="" loading="eager" />
-            </Reveal>
-          )}
-          {g.description && (
-            <Reveal delay={2} className="sn-prose">
-              {g.description.split(/\n{2,}/).map((para, i) => <p key={i}>{para}</p>)}
-            </Reveal>
-          )}
-          {g.host_name && (
-            <Reveal delay={3} className="sn-hostline">
-              <span className="sn-label">Your host</span>
-              {g.host_id
-                ? <Link className="sn-hostname" to={`/sanctuary/hosts/${g.host_id}`}>{g.host_name}</Link>
-                : <span className="sn-hostname">{g.host_name}</span>}
-              {g.host_link && /^https?:\/\//i.test(g.host_link) && (
-                <a href={g.host_link} target="_blank" rel="noopener noreferrer nofollow">{g.host_link.replace(/^https?:\/\/(www\.)?/i, '')} ↗</a>
-              )}
-            </Reveal>
-          )}
-          {otherDates.length > 0 && (
-            <section className="sn-more" aria-labelledby="sn-more-h">
-              <h2 id="sn-more-h" className="sn-more-h">More dates</h2>
-              <ul className="sn-list">
-                {otherDates.map((o) => <li key={o.id}><GatheringRow o={o} showHost={false} compact /></li>)}
-              </ul>
-            </section>
-          )}
-        </div>
+        )}
 
         <aside className="sn-panel" aria-label="Reserve">
           <dl className="sn-facts">
@@ -240,6 +217,33 @@ const GatheringPage = () => {
             </div>
           )}
         </aside>
+
+        <div className="sn-detail-body">
+          {g.description && (
+            <Reveal delay={2} className="sn-prose">
+              {g.description.split(/\n{2,}/).map((para, i) => <p key={i}>{para}</p>)}
+            </Reveal>
+          )}
+          {g.host_name && (
+            <Reveal delay={3} className="sn-hostline">
+              <span className="sn-label">Your host</span>
+              {g.host_id
+                ? <Link className="sn-hostname" to={`/sanctuary/hosts/${g.host_id}`}>{g.host_name}</Link>
+                : <span className="sn-hostname">{g.host_name}</span>}
+              {g.host_link && /^https?:\/\//i.test(g.host_link) && (
+                <a href={g.host_link} target="_blank" rel="noopener noreferrer nofollow">{g.host_link.replace(/^https?:\/\/(www\.)?/i, '')} ↗</a>
+              )}
+            </Reveal>
+          )}
+          {otherDates.length > 0 && (
+            <section className="sn-more" aria-labelledby="sn-more-h">
+              <h2 id="sn-more-h" className="sn-more-h">More dates</h2>
+              <ul className="sn-list">
+                {otherDates.map((o) => <li key={o.id}><GatheringRow o={o} showHost={false} compact /></li>)}
+              </ul>
+            </section>
+          )}
+        </div>
       </div>
     </main>
   );

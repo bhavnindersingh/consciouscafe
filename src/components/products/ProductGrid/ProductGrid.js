@@ -273,10 +273,13 @@ function Gatherings() {
     <section className="section" id="gather">
       <div className="col-head">
         <Reveal><div className="kicker-row"><span className="idx">03 — Conscious Sanctuary</span><span className="eyebrow">In the making · opening 2026</span></div></Reveal>
-        <Reveal delay={1}>
-          <h2 className="display" style={{ fontSize: 'clamp(32px,5vw,76px)', maxWidth: '18ch', marginBottom: 'clamp(40px,6vh,72px)' }}>
-            A shala, a temple, an ice spa — <em>taking shape</em> beside the café.
-          </h2>
+        <Reveal delay={1} as="h2" className="display gather-h">
+          A shala, a temple, an ice spa — <em>taking shape</em> beside the café.
+        </Reveal>
+        {/* The calendar is already live; the buildings are not. Say so before "coming soon". */}
+        <Reveal delay={2} className="gather-now">
+          <p className="lede gather-now-p">Classes, workshops and evenings already gather beside the café.</p>
+          <button className="tlink" onClick={() => navigate('/sanctuary')}>See what’s on <Arrow /></button>
         </Reveal>
       </div>
       <div className="gather-grid">
@@ -285,20 +288,21 @@ function Gatherings() {
           <span className="eyebrow">A space for body &amp; spirit</span>
           <h4>Conscious Sanctuary</h4>
           <p>Next door to the kitchen, we are building a place to move and to rest — a yoga shala, strength and movement classes, a temple to sit in, and a cold-water ice spa. Made slowly, the way everything here is.</p>
-          <div style={{ marginTop: 24 }}>
+          <div className="gather-card-act">
             <button className="btn on-dark" onClick={() => setIntent('waitlist')}>Join the waitlist <Arrow /></button>
           </div>
         </Reveal>
         <div className="gather-stack">
-          {offerings.map((o, i) => (
-            <Reveal className="gather-mini" delay={i + 1} key={o.t}>
-              <div className="gm-num">{String(i + 1).padStart(2, '0')}</div>
-              <div><h5>{o.t}</h5><span className="gm-desc">{o.d}</span></div>
-              <span className="soon-pill">Soon</span>
-            </Reveal>
-          ))}
-          <Reveal delay={3}>
-            <button className="btn" style={{ width: '100%', justifyContent: 'center', marginTop: 8 }} onClick={() => setIntent('notify')}>
+          <ul className="gather-list">
+            {offerings.map((o, i) => (
+              <Reveal as="li" className="gather-mini" delay={i + 1} key={o.t}>
+                <h5>{o.t}</h5>
+                <span className="gm-desc">{o.d}</span>
+              </Reveal>
+            ))}
+          </ul>
+          <Reveal delay={3} className="gather-foot">
+            <button className="btn gather-notify" onClick={() => setIntent('notify')}>
               Notify me when it opens <Arrow />
             </button>
           </Reveal>

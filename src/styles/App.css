@@ -286,7 +286,10 @@ button { font-family: inherit; cursor: pointer; }
 .strip-item::after { content:"✦"; font-style: normal; font-size: .5em; color: var(--sage); }
 @keyframes marq { to { transform: translateX(-50%); } }
 
-/* ---- Gatherings ---- */
+/* ---- Gatherings (home, #gather) ---- new classes here start with gather- */
+.gather-h { font-size: clamp(32px, 5vw, 76px); max-width: 18ch; margin-bottom: clamp(24px, 4vh, 40px); }
+.gather-now { display: flex; align-items: baseline; justify-content: space-between; gap: 16px 40px; flex-wrap: wrap; padding-bottom: clamp(28px, 4vh, 44px); margin-bottom: clamp(32px, 5vh, 56px); border-bottom: 1px solid var(--line); }
+.gather-now-p { max-width: 34ch; font-size: clamp(18px, 1.5vw, 24px); }
 .gather-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(28px,4vw,64px); max-width: 1500px; margin: 0 auto; align-items: stretch; }
 .sanctuary-card {
   position: relative; overflow: hidden; min-height: 380px;
@@ -301,16 +304,14 @@ button { font-family: inherit; cursor: pointer; }
   font-family: var(--ui); font-size: 10px; letter-spacing: .22em; text-transform: uppercase;
   color: var(--forest); background: var(--paper); padding: 7px 13px; border-radius: 99px;
 }
-.gather-stack { display: grid; gap: clamp(20px,3vw,28px); }
-.gather-mini { display: grid; grid-template-columns: 96px 1fr auto; gap: 22px; align-items: center; padding: 22px 0; border-top: 1px solid var(--line); }
-.gather-mini:first-child { border-top: none; }
-.gather-mini .gm-num { font-family: var(--display); font-size: 26px; color: var(--ink-mute); text-align: left; }
-.gather-mini .gm-desc { display: block; font-family: var(--serif); font-size: 16px; color: var(--ink-mute); font-style: italic; margin-top: 2px; }
-.gather-mini h5 { font-family: var(--display); font-weight: 400; font-size: clamp(20px,1.7vw,26px); line-height: 1.1; }
-.soon-pill {
-  font-family: var(--ui); font-size: 10px; letter-spacing: .18em; text-transform: uppercase;
-  color: var(--sage); border: 1px solid var(--line); padding: 6px 12px; border-radius: 99px; white-space: nowrap;
-}
+.gather-card-act { margin-top: 24px; }
+.gather-stack { display: flex; flex-direction: column; justify-content: space-between; gap: clamp(20px,3vw,28px); }
+.gather-list { list-style: none; margin: 0; padding: 0; }
+.gather-mini { display: flex; flex-direction: column; gap: 4px; padding: 20px 0; border-top: 1px solid var(--line); }
+.gather-mini:first-child { border-top: none; padding-top: 0; }
+.gather-mini .gm-desc { display: block; font-family: var(--serif); font-size: 17px; color: var(--ink-mute); font-style: italic; }
+.gather-mini h5 { font-family: var(--display); font-weight: 400; font-size: clamp(22px,1.8vw,28px); line-height: 1.1; }
+.gather-notify { width: 100%; justify-content: center; }
 
 /* ============================================================
    FOOTER
@@ -1122,7 +1123,16 @@ button { font-family: inherit; cursor: pointer; }
   .visit-hero h1 { font-size: clamp(40px, 13vw, 64px); }
 
   /* gather */
-  .gather-mini { grid-template-columns: 44px 1fr auto; gap: 14px; }
+  .gather-h { max-width: none; }
+  .gather-now { flex-direction: column; align-items: flex-start; gap: 14px; }
+  .gather-now-p { max-width: none; }
+  .gather-now .tlink { min-height: 44px; }
+  .sanctuary-card { min-height: 0; padding: 26px 22px 28px; }
+  .sanctuary-card .soon-flag { position: static; align-self: flex-start; margin-bottom: 18px; }
+  .sanctuary-card p { max-width: none; }
+  .gather-card-act .btn { width: 100%; justify-content: center; }
+  .gather-mini { padding: 16px 0; }
+  .host-banner { padding: 22px 20px; }
 
   /* menu */
   .menu-hero { padding: clamp(96px,16vh,140px) var(--gutter) 18px; }
