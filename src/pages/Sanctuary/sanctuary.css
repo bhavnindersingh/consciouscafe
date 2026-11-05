@@ -83,8 +83,9 @@
 .sn-back:hover { color: var(--ink); }
 .sn-detail-head { display: flex; gap: clamp(18px, 2.4vw, 32px); align-items: flex-start; }
 .sn-detail-title { font-size: clamp(38px, 5.4vw, 84px); margin-top: 10px; }
-.sn-detail-img { margin-top: clamp(28px, 5vh, 48px); background: var(--paper-2); aspect-ratio: 16 / 10; overflow: hidden; }
-.sn-detail-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.sn-detail-img { margin-top: clamp(28px, 5vh, 48px); }
+/* The whole photo, in its own shape — scaled down, never cropped. */
+.sn-detail-img img { display: block; width: auto; height: auto; max-width: 100%; max-height: 80vh; }
 .sn-prose { margin-top: clamp(28px, 5vh, 44px); max-width: 64ch; }
 .sn-prose p { font-family: var(--serif); font-size: clamp(19px, 1.7vw, 23px); line-height: 1.55; color: var(--ink-soft); margin-bottom: 1em; white-space: pre-line; }
 .sn-hostline { margin-top: 30px; padding-top: 22px; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; }
@@ -178,7 +179,8 @@
 .sn-editor .sn-dash-h { margin-bottom: 24px; }
 .sn-editor-acts { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; margin-top: 10px; }
 .sn-image { display: flex; gap: 18px; align-items: center; }
-.sn-image img, .sn-image-empty { width: 200px; aspect-ratio: 16 / 10; object-fit: cover; background: var(--paper-2); border: 1px solid var(--line-soft); }
+.sn-image img { display: block; width: auto; height: auto; max-width: 200px; max-height: 200px; border: 1px solid var(--line-soft); }
+.sn-image-empty { width: 200px; aspect-ratio: 16 / 10; background: var(--paper-2); border: 1px solid var(--line-soft); }
 .sn-image-empty { display: flex; align-items: center; justify-content: center; font-family: var(--ui); font-size: 12px; color: var(--ink-mute); }
 .sn-image-acts { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
 .sn-image-acts label { cursor: pointer; }
@@ -198,7 +200,8 @@
 .sn-row-tags { display: flex; gap: 12px; align-items: baseline; flex-wrap: wrap; }
 .sn-repeat { font-family: var(--serif); font-style: italic; font-size: 16px; color: var(--ink-soft); letter-spacing: 0; text-transform: none; }
 .sn-row.has-img { grid-template-columns: 76px minmax(0, 1fr) 176px auto; }
-.sn-row-img { width: 176px; aspect-ratio: 3 / 2; object-fit: cover; display: block; background: var(--paper-2); }
+/* The whole photo inside a 176 × 200 box, in its own shape — never cropped. */
+.sn-row-img { display: block; width: auto; height: auto; max-width: 176px; max-height: 200px; justify-self: center; align-self: center; }
 .sn-row.compact { grid-template-columns: 58px minmax(0, 1fr) auto; padding: 14px 0; }
 .sn-row.compact .sn-row-title { font-size: clamp(19px, 1.8vw, 23px); }
 .sn-row.compact .sn-price { font-size: 18px; }
@@ -269,7 +272,7 @@ button.sn-cal-day:hover { background: var(--paper-2); }
 @media (max-width: 860px) {
   .sn-row.has-img { grid-template-columns: 62px minmax(0, 1fr) 92px; }
   .sn-row.has-img .sn-row-side { grid-column: 2 / -1; }
-  .sn-row-img { width: 92px; aspect-ratio: 1; }
+  .sn-row-img { max-width: 92px; max-height: 120px; }
   .sn-row.compact { grid-template-columns: 58px minmax(0, 1fr); }
   .sn-cal-day { min-height: 96px; padding: 8px; }
   .sn-cal-item { -webkit-line-clamp: 1; }
