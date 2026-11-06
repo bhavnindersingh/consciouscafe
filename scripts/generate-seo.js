@@ -134,6 +134,10 @@ const STATIC_ROUTES = [
   { path: '/sanctuary', priority: '0.7', changefreq: 'daily',
     title: 'Events, Classes & Workshops in Auroville | Conscious Sanctuary',
     description: 'Yoga and movement classes, workshops and gatherings at Conscious Sanctuary beside Conscious Cafe on Auroville Road. See what’s on and reserve a place.' },
+  // Booking the ice bath / sauna. Its return page (/sanctuary/restore/booked) is per-order and noindex.
+  { path: '/sanctuary/restore', priority: '0.7', changefreq: 'weekly',
+    title: 'Book the Ice Bath & Ayurvedic Sauna in Auroville | Conscious Sanctuary',
+    description: 'Book a time for the ice bath, the Ayurvedic sauna, or a contrast session of both at Conscious Sanctuary on Auroville Road. Shared slots, pay online with PhonePe.' },
   { path: '/delivery', priority: '0.6', changefreq: 'monthly',
     title: 'Food Delivery Auroville | Conscious Cafe Online Order',
     description: 'Order healthy vegetarian & vegan food delivery from Conscious Cafe Auroville. Fresh, consciously sourced non-processed meals delivered to your door. Serving Auroville and nearby areas.' },
@@ -205,6 +209,7 @@ function crumbsFor(routePath) {
     '/visit': [{ name: 'Home', path: '/' }, { name: 'Visit', path: '/visit' }],
     '/delivery': [{ name: 'Home', path: '/' }, { name: 'Delivery', path: '/delivery' }],
     '/sanctuary': [{ name: 'Home', path: '/' }, { name: 'Sanctuary', path: '/sanctuary' }],
+    '/sanctuary/restore': [{ name: 'Home', path: '/' }, { name: 'Sanctuary', path: '/sanctuary' }, { name: 'Ice bath & sauna', path: '/sanctuary/restore' }],
   };
   return labels[routePath] ? [crumb(labels[routePath])] : [];
 }

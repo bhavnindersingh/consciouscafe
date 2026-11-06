@@ -122,6 +122,12 @@ export const pageData = {
     description: 'Yoga and movement classes, workshops and gatherings at Conscious Sanctuary beside Conscious Cafe on Auroville Road. See what’s on and reserve a place.',
     keywords: 'auroville events, auroville workshops, yoga class auroville, auroville classes, conscious sanctuary, things to do auroville, sound bath auroville, meditation auroville',
   },
+  // The booking page for the two rooms (generatePageSEO builds the url from the key).
+  'sanctuary/restore': {
+    title: 'Book the Ice Bath & Ayurvedic Sauna in Auroville | Conscious Sanctuary',
+    description: 'Book a time for the ice bath, the Ayurvedic sauna, or a contrast session of both at Conscious Sanctuary on Auroville Road. Shared slots, pay online with PhonePe.',
+    keywords: 'ice bath booking auroville, sauna booking auroville, ayurvedic sauna auroville, cold plunge auroville, contrast therapy auroville, conscious sanctuary booking',
+  },
   'privacy-policy': {
     title: 'Privacy Policy | Conscious Cafe Auroville',
     description: 'Privacy Policy for Conscious Cafe, Auroville. Learn how we collect, use, and protect your personal information.',

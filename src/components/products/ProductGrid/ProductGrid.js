@@ -154,7 +154,7 @@ const STRANDS = [
   { verb: 'Nourish', name: 'The café', desc: 'Whole foods and plant-led plates, wood-fired and made by hand, from a kitchen that cooks the season.', status: 'Since 2021', link: { to: '/menu', label: 'View the menu' } },
   { verb: 'Move', name: 'Yoga shala & gym', desc: 'Mat practice, breath and meditation; strength, mobility and conditioning.', status: 'Open' },
   { verb: 'Be still', name: 'The temple', desc: 'A quiet room for stillness, sound and sitting.', status: 'Open' },
-  { verb: 'Restore', name: 'Ice bath & Ayurvedic sauna', desc: 'Cold plunge, Ayurvedic sauna and the contrast between them.', status: 'Open' },
+  { verb: 'Restore', name: 'Ice bath & Ayurvedic sauna', desc: 'Cold plunge, Ayurvedic sauna and the contrast between them.', status: 'Open', link: { to: '/sanctuary/restore', label: 'Book a slot' } },
   { verb: 'Gather', name: 'Classes, workshops & evenings', desc: 'Led by teachers and makers we trust. Reserve a place; pay at the door.', status: 'On the calendar', link: { to: '/sanctuary', label: 'See what’s on' } },
 ];
 

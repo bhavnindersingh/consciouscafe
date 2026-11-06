@@ -34,6 +34,9 @@ const SanctuaryPage = lazy(() => import("./pages/Sanctuary/SanctuaryPage"));
 const GatheringPage = lazy(() => import("./pages/Sanctuary/GatheringPage"));
 const HostPage = lazy(() => import("./pages/Sanctuary/HostPage"));
 const HostProfilePage = lazy(() => import("./pages/Sanctuary/HostProfilePage"));
+// Ice bath & Ayurvedic sauna — paid slots (PhonePe); the return page is where PhonePe sends the guest back.
+const RestorePage = lazy(() => import("./pages/Wellness/RestorePage"));
+const BookedPage = lazy(() => import("./pages/Wellness/BookedPage"));
 
 // Minimal, layout-stable fallback (avoids CLS while a chunk loads)
 const RouteFallback = () => <div style={{ minHeight: "60vh" }} aria-busy="true" />;
@@ -126,6 +129,9 @@ function AppContent() {
           <Route path="/sanctuary" element={<SanctuaryPage />} />
           <Route path="/sanctuary/hosts/:hostId" element={<HostProfilePage />} />
           <Route path="/sanctuary/host/*" element={<HostPage />} />
+          {/* Booking the ice bath / sauna — above /sanctuary/:id, which is a uuid route */}
+          <Route path="/sanctuary/restore" element={<RestorePage />} />
+          <Route path="/sanctuary/restore/booked" element={<BookedPage />} />
           <Route path="/sanctuary/:id" element={<GatheringPage />} />
           {/* The old facilitator dashboard (its tables never existed in this project) */}
           <Route path="/request-facilitator-access" element={<Navigate to="/sanctuary/host" replace />} />

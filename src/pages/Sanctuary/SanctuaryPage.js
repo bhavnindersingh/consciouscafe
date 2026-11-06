@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import SEO from '../../components/seo/SEO/SEO';
 import { generatePageSEO, breadcrumb } from '../../utils/seoData';
 import { listGatherings } from '../../services/sanctuaryService';
@@ -57,6 +57,9 @@ const SanctuaryPage = () => {
         <Reveal delay={2} as="p" className="lede">
           Classes, workshops and evenings beside the café — led by teachers and makers we trust.
           Reserve a place; pay at the door.
+        </Reveal>
+        <Reveal delay={3}>
+          <Link className="sn-hero-aside" to="/sanctuary/restore">Book the ice bath or Ayurvedic sauna <Arrow s={14} /></Link>
         </Reveal>
       </header>
 
