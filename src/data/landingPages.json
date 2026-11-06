@@ -197,29 +197,29 @@
   },
   {
     "slug": "yoga-auroville",
-    "eyebrow": "The Sanctuary · Opening 2026",
+    "eyebrow": "The Sanctuary · Auroville Road",
     "title": "Yoga in Auroville — Yogashala | Conscious Sanctuary",
-    "h1": "Yoga, coming to the Sanctuary",
-    "description": "A yogashala is coming to the Conscious Sanctuary in Auroville — a calm, light-filled space for practice beside the cafe on Auroville Road. Opening in 2026. Join the waitlist.",
+    "h1": "The yogashala",
+    "description": "A yogashala at the Conscious Sanctuary in Auroville — a calm, light-filled space for practice beside the cafe on Auroville Road. Classes and workshops are on the Sanctuary calendar.",
     "keywords": "yoga auroville, yogashala auroville, yoga classes auroville, yoga retreat auroville, yoga near pondicherry, meditation auroville",
-    "intro": "Beside the cafe, the Conscious Sanctuary is taking shape — and a yogashala is at the heart of it. A calm, light-filled space designed for practice, breath and stillness, opening in 2026. Join the waitlist to be first on the mat.",
+    "intro": "Beside the cafe, the Conscious Sanctuary has a yogashala at its heart — a calm, light-filled space for practice, breath and stillness. Classes and workshops are on the Sanctuary calendar.",
     "sections": [
-      { "heading": "A space being made for practice", "body": [
-        "The shala is being built around natural light, open air and quiet underfoot — designed to disappear so the practice can come forward, whether you're deep into your asana or rolling out a mat for the first time.",
-        "When it opens, practice will flow naturally into the rest of the sanctuary: a sauna and ice bath to recover, and the cafe for a nourishing meal after."
+      { "heading": "A space made for practice", "body": [
+        "The shala is built around natural light, open air and quiet underfoot — made to disappear so the practice can come forward, whether you're deep into your asana or rolling out a mat for the first time.",
+        "Practice flows naturally into the rest of the sanctuary: an Ayurvedic sauna and ice bath to recover, and the cafe for a nourishing meal after."
       ] },
       { "heading": "Rooted in Auroville", "body": [
         "We're on Auroville Road, minutes from the township and a short drive from Pondicherry — an easy place to make practice part of your day.",
-        "The Sanctuary opens in 2026. Join the waitlist and we'll let you know the moment classes and retreats are announced — with an early window before anyone else."
+        "Classes, workshops and evenings are on the Sanctuary calendar — pick one and reserve a place."
       ] }
     ],
     "highlights": [],
     "faqs": [
-      { "q": "When is the yogashala opening?", "a": "The Conscious Sanctuary, including the yogashala, is opening in 2026. Join the waitlist and we'll be in touch the moment classes and retreats are announced." },
-      { "q": "Where will it be?", "a": "At the Conscious Sanctuary on Auroville Road (Kuilapalayam Main Road), beside Conscious Cafe — a short drive from Pondicherry." }
+      { "q": "Is the yogashala open?", "a": "Yes. It's part of the Conscious Sanctuary on Auroville Road — classes and workshops are listed on the Sanctuary calendar, where you can reserve a place." },
+      { "q": "Where is it?", "a": "At the Conscious Sanctuary on Auroville Road (Kuilapalayam Main Road), beside Conscious Cafe — a short drive from Pondicherry." }
     ],
     "relatedPages": ["ice-bath-auroville", "sauna-auroville", "best-cafe-auroville"],
-    "menuCta": { "label": "Join the waitlist", "to": "mailto:hello@consciouscafe.in?subject=Sanctuary%20waitlist" }
+    "menuCta": { "label": "See what's on", "to": "/sanctuary" }
   },
   {
     "slug": "ice-bath-auroville",
