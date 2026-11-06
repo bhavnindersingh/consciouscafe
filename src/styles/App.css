@@ -288,7 +288,7 @@ button { font-family: inherit; cursor: pointer; }
 
 /* ---- The place (home, #place) ---- new classes here start with home-
    The spine of the home page: five strands as a ledger, then the Sanctuary's
-   live calendar beside the waitlist. sanctuary.css never loads on /, so the
+   live calendar beneath. sanctuary.css never loads on /, so the
    date tile and row are restated here with the same proportions. */
 .home-place-head { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 72px); align-items: end; margin-bottom: clamp(36px, 6vh, 72px); }
 .home-place-h { font-size: clamp(36px, 5.6vw, 84px); max-width: 12ch; }
@@ -306,9 +306,8 @@ button { font-family: inherit; cursor: pointer; }
 .home-strand-desc { font-family: var(--serif); font-size: clamp(16px, 1.2vw, 19px); line-height: 1.45; color: var(--ink-soft); max-width: 52ch; }
 .home-strand-side { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; text-align: right; }
 .home-strand-status { font-family: var(--ui); font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--forest); }
-.home-strand.is-soon .home-strand-status { color: var(--ink-mute); }
 
-.home-place-live { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(280px, 1fr); gap: clamp(32px, 5vw, 96px); margin-top: clamp(40px, 7vh, 88px); align-items: start; }
+.home-place-live { margin-top: clamp(40px, 7vh, 88px); max-width: 960px; }
 .home-next { min-height: 200px; border-top: 1px solid var(--ink); padding-top: clamp(20px, 3vh, 28px); }
 .home-next-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px 32px; flex-wrap: wrap; margin-bottom: 10px; }
 .home-next-h { font-family: var(--display); font-weight: 400; font-size: clamp(26px, 2.6vw, 38px); line-height: 1.1; }
@@ -334,10 +333,6 @@ button { font-family: inherit; cursor: pointer; }
 .home-next-note { border-top: 1px solid var(--ink); padding: clamp(20px, 3vh, 30px) 0; font-family: var(--serif); font-size: clamp(17px, 1.3vw, 20px); color: var(--ink-mute); line-height: 1.5; max-width: 44ch; }
 .home-next-note p { margin-bottom: 12px; }
 
-.home-doors { border-top: 1px solid var(--ink); padding-top: clamp(20px, 3vh, 28px); }
-.home-doors h4 { font-family: var(--display); font-weight: 400; font-size: clamp(24px, 2.3vw, 34px); line-height: 1.08; margin-bottom: 12px; }
-.home-doors p { font-size: clamp(16px, 1.2vw, 19px); line-height: 1.5; color: var(--ink-soft); margin-bottom: 22px; max-width: 40ch; }
-.home-doors-act { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; }
 
 /* The café (home, #cafe) — the kitchen as one strand: a heading, then the ethos as a lede. */
 .manifesto .home-cafe-h { font-size: clamp(34px, 5vw, 76px); max-width: 14ch; margin-bottom: clamp(22px, 3vh, 32px); }
@@ -1092,7 +1087,6 @@ button { font-family: inherit; cursor: pointer; }
   .sm-aside { flex-direction: row; align-items: center; gap: 16px; padding-top: 0; }
   .sm-aside .sm-rule { width: 48px; }
   .home-strand { grid-template-columns: minmax(120px, .8fr) minmax(0, 2fr) auto; }
-  .home-place-live { grid-template-columns: 1fr; gap: 44px; }
   .host-banner { flex-direction: column; align-items: flex-start; gap: 18px; }
   .host-banner > button { width: 100%; justify-content: center; }
   .sa-grid2 { grid-template-columns: 1fr; }
@@ -1163,14 +1157,12 @@ button { font-family: inherit; cursor: pointer; }
   .home-strand-verb { font-size: 30px; }
   .home-strand-side { flex-direction: row; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px 18px; text-align: left; margin-top: 2px; }
   .home-place .tlink, .manifesto .tlink, .sig-leadbody .tlink { min-height: 44px; }
-  .home-place-live { gap: 40px; }
   .home-next { min-height: 160px; }
   .home-next-row { grid-template-columns: 62px minmax(0, 1fr); gap: 10px 14px; }
   .home-next-go { grid-column: 2; min-height: 24px; }
   .home-tile { width: 62px; }
   .home-tile-day { font-size: 28px; }
-  .home-doors-act .btn { width: 100%; justify-content: center; }
-  .host-banner { padding: 22px 20px; }
+    .host-banner { padding: 22px 20px; }
 
   /* menu */
   .menu-hero { padding: clamp(96px,16vh,140px) var(--gutter) 18px; }

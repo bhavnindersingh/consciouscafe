@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Hero from '../../../pages/Home/Hero';
 import NextGatherings from '../../../pages/Home/NextGatherings';
@@ -18,120 +18,6 @@ const Reveal = ({ children, className = '', delay = 0, as: Tag = 'div', style })
 
 const catName = (slug = '') =>
   slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-
-/* Sanctuary waitlist / host enquiry modal */
-const SANC_INTENTS = {
-  waitlist: {
-    flag: 'Taking shape',
-    title: 'Join the waitlist',
-    sub: 'Be first through the doors when the shala, temple and ice spa open beside the café — with an early-access window before anyone else.',
-    fields: ['name', 'email', 'interest'],
-    submit: 'Join the waitlist',
-    doneH: "You're on the list.",
-    doneP: "We'll write to {email} the moment doors open.",
-  },
-  notify: {
-    flag: 'Taking shape',
-    title: 'Notify me when it opens',
-    sub: 'One quiet email when the Sanctuary is ready to receive you. Nothing else, ever.',
-    fields: ['email'],
-    submit: 'Notify me',
-    doneH: 'Noted.',
-    doneP: 'A single note will reach {email} the day the Sanctuary opens.',
-  },
-  host: {
-    flag: 'Private & group bookings',
-    title: 'Host at the Sanctuary',
-    sub: 'Workshops, retreats, sound circles or private sessions — tell us what you have in mind and we\'ll shape the space around it.',
-    fields: ['name', 'email', 'phone', 'type', 'dates', 'message'],
-    submit: 'Send enquiry',
-    doneH: 'Thank you.',
-    doneP: "Your enquiry is with our team — we'll reply to {email} within two working days.",
-  },
-};
-
-const INTEREST_OPTS = ['Yoga shala', 'Movement & gym', 'The temple', 'Ice spa', 'All of it'];
-const HOST_TYPE_OPTS = ['Workshop', 'Retreat or residency', 'Sound & meditation circle', 'Private session', 'Corporate / team day', 'Something else'];
-
-function SancField({ name, value, onChange }) {
-  const set = v => onChange(name, v);
-  if (name === 'name') return <label className="sa-field"><span>Your name</span><input type="text" value={value} onChange={e => set(e.target.value)} placeholder="First & last" /></label>;
-  if (name === 'email') return <label className="sa-field"><span>Email</span><input type="email" value={value} onChange={e => set(e.target.value)} placeholder="you@email.com" /></label>;
-  if (name === 'phone') return <label className="sa-field"><span>Phone <em>(optional)</em></span><input type="tel" value={value} onChange={e => set(e.target.value)} placeholder="+91" /></label>;
-  if (name === 'dates') return <label className="sa-field"><span>Preferred dates <em>(optional)</em></span><input type="text" value={value} onChange={e => set(e.target.value)} placeholder="e.g. a weekend in March" /></label>;
-  if (name === 'interest') return (
-    <label className="sa-field"><span>What draws you</span>
-      <select value={value} onChange={e => set(e.target.value)}>
-        <option value="">Choose one…</option>
-        {INTEREST_OPTS.map(o => <option key={o} value={o}>{o}</option>)}
-      </select>
-    </label>
-  );
-  if (name === 'type') return (
-    <label className="sa-field"><span>Kind of gathering</span>
-      <select value={value} onChange={e => set(e.target.value)}>
-        <option value="">Choose one…</option>
-        {HOST_TYPE_OPTS.map(o => <option key={o} value={o}>{o}</option>)}
-      </select>
-    </label>
-  );
-  if (name === 'message') return <label className="sa-field sa-wide"><span>Tell us more</span><textarea rows={3} value={value} onChange={e => set(e.target.value)} placeholder="Numbers, intention, anything we should know…" /></label>;
-  return null;
-}
-
-function SanctuaryModal({ intent, onClose }) {
-  const cfg = intent ? SANC_INTENTS[intent] : null;
-  const [form, setForm] = useState({});
-  const [sent, setSent] = useState(false);
-
-  React.useEffect(() => { setForm({}); setSent(false); }, [intent]);
-  React.useEffect(() => {
-    if (!intent) return;
-    const onKey = e => { if (e.key === 'Escape') onClose(); };
-    document.addEventListener('keydown', onKey);
-    document.body.style.overflow = 'hidden';
-    return () => { document.removeEventListener('keydown', onKey); document.body.style.overflow = ''; };
-  }, [intent, onClose]);
-
-  if (!cfg) return null;
-
-  const setField = (k, v) => setForm(f => ({ ...f, [k]: v }));
-  const emailOk = /\S+@\S+\.\S+/.test(form.email || '');
-  const canSend = emailOk && (!cfg.fields.includes('name') || (form.name || '').trim().length > 1);
-  const onSubmit = e => { e.preventDefault(); if (canSend) setSent(true); };
-  const isHost = intent === 'host';
-
-  return (
-    <div className="sa-overlay" onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
-      <div className="sa-panel" role="dialog" aria-modal="true" aria-label={cfg.title}>
-        <button className="sa-close" onClick={onClose} aria-label="Close">×</button>
-        {!sent ? (
-          <>
-            <span className="sa-flag"><span className="dot" />Conscious Sanctuary · {cfg.flag}</span>
-            <h3 className="display">{cfg.title}</h3>
-            <p className="sa-sub">{cfg.sub}</p>
-            <form className="sa-form" onSubmit={onSubmit}>
-              <div className={isHost ? 'sa-grid2' : ''}>
-                {cfg.fields.map(f => <SancField key={f} name={f} value={form[f] || ''} onChange={setField} />)}
-              </div>
-              <button type="submit" className="btn forest sa-submit" disabled={!canSend}>{cfg.submit} <Arrow /></button>
-              <p className="sa-fine">We use your details only for this — no lists sold, no noise.</p>
-            </form>
-          </>
-        ) : (
-          <div className="sa-done">
-            <span className="sa-tick" aria-hidden="true">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M4 12.5l5 5L20 6" strokeLinecap="round" strokeLinejoin="round" /></svg>
-            </span>
-            <h3 className="display">{cfg.doneH}</h3>
-            <p className="sa-sub">{cfg.doneP.replace('{email}', form.email || 'you')}</p>
-            <button className="btn forest sa-submit" onClick={onClose}>Close</button>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
 
 /* SIGNATURES — editorial product gallery */
 function Signatures({ products, onProductClick }) {
@@ -262,18 +148,17 @@ function Pillars() {
 }
 
 /* THE PLACE — the spine of the page: one place, five ways to be well.
-   The café is one strand; the Sanctuary's calendar is live; the rooms are
-   still taking shape. Status words here are the site's existing ones. */
+   The café is one strand; the rooms are open (owner, 2026-11-06); the
+   Sanctuary's calendar is live. */
 const STRANDS = [
   { verb: 'Nourish', name: 'The café', desc: 'Whole foods and plant-led plates, wood-fired and made by hand, from a kitchen that cooks the season.', status: 'Since 2021', link: { to: '/menu', label: 'View the menu' } },
-  { verb: 'Move', name: 'Yoga shala & gym', desc: 'Mat practice, breath and meditation; strength, mobility and conditioning.', status: 'Taking shape' },
-  { verb: 'Be still', name: 'The temple', desc: 'A quiet room for stillness, sound and sitting.', status: 'Taking shape' },
-  { verb: 'Restore', name: 'Ice spa', desc: 'Cold plunge, contrast therapy and recovery.', status: 'Taking shape' },
+  { verb: 'Move', name: 'Yoga shala & gym', desc: 'Mat practice, breath and meditation; strength, mobility and conditioning.', status: 'Open' },
+  { verb: 'Be still', name: 'The temple', desc: 'A quiet room for stillness, sound and sitting.', status: 'Open' },
+  { verb: 'Restore', name: 'Ice bath & Ayurvedic sauna', desc: 'Cold plunge, Ayurvedic sauna and the contrast between them.', status: 'Open' },
   { verb: 'Gather', name: 'Classes, workshops & evenings', desc: 'Led by teachers and makers we trust. Reserve a place; pay at the door.', status: 'On the calendar', link: { to: '/sanctuary', label: 'See what’s on' } },
 ];
 
 function Place() {
-  const [intent, setIntent] = useState(null);
   const navigate = useNavigate();
   return (
     <section className="section home-place" id="place">
@@ -284,13 +169,13 @@ function Place() {
             One place, several <em>ways to be well.</em>
           </Reveal>
           <Reveal delay={2} as="p" className="lede home-place-lede">
-            Food is one of them. Beside the kitchen, a shala, a temple and an ice spa are taking shape — and classes, workshops and evenings already gather here.
+            Food is one of them. Beside the kitchen are a yoga shala and gym, a temple, an ice bath and an Ayurvedic sauna — and classes, workshops and evenings gather here.
           </Reveal>
         </div>
 
         <ol className="home-strands">
           {STRANDS.map((st, i) => (
-            <Reveal as="li" className={`home-strand${st.link ? '' : ' is-soon'}`} delay={Math.min(i + 1, 4)} key={st.verb}>
+            <Reveal as="li" className="home-strand" delay={Math.min(i + 1, 4)} key={st.verb}>
               <span className="home-strand-verb">{st.verb}</span>
               <span className="home-strand-body">
                 <span className="home-strand-name">{st.name}</span>
@@ -308,18 +193,8 @@ function Place() {
 
         <div className="home-place-live">
           <NextGatherings />
-          <div className="home-doors">
-            <h4>Be first through the doors.</h4>
-            <p>The shala, temple and ice spa are made slowly, the way everything here is. Leave an email and we’ll write the moment they open — nothing else, ever.</p>
-            <div className="home-doors-act">
-              <button className="btn" onClick={() => setIntent('waitlist')}>Join the waitlist <Arrow /></button>
-              <button className="tlink" onClick={() => setIntent('notify')}>Notify me when it opens <Arrow /></button>
-            </div>
-          </div>
         </div>
       </div>
-
-      <SanctuaryModal intent={intent} onClose={() => setIntent(null)} />
     </section>
   );
 }

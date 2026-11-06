@@ -41,7 +41,7 @@ const Hero = () => {
         <div style={{ maxWidth: 1500, margin: '0 auto', width: '100%' }}>
           <span className="eyebrow on-dark">Conscious Café &amp; Sanctuary</span>
           <h1 className="display reveal">A café and a sanctuary,<br /><em>one slow place.</em></h1>
-          <p className="hero-sub">A plant-led kitchen on Auroville Road and, taking shape beside it, a place to move, sit still and restore — with classes and evenings already on the calendar.</p>
+          <p className="hero-sub">A plant-led kitchen on Auroville Road and, beside it, a place to move, sit still and restore — with classes and evenings on the calendar.</p>
           <div className="hero-cta">
             <button className="btn on-dark" onClick={() => navigate('/menu')}>View the Menu <Arrow /></button>
             <button className="btn on-dark" style={{ borderColor: 'transparent', paddingLeft: 0 }} onClick={() => navigate('/sanctuary')}>See what’s on <Arrow /></button>
