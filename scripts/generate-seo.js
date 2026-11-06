@@ -107,8 +107,8 @@ const faqSchema = () => ({
 // ── Stable routes (title/description mirror src/utils/seoData.js) ──────────────
 const STATIC_ROUTES = [
   { path: '/', priority: '1.0', changefreq: 'weekly',
-    title: 'Conscious Cafe Auroville | Best Vegetarian & Vegan Restaurant with Ice Bath, Sauna, Yogashala',
-    description: 'Experience artisanal vegetarian & vegan food at Conscious Cafe Auroville. Fresh, consciously sourced non-processed meals with conscious ingredients at Kavas Yoga Retreat. Order online now!' },
+    title: 'Conscious Café & Sanctuary, Auroville Road | Plant-led Café, Yoga Shala, Temple, Ice Spa & Gatherings',
+    description: 'A plant-led café on Auroville Road and, taking shape beside it, Conscious Sanctuary — a yoga shala and gym, a temple and an ice spa — with classes, workshops and evenings by outside hosts already on the calendar. Order food online or reserve a place.' },
   { path: '/menu', priority: '0.9', changefreq: 'weekly',
     title: 'Vegetarian & Vegan Food Menu | Conscious Cafe Auroville',
     description: 'Browse our artisanal vegetarian & vegan menu featuring toasts, bowls, salads & desserts. Fresh, consciously sourced non-processed ingredients. Best healthy restaurant in Auroville!' },

@@ -77,9 +77,9 @@ export const maps = {
 
 export const pageData = {
   home: {
-    title: 'Conscious Cafe Auroville | Best Vegetarian & Vegan Restaurant with Ice Bath, Sauna, Yogashala',
-    description: 'Experience artisanal vegetarian & vegan food at Conscious Cafe Auroville. Fresh, consciously sourced non-processed meals with conscious ingredients at Kavas Yoga Retreat. Order online now!',
-    keywords: 'conscious cafe auroville, artisanal vegetarian vegan restaurant, consciously sourced food auroville, healthy restaurant, sustainable dining, kavas yoga retreat, conscious eating, vegetarian, vegan, ice bath, sauna, yogashala',
+    title: 'Conscious Café & Sanctuary, Auroville Road | Plant-led Café, Yoga Shala, Temple, Ice Spa & Gatherings',
+    description: 'A plant-led café on Auroville Road and, taking shape beside it, Conscious Sanctuary — a yoga shala and gym, a temple and an ice spa — with classes, workshops and evenings by outside hosts already on the calendar. Order food online or reserve a place.',
+    keywords: 'conscious cafe auroville, conscious sanctuary, plant-based cafe auroville, vegetarian vegan restaurant auroville, yoga shala auroville, ice spa, cold plunge, temple, meditation, yoga classes auroville, workshops auroville, kavas yoga retreat, sustainable dining',
   },
   menu: {
     title: 'Vegetarian & Vegan Food Menu | Conscious Cafe Auroville',

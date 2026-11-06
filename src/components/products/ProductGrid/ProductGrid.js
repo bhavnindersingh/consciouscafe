@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Hero from '../../../pages/Home/Hero';
+import NextGatherings from '../../../pages/Home/NextGatherings';
 import SEO from '../../seo/SEO/SEO';
 import { pageData, generateStructuredData, siteConfig } from '../../../utils/seoData';
 import PhotoPending from '../../common/PhotoPending/PhotoPending';
@@ -21,7 +22,7 @@ const catName = (slug = '') =>
 /* Sanctuary waitlist / host enquiry modal */
 const SANC_INTENTS = {
   waitlist: {
-    flag: 'Opening 2026',
+    flag: 'Taking shape',
     title: 'Join the waitlist',
     sub: 'Be first through the doors when the shala, temple and ice spa open beside the café — with an early-access window before anyone else.',
     fields: ['name', 'email', 'interest'],
@@ -30,7 +31,7 @@ const SANC_INTENTS = {
     doneP: "We'll write to {email} the moment doors open.",
   },
   notify: {
-    flag: 'Opening 2026',
+    flag: 'Taking shape',
     title: 'Notify me when it opens',
     sub: 'One quiet email when the Sanctuary is ready to receive you. Nothing else, ever.',
     fields: ['email'],
@@ -161,7 +162,7 @@ function Signatures({ products, onProductClick }) {
       <div className="col-head">
         <Reveal>
           <div className="kicker-row">
-            <span className="idx">04 — Signatures</span>
+            <span className="idx">Signatures</span>
             <span className="eyebrow">What the regulars order</span>
           </div>
         </Reveal>
@@ -240,7 +241,7 @@ function Pillars() {
   return (
     <section className="section forest" id="story">
       <div className="col-head">
-        <Reveal><div className="kicker-row"><span className="idx" style={{ color: 'rgba(255,255,255,.55)' }}>02 — Why we exist</span></div></Reveal>
+        <Reveal><div className="kicker-row"><span className="idx" style={{ color: 'rgba(255,255,255,.55)' }}>Why we exist</span></div></Reveal>
         <Reveal delay={1}>
           <h2 className="display" style={{ fontSize: 'clamp(32px,5vw,76px)', maxWidth: '16ch', marginBottom: 'clamp(40px,7vh,84px)' }}>
             Conscious is not a <em>flavour.</em> It is a practice.
@@ -260,60 +261,61 @@ function Pillars() {
   );
 }
 
-function Gatherings() {
+/* THE PLACE — the spine of the page: one place, five ways to be well.
+   The café is one strand; the Sanctuary's calendar is live; the rooms are
+   still taking shape. Status words here are the site's existing ones. */
+const STRANDS = [
+  { verb: 'Nourish', name: 'The café', desc: 'Whole foods and plant-led plates, wood-fired and made by hand, from a kitchen that cooks the season.', status: 'Since 2021', link: { to: '/menu', label: 'View the menu' } },
+  { verb: 'Move', name: 'Yoga shala & gym', desc: 'Mat practice, breath and meditation; strength, mobility and conditioning.', status: 'Taking shape' },
+  { verb: 'Be still', name: 'The temple', desc: 'A quiet room for stillness, sound and sitting.', status: 'Taking shape' },
+  { verb: 'Restore', name: 'Ice spa', desc: 'Cold plunge, contrast therapy and recovery.', status: 'Taking shape' },
+  { verb: 'Gather', name: 'Classes, workshops & evenings', desc: 'Led by teachers and makers we trust. Reserve a place; pay at the door.', status: 'On the calendar', link: { to: '/sanctuary', label: 'See what’s on' } },
+];
+
+function Place() {
   const [intent, setIntent] = useState(null);
   const navigate = useNavigate();
-  const offerings = [
-    { t: 'Yoga Shala', d: 'Daily mat practice, breath & meditation' },
-    { t: 'Movement & Gym', d: 'Strength, mobility and conditioning classes' },
-    { t: 'The Temple', d: 'A quiet room for stillness, sound & sit' },
-    { t: 'Ice Spa', d: 'Cold plunge, contrast therapy & recovery' },
-  ];
   return (
-    <section className="section" id="gather">
+    <section className="section home-place" id="place">
       <div className="col-head">
-        <Reveal><div className="kicker-row"><span className="idx">03 — Conscious Sanctuary</span><span className="eyebrow">In the making · opening 2026</span></div></Reveal>
-        <Reveal delay={1} as="h2" className="display gather-h">
-          A shala, a temple, an ice spa — <em>taking shape</em> beside the café.
-        </Reveal>
-        {/* The calendar is already live; the buildings are not. Say so before "coming soon". */}
-        <Reveal delay={2} className="gather-now">
-          <p className="lede gather-now-p">Classes, workshops and evenings already gather beside the café.</p>
-          <button className="tlink" onClick={() => navigate('/sanctuary')}>See what’s on <Arrow /></button>
-        </Reveal>
-      </div>
-      <div className="gather-grid">
-        <Reveal className="sanctuary-card">
-          <span className="soon-flag">Coming soon</span>
-          <span className="eyebrow">A space for body &amp; spirit</span>
-          <h4>Conscious Sanctuary</h4>
-          <p>Next door to the kitchen, we are building a place to move and to rest — a yoga shala, strength and movement classes, a temple to sit in, and a cold-water ice spa. Made slowly, the way everything here is.</p>
-          <div className="gather-card-act">
-            <button className="btn on-dark" onClick={() => setIntent('waitlist')}>Join the waitlist <Arrow /></button>
-          </div>
-        </Reveal>
-        <div className="gather-stack">
-          <ul className="gather-list">
-            {offerings.map((o, i) => (
-              <Reveal as="li" className="gather-mini" delay={i + 1} key={o.t}>
-                <h5>{o.t}</h5>
-                <span className="gm-desc">{o.d}</span>
-              </Reveal>
-            ))}
-          </ul>
-          <Reveal delay={3} className="gather-foot">
-            <button className="btn gather-notify" onClick={() => setIntent('notify')}>
-              Notify me when it opens <Arrow />
-            </button>
+        <Reveal><div className="kicker-row"><span className="idx">Conscious Café &amp; Conscious Sanctuary</span><span className="eyebrow">Auroville Road</span></div></Reveal>
+        <div className="home-place-head">
+          <Reveal delay={1} as="h2" className="display home-place-h">
+            One place, several <em>ways to be well.</em>
+          </Reveal>
+          <Reveal delay={2} as="p" className="lede home-place-lede">
+            Food is one of them. Beside the kitchen, a shala, a temple and an ice spa are taking shape — and classes, workshops and evenings already gather here.
           </Reveal>
         </div>
 
-        <div className="host-banner">
-          <div className="hb-copy">
-            <span className="eyebrow">Private &amp; group bookings</span>
-            <h4>Planning a workshop or retreat? Host it at the Sanctuary.</h4>
+        <ol className="home-strands">
+          {STRANDS.map((st, i) => (
+            <Reveal as="li" className={`home-strand${st.link ? '' : ' is-soon'}`} delay={Math.min(i + 1, 4)} key={st.verb}>
+              <span className="home-strand-verb">{st.verb}</span>
+              <span className="home-strand-body">
+                <span className="home-strand-name">{st.name}</span>
+                <span className="home-strand-desc">{st.desc}</span>
+              </span>
+              <span className="home-strand-side">
+                <span className="home-strand-status">{st.status}</span>
+                {st.link && (
+                  <button className="tlink home-strand-link" onClick={() => navigate(st.link.to)}>{st.link.label} <Arrow /></button>
+                )}
+              </span>
+            </Reveal>
+          ))}
+        </ol>
+
+        <div className="home-place-live">
+          <NextGatherings />
+          <div className="home-doors">
+            <h4>Be first through the doors.</h4>
+            <p>The shala, temple and ice spa are made slowly, the way everything here is. Leave an email and we’ll write the moment they open — nothing else, ever.</p>
+            <div className="home-doors-act">
+              <button className="btn" onClick={() => setIntent('waitlist')}>Join the waitlist <Arrow /></button>
+              <button className="tlink" onClick={() => setIntent('notify')}>Notify me when it opens <Arrow /></button>
+            </div>
           </div>
-          <button className="btn" onClick={() => navigate('/sanctuary/host')}>Host at the Sanctuary <Arrow /></button>
         </div>
       </div>
 
@@ -322,9 +324,49 @@ function Gatherings() {
   );
 }
 
-const ProductGrid = ({ products = [], onAddToCart, onProductClick }) => {
+/* THE CAFÉ — the kitchen's own section, one strand of the place. */
+function Cafe() {
   const navigate = useNavigate();
+  return (
+    <section className="section" id="cafe">
+      <div className="manifesto">
+        <Reveal>
+          <div className="kicker-row"><span className="idx">The café</span><span className="eyebrow">A way of cooking</span></div>
+        </Reveal>
+        <Reveal delay={1} as="h2" className="display home-cafe-h">
+          Eat like the <em>earth is watching.</em>
+        </Reveal>
+        <Reveal delay={2} as="p" className="lede home-cafe-lede">
+          We cook with what the season offers — grains, roots, leaf and ferment — and let restraint do the seasoning. Nothing rushed, nothing wasted, everything considered.
+        </Reveal>
+        <div className="manifesto-foot">
+          <Reveal delay={3}><p className="lede" style={{ maxWidth: '30ch' }}>Sourced within reach of our doors, prepared by hands that know the difference.</p></Reveal>
+          <Reveal delay={4}><button className="tlink" onClick={() => navigate('/about')}>Read our story <Arrow /></button></Reveal>
+        </div>
+      </div>
+    </section>
+  );
+}
 
+/* Closing: the Sanctuary's open door for teachers and makers. */
+function HostBanner() {
+  const navigate = useNavigate();
+  return (
+    <section className="section tight home-host" id="host">
+      <div className="col-head">
+        <div className="host-banner">
+          <div className="hb-copy">
+            <span className="eyebrow">Private &amp; group bookings</span>
+            <h4>Planning a workshop or retreat? Host it at the Sanctuary.</h4>
+          </div>
+          <button className="btn" onClick={() => navigate('/sanctuary/host')}>Host at the Sanctuary <Arrow /></button>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+const ProductGrid = ({ products = [], onAddToCart, onProductClick }) => {
   /* Food products only for the signature section */
   const foodProducts = useMemo(() =>
     products.filter(p => !p.mainCategory || p.mainCategory === 'food'),
@@ -343,23 +385,13 @@ const ProductGrid = ({ products = [], onAddToCart, onProductClick }) => {
 
       <Hero />
 
-      {/* Manifesto */}
-      <section className="section" id="manifesto">
-        <div className="manifesto">
-          <Reveal>
-            <div className="kicker-row"><span className="idx">01 — Ethos</span><span className="eyebrow">A way of cooking</span></div>
-          </Reveal>
-          <Reveal delay={1}>
-            <p className="display" style={{ fontSize: 'clamp(30px,5vw,78px)' }}>
-              We cook with what the season offers — <span className="mut" style={{ color: 'var(--ink-mute)' }}>grains, roots, leaf and ferment</span> — and let restraint do the seasoning. Nothing rushed, nothing wasted, <em>everything considered.</em>
-            </p>
-          </Reveal>
-          <div className="manifesto-foot">
-            <Reveal delay={2}><p className="lede" style={{ maxWidth: '30ch' }}>Sourced within reach of our doors, prepared by hands that know the difference.</p></Reveal>
-            <Reveal delay={3}><button className="tlink" onClick={() => navigate('/about')}>Read our story <Arrow /></button></Reveal>
-          </div>
-        </div>
-      </section>
+      {/* The place: café + Sanctuary as one, with the live calendar */}
+      <Place />
+
+      {/* The pivot: the practice that runs through all of it, then the kitchen */}
+      <Pillars />
+
+      <Cafe />
 
       <Strip />
 
@@ -367,8 +399,7 @@ const ProductGrid = ({ products = [], onAddToCart, onProductClick }) => {
         <Signatures products={foodProducts} onProductClick={onProductClick} />
       </section>
 
-      <Pillars />
-      <Gatherings />
+      <HostBanner />
     </>
   );
 };

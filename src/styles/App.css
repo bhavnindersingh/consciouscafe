@@ -286,32 +286,63 @@ button { font-family: inherit; cursor: pointer; }
 .strip-item::after { content:"✦"; font-style: normal; font-size: .5em; color: var(--sage); }
 @keyframes marq { to { transform: translateX(-50%); } }
 
-/* ---- Gatherings (home, #gather) ---- new classes here start with gather- */
-.gather-h { font-size: clamp(32px, 5vw, 76px); max-width: 18ch; margin-bottom: clamp(24px, 4vh, 40px); }
-.gather-now { display: flex; align-items: baseline; justify-content: space-between; gap: 16px 40px; flex-wrap: wrap; padding-bottom: clamp(28px, 4vh, 44px); margin-bottom: clamp(32px, 5vh, 56px); border-bottom: 1px solid var(--line); }
-.gather-now-p { max-width: 34ch; font-size: clamp(18px, 1.5vw, 24px); }
-.gather-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(28px,4vw,64px); max-width: 1500px; margin: 0 auto; align-items: stretch; }
-.sanctuary-card {
-  position: relative; overflow: hidden; min-height: 380px;
-  display: flex; flex-direction: column; justify-content: flex-end;
-  padding: clamp(30px,3.2vw,50px); background: var(--forest); color: var(--paper);
+/* ---- The place (home, #place) ---- new classes here start with home-
+   The spine of the home page: five strands as a ledger, then the Sanctuary's
+   live calendar beside the waitlist. sanctuary.css never loads on /, so the
+   date tile and row are restated here with the same proportions. */
+.home-place-head { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 72px); align-items: end; margin-bottom: clamp(36px, 6vh, 72px); }
+.home-place-h { font-size: clamp(36px, 5.6vw, 84px); max-width: 12ch; }
+.home-place-lede { max-width: 40ch; font-size: clamp(18px, 1.5vw, 24px); padding-bottom: .3em; }
+
+.home-strands { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--ink); }
+.home-strand {
+  display: grid; grid-template-columns: minmax(150px, .9fr) minmax(0, 2.2fr) minmax(200px, 1fr);
+  gap: 12px clamp(20px, 3vw, 56px); align-items: baseline;
+  padding: clamp(18px, 2.6vh, 28px) 0; border-bottom: 1px solid var(--line);
 }
-.sanctuary-card .eyebrow { color: rgba(255,255,255,.6); }
-.sanctuary-card h4 { font-family: var(--display); font-weight: 400; font-size: clamp(30px,3vw,48px); line-height: 1.02; margin: 14px 0 14px; letter-spacing: -.01em; }
-.sanctuary-card p { color: rgba(255,255,255,.82); font-size: clamp(17px,1.2vw,19px); line-height: 1.5; max-width: 44ch; }
-.sanctuary-card .soon-flag {
-  position: absolute; top: clamp(24px,2.4vw,34px); right: clamp(24px,2.4vw,34px);
-  font-family: var(--ui); font-size: 10px; letter-spacing: .22em; text-transform: uppercase;
-  color: var(--forest); background: var(--paper); padding: 7px 13px; border-radius: 99px;
+.home-strand-verb { font-family: var(--display); font-size: clamp(28px, 3.2vw, 48px); line-height: 1; letter-spacing: -.01em; }
+.home-strand-body { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.home-strand-name { font-family: var(--display); font-size: clamp(20px, 1.7vw, 26px); line-height: 1.1; }
+.home-strand-desc { font-family: var(--serif); font-size: clamp(16px, 1.2vw, 19px); line-height: 1.45; color: var(--ink-soft); max-width: 52ch; }
+.home-strand-side { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; text-align: right; }
+.home-strand-status { font-family: var(--ui); font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--forest); }
+.home-strand.is-soon .home-strand-status { color: var(--ink-mute); }
+
+.home-place-live { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(280px, 1fr); gap: clamp(32px, 5vw, 96px); margin-top: clamp(40px, 7vh, 88px); align-items: start; }
+.home-next { min-height: 200px; border-top: 1px solid var(--ink); padding-top: clamp(20px, 3vh, 28px); }
+.home-next-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px 32px; flex-wrap: wrap; margin-bottom: 10px; }
+.home-next-h { font-family: var(--display); font-weight: 400; font-size: clamp(26px, 2.6vw, 38px); line-height: 1.1; }
+.home-next-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+.home-next-row {
+  display: grid; grid-template-columns: 76px minmax(0, 1fr) auto; gap: clamp(16px, 2.4vw, 32px); align-items: center;
+  padding: clamp(16px, 2.4vh, 24px) 0; border-bottom: 1px solid var(--line-soft); color: var(--ink); text-decoration: none;
+  transition: background .35s var(--ease);
 }
-.gather-card-act { margin-top: 24px; }
-.gather-stack { display: flex; flex-direction: column; justify-content: space-between; gap: clamp(20px,3vw,28px); }
-.gather-list { list-style: none; margin: 0; padding: 0; }
-.gather-mini { display: flex; flex-direction: column; gap: 4px; padding: 20px 0; border-top: 1px solid var(--line); }
-.gather-mini:first-child { border-top: none; padding-top: 0; }
-.gather-mini .gm-desc { display: block; font-family: var(--serif); font-size: 17px; color: var(--ink-mute); font-style: italic; }
-.gather-mini h5 { font-family: var(--display); font-weight: 400; font-size: clamp(22px,1.8vw,28px); line-height: 1.1; }
-.gather-notify { width: 100%; justify-content: center; }
+.home-tile { width: 76px; border: 1px solid var(--ink); display: flex; flex-direction: column; align-items: center; padding: 8px 0 10px; background: var(--paper); flex: none; }
+.home-tile-dow, .home-tile-mon { font-family: var(--ui); font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--ink-mute); }
+.home-tile-day { font-family: var(--display); font-size: 34px; line-height: 1.05; }
+.home-next-main { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.home-next-tags { display: flex; gap: 12px; align-items: baseline; flex-wrap: wrap; }
+.home-next-kind { font-family: var(--ui); font-size: 11px; letter-spacing: .26em; text-transform: uppercase; font-weight: 500; color: var(--sage); }
+.home-next-kind.is-class { color: var(--forest); }
+.home-next-kind.is-workshop { color: var(--clay); }
+.home-next-repeat { font-family: var(--serif); font-style: italic; font-size: 16px; color: var(--ink-soft); }
+.home-next-title { font-family: var(--display); font-size: clamp(22px, 2.2vw, 30px); line-height: 1.1; text-wrap: balance; }
+.home-next-meta { font-family: var(--ui); font-size: 13px; color: var(--ink-mute); line-height: 1.5; }
+.home-next-go { font-family: var(--ui); font-size: 11px; letter-spacing: .22em; text-transform: uppercase; display: inline-flex; gap: 8px; align-items: center; color: var(--ink-soft); white-space: nowrap; transition: color .3s var(--ease); }
+.home-next-row:hover .home-next-go { color: var(--forest); }
+.home-next-note { border-top: 1px solid var(--ink); padding: clamp(20px, 3vh, 30px) 0; font-family: var(--serif); font-size: clamp(17px, 1.3vw, 20px); color: var(--ink-mute); line-height: 1.5; max-width: 44ch; }
+.home-next-note p { margin-bottom: 12px; }
+
+.home-doors { border-top: 1px solid var(--ink); padding-top: clamp(20px, 3vh, 28px); }
+.home-doors h4 { font-family: var(--display); font-weight: 400; font-size: clamp(24px, 2.3vw, 34px); line-height: 1.08; margin-bottom: 12px; }
+.home-doors p { font-size: clamp(16px, 1.2vw, 19px); line-height: 1.5; color: var(--ink-soft); margin-bottom: 22px; max-width: 40ch; }
+.home-doors-act { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; }
+
+/* The café (home, #cafe) — the kitchen as one strand: a heading, then the ethos as a lede. */
+.manifesto .home-cafe-h { font-size: clamp(34px, 5vw, 76px); max-width: 14ch; margin-bottom: clamp(22px, 3vh, 32px); }
+.home-cafe-lede { max-width: 42ch; }
+.home-host .host-banner { margin-top: 0; }
 
 /* ============================================================
    FOOTER
@@ -707,7 +738,7 @@ button { font-family: inherit; cursor: pointer; }
 .sa-field > span em { font-style: normal; text-transform: none; letter-spacing: .02em; opacity: .7; }
 .sa-field input, .sa-field select, .sa-field textarea {
   font-family: var(--serif); font-size: 19px; color: var(--ink); background: transparent;
-  border: none; border-bottom: 1px solid var(--line); padding: 9px 0; width: 100%; outline: none;
+  border: none; border-bottom: 1px solid var(--line); padding: 10px 0; width: 100%; outline: none; min-height: 44px;
   transition: border-color .35s var(--ease);
 }
 .sa-field textarea { resize: vertical; min-height: 76px; line-height: 1.4; }
@@ -1060,7 +1091,8 @@ button { font-family: inherit; cursor: pointer; }
   .sm-grid { grid-template-columns: 1fr; gap: 22px; }
   .sm-aside { flex-direction: row; align-items: center; gap: 16px; padding-top: 0; }
   .sm-aside .sm-rule { width: 48px; }
-  .gather-grid { grid-template-columns: 1fr; }
+  .home-strand { grid-template-columns: minmax(120px, .8fr) minmax(0, 2fr) auto; }
+  .home-place-live { grid-template-columns: 1fr; gap: 44px; }
   .host-banner { flex-direction: column; align-items: flex-start; gap: 18px; }
   .host-banner > button { width: 100%; justify-content: center; }
   .sa-grid2 { grid-template-columns: 1fr; }
@@ -1123,16 +1155,21 @@ button { font-family: inherit; cursor: pointer; }
   .story-close-actions { flex-direction: column; gap: 20px; }
   .visit-hero h1 { font-size: clamp(40px, 13vw, 64px); }
 
-  /* gather */
-  .gather-h { max-width: none; }
-  .gather-now { flex-direction: column; align-items: flex-start; gap: 14px; }
-  .gather-now-p { max-width: none; }
-  .gather-now .tlink { min-height: 44px; }
-  .sanctuary-card { min-height: 0; padding: 26px 22px 28px; }
-  .sanctuary-card .soon-flag { position: static; align-self: flex-start; margin-bottom: 18px; }
-  .sanctuary-card p { max-width: none; }
-  .gather-card-act .btn { width: 100%; justify-content: center; }
-  .gather-mini { padding: 16px 0; }
+  /* the place */
+  .home-place-head { grid-template-columns: 1fr; gap: 18px; }
+  .home-place-h { max-width: none; }
+  .home-place-lede { padding-bottom: 0; }
+  .home-strand { grid-template-columns: 1fr; gap: 8px; padding: 18px 0 20px; }
+  .home-strand-verb { font-size: 30px; }
+  .home-strand-side { flex-direction: row; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px 18px; text-align: left; margin-top: 2px; }
+  .home-place .tlink, .manifesto .tlink, .sig-leadbody .tlink { min-height: 44px; }
+  .home-place-live { gap: 40px; }
+  .home-next { min-height: 160px; }
+  .home-next-row { grid-template-columns: 62px minmax(0, 1fr); gap: 10px 14px; }
+  .home-next-go { grid-column: 2; min-height: 24px; }
+  .home-tile { width: 62px; }
+  .home-tile-day { font-size: 28px; }
+  .home-doors-act .btn { width: 100%; justify-content: center; }
   .host-banner { padding: 22px 20px; }
 
   /* menu */
