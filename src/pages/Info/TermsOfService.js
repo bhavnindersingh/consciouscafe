@@ -120,6 +120,39 @@ const sections = [
     ),
   },
   {
+    id: 'sanctuary-payments',
+    title: 'Ice bath and sauna: payment, cancellation and refunds',
+    body: (
+      <>
+        <p>
+          Ice bath, Ayurvedic sauna and contrast sessions are booked and paid for online at{' '}
+          <a href="/sanctuary/restore">consciouscafe.in/sanctuary/restore</a>, through PhonePe.
+          Prices are shown per person, and GST is added at checkout.
+        </p>
+        <ul>
+          <li>
+            Your place is held for a few minutes while you pay. If the payment does not go
+            through, nothing is charged and the place is released.
+          </li>
+          <li>
+            To cancel, call or WhatsApp us on <a href="tel:+918754561269">+91 87545 61269</a>{' '}
+            or write to <a href="mailto:hello@consciouscafe.in">hello@consciouscafe.in</a>. Our team
+            cancels the booking and refunds the full amount you paid, GST included.
+          </li>
+          <li>If we have to cancel a session, we refund the full amount.</li>
+          <li>
+            If your payment reaches us after the last place has been taken, we cancel the
+            booking and refund the full amount automatically.
+          </li>
+          <li>
+            Refunds go back through PhonePe to the account or card you paid from. How long they
+            take to appear depends on your bank, usually a few working days.
+          </li>
+        </ul>
+      </>
+    ),
+  },
+  {
     id: 'house',
     title: 'In our space',
     body: (
@@ -206,7 +239,7 @@ const TermsOfService = () => {
       <LegalDoc
         eyebrow="Conscious Café · Legal"
         title="Terms of Service"
-        updated="24 June 2026"
+        updated="6 November 2026"
         intro={
           <p>
             These terms cover how we serve you — in the café, online, and across our wellness

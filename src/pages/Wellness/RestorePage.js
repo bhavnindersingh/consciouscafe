@@ -28,7 +28,8 @@ const Step = ({ title, note, children, id }) => (
 
 const CancelLine = () => (
   <p className="wl-cancel-line">
-    Need to cancel? Call or WhatsApp <a href={CAFE_WHATSAPP_URL} target="_blank" rel="noopener noreferrer">{CAFE_PHONE}</a> — we refund in full.
+    Need to cancel? Call or WhatsApp <a href={CAFE_WHATSAPP_URL} target="_blank" rel="noopener noreferrer">{CAFE_PHONE}</a> — we refund in full.{' '}
+    <a href="/terms-of-service#sanctuary-payments">Payment and refund terms</a>.
   </p>
 );
 
