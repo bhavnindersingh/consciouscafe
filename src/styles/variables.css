@@ -16,6 +16,11 @@
   --sage: #6f7d63;
   --blush: #f4e3e0;
   --clay: #b08358;
+  /* the ice bath and the sauna (/sanctuary/restore): a cold slate, an ember */
+  --cold: #2c4148;
+  --cold-deep: #142126;
+  --heat: #9a5432;
+  --heat-deep: #4c2516;
 
   /* Type */
   --display: "EB Garamond", Georgia, serif;

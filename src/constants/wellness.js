@@ -14,6 +14,16 @@
 // a place in; a contrast session takes a place in both.
 export const SERVICE_KEYS = ['ice_bath', 'sauna', 'contrast'];
 
+// What each session is, in a line: the booking card's text when the POS gives
+// no description, and the WhatsApp request while online booking is off (the
+// POS switches services on; the RPC lists only active ones). Names match
+// wellness_services.name. Wording from the ice-bath / sauna landing pages.
+export const SERVICE_COPY = {
+  ice_bath: { name: 'Ice bath', line: 'Deliberate cold: steady the breath and step out sharper than you went in.', ask: 'the ice bath' },
+  sauna: { name: 'Ayurvedic sauna', line: 'Deep, dry warmth to slow your breathing and let the day go.', ask: 'the Ayurvedic sauna' },
+  contrast: { name: 'Sauna + ice bath', line: 'Heat, then cold, and back again: the contrast ritual.', ask: 'a sauna + ice bath session' },
+};
+
 // wellness_resources.key — the two rooms.
 export const RESOURCE_KEYS = ['ice_bath', 'sauna'];
 

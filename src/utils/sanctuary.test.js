@@ -5,7 +5,8 @@ import {
   splitHostOfferings, seatsTaken, rsvpErrorMessage, googleCalendarUrl, isUuid, canPublish,
   cleanEmail, cleanCode, authErrorKind,
   weekdayOf, addDays, seriesDates, repeatLabel, weekdaysOf, validateRepeat, seriesRows, seriesSummary,
-  durationMinutes, durationLabel, collapseSeries, groupHostSeries, istToday, shiftMonth, monthTitle, monthGrid, byDay,
+  durationMinutes, durationLabel, parseVideoLink, safeHttpsLink, elsewhere, mapsUrl, collapseSeries, groupHostSeries, istToday, shiftMonth, monthTitle, monthGrid, byDay,
+  inHouse, withWhere, looksLikeSanctuary, roomWindow, roomClashes, roomTakenMessage,
 } from './sanctuary';
 import { OFFERING_KINDS, RSVP_ERROR_COPY, HOST_AUTH_COPY } from '../constants/sanctuary';
 
@@ -153,8 +154,20 @@ describe('validateOffering', () => {
     expect(value).toEqual({
       kind: 'class', title: 'Morning Hatha', description: null,
       starts_at: SEVEN_IST, ends_at: '2026-11-10T02:45:00.000Z',
-      location: 'Conscious Sanctuary, Auroville Road', price_inr: null, capacity: 12, image_path: null,
+      at_sanctuary: true, location: 'Conscious Sanctuary, Auroville Road', price_inr: null, capacity: 12, image_path: null,
+      video_url: null, video_path: null,
     });
+  });
+
+  test('outside the Sanctuary it needs a place — and not the Sanctuary typed in', () => {
+    const out = { ...good, where: 'outside' };
+    expect(validateOffering(out).errors.location).toBe('Write where it happens, so people can find it.');
+    expect(validateOffering({ ...out, location: 'conscious  sanctuary, auroville rd' }).errors.location).toMatch(/choose “At Conscious Sanctuary”/);
+    const { errors, value } = validateOffering({ ...out, location: ' The Clay House, Auroville ' });
+    expect(errors).toEqual({});
+    expect(value).toMatchObject({ at_sanctuary: false, location: 'The Clay House, Auroville' });
+    // at the Sanctuary, whatever was typed for "outside" is left behind
+    expect(validateOffering({ ...good, location: 'The Clay House' }).value).toMatchObject({ at_sanctuary: true, location: 'Conscious Sanctuary, Auroville Road' });
   });
 
   test('a multi-day workshop uses its end date', () => {
@@ -213,6 +226,98 @@ describe('durationLabel', () => {
   });
 });
 
+describe('parseVideoLink', () => {
+  const yt = (url) => parseVideoLink(url) && [parseVideoLink(url).id, parseVideoLink(url).url];
+
+  test('YouTube in every shape people paste', () => {
+    const watch = ['dQw4w9WgXcQ', 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'];
+    expect(yt('https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=42s')).toEqual(watch);
+    expect(yt('youtube.com/watch?v=dQw4w9WgXcQ')).toEqual(watch);
+    expect(yt('https://m.youtube.com/watch?feature=share&v=dQw4w9WgXcQ')).toEqual(watch);
+    expect(yt('https://youtu.be/dQw4w9WgXcQ?si=abc')).toEqual(watch);
+    expect(yt('https://www.youtube.com/embed/dQw4w9WgXcQ')).toEqual(watch);
+    expect(yt('https://www.youtube.com/live/dQw4w9WgXcQ?feature=shared')).toEqual(watch);
+    const s = parseVideoLink('https://youtube.com/shorts/dQw4w9WgXcQ?feature=share');
+    expect([s.url, s.vertical]).toEqual(['https://www.youtube.com/shorts/dQw4w9WgXcQ', true]);
+    expect(parseVideoLink('https://youtu.be/dQw4w9WgXcQ').embed).toBe('https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?rel=0&playsinline=1');
+  });
+
+  test('Vimeo, public and unlisted', () => {
+    expect(parseVideoLink('https://vimeo.com/76979871')).toMatchObject({ provider: 'vimeo', url: 'https://vimeo.com/76979871', embed: 'https://player.vimeo.com/video/76979871?dnt=1' });
+    expect(parseVideoLink('https://vimeo.com/channels/staffpicks/76979871').url).toBe('https://vimeo.com/76979871');
+    expect(parseVideoLink('https://vimeo.com/76979871/a1b2c3d4e5').embed).toBe('https://player.vimeo.com/video/76979871?dnt=1&h=a1b2c3d4e5');
+    expect(parseVideoLink('https://player.vimeo.com/video/76979871?h=a1b2c3d4e5').url).toBe('https://vimeo.com/76979871/a1b2c3d4e5');
+  });
+
+  test('Instagram reels and posts', () => {
+    expect(parseVideoLink('https://www.instagram.com/reel/C1a2B3c4D5e/?igsh=xyz')).toMatchObject({
+      provider: 'instagram', url: 'https://www.instagram.com/reel/C1a2B3c4D5e/', embed: 'https://www.instagram.com/reel/C1a2B3c4D5e/embed/', vertical: true,
+    });
+    expect(parseVideoLink('instagram.com/reels/C1a2B3c4D5e').url).toBe('https://www.instagram.com/reel/C1a2B3c4D5e/');
+    expect(parseVideoLink('https://www.instagram.com/meera.yoga/reel/C1a2B3c4D5e/').id).toBe('C1a2B3c4D5e');
+    expect(parseVideoLink('https://www.instagram.com/p/C1a2B3c4D5e/').embed).toBe('https://www.instagram.com/p/C1a2B3c4D5e/embed/');
+  });
+
+  test('anything else is not a video we can show', () => {
+    ['', '   ', 'hello', 'https://example.com/video.mp4', 'javascript:alert(1)', 'https://youtube.com/watch?v=short',
+      'https://www.youtube.com/watch?v=dQw4w9WgXcQ"onload="x', 'https://evil.com/youtube.com/watch?v=dQw4w9WgXcQ',
+      'https://youtube.com.evil.com/watch?v=dQw4w9WgXcQ', 'https://www.instagram.com/meera.yoga/', 'https://vimeo.com/about',
+      'ftp://youtu.be/dQw4w9WgXcQ', 'https://youtu.be/dQw4w9WgXcQ <script>',
+    ].forEach((bad) => expect(parseVideoLink(bad)).toBeNull());
+  });
+});
+
+describe('where it is', () => {
+  test('the Sanctuary itself reads as no extra place', () => {
+    expect(elsewhere('Conscious Sanctuary, Auroville Road')).toBe('');
+    expect(elsewhere('  conscious sanctuary, auroville road ')).toBe('');
+    expect(elsewhere('')).toBe('');
+    expect(elsewhere('Pitanga, Auroville')).toBe('Pitanga, Auroville');
+  });
+  test('maps link', () => {
+    expect(mapsUrl('Pitanga, Auroville')).toBe('https://www.google.com/maps/search/?api=1&query=Pitanga%2C%20Auroville');
+  });
+});
+
+describe('safeHttpsLink', () => {
+  test('https addresses pass, trimmed', () => {
+    expect(safeHttpsLink(' https://insider.in/pottery ')).toBe('https://insider.in/pottery');
+    expect(safeHttpsLink('https://www.instagram.com/p/x/')).toBe('https://www.instagram.com/p/x/');
+  });
+  test('anything else is no link', () => {
+    [null, undefined, '', 'http://x.com', 'javascript:alert(1)', 'https://x.com/"onmouseover', 'https://local host', 'https://nodot', 'insider.in']
+      .forEach((bad) => expect(safeHttpsLink(bad)).toBeNull());
+  });
+});
+
+describe('the video in validateOffering', () => {
+  const good = {
+    ...emptyOfferingForm(), kind: 'class', title: 'Morning Hatha', startDate: '2026-11-10', startTime: '07:00', endTime: '08:15',
+  };
+
+  test('a pasted link is stored in its canonical form', () => {
+    const { errors, value } = validateOffering({ ...good, videoUrl: ' youtu.be/dQw4w9WgXcQ ' });
+    expect(errors).toEqual({});
+    expect([value.video_url, value.video_path]).toEqual(['https://www.youtube.com/watch?v=dQw4w9WgXcQ', null]);
+  });
+
+  test('a link we cannot show is an error', () => {
+    expect(validateOffering({ ...good, videoUrl: 'https://example.com/v' }).errors.video).toBeTruthy();
+  });
+
+  test('the open tab decides: an upload wins on the upload tab, a link on the link tab', () => {
+    const both = { ...good, videoUrl: 'https://youtu.be/dQw4w9WgXcQ', videoPath: 'u/v.mp4' };
+    const up = validateOffering({ ...both, videoMode: 'upload' }).value;
+    const link = validateOffering({ ...both, videoMode: 'link' }).value;
+    expect([up.video_url, up.video_path]).toEqual([null, 'u/v.mp4']);
+    expect([link.video_url, link.video_path]).toEqual(['https://www.youtube.com/watch?v=dQw4w9WgXcQ', null]);
+  });
+
+  test('a bad link left behind on the link tab does not block an upload', () => {
+    expect(validateOffering({ ...good, videoMode: 'upload', videoUrl: 'nonsense', videoPath: 'u/v.mp4' }).errors).toEqual({});
+  });
+});
+
 describe('forms from saved rows', () => {
   const row = {
     kind: 'workshop', title: 'Clay', description: 'Hands in the earth', starts_at: '2026-11-14T04:30:00Z',
@@ -222,8 +327,31 @@ describe('forms from saved rows', () => {
   test('offeringToForm reads IST and leaves endDate blank for a same-day one', () => {
     expect(offeringToForm(row)).toEqual({
       kind: 'workshop', title: 'Clay', description: 'Hands in the earth', startDate: '2026-11-14', startTime: '10:00',
-      endDate: '', endTime: '16:00', location: 'The shala', price: '2500', capacity: '8', imagePath: 'u/1.jpg',
+      endDate: '', endTime: '16:00', where: 'outside', location: 'The shala', price: '2500', capacity: '8', imagePath: 'u/1.jpg',
+      videoMode: 'link', videoUrl: '', videoPath: null,
     });
+  });
+
+  test('in or out of the Sanctuary: the flag when there is one, else the place', () => {
+    expect(offeringToForm({ ...row, at_sanctuary: true, location: 'Conscious Sanctuary, Auroville Road' })).toMatchObject({ where: 'sanctuary', location: '' });
+    expect(offeringToForm({ ...row, at_sanctuary: false })).toMatchObject({ where: 'outside', location: 'The shala' });
+    expect(inHouse({ location: 'Conscious Sanctuary, Auroville Road' })).toBe(true);
+    expect(inHouse({ location: 'The shala' })).toBe(false);
+    expect(inHouse({ location: 'The shala', at_sanctuary: true })).toBe(true);
+    expect(looksLikeSanctuary('At CONSCIOUS SANCTUARY')).toBe(true);
+    expect(looksLikeSanctuary('Conscious Café kitchen')).toBe(false);
+  });
+
+  test('a draft kept from before "where" existed opens the right way', () => {
+    expect(withWhere({ title: 'x', location: 'Conscious Sanctuary, Auroville Road' })).toMatchObject({ where: 'sanctuary', location: '' });
+    expect(withWhere({ title: 'x', location: 'The shala' })).toMatchObject({ where: 'outside', location: 'The shala' });
+    const f = { where: 'outside', location: 'Pitanga' };
+    expect(withWhere(f)).toBe(f);
+  });
+
+  test('a saved upload opens on the upload tab, a saved link on the link tab', () => {
+    expect(offeringToForm({ ...row, video_path: 'u/v.mp4' })).toMatchObject({ videoMode: 'upload', videoPath: 'u/v.mp4', videoUrl: '' });
+    expect(offeringToForm({ ...row, video_url: 'https://vimeo.com/76979871' })).toMatchObject({ videoMode: 'link', videoUrl: 'https://vimeo.com/76979871' });
   });
 
   test('duplicateForm is the same gathering a week later', () => {
@@ -246,7 +374,18 @@ describe('host dashboard', () => {
     const s = splitHostOfferings(rows, now);
     expect(s.upcoming.map((o) => o.id)).toEqual(['d', 'a']);
     expect(s.drafts.map((o) => o.id)).toEqual(['b']);
+
     expect(s.past.map((o) => o.id)).toEqual(['c', 'e']);
+  });
+
+  test('an event waiting for review sits with the drafts, never with what is live', () => {
+    const rows = [
+      { id: 'r', status: 'in_review', starts_at: '2026-11-21T01:30:00Z', ends_at: '2026-11-21T03:00:00Z' },
+      { id: 'd', status: 'draft', starts_at: '2026-11-22T01:30:00Z', ends_at: '2026-11-22T03:00:00Z' },
+      { id: 'p', status: 'published', starts_at: '2026-11-23T01:30:00Z', ends_at: '2026-11-23T03:00:00Z' },
+    ];
+    const s = splitHostOfferings(rows, new Date('2026-11-09T00:00:00Z').getTime());
+    expect([s.drafts.map((o) => o.id), s.upcoming.map((o) => o.id)]).toEqual([['r', 'd'], ['p']]);
   });
 
   test('seatsTaken counts confirmed seats only', () => {
@@ -421,5 +560,33 @@ describe('calendar view', () => {
     const m = byDay([{ id: 'x', starts_at: '2026-11-10T19:00:00Z' }, { id: 'y', starts_at: '2026-11-11T03:00:00Z' }]);
     expect(Object.keys(m)).toEqual(['2026-11-11']);
     expect(m['2026-11-11'].map((o) => o.id)).toEqual(['x', 'y']);
+  });
+});
+
+describe('one room', () => {
+  // Fri 4 Dec 2026, IST: Kirtan 7–9 pm is live; a request 10–11 am waits for review
+  const kirtan = { id: 'k', status: 'published', title: 'Kirtan evening', starts_at: '2026-12-04T13:30:00+00:00', ends_at: '2026-12-04T15:30:00+00:00' };
+  const held = { id: 'h', status: 'in_review', title: null, starts_at: '2026-12-04T04:30:00+00:00', ends_at: '2026-12-04T05:30:00+00:00' };
+  const at = (from, to) => ({ starts_at: istToIso('2026-12-04', from), ends_at: istToIso('2026-12-04', to) });
+
+  test('roomWindow covers the IST days of every wanted time', () => {
+    expect(roomWindow([at('19:00', '21:00')])).toEqual({ from: '2026-12-03T18:30:00.000Z', to: '2026-12-04T18:30:00.000Z' });
+    expect(roomWindow([at('19:00', '21:00'), { starts_at: istToIso('2026-12-11', '19:00'), ends_at: istToIso('2026-12-11', '21:00') }]).to).toBe('2026-12-11T18:30:00.000Z');
+    expect(roomWindow([{ starts_at: null, ends_at: null }])).toBeNull();
+  });
+
+  test('a live event takes the time; one in review only holds it', () => {
+    const r = roomClashes([kirtan, held], [at('20:00', '21:30'), at('10:30', '12:00')]);
+    expect(r.taken.map((c) => c.busy.id)).toEqual(['k']);
+    expect(r.held.map((c) => c.busy.id)).toEqual(['h']);
+  });
+
+  test('back to back is fine, and the event being edited is not in its own way', () => {
+    expect(roomClashes([kirtan], [at('17:30', '19:00'), at('21:00', '22:00')]).taken).toEqual([]);
+    expect(roomClashes([kirtan], [at('19:00', '21:00')], ['k']).taken).toEqual([]);
+  });
+
+  test('the message names what is on', () => {
+    expect(roomTakenMessage(kirtan)).toBe('The Sanctuary is taken then: “Kirtan evening”, Fri 4 Dec · 7 – 9 pm. Pick another time, or choose somewhere else.');
   });
 });

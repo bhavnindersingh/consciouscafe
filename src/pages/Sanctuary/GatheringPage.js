@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import SEO from '../../components/seo/SEO/SEO';
 import { breadcrumb } from '../../utils/seoData';
@@ -6,15 +6,15 @@ import { getGathering, reservePlaces, imageUrl, listSeriesDates } from '../../se
 import { LIMITS } from '../../constants/sanctuary';
 import {
   formatWhen, priceLabel, isFree, seatsLabel, rsvpState, validateRsvp, rsvpErrorMessage,
-  googleCalendarUrl, isUuid, kindLabel, repeatLabel, weekdaysOf,
+  googleCalendarUrl, isUuid, kindLabel, repeatLabel, weekdaysOf, inHouse, mapsUrl,
 } from '../../utils/sanctuary';
-import { Arrow, Reveal, DateTile, KindTag, Field, Spinner, GatheringRow } from './parts';
+import { Arrow, Reveal, DateTile, KindTag, Field, GatheringRow, GatheringVideo, PinnedBar, scrollToEl, PageSkeleton, useFieldErrors } from './parts';
 import './sanctuary.css';
 
 const WHATSAPP_URL = 'https://wa.me/918754561269';
 
 const CLOSED_COPY = {
-  cancelled: ['This gathering has been cancelled.', 'The host has called it off. Have a look at what else is on.'],
+  cancelled: ['This event has been cancelled.', 'The organiser has called it off. Have a look at what else is on.'],
   past: ['This one has passed.', 'Have a look at what’s coming up next.'],
   started: ['This one is under way.', 'Reservations closed when it began.'],
   full: ['Every place is taken.', 'Message us on WhatsApp to hear if a place opens up.'],
@@ -23,18 +23,18 @@ const CLOSED_COPY = {
 function RsvpForm({ gathering, onDone }) {
   const maxSeats = gathering.capacity == null ? LIMITS.seatsPerRsvp : Math.min(LIMITS.seatsPerRsvp, gathering.seats_left);
   const [form, setForm] = useState({ name: '', phone: '', email: '', seats: 1 });
-  const [errors, setErrors] = useState({});
   const [failure, setFailure] = useState(null);
   const [busy, setBusy] = useState(false);
-  const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
+  // blur-first: a field is checked when it's left, and its error goes as soon as it's edited
+  const { errors, blur, clear, all } = useFieldErrors((f) => validateRsvp(f, maxSeats), form);
+  const set = (k) => (e) => { setForm((f) => ({ ...f, [k]: e.target.value })); clear(k); };
 
   const submit = async (e) => {
     e.preventDefault();
     if (busy) return;
-    const { errors: errs, value } = validateRsvp(form, maxSeats);
-    setErrors(errs);
+    const { errors: errs, value } = all();
     setFailure(null);
-    if (Object.keys(errs).length) return;
+    if (Object.keys(errs).length) { document.getElementById(`sn-r-${Object.keys(errs)[0]}`)?.focus(); return; }
     setBusy(true);
     try {
       const res = await reservePlaces({ offeringId: gathering.id, ...value });
@@ -49,16 +49,16 @@ function RsvpForm({ gathering, onDone }) {
   return (
     <form className="sn-form" onSubmit={submit} noValidate>
       <Field label="Your name" error={errors.name} htmlFor="sn-r-name">
-        <input id="sn-r-name" autoComplete="name" value={form.name} onChange={set('name')} maxLength={LIMITS.nameMax} />
+        <input id="sn-r-name" onBlur={blur('name')} autoComplete="name" value={form.name} onChange={set('name')} maxLength={LIMITS.nameMax} />
       </Field>
-      <Field label="Phone" error={errors.phone} hint="So the host can reach you if anything changes." htmlFor="sn-r-phone">
-        <input id="sn-r-phone" type="tel" inputMode="tel" autoComplete="tel" placeholder="+91" value={form.phone} onChange={set('phone')} />
+      <Field label="Phone" error={errors.phone} hint="So the organiser can reach you if anything changes." htmlFor="sn-r-phone">
+        <input id="sn-r-phone" onBlur={blur('phone')} type="tel" inputMode="tel" autoComplete="tel" placeholder="+91" value={form.phone} onChange={set('phone')} />
       </Field>
       <Field label="Email (optional)" error={errors.email} htmlFor="sn-r-email">
-        <input id="sn-r-email" type="email" autoComplete="email" value={form.email} onChange={set('email')} maxLength={LIMITS.emailMax} />
+        <input id="sn-r-email" onBlur={blur('email')} type="email" autoComplete="email" value={form.email} onChange={set('email')} maxLength={LIMITS.emailMax} />
       </Field>
       <Field label="Places" error={errors.seats} htmlFor="sn-r-seats">
-        <select id="sn-r-seats" value={form.seats} onChange={set('seats')}>
+        <select id="sn-r-seats" value={form.seats} onChange={set('seats')} onBlur={blur('seats')}>
           {Array.from({ length: Math.max(1, maxSeats) }, (_, i) => i + 1).map((n) => (
             <option key={n} value={n}>{n} {n === 1 ? 'place' : 'places'}</option>
           ))}
@@ -76,12 +76,57 @@ function RsvpForm({ gathering, onDone }) {
   );
 }
 
+/**
+ * Phones: the price and a Reserve button stay at the bottom of the screen while
+ * the visitor reads; it steps away once the form itself is on screen.
+ */
+function ReserveBar({ g, target }) {
+  return (
+    <PinnedBar target={target}>
+      {(away) => (
+        <>
+          <div className="sn-reserve-bar-info">
+            <span className="sn-price">{isFree(g.price_inr) ? 'Free' : priceLabel(g.price_inr)}</span>
+            <span className="sn-seats">{seatsLabel(g.seats_left, g.capacity)}</span>
+          </div>
+          <button type="button" className="btn forest" onClick={() => scrollToEl(target.current)} tabIndex={away ? -1 : undefined}>Reserve <Arrow /></button>
+        </>
+      )}
+    </PinnedBar>
+  );
+}
+
+/** The phone's own share sheet where there is one; elsewhere, the link copied. */
+function ShareButton({ title, url }) {
+  const [said, setSaid] = useState('');
+  const share = async () => {
+    try {
+      if (navigator.share) { await navigator.share({ title, url }); return; }
+      await navigator.clipboard.writeText(url);
+      setSaid('Link copied — paste it anywhere.');
+    } catch (e) {
+      if (e && e.name === 'AbortError') return; // closed the share sheet
+      setSaid(`Copy this link: ${url}`);
+    }
+  };
+  return (
+    <div className="sn-share">
+      <button type="button" className="sn-act" onClick={share}>
+        <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6h14v-6" fill="none" stroke="currentColor" strokeWidth="1.6" /></svg>
+        Share this event
+      </button>
+      <span className="sn-share-said" role="status">{said}</span>
+    </div>
+  );
+}
+
 const GatheringPage = () => {
   const { id } = useParams();
   const [g, setG] = useState(undefined); // undefined = loading, null = not found
   const [error, setError] = useState(null);
   const [done, setDone] = useState(null);
   const [series, setSeries] = useState([]); // every upcoming date of its weekly series
+  const panel = useRef(null);
 
   useEffect(() => {
     let alive = true;
@@ -108,7 +153,7 @@ const GatheringPage = () => {
       </main>
     );
   }
-  if (g === undefined) return <main className="sn-view sn-detail-view"><Spinner /></main>;
+  if (g === undefined) return <main className="sn-view sn-detail-view"><PageSkeleton kind="detail" label="Loading the event" /></main>;
   if (g === null) {
     return (
       <main className="sn-view sn-detail-view">
@@ -133,7 +178,7 @@ const GatheringPage = () => {
     <main className="sn-view sn-detail-view">
       <SEO
         title={`${g.title} — ${kindLabel(g.kind)} | Conscious Sanctuary`}
-        description={(g.description || `${kindLabel(g.kind)} at Conscious Sanctuary, Auroville Road. ${when}.`).slice(0, 160)}
+        description={(g.description || `${kindLabel(g.kind)} at ${g.location || 'Conscious Sanctuary, Auroville Road'}. ${when}.`).slice(0, 160)}
         url={`/sanctuary/${g.id}`}
         image={img || undefined}
         noIndex={state === 'past' || state === 'cancelled'}
@@ -146,7 +191,8 @@ const GatheringPage = () => {
             endDate: g.ends_at,
             eventStatus: g.status === 'cancelled' ? 'https://schema.org/EventCancelled' : 'https://schema.org/EventScheduled',
             eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
-            location: { '@type': 'Place', name: g.location, address: 'Auroville Road, Tamil Nadu 605101, India' },
+            // the Sanctuary's own address only when it's there; organisers hold things anywhere
+            location: { '@type': 'Place', name: g.location, ...(inHouse(g) ? { address: 'Auroville Road, Tamil Nadu 605101, India' } : {}) },
             ...(img ? { image: [img] } : {}),
             ...(g.description ? { description: g.description } : {}),
             ...(g.host_name ? { organizer: { '@type': 'Person', name: g.host_name } } : {}),
@@ -162,19 +208,25 @@ const GatheringPage = () => {
         ]}
       />
 
-      {/* Grid areas (sanctuary.css): back, head and photo in column one, the reserve
-          panel spanning column two; on one column this source order puts the panel
-          right under the title and photo, before the prose. */}
+      {/* Grid areas (sanctuary.css): column one reads top to bottom (back, head,
+          photo, video, words, host, more dates); the reserve panel spans column two
+          and sticks. On one column this source order is the reading order: what it
+          is first, the form after — with the Reserve bar pinned meanwhile. */}
       <div className="sn-detail">
-        <Reveal className="sn-detail-back"><Link className="sn-back" to="/sanctuary">← All gatherings</Link></Reveal>
+        <Reveal className="sn-detail-back"><Link className="sn-back" to="/sanctuary">← All events</Link></Reveal>
         <Reveal delay={1} className="sn-detail-head">
           <DateTile iso={g.starts_at} />
           <div>
             <span className="sn-row-tags">
               <KindTag kind={g.kind} />
               {repeat && <span className="sn-repeat">{repeat}</span>}
+              {!inHouse(g) && <span className="sn-away-tag">Linda’s curation</span>}
             </span>
             <h1 className="display sn-detail-title">{g.title}</h1>
+            <p className="sn-detail-sum">
+              {when}<br />
+              {isFree(g.price_inr) ? 'Free' : priceLabel(g.price_inr)} · {seatsLabel(g.seats_left, g.capacity)}
+            </p>
           </div>
         </Reveal>
         {img && (
@@ -182,11 +234,42 @@ const GatheringPage = () => {
             <img src={img} alt="" loading="eager" />
           </Reveal>
         )}
+        {(g.video_url || g.video_path) && (
+          <div className="sn-detail-video">
+            <GatheringVideo url={g.video_url} path={g.video_path} title={g.title} />
+          </div>
+        )}
 
-        <aside className="sn-panel" aria-label="Reserve">
+        <div className="sn-detail-body">
+          {g.description && (
+            <Reveal delay={2} className="sn-prose">
+              {g.description.split(/\n{2,}/).map((para, i) => <p key={i}>{para}</p>)}
+            </Reveal>
+          )}
+          {g.host_name && (
+            <Reveal delay={3} className="sn-hostline">
+              <span className="sn-label">Organised by</span>
+              {g.host_avatar_path && <img className="sn-hostline-avatar" src={imageUrl(g.host_avatar_path)} alt="" />}
+              {g.host_id
+                ? <Link className="sn-hostname" to={`/sanctuary/hosts/${g.host_id}`}>{g.host_name}</Link>
+                : <span className="sn-hostname">{g.host_name}</span>}
+              {g.host_id && <Link className="sn-hostline-go" to={`/sanctuary/hosts/${g.host_id}`}>Visit organiser profile <Arrow s={14} /></Link>}
+            </Reveal>
+          )}
+        </div>
+
+        <aside className="sn-panel" aria-label="Reserve" id="reserve" ref={panel}>
+          <ShareButton title={g.title} url={pageUrl} />
           <dl className="sn-facts">
             <div><dt>When</dt><dd>{when}</dd></div>
-            <div><dt>Where</dt><dd>{g.location}</dd></div>
+            <div>
+              <dt>Where</dt>
+              <dd>
+                {inHouse(g) ? 'Conscious Sanctuary, Auroville Road' : (
+                  <a href={mapsUrl(g.location)} target="_blank" rel="noopener noreferrer">{g.location} <span aria-hidden="true">↗</span><span className="sr-only"> (opens a map)</span></a>
+                )}
+              </dd>
+            </div>
             <div><dt>Price</dt><dd>{isFree(g.price_inr) ? 'Free' : `${priceLabel(g.price_inr)} · pay at the venue`}</dd></div>
             <div><dt>Places</dt><dd>{seatsLabel(g.seats_left, g.capacity)}</dd></div>
           </dl>
@@ -218,33 +301,16 @@ const GatheringPage = () => {
           )}
         </aside>
 
-        <div className="sn-detail-body">
-          {g.description && (
-            <Reveal delay={2} className="sn-prose">
-              {g.description.split(/\n{2,}/).map((para, i) => <p key={i}>{para}</p>)}
-            </Reveal>
-          )}
-          {g.host_name && (
-            <Reveal delay={3} className="sn-hostline">
-              <span className="sn-label">Your host</span>
-              {g.host_id
-                ? <Link className="sn-hostname" to={`/sanctuary/hosts/${g.host_id}`}>{g.host_name}</Link>
-                : <span className="sn-hostname">{g.host_name}</span>}
-              {g.host_link && /^https?:\/\//i.test(g.host_link) && (
-                <a href={g.host_link} target="_blank" rel="noopener noreferrer nofollow">{g.host_link.replace(/^https?:\/\/(www\.)?/i, '')} ↗</a>
-              )}
-            </Reveal>
-          )}
-          {otherDates.length > 0 && (
-            <section className="sn-more" aria-labelledby="sn-more-h">
-              <h2 id="sn-more-h" className="sn-more-h">More dates</h2>
-              <ul className="sn-list">
-                {otherDates.map((o) => <li key={o.id}><GatheringRow o={o} showHost={false} compact /></li>)}
-              </ul>
-            </section>
-          )}
-        </div>
+        {otherDates.length > 0 && (
+          <section className="sn-more" aria-labelledby="sn-more-h">
+            <h2 id="sn-more-h" className="sn-more-h">More dates</h2>
+            <ul className="sn-list">
+              {otherDates.map((o) => <li key={o.id}><GatheringRow o={o} showHost={false} compact /></li>)}
+            </ul>
+          </section>
+        )}
       </div>
+      {state === 'open' && !done && <ReserveBar g={g} target={panel} />}
     </main>
   );
 };

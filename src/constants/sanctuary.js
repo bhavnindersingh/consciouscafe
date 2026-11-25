@@ -3,6 +3,7 @@
  *
  * JS twin of the CHECK constraints in the POS repo:
  *   Manager Conscious Cafe/backend/supabase/migrations/20261104200000_sanctuary.sql
+ *   (video: 20261125000000_sanctuary_video.sql)
  * Change both together — a value the database doesn't know is a failed save,
  * and one this file doesn't know renders as a blank label.
  */
@@ -14,7 +15,9 @@ export const OFFERING_KINDS = [
 ];
 
 export const HOST_STATUSES = ['requested', 'approved', 'declined', 'paused'];
-export const OFFERING_STATUSES = ['draft', 'published', 'cancelled'];
+// 'in_review': an organiser's event waiting for an executive (POS migrations
+// 20261126100000 / 20261126200000). Only 'published' rows are public.
+export const OFFERING_STATUSES = ['draft', 'in_review', 'published', 'cancelled'];
 export const RSVP_STATUSES = ['confirmed', 'cancelled'];
 
 // Limits mirrored from the same migration (CHECKs and sanctuary_rsvp()).
@@ -31,11 +34,16 @@ export const LIMITS = {
   hostNameMin: 2,
   hostNameMax: 80,
   bioMax: 2000,
+  taglineMax: 120,       // an organiser's page (20261126100000)
+  placeNameMax: 120,
+  placeAddressMax: 200,
+  galleryMax: 12,
   linkMax: 300,
   hostPhoneMax: 20,
   codeResendSeconds: 60, // Supabase's default gap between two sign-in emails to one address
   seriesMaxDates: 26,    // a weekly series: at most this many dates in one go
   seriesMaxWeeks: 26,    // …and no further out than this
+  videoUrlMax: 300,      // sanctuary_offerings_video_url_check
 };
 
 // Weekdays as JavaScript numbers them (0 = Sunday), listed Monday first.
@@ -53,6 +61,13 @@ export const DEFAULT_LOCATION = 'Conscious Sanctuary, Auroville Road';
 export const IMAGE_BUCKET = 'sanctuary-images';
 export const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 export const IMAGE_MAX_BYTES = 5 * 1024 * 1024;
+
+// A gathering's video: a link (YouTube / Vimeo / Instagram — parseVideoLink) or
+// a clip in this bucket. Twin of 20261125000000_sanctuary_video.sql (bucket
+// limit and mime list); 50 MB is also Supabase's per-file upload ceiling.
+export const VIDEO_BUCKET = 'sanctuary-videos';
+export const VIDEO_TYPES = ['video/mp4', 'video/webm', 'video/quicktime'];
+export const VIDEO_MAX_BYTES = 50 * 1024 * 1024;
 
 // The exact messages sanctuary_rsvp() raises (SQLSTATE P0001), and what a
 // visitor reads for each. Anything else is a network or server failure.

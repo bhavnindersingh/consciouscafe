@@ -7,8 +7,10 @@
  * the tables themselves are host- and admin-only under RLS. Hosts read and
  * write their own rows directly with their Google session.
  */
-import { supabase } from './supabase/supabaseClient';
-import { IMAGE_BUCKET, IMAGE_TYPES, IMAGE_MAX_BYTES } from '../constants/sanctuary';
+import { supabase, supabaseUrl, supabaseAnonKey } from './supabase/supabaseClient';
+import {
+  IMAGE_BUCKET, IMAGE_TYPES, IMAGE_MAX_BYTES, VIDEO_BUCKET, VIDEO_TYPES, VIDEO_MAX_BYTES,
+} from '../constants/sanctuary';
 
 const unwrap = ({ data, error }) => {
   if (error) throw error;
@@ -31,6 +33,16 @@ export async function getGathering(id) {
 /** Upcoming dates of one weekly series. */
 export async function listSeriesDates(seriesId) {
   return unwrap(await supabase.rpc('sanctuary_listings').eq('series_id', seriesId)) || [];
+}
+
+/**
+ * The Sanctuary's taken times between two instants — live events and ones
+ * waiting for review (sanctuary_room_busy(), POS migration 20261127000000):
+ * [{ id, starts_at, ends_at, status, title }], title only for live ones.
+ * Signed-in organisers only; at most 200 days at a time.
+ */
+export async function listRoomBusy(fromIso, toIso) {
+  return unwrap(await supabase.rpc('sanctuary_room_busy', { p_from: fromIso, p_to: toIso })) || [];
 }
 
 /** An approved host's public page: { id, display_name, bio, link } or null. */
@@ -65,6 +77,11 @@ export function imageUrl(path) {
   return supabase.storage.from(IMAGE_BUCKET).getPublicUrl(path).data.publicUrl;
 }
 
+export function videoFileUrl(path) {
+  if (!path) return null;
+  return supabase.storage.from(VIDEO_BUCKET).getPublicUrl(path).data.publicUrl;
+}
+
 // ── Host ───────────────────────────────────────────────────────────────────
 
 /** The signed-in person's host row, or null if they haven't asked to host yet. */
@@ -83,13 +100,35 @@ export async function requestToHost(userId, { displayName, phone, link, bio }) {
   }).select('*').single());
 }
 
-export async function updateMyHost(userId, { displayName, phone, link, bio }) {
-  return unwrap(await supabase.from('sanctuary_hosts').update({
+/**
+ * The organiser's own row: details, and — when given — their page (tagline,
+ * photos, their space). Photo paths are under '<user_id>/' in sanctuary-images
+ * (uploadImage); the table refuses any other folder.
+ */
+export async function updateMyHost(userId, { displayName, phone, link, bio, page }) {
+  const row = {
     display_name: displayName,
     phone: phone || null,
     link: link || null,
     bio: bio || null,
-  }).eq('user_id', userId).select('*').single());
+  };
+  if (page) {
+    Object.assign(row, {
+      tagline: page.tagline || null,
+      avatar_path: page.avatarPath || null,
+      cover_path: page.coverPath || null,
+      gallery_paths: page.galleryPaths || [],
+      place_name: page.placeName || null,
+      place_address: page.placeAddress || null,
+    });
+  }
+  return unwrap(await supabase.from('sanctuary_hosts').update(row).eq('user_id', userId).select('*').single());
+}
+
+/** Remove a photo this page editor uploaded and then replaced or dropped (never a saved one). */
+export async function removeImage(path) {
+  if (!path) return;
+  await supabase.storage.from(IMAGE_BUCKET).remove([path]);
 }
 
 /** Every gathering this host owns (RLS returns only theirs). */
@@ -133,6 +172,9 @@ export async function updateSeries(seriesId, fromIso, value, startTime, minutes)
     p_capacity: value.capacity,
     p_start_time: startTime,
     p_minutes: minutes,
+    p_video_url: value.video_url,
+    p_video_path: value.video_path,
+    p_set_video: true,
   }));
 }
 
@@ -175,4 +217,58 @@ export async function uploadImage(userId, file) {
   const path = `${userId}/${crypto.randomUUID()}.${ext}`;
   unwrap(await supabase.storage.from(IMAGE_BUCKET).upload(path, file, { contentType: file.type, upsert: false }));
   return path;
+}
+
+// Some phones hand over a clip with no type; go by the name then.
+const VIDEO_EXT = { mp4: 'video/mp4', m4v: 'video/mp4', mov: 'video/quicktime', webm: 'video/webm' };
+
+/**
+ * Upload a clip under the host's own folder. supabase-js reports no progress, and
+ * 50 MB over a phone connection takes a while, so this posts to the same storage
+ * endpoint with XMLHttpRequest and calls onProgress(0–1). Returns the path.
+ * `signal` (an AbortSignal) stops it.
+ */
+export async function uploadVideo(userId, file, { onProgress, signal } = {}) {
+  const ext = (file.name.split('.').pop() || '').toLowerCase();
+  const type = VIDEO_TYPES.includes(file.type) ? file.type : (!file.type && VIDEO_EXT[ext]) || null;
+  if (!type) throw new Error('Use an MP4, MOV or WebM video.');
+  if (file.size > VIDEO_MAX_BYTES) throw new Error('Clips up to 50 MB, please. For anything longer, put it on YouTube and paste the link.');
+  const { data } = await supabase.auth.getSession();
+  const token = data?.session?.access_token;
+  if (!token) throw new Error('Your sign-in has expired. Sign in again, then upload.');
+
+  const path = `${userId}/${crypto.randomUUID()}.${{ 'video/mp4': 'mp4', 'video/quicktime': 'mov', 'video/webm': 'webm' }[type]}`;
+  const url = `${supabaseUrl}/storage/v1/object/${VIDEO_BUCKET}/${path.split('/').map(encodeURIComponent).join('/')}`;
+  await new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', url);
+    xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+    xhr.setRequestHeader('apikey', supabaseAnonKey);
+    xhr.setRequestHeader('Content-Type', type);
+    xhr.setRequestHeader('x-upsert', 'false');
+    xhr.setRequestHeader('cache-control', 'max-age=31536000');
+    xhr.upload.onprogress = (e) => { if (e.lengthComputable && onProgress) onProgress(e.loaded / e.total); };
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) { resolve(); return; }
+      let msg = '';
+      try { msg = JSON.parse(xhr.responseText).message || ''; } catch { /* not json */ }
+      reject(new Error(xhr.status === 413 || /size/i.test(msg)
+        ? 'That clip is over 50 MB. Try a shorter one, or put it on YouTube and paste the link.'
+        : 'That video didn’t upload. Check your connection and try again.'));
+    };
+    xhr.onerror = () => reject(new Error('That video didn’t upload. Check your connection and try again.'));
+    xhr.onabort = () => reject(Object.assign(new Error('Upload stopped.'), { aborted: true }));
+    if (signal) signal.addEventListener('abort', () => xhr.abort(), { once: true });
+    xhr.send(file);
+  });
+  return path;
+}
+
+/**
+ * Remove a clip this editor uploaded and the host then replaced or removed. Never
+ * call it for a path that was already saved: the dates of a weekly series share one.
+ */
+export async function removeVideo(path) {
+  if (!path) return;
+  await supabase.storage.from(VIDEO_BUCKET).remove([path]);
 }

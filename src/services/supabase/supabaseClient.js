@@ -14,6 +14,10 @@ const SUPABASE_ANON_KEY =
 const supabaseUrl = process.env.REACT_APP_SUPABASE_URL || SUPABASE_URL;
 const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY || SUPABASE_ANON_KEY;
 
+// For the one call supabase-js can't make: an upload that reports progress
+// (sanctuaryService.uploadVideo).
+export { supabaseUrl, supabaseAnonKey };
+
 // PKCE: Google sends the host back with a one-time ?code= that the client
 // exchanges itself (detectSessionInUrl), so no token ever sits in the URL.
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {

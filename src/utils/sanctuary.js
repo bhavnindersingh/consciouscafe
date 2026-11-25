@@ -169,14 +169,99 @@ export function validateRsvp(form, maxSeats = LIMITS.seatsPerRsvp) {
   };
 }
 
-/** Form values for a new gathering. */
+// ── Video ─────────────────────────────────────────────────────────────────
+
+const YT_ID = /^[A-Za-z0-9_-]{11}$/;
+const IG_ID = /^[A-Za-z0-9_-]{5,40}$/;
+const VIMEO_HASH = /^[0-9a-f]{6,20}$/i;
+const VIDEO_PROVIDERS = { youtube: 'YouTube', vimeo: 'Vimeo', instagram: 'Instagram' };
+
+/**
+ * A pasted video link → { provider, label, id, url, embed, vertical } or null.
+ *
+ * `url` is the canonical link we store; `embed` is the iframe address, built
+ * only from the provider and the id parsed here — never the text as typed. The
+ * column is a host's own text, so the page parses it again before showing it.
+ * YouTube: watch?v=, youtu.be/, shorts/, embed/, live/. Vimeo: vimeo.com/<n>
+ * (+ an unlisted hash), player.vimeo.com/video/<n>?h=. Instagram: reel/, p/, tv/.
+ */
+export function parseVideoLink(raw) {
+  let s = String(raw || '').trim();
+  if (!s || /\s/.test(s)) return null;
+  if (!/^[a-z][a-z0-9+.-]*:/i.test(s)) s = `https://${s}`;
+  let u;
+  try { u = new URL(s); } catch { return null; }
+  if (u.protocol !== 'https:' && u.protocol !== 'http:') return null;
+  const host = u.hostname.toLowerCase().replace(/^(www|m|music)\./, '');
+  const seg = u.pathname.split('/').filter(Boolean);
+  const make = (provider, id, url, embed, vertical = false) => ({ provider, label: VIDEO_PROVIDERS[provider], id, url, embed, vertical });
+
+  if (host === 'youtube.com' || host === 'youtube-nocookie.com' || host === 'youtu.be') {
+    let id = null;
+    let shorts = false;
+    if (host === 'youtu.be') id = seg[0];
+    else if (seg[0] === 'watch') id = u.searchParams.get('v');
+    else if (['shorts', 'embed', 'live', 'v'].includes(seg[0])) { id = seg[1]; shorts = seg[0] === 'shorts'; }
+    if (!id || !YT_ID.test(id)) return null;
+    return make('youtube', id,
+      shorts ? `https://www.youtube.com/shorts/${id}` : `https://www.youtube.com/watch?v=${id}`,
+      `https://www.youtube-nocookie.com/embed/${id}?rel=0&playsinline=1`, shorts);
+  }
+  if (host === 'vimeo.com' || host === 'player.vimeo.com') {
+    const at = host === 'player.vimeo.com' ? (seg[0] === 'video' ? 1 : -1) : seg.findIndex((p) => /^\d+$/.test(p));
+    const id = at >= 0 ? seg[at] : null;
+    if (!id || !/^\d{1,12}$/.test(id)) return null;
+    const h = host === 'player.vimeo.com' ? u.searchParams.get('h') : seg[at + 1];
+    const hash = h && VIMEO_HASH.test(h) ? h.toLowerCase() : null;
+    return make('vimeo', id,
+      `https://vimeo.com/${id}${hash ? `/${hash}` : ''}`,
+      `https://player.vimeo.com/video/${id}?dnt=1${hash ? `&h=${hash}` : ''}`);
+  }
+  if (host === 'instagram.com') {
+    const at = seg.findIndex((p) => ['reel', 'reels', 'p', 'tv'].includes(p));
+    const id = at >= 0 ? seg[at + 1] : null;
+    if (!id || !IG_ID.test(id)) return null;
+    const kind = seg[at] === 'p' ? 'p' : 'reel';
+    return make('instagram', id, `https://www.instagram.com/${kind}/${id}/`, `https://www.instagram.com/${kind}/${id}/embed/`, true);
+  }
+  return null;
+}
+
+/**
+ * A link someone else typed, safe to put in an href: an https address with no
+ * spaces or quotes, else null (an organiser's own link, on their profile).
+ */
+export const safeHttpsLink = (link) => (typeof link === 'string' && /^https:\/\/[^\s"'<>]+\.[^\s"'<>]+$/i.test(link.trim()) ? link.trim() : null);
+
+/**
+ * Form values for a new event. `where` is 'sanctuary' (the one room — the
+ * calendar) or 'outside' (anywhere else — Linda's curation); `location` is the
+ * place when it's outside ('' at the Sanctuary, which has one address).
+ */
 export function emptyOfferingForm() {
   return {
     kind: 'event', title: '', description: '',
     startDate: '', startTime: '18:00', endDate: '', endTime: '20:00',
-    location: DEFAULT_LOCATION, price: '', capacity: '', imagePath: null,
+    where: 'sanctuary', location: '', price: '', capacity: '', imagePath: null,
+    videoMode: 'link', videoUrl: '', videoPath: null,
   };
 }
+
+/** Typed as a place but naming the Sanctuary — which is "At Conscious Sanctuary", one room with a calendar. */
+export const looksLikeSanctuary = (place) => /conscious\s*sanctuary/i.test(String(place || ''));
+
+/**
+ * A form from before `where` existed (a draft kept in this browser) → the same
+ * form with it: the Sanctuary's own address means in-house, anything else outside.
+ */
+export function withWhere(form) {
+  if (form.where === 'sanctuary' || form.where === 'outside') return form;
+  const place = elsewhere(form.location);
+  return { ...form, where: place ? 'outside' : 'sanctuary', location: place };
+}
+
+/** In the Sanctuary (the calendar) rather than outside it (Linda's curation). A row without the flag: by its place. */
+export const inHouse = (o) => (typeof o.at_sanctuary === 'boolean' ? o.at_sanctuary : !elsewhere(o.location));
 
 /** A saved row → form values (IST wall clock). endDate is '' when it ends the same day. */
 export function offeringToForm(o) {
@@ -188,10 +273,14 @@ export function offeringToForm(o) {
     description: o.description || '',
     startDate: s.date, startTime: s.time,
     endDate: e.date === s.date ? '' : e.date, endTime: e.time,
-    location: o.location || DEFAULT_LOCATION,
+    where: inHouse(o) ? 'sanctuary' : 'outside',
+    location: inHouse(o) ? '' : (o.location || ''),
     price: o.price_inr === null || o.price_inr === undefined ? '' : String(Number(o.price_inr)),
     capacity: o.capacity === null || o.capacity === undefined ? '' : String(o.capacity),
     imagePath: o.image_path || null,
+    videoMode: o.video_path ? 'upload' : 'link',
+    videoUrl: o.video_url || '',
+    videoPath: o.video_path || null,
   };
 }
 
@@ -206,13 +295,18 @@ export function validateOffering(form) {
   const errors = {};
   const title = String(form.title || '').trim();
   const description = String(form.description || '').trim();
-  const location = String(form.location || '').trim() || DEFAULT_LOCATION;
+  const outside = form.where === 'outside';
+  const place = String(form.location || '').trim();
 
   if (!OFFERING_KINDS.some((k) => k.value === form.kind)) errors.kind = 'Choose event, class or workshop.';
   if (title.length < LIMITS.titleMin) errors.title = 'Give it a title.';
   else if (title.length > LIMITS.titleMax) errors.title = `Keep the title under ${LIMITS.titleMax} characters.`;
   if (description.length > LIMITS.descriptionMax) errors.description = `Keep it under ${LIMITS.descriptionMax} characters.`;
-  if (location.length > LIMITS.locationMax) errors.location = 'A shorter location, please.';
+  if (outside) {
+    if (place.length < 2) errors.location = 'Write where it happens, so people can find it.';
+    else if (place.length > LIMITS.locationMax) errors.location = 'A shorter place, please.';
+    else if (looksLikeSanctuary(place)) errors.location = 'That’s the Sanctuary — choose “At Conscious Sanctuary” above instead.';
+  }
 
   const startsAt = istToIso(form.startDate, form.startTime);
   const endsAt = istToIso(form.endDate || form.startDate, form.endTime);
@@ -240,6 +334,18 @@ export function validateOffering(form) {
     }
   }
 
+  // One video at most: the tab the host left open decides which one is kept.
+  let videoUrl = null;
+  let videoPath = null;
+  if (form.videoMode === 'upload') {
+    videoPath = form.videoPath || null;
+  } else if (!blank(form.videoUrl)) {
+    const v = parseVideoLink(form.videoUrl);
+    if (!v) errors.video = 'Paste a link to a YouTube, Vimeo or Instagram video.';
+    else if (v.url.length > LIMITS.videoUrlMax) errors.video = 'That link is too long.';
+    else videoUrl = v.url;
+  }
+
   return {
     errors,
     value: {
@@ -248,22 +354,83 @@ export function validateOffering(form) {
       description: description || null,
       starts_at: startsAt,
       ends_at: endsAt,
-      location,
+      at_sanctuary: !outside,
+      location: outside ? place : DEFAULT_LOCATION,
       price_inr: price === 0 ? null : price,
       capacity,
       image_path: form.imagePath || null,
+      video_url: videoUrl,
+      video_path: videoPath,
     },
   };
 }
 
+/** Where it happens, when that isn't the Sanctuary itself ('' at the Sanctuary or unknown). */
+export function elsewhere(location) {
+  const l = String(location || '').trim();
+  return !l || l.toLowerCase() === DEFAULT_LOCATION.toLowerCase() ? '' : l;
+}
+
+/** A Google Maps search for a place someone typed. */
+export const mapsUrl = (q) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(String(q || '').trim())}`;
+
 /** Publishing something already under way would open RSVPs that the database refuses. */
 export const canPublish = (o, now = Date.now()) => !hasStarted(o, now);
 
-/** Host dashboard tabs. Upcoming: live or cancelled, not yet over. Past: over, newest first. */
+// ── One room ────────────────────────────────────────────────────────────────
+// Conscious Sanctuary holds one thing at a time. The database refuses a second
+// live event over a taken time (POS migration 20261127000000, constraint
+// sanctuary_offerings_one_room); these let the editor say so before anyone saves.
+
+const overlaps = (a, b) => new Date(a.starts_at) < new Date(b.ends_at) && new Date(b.starts_at) < new Date(a.ends_at);
+
+/**
+ * The span to ask sanctuary_room_busy() about for these wanted times:
+ * { from, to } covering their IST days whole, or null.
+ */
+export function roomWindow(wanted) {
+  const ok = wanted.filter((w) => w.starts_at && w.ends_at);
+  if (!ok.length) return null;
+  const first = isoToIstParts(ok.reduce((m, w) => (w.starts_at < m ? w.starts_at : m), ok[0].starts_at)).date;
+  const last = isoToIstParts(ok.reduce((m, w) => (w.ends_at > m ? w.ends_at : m), ok[0].ends_at)).date;
+  return { from: istToIso(first, '00:00'), to: istToIso(addDays(last, 1), '00:00') };
+}
+
+/**
+ * What the wanted times run into, from sanctuary_room_busy() rows. `mine`: ids
+ * to leave out (the event being edited). → { taken, held }: each a list of
+ * { want, busy } — taken = a live event (it can't be approved over it), held =
+ * someone's event waiting for review (whichever is approved first gets it).
+ */
+export function roomClashes(busy, wanted, mine = []) {
+  const others = busy.filter((b) => !mine.includes(b.id));
+  const taken = [];
+  const held = [];
+  for (const want of wanted) {
+    if (!want.starts_at || !want.ends_at) continue;
+    for (const b of others) {
+      if (!overlaps(want, b)) continue;
+      (b.status === 'published' ? taken : held).push({ want, busy: b });
+    }
+  }
+  return { taken, held };
+}
+
+/** One busy slot, the way the editor says it: '“Kirtan evening”, Fri 4 Dec, 7 – 9 pm'. */
+export const busyLabel = (b) => `${b.title ? `“${b.title}”, ` : ''}${formatWhen(b.starts_at, b.ends_at)}`;
+
+/** The message when the Sanctuary is taken — the same words the database uses. */
+export const roomTakenMessage = (b) => `The Sanctuary is taken then: ${busyLabel(b)}. Pick another time, or choose somewhere else.`;
+
+/**
+ * Organiser dashboard tabs. Upcoming: live or cancelled, not yet over. Drafts:
+ * drafts and events waiting for review (neither is public). Past: over, newest first.
+ */
 export function splitHostOfferings(rows, now = Date.now()) {
   const byStart = (a, b) => new Date(a.starts_at) - new Date(b.starts_at);
-  const drafts = rows.filter((o) => o.status === 'draft').sort(byStart);
-  const live = rows.filter((o) => o.status !== 'draft');
+  const notPublic = (o) => o.status === 'draft' || o.status === 'in_review';
+  const drafts = rows.filter(notPublic).sort(byStart);
+  const live = rows.filter((o) => !notPublic(o));
   return {
     upcoming: live.filter((o) => !isPast(o, now)).sort(byStart),
     drafts,

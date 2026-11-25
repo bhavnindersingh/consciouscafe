@@ -71,7 +71,7 @@ const CalendarView = ({ items }) => {
                   role="gridcell"
                   className={cls}
                   aria-pressed={picked === c.date}
-                  aria-label={`${formatDay(istToIso(c.date, '12:00'))}: ${on.length} ${on.length === 1 ? 'gathering' : 'gatherings'}`}
+                  aria-label={`${formatDay(istToIso(c.date, '12:00'))}: ${on.length} ${on.length === 1 ? 'event' : 'events'}`}
                   onClick={() => setPicked(c.date)}
                 >
                   <span className="sn-cal-num">{c.day}</span>
