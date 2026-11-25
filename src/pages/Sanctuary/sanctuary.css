@@ -147,7 +147,6 @@ a.sn-hostname { display: inline-flex; align-items: center; min-height: 44px; col
 
 /* ── forms ── inputs never below 16px, so phones don't zoom on focus */
 .sn-form { display: flex; flex-direction: column; gap: 18px; max-width: 560px; }
-.sn-form-wide { max-width: 760px; }
 .sn-field { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
 .sn-label { font-family: var(--ui); font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--ink-mute); font-weight: 500; }
 .sn-field input, .sn-field select, .sn-field textarea {
@@ -231,6 +230,48 @@ a.sn-hostname { display: inline-flex; align-items: center; min-height: 44px; col
 .sn-editor .sn-dash-h { margin-bottom: 24px; }
 .sn-editor-acts { display: flex; gap: 12px 16px; align-items: center; flex-wrap: wrap; margin-top: 10px; }
 .sn-scope { margin: 0 0 28px; display: flex; flex-direction: column; gap: 10px; }
+
+/* the gathering editor: sections down the left as serif heads on hairlines; the
+   row as the calendar will show it sits beside them and sticks, with the save
+   buttons under it. On one column it follows the sections, so the buttons stay
+   the last thing on the page. */
+.sn-editor.sn-editor-wide { max-width: 1300px; }
+.sn-editor-head { max-width: 760px; margin-bottom: clamp(28px, 5vh, 48px); }
+.sn-editor-head .sn-dash-h { margin-bottom: 10px; }
+.sn-editor-head .sn-scope { margin: 18px 0 0; }
+.sn-editor-grid {
+  display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(320px, 1fr);
+  column-gap: clamp(36px, 5vw, 88px); align-items: start;
+}
+.sn-steps { min-width: 0; display: flex; flex-direction: column; gap: clamp(40px, 6vh, 64px); }
+.sn-step { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+.sn-step-h {
+  font-family: var(--display); font-weight: 400; font-size: clamp(24px, 2.4vw, 32px); line-height: 1.1; color: var(--ink);
+  margin: 0; padding-bottom: 10px; border-bottom: 1px solid var(--ink);
+  display: flex; justify-content: space-between; align-items: baseline; gap: 16px; flex-wrap: wrap;
+}
+.sn-step-note { font-family: var(--ui); font-size: 13px; color: var(--ink-mute); }
+.sn-field input.sn-title-input { font-family: var(--display); font-size: 24px; padding: 10px 14px; min-height: 56px; }
+.sn-field input.sn-title-input::placeholder { color: var(--ink-mute); opacity: .6; }
+
+/* kind: three cards, each marked with the colour the calendar gives that kind */
+.sn-kinds { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.sn-kindcard {
+  display: flex; flex-direction: column; gap: 6px; min-height: 44px; padding: 16px 16px 18px; cursor: pointer;
+  border: 1px solid var(--line); background: transparent;
+  transition: border-color .3s var(--ease), background .3s var(--ease), box-shadow .3s var(--ease);
+}
+.sn-kindcard::before { content: ''; width: 18px; height: 2px; background: var(--sage); margin-bottom: 6px; }
+.sn-kindcard.k-class::before { background: var(--forest); }
+.sn-kindcard.k-workshop::before { background: var(--clay); }
+.sn-kindcard-name { font-family: var(--display); font-size: 22px; line-height: 1.1; color: var(--ink); }
+.sn-kindcard-desc { font-family: var(--ui); font-size: 13px; line-height: 1.5; color: var(--ink-mute); }
+.sn-kindcard.on { background: var(--paper-2); border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+.sn-kindcard:has(input:focus-visible), .sn-photo-drop:has(input:focus-visible), label.sn-act:has(input:focus-visible) { outline: 2px solid var(--forest); outline-offset: 3px; }
+
+/* when */
+.sn-when-foot { display: flex; justify-content: space-between; align-items: center; gap: 0 16px; flex-wrap: wrap; margin-top: -8px; }
+.sn-dur { font-family: var(--ui); font-size: 13px; color: var(--ink-mute); line-height: 1.5; }
 .sn-repeatbox { display: flex; flex-direction: column; gap: 16px; border-left: 2px solid var(--forest); padding: 4px 0 4px 20px; }
 .sn-repeatbox input[type="date"] { max-width: 260px; }
 .sn-days { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -238,11 +279,58 @@ a.sn-hostname { display: inline-flex; align-items: center; min-height: 44px; col
 .sn-day.on { background: var(--forest); border-color: var(--forest); color: var(--paper); }
 .sn-repeat-preview { font-family: var(--ui); font-size: 14px; color: var(--ink-soft); line-height: 1.6; margin: 0; }
 .sn-repeat-preview strong { color: var(--ink); font-weight: 500; }
-.sn-image { display: flex; gap: 18px; align-items: center; }
-.sn-image img { display: block; width: auto; height: auto; max-width: 200px; max-height: 200px; border: 1px solid var(--line-soft); }
-.sn-image-empty { width: 200px; aspect-ratio: 16 / 10; background: var(--paper-2); border: 1px solid var(--line-soft); display: flex; align-items: center; justify-content: center; font-family: var(--ui); font-size: 12px; color: var(--ink-mute); }
-.sn-image-acts { display: flex; flex-direction: column; align-items: flex-start; gap: 0; }
-.sn-image-acts label { cursor: pointer; }
+.sn-series-dates { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.sn-series-dates li { font-family: var(--ui); font-size: 12px; color: var(--ink-soft); padding: 5px 9px; border: 1px solid var(--line-soft); font-variant-numeric: tabular-nums; }
+
+/* price: the rupee sign sits inside the box */
+.sn-money { position: relative; display: block; }
+.sn-money > span { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-family: var(--ui); font-size: 16px; color: var(--ink-mute); pointer-events: none; }
+.sn-field .sn-money input { padding-left: 32px; }
+
+/* photo: a drop box until there is one, then the photo in its own shape */
+.sn-photo { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+.sn-photo img { display: block; width: auto; height: auto; max-width: 100%; max-height: 360px; border: 1px solid var(--line-soft); transition: opacity .3s var(--ease); }
+.sn-photo.drag img { opacity: .5; }
+.sn-photo-acts { display: flex; gap: 0 20px; }
+.sn-photo-acts label { cursor: pointer; }
+.sn-photo-drop {
+  align-self: stretch; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+  min-height: 180px; padding: 24px; text-align: center; cursor: pointer;
+  border: 1px dashed var(--line); background: #fffdf8; transition: border-color .3s var(--ease), background .3s var(--ease);
+}
+.sn-photo.drag .sn-photo-drop { border-color: var(--forest); background: var(--paper-2); }
+.sn-photo-drop-h { font-family: var(--display); font-size: 24px; line-height: 1.1; color: var(--ink); }
+/* nothing to drag from on a touch screen */
+@media (hover: none) { .sn-photo-dnd { display: none; } }
+
+/* the side: preview, what saving does, the buttons */
+.sn-side-h { font-family: var(--display); font-weight: 400; font-size: clamp(22px, 2vw, 26px); line-height: 1.1; color: var(--ink); margin: 0; padding-bottom: 10px; border-bottom: 1px solid var(--ink); }
+.sn-pv { display: grid; grid-template-columns: 62px minmax(0, 1fr); column-gap: 16px; row-gap: 14px; align-items: center; padding: 20px 0; border-bottom: 1px solid var(--line-soft); }
+.sn-pv .sn-tile { width: 62px; }
+.sn-pv .sn-tile-day { font-size: 28px; }
+.sn-pv .sn-tile.is-empty { border-style: dashed; border-color: var(--line); }
+.sn-pv .sn-tile.is-empty .sn-tile-day { color: var(--ink-mute); }
+.sn-pv .sn-row-title { font-size: clamp(22px, 2vw, 28px); overflow-wrap: anywhere; }
+.sn-pv .sn-row-title.is-empty { color: var(--ink-mute); font-style: italic; }
+.sn-pv .sn-row-img { grid-column: 1 / -1; justify-self: start; max-width: 100%; max-height: 170px; }
+.sn-pv .sn-row-side { grid-column: 2; flex-direction: row; flex-wrap: wrap; align-items: baseline; justify-content: flex-start; gap: 4px 16px; text-align: left; min-width: 0; width: auto; }
+.sn-pv .sn-price { font-size: 20px; }
+.sn-side-note { font-family: var(--ui); font-size: 13px; color: var(--ink-mute); line-height: 1.6; margin: 18px 0 14px; }
+.sn-side-todo, .sn-side-warn { font-family: var(--ui); font-size: 13px; line-height: 1.5; margin: 0 0 14px; }
+.sn-side-todo { color: var(--ink-soft); }
+.sn-side-warn { color: #8a2a1f; }
+.sn-editor-side .sn-editor-acts { flex-direction: column; align-items: stretch; gap: 10px; margin-top: 0; }
+.sn-editor-side .sn-editor-acts .btn, .sn-editor-side .sn-editor-acts .sn-act { justify-content: center; }
+/* two columns but a narrow form: the date takes its own row so the times have room */
+@media (min-width: 861px) and (max-width: 1060px) {
+  .sn-editor-grid .sn-grid3 { grid-template-columns: 1fr 1fr; }
+  .sn-editor-grid .sn-grid3 > :first-child { grid-column: 1 / -1; }
+}
+/* never taller than the screen under the nav: on a short laptop the preview
+   scrolls inside the panel and the buttons stay in sight */
+.sn-editor-side.sn-panel { display: flex; flex-direction: column; max-height: calc(100vh - 124px); }
+.sn-side-top { flex: 0 1 auto; min-height: 0; overflow-y: auto; scrollbar-width: thin; }
+.sn-editor-side .sn-editor-acts { flex: none; }
 
 .sn-guests .sn-row-meta { margin-bottom: 22px; display: block; }
 .sn-table { width: 100%; border-collapse: collapse; margin-top: 14px; font-family: var(--ui); font-size: 14px; }
@@ -305,6 +393,8 @@ button.sn-cal-day { cursor: pointer; transition: background .25s var(--ease); }
   .sn-cal-step:hover:not(:disabled) { background: var(--ink); color: var(--paper); }
   button.sn-cal-day:hover { background: var(--paper-2); }
   .sn-day:hover { border-color: var(--ink); color: var(--ink); }
+  .sn-kindcard:hover:not(.on) { border-color: var(--ink); }
+  .sn-photo-drop:hover { border-color: var(--ink); }
 }
 
 /* ── one column ── */
@@ -325,6 +415,9 @@ button.sn-cal-day { cursor: pointer; transition: background .25s var(--ease); }
   .sn-detail-body .sn-prose { margin-top: clamp(32px, 6vh, 48px); }
   .sn-hrow { grid-template-columns: 58px minmax(0, 1fr); }
   .sn-hrow-acts { grid-column: 1 / -1; justify-content: flex-start; max-width: none; }
+  .sn-editor-grid { grid-template-columns: minmax(0, 1fr); }
+  .sn-editor-side.sn-panel { display: block; max-height: none; }
+  .sn-side-top { overflow: visible; }
   .sn-table thead { display: none; }
   .sn-table tr { display: grid; grid-template-columns: minmax(0, 1fr) auto; padding: 12px 0; border-bottom: 1px solid var(--line-soft); }
   .sn-table td { border: 0; padding: 2px 0; }
@@ -418,9 +511,11 @@ button.sn-cal-day { cursor: pointer; transition: background .25s var(--ease); }
   .sn-day { flex: 1 1 0; min-width: 40px; padding: 0; font-size: 12px; }
   .sn-repeatbox { padding-left: 14px; }
   .sn-repeatbox input[type="date"] { max-width: none; }
-  .sn-image { flex-direction: column; align-items: flex-start; }
-  .sn-image img, .sn-image-empty { max-width: 100%; width: 100%; }
-  .sn-image-acts { flex-direction: row; gap: 0 18px; }
+  .sn-kinds { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  .sn-kindcard { padding: 14px 14px 16px; }
+  .sn-kindcard::before { margin-bottom: 2px; }
+  .sn-field input.sn-title-input { font-size: 21px; }
+  .sn-photo-drop { min-height: 150px; }
   .sn-editor-acts { flex-direction: column; align-items: stretch; gap: 10px; }
   .sn-editor-acts .btn { width: 100%; justify-content: center; }
   .sn-editor-acts .sn-act { justify-content: center; }

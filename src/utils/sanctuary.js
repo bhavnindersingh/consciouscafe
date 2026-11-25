@@ -217,7 +217,8 @@ export function validateOffering(form) {
   const startsAt = istToIso(form.startDate, form.startTime);
   const endsAt = istToIso(form.endDate || form.startDate, form.endTime);
   if (!startsAt) errors.start = 'Pick a date and start time.';
-  if (!endsAt) errors.end = 'Pick an end time.';
+  // No date yet is the start's error; only blame the end when its own time is missing.
+  if (!endsAt && (startsAt || !TIME_RE.test(form.endTime || ''))) errors.end = 'Pick an end time.';
   if (startsAt && endsAt) {
     const span = new Date(endsAt) - new Date(startsAt);
     if (span <= 0) errors.end = 'It has to end after it starts.';
@@ -417,6 +418,22 @@ export function seriesSummary(dates) {
 
 /** Minutes between a row's start and end — what "this and following" keeps. */
 export const durationMinutes = (value) => Math.round((new Date(value.ends_at) - new Date(value.starts_at)) / 60000);
+
+/**
+ * How long it runs, for the editor: '45 min', '1 hour', '1 h 30 min', '3 days'.
+ * A day or more counts the IST calendar days it touches. '' unless it ends after it starts.
+ */
+export function durationLabel(startsIso, endsIso) {
+  if (!startsIso || !endsIso) return '';
+  const mins = Math.round((new Date(endsIso) - new Date(startsIso)) / 60000);
+  if (!Number.isFinite(mins) || mins <= 0) return '';
+  if (mins >= 24 * 60) return `${daysBetween(isoToIstParts(startsIso).date, isoToIstParts(endsIso).date) + 1} days`;
+  const h = Math.floor(mins / 60);
+  const m = mins % 60;
+  if (!h) return `${m} min`;
+  if (!m) return h === 1 ? '1 hour' : `${h} hours`;
+  return `${h} h ${m} min`;
+}
 
 /**
  * Public list: one entry per weekly series (its next date) plus every one-off,

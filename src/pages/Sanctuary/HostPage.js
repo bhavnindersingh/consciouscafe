@@ -13,7 +13,7 @@ import {
   seatsTaken, formatWhen, canPublish, isPast, isUuid, formatDay, formatClock,
   cleanEmail, cleanCode, authErrorKind,
   groupHostSeries, repeatLabel, weekdaysOf, weekdayOf, addDays, validateRepeat, seriesRows,
-  seriesSummary, durationMinutes,
+  seriesSummary, durationMinutes, durationLabel, priceLabel, seatsLabel, istToIso,
 } from '../../utils/sanctuary';
 import { Arrow, DateTile, KindTag, Field, Spinner } from './parts';
 import './sanctuary.css';
@@ -381,7 +381,73 @@ function Dashboard({ host, onSignOut }) {
 // A new gathering happens once unless the host says otherwise.
 const NO_REPEAT = { repeat: 'once', weekdays: [], untilDate: '' };
 
-function Editor({ userId }) {
+// One line under each kind, so a host can tell them apart before choosing.
+const KIND_HINTS = {
+  event: 'An evening or an afternoon: a talk, a concert, a circle.',
+  class: 'A regular practice: yoga, movement, breath.',
+  workshop: 'Deeper and hands-on, for a few hours or a weekend.',
+};
+
+// Which error a changed field can clear.
+const ERROR_OF = {
+  kind: 'kind', title: 'title', description: 'description', startDate: 'start', startTime: 'start',
+  endDate: 'end', endTime: 'end', location: 'location', price: 'price', capacity: 'capacity',
+  repeat: 'repeat', weekdays: 'repeat', untilDate: 'repeat',
+};
+
+// The order the form reads in, so a failed save lands on the first problem.
+const ERROR_ORDER = ['kind', 'title', 'start', 'end', 'repeat', 'location', 'price', 'capacity', 'description'];
+
+/** A label over a group of buttons or radios. Field is a <label>, which can't hold several controls. */
+const Group = ({ label, id, error, hint, children }) => (
+  <div className={`sn-field${error ? ' has-error' : ''}`}>
+    <span className="sn-label" id={id}>{label}</span>
+    {children}
+    {error ? <span className="sn-err" role="alert">{error}</span> : hint ? <span className="sn-hint">{hint}</span> : null}
+  </div>
+);
+
+const Step = ({ title, note, children }) => (
+  <section className="sn-step">
+    <h2 className="sn-step-h">{title}{note && <span className="sn-step-note">{note}</span>}</h2>
+    {children}
+  </section>
+);
+
+/** The calendar row as visitors will see it, built from the form as typed. Not a link: there is no page yet. */
+function Preview({ value, hostName, repeat, more, editing }) {
+  const img = imageUrl(value.image_path);
+  const when = value.starts_at ? formatWhen(value.starts_at, value.ends_at || undefined) : 'Pick a date and time';
+  return (
+    <div className="sn-pv">
+      {value.starts_at ? <DateTile iso={value.starts_at} /> : (
+        <div className="sn-tile is-empty" aria-hidden="true">
+          <span className="sn-tile-dow">&nbsp;</span><span className="sn-tile-day">–</span><span className="sn-tile-mon">&nbsp;</span>
+        </div>
+      )}
+      <div className="sn-row-main">
+        <span className="sn-row-tags">
+          <KindTag kind={value.kind} />
+          {repeat && <span className="sn-repeat">{repeat}</span>}
+        </span>
+        <span className={`sn-row-title${value.title ? '' : ' is-empty'}`}>{value.title || 'Your title'}</span>
+        <span className="sn-row-meta">
+          {when}
+          {hostName ? <> · with {hostName}</> : null}
+          {more ? <> · and {more} more {more === 1 ? 'date' : 'dates'}</> : null}
+        </span>
+      </div>
+      {img && <img className="sn-row-img" src={img} alt="" />}
+      <div className="sn-row-side">
+        <span className="sn-price">{priceLabel(value.price_inr)}</span>
+        {/* editing: some places may be taken already, so show the total, not what's left */}
+        <span className="sn-seats">{editing && value.capacity ? `${value.capacity} ${value.capacity === 1 ? 'place' : 'places'}` : seatsLabel(value.capacity, value.capacity)}</span>
+      </div>
+    </div>
+  );
+}
+
+function Editor({ userId, hostName }) {
   const { gid } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
@@ -394,6 +460,9 @@ function Editor({ userId }) {
   const [failure, setFailure] = useState(null);
   const [busy, setBusy] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [photoFailure, setPhotoFailure] = useState(null);
+  const [dragging, setDragging] = useState(false);
+  const [multiDay, setMultiDay] = useState(false);
 
   useEffect(() => {
     const src = gid || duplicateOf;
@@ -407,48 +476,83 @@ function Editor({ userId }) {
 
   if (!form) return failure ? <p className="sn-failure">{failure}</p> : <Spinner />;
 
-  const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
+  /** Change fields, and drop any error they were showing. */
+  const update = (patch) => {
+    setForm((f) => ({ ...f, ...patch }));
+    const keys = Object.keys(patch).map((k) => ERROR_OF[k]).filter(Boolean);
+    setErrors((e) => {
+      if (!keys.some((k) => e[k])) return e;
+      const next = { ...e };
+      keys.forEach((k) => delete next[k]);
+      return next;
+    });
+  };
+  const set = (k) => (e) => update({ [k]: e.target.value });
+
   const isPublished = original?.status === 'published';
   const inSeries = Boolean(gid && original?.series_id);
   const following = inSeries && scope === 'following';
   const weekly = !gid && form.repeat === 'weekly';
   const repeatCheck = weekly ? validateRepeat(form) : null;
+  const seriesOk = Boolean(repeatCheck && !repeatCheck.errors.repeat);
+  const { value } = validateOffering(form);
+  const showEndDate = multiDay || Boolean(form.endDate);
+  const duration = durationLabel(value.starts_at, value.ends_at);
+  const endsEarly = Boolean(value.starts_at && value.ends_at && !duration);
 
-  const setRepeat = (repeat) => setForm((f) => {
-    if (repeat !== 'weekly') return { ...f, repeat };
-    const wd = weekdayOf(f.startDate);
-    return {
-      ...f,
+  const setRepeat = (repeat) => {
+    if (repeat !== 'weekly') { update({ repeat }); return; }
+    const wd = weekdayOf(form.startDate);
+    update({
       repeat,
-      weekdays: f.weekdays.length ? f.weekdays : (wd === null ? [] : [wd]),
-      untilDate: f.untilDate || (f.startDate ? addDays(f.startDate, 49) : ''),
-    };
-  });
-  const toggleDay = (v) => setForm((f) => ({
-    ...f, weekdays: f.weekdays.includes(v) ? f.weekdays.filter((d) => d !== v) : [...f.weekdays, v],
-  }));
+      weekdays: form.weekdays.length ? form.weekdays : (wd === null ? [] : [wd]),
+      untilDate: form.untilDate || (form.startDate ? addDays(form.startDate, 49) : ''),
+    });
+  };
+  const toggleDay = (v) => update({ weekdays: form.weekdays.includes(v) ? form.weekdays.filter((d) => d !== v) : [...form.weekdays, v] });
+  const oneDay = () => { setMultiDay(false); update({ endDate: '' }); };
+  const manyDays = () => { setMultiDay(true); if (form.startDate) update({ endDate: addDays(form.startDate, 1) }); };
 
-  const onImage = async (e) => {
-    const file = e.target.files?.[0];
-    e.target.value = '';
+  const upload = async (file) => {
     if (!file) return;
-    setUploading(true); setFailure(null);
-    try { const path = await uploadImage(userId, file); setForm((f) => ({ ...f, imagePath: path })); } catch (err) { setFailure(err.message || 'Upload failed.'); }
+    setUploading(true); setPhotoFailure(null);
+    try { const path = await uploadImage(userId, file); update({ imagePath: path }); } catch (err) { setPhotoFailure(err.message || 'That photo didn’t upload. Try again, or try another one.'); }
     setUploading(false);
+  };
+  const onPick = (e) => { const file = e.target.files?.[0]; e.target.value = ''; upload(file); };
+  const drop = {
+    onDragOver: (e) => { e.preventDefault(); if (!uploading) setDragging(true); },
+    onDragLeave: (e) => { if (!e.currentTarget.contains(e.relatedTarget)) setDragging(false); },
+    onDrop: (e) => { e.preventDefault(); setDragging(false); if (!uploading) upload(e.dataTransfer.files?.[0]); },
+  };
+
+  /** Bring the first field that needs attention into view and put the cursor in it. */
+  const goToError = (errs) => {
+    const key = ERROR_ORDER.find((k) => errs[k]);
+    const id = {
+      kind: 'sn-e-kind-event', title: 'sn-e-title', start: 'sn-e-date', end: 'sn-e-end',
+      repeat: form.weekdays.length ? 'sn-e-until' : 'sn-e-day-1', location: 'sn-e-loc', price: 'sn-e-price',
+      capacity: 'sn-e-cap', description: 'sn-e-desc',
+    }[key];
+    const el = id && document.getElementById(id);
+    if (!el) return;
+    const still = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    el.scrollIntoView({ block: 'center', behavior: still ? 'auto' : 'smooth' });
+    el.focus({ preventScroll: true });
   };
 
   const save = async (status) => {
-    const { errors: errs, value } = validateOffering(form);
+    const { errors: errs, value: row0 } = validateOffering(form);
     const rep = weekly ? validateRepeat(form) : { errors: {}, dates: [] };
     Object.assign(errs, rep.errors);
-    if (status === 'published' && value.starts_at && !canPublish(value)) errs.start = 'That time has already passed.';
+    if (status === 'published' && row0.starts_at && !canPublish(row0)) errs.start = 'That time has already passed.';
     setErrors(errs); setFailure(null);
-    if (Object.keys(errs).length) { window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+    if (Object.keys(errs).length) { goToError(errs); return; }
     setBusy(true);
-    const row = { ...value, ...(status ? { status } : {}) };
+    const row = { ...row0, ...(status ? { status } : {}) };
     try {
       if (following) {
-        await updateSeries(original.series_id, original.starts_at, value, form.startTime, durationMinutes(value));
+        await updateSeries(original.series_id, original.starts_at, row0, form.startTime, durationMinutes(row0));
       } else if (weekly) {
         await createSeries(userId, seriesRows(form, row, rep.dates, crypto.randomUUID()));
       } else {
@@ -461,132 +565,227 @@ function Editor({ userId }) {
     }
   };
 
+  const errorCount = Object.keys(errors).length;
+  const missing = [!value.title && 'a title', !value.starts_at && 'a date'].filter(Boolean);
+  const heading = following ? 'Edit every later date' : gid ? 'Edit gathering' : duplicateOf ? 'Duplicate gathering' : 'New gathering';
+  const sideNote = following
+    ? 'Saving updates every later date in this series.'
+    : isPublished
+      ? 'This is live. Your changes show on the calendar as soon as you save.'
+      : weekly && seriesOk
+        ? `Publishing puts all ${repeatCheck.dates.length} dates on the calendar. A draft stays here, where only you can see it.`
+        : 'Publishing puts it on the calendar straight away. A draft stays here, where only you can see it.';
+  const descLen = form.description.length;
+
   return (
-    <div className="sn-editor">
-      <Link className="sn-back" to="/sanctuary/host">← Your gatherings</Link>
-      <h1 className="display sn-dash-h">{following ? 'Edit every later date' : gid ? 'Edit gathering' : duplicateOf ? 'Duplicate gathering' : 'New gathering'}</h1>
-      {duplicateOf && <p className="sn-hint">Same details, one week later — change anything before you save.</p>}
-      {inSeries && (
-        <div className="sn-scope">
-          <div className="sn-seg" role="radiogroup" aria-label="Change">
-            {[['one', 'This date only'], ['following', 'This and later dates']].map(([v, label]) => (
-              <button type="button" key={v} role="radio" aria-checked={scope === v}
-                className={`sn-seg-opt${scope === v ? ' on' : ''}`} onClick={() => setScope(v)}>{label}</button>
-            ))}
-          </div>
-          <p className="sn-hint">
-            {following
-              ? 'Every later date keeps its own day and takes these details, start time and length. Cancelled dates are left alone.'
-              : 'Only this date changes. The rest of the series stays as it is.'}
-          </p>
-        </div>
-      )}
-
-      <form className="sn-form sn-form-wide" onSubmit={(e) => { e.preventDefault(); save(isPublished || following ? undefined : 'draft'); }} noValidate>
-        <Field label="Kind" error={errors.kind}>
-          <div className="sn-seg" role="radiogroup">
-            {OFFERING_KINDS.map((k) => (
-              <button type="button" key={k.value} role="radio" aria-checked={form.kind === k.value}
-                className={`sn-seg-opt${form.kind === k.value ? ' on' : ''}`} onClick={() => setForm((f) => ({ ...f, kind: k.value }))}>
-                {k.label}
-              </button>
-            ))}
-          </div>
-        </Field>
-        <Field label="Title" error={errors.title} htmlFor="sn-e-title">
-          <input id="sn-e-title" value={form.title} onChange={set('title')} maxLength={LIMITS.titleMax} placeholder="Morning Hatha, Full-moon sound bath…" />
-        </Field>
-
-        <div className="sn-grid3">
-          <Field label={weekly ? 'First date' : 'Date'} error={errors.start} htmlFor="sn-e-date">
-            <input id="sn-e-date" type="date" value={form.startDate} onChange={set('startDate')} disabled={following} />
-          </Field>
-          <Field label="Starts" htmlFor="sn-e-start">
-            <input id="sn-e-start" type="time" value={form.startTime} onChange={set('startTime')} />
-          </Field>
-          <Field label="Ends" error={errors.end} htmlFor="sn-e-end">
-            <input id="sn-e-end" type="time" value={form.endTime} onChange={set('endTime')} />
-          </Field>
-        </div>
-        <Field label="Ends on a later day? (optional)" hint="For a weekend or multi-day workshop. Times are Auroville time." htmlFor="sn-e-enddate">
-          <input id="sn-e-enddate" type="date" value={form.endDate} min={form.startDate || undefined} onChange={set('endDate')} disabled={following} />
-        </Field>
-
-        {!gid && (
-          <Field label="Repeats" error={errors.repeat}>
-            <div className="sn-seg" role="radiogroup" aria-label="Repeats">
-              {[['once', 'Once'], ['weekly', 'Weekly']].map(([v, label]) => (
-                <button type="button" key={v} role="radio" aria-checked={form.repeat === v}
-                  className={`sn-seg-opt${form.repeat === v ? ' on' : ''}`} onClick={() => setRepeat(v)}>{label}</button>
+    <div className="sn-editor sn-editor-wide">
+      <div className="sn-editor-head">
+        <Link className="sn-back" to="/sanctuary/host">← Your gatherings</Link>
+        <h1 className="display sn-dash-h">{heading}</h1>
+        {duplicateOf && <p className="sn-hint">Same details, one week later. Change anything before you save.</p>}
+        {inSeries && (
+          <div className="sn-scope">
+            <div className="sn-seg" role="radiogroup" aria-label="Change">
+              {[['one', 'This date only'], ['following', 'This and later dates']].map(([v, label]) => (
+                <button type="button" key={v} role="radio" aria-checked={scope === v}
+                  className={`sn-seg-opt${scope === v ? ' on' : ''}`} onClick={() => setScope(v)}>{label}</button>
               ))}
             </div>
-          </Field>
-        )}
-        {weekly && (
-          <div className="sn-repeatbox">
-            <Field label="On these days">
-              <div className="sn-days" role="group" aria-label="Days of the week">
-                {WEEKDAYS.map((w) => (
-                  <button type="button" key={w.value} aria-pressed={form.weekdays.includes(w.value)} aria-label={w.name}
-                    className={`sn-day${form.weekdays.includes(w.value) ? ' on' : ''}`} onClick={() => toggleDay(w.value)}>
-                    {w.short}
-                  </button>
-                ))}
-              </div>
-            </Field>
-            <Field label="Last date" htmlFor="sn-e-until">
-              <input id="sn-e-until" type="date" value={form.untilDate} min={form.startDate || undefined} onChange={set('untilDate')} />
-            </Field>
-            <p className="sn-repeat-preview" aria-live="polite">
-              {repeatCheck && !repeatCheck.errors.repeat
-                ? <><strong>{repeatLabel(form.weekdays)}</strong> — {seriesSummary(repeatCheck.dates)}. Each date has its own places and guest list.</>
-                : repeatCheck?.errors.repeat}
+            <p className="sn-hint">
+              {following
+                ? 'Every later date keeps its own day and takes these details, start time and length. Cancelled dates are left alone.'
+                : 'Only this date changes. The rest of the series stays as it is.'}
             </p>
           </div>
         )}
+      </div>
 
-        <Field label="Where" error={errors.location} htmlFor="sn-e-loc">
-          <input id="sn-e-loc" value={form.location} onChange={set('location')} maxLength={LIMITS.locationMax} />
-        </Field>
-        <div className="sn-grid2">
-          <Field label="Price per person (₹)" error={errors.price} hint="Leave blank for free. Paid at the venue." htmlFor="sn-e-price">
-            <input id="sn-e-price" type="number" min="0" step="1" inputMode="decimal" value={form.price} onChange={set('price')} />
-          </Field>
-          <Field label="Places" error={errors.capacity} hint="Leave blank for no limit." htmlFor="sn-e-cap">
-            <input id="sn-e-cap" type="number" min="1" max={LIMITS.capacityMax} step="1" inputMode="numeric" value={form.capacity} onChange={set('capacity')} />
-          </Field>
-        </div>
-        <Field label="Description" error={errors.description} hint="What happens, who it’s for, what to bring. A blank line starts a new paragraph." htmlFor="sn-e-desc">
-          <textarea id="sn-e-desc" rows={8} value={form.description} onChange={set('description')} maxLength={LIMITS.descriptionMax} />
-        </Field>
+      <form className="sn-editor-grid" onSubmit={(e) => { e.preventDefault(); save(isPublished || following ? undefined : 'draft'); }} noValidate>
+        <div className="sn-steps">
+          <Step title="What it is">
+            <Group label="Kind" id="sn-e-kind-l" error={errors.kind}>
+              <div className="sn-kinds" role="radiogroup" aria-labelledby="sn-e-kind-l">
+                {OFFERING_KINDS.map((k) => (
+                  <label key={k.value} className={`sn-kindcard k-${k.value}${form.kind === k.value ? ' on' : ''}`}>
+                    <input type="radio" className="sr-only" name="sn-e-kind" id={`sn-e-kind-${k.value}`} value={k.value}
+                      checked={form.kind === k.value} onChange={() => update({ kind: k.value })} />
+                    <span className="sn-kindcard-name">{k.label}</span>
+                    <span className="sn-kindcard-desc">{KIND_HINTS[k.value]}</span>
+                  </label>
+                ))}
+              </div>
+            </Group>
+            <Field label="Title" error={errors.title} htmlFor="sn-e-title"
+              hint={form.title.length > LIMITS.titleMax - 30 ? `${form.title.length} of ${LIMITS.titleMax} characters` : null}>
+              <input id="sn-e-title" className="sn-title-input" value={form.title} onChange={set('title')} maxLength={LIMITS.titleMax}
+                placeholder="Morning Hatha, Full-moon sound bath…" />
+            </Field>
+          </Step>
 
-        <Field label="Image (optional)" hint="JPG, PNG or WebP, up to 5 MB. A wide photo works best.">
-          <div className="sn-image">
-            {form.imagePath ? <img src={imageUrl(form.imagePath)} alt="" /> : <div className="sn-image-empty">No image</div>}
-            <div className="sn-image-acts">
-              <label className="sn-act">
-                {uploading ? 'Uploading…' : form.imagePath ? 'Replace' : 'Upload'}
-                <input type="file" accept={IMAGE_TYPES.join(',')} onChange={onImage} disabled={uploading} hidden />
-              </label>
-              {form.imagePath && <button type="button" className="sn-act" onClick={() => setForm((f) => ({ ...f, imagePath: null }))}>Remove</button>}
+          <Step title="When" note="Auroville time">
+            {showEndDate ? (
+              <div className="sn-grid2">
+                <Field label={weekly ? 'First date' : 'Starts on'} error={errors.start} htmlFor="sn-e-date">
+                  <input id="sn-e-date" type="date" value={form.startDate} onChange={set('startDate')} disabled={following} />
+                </Field>
+                <Field label="Start time" htmlFor="sn-e-start">
+                  <input id="sn-e-start" type="time" value={form.startTime} onChange={set('startTime')} />
+                </Field>
+                <Field label="Ends on" htmlFor="sn-e-enddate">
+                  <input id="sn-e-enddate" type="date" value={form.endDate} min={form.startDate || undefined} onChange={set('endDate')} disabled={following} />
+                </Field>
+                <Field label="End time" error={errors.end} htmlFor="sn-e-end">
+                  <input id="sn-e-end" type="time" value={form.endTime} onChange={set('endTime')} />
+                </Field>
+              </div>
+            ) : (
+              <div className="sn-grid3">
+                <Field label={weekly ? 'First date' : 'Date'} error={errors.start} htmlFor="sn-e-date">
+                  <input id="sn-e-date" type="date" value={form.startDate} onChange={set('startDate')} disabled={following} />
+                </Field>
+                <Field label="Starts" htmlFor="sn-e-start">
+                  <input id="sn-e-start" type="time" value={form.startTime} onChange={set('startTime')} />
+                </Field>
+                <Field label="Ends" error={errors.end} htmlFor="sn-e-end">
+                  <input id="sn-e-end" type="time" value={form.endTime} onChange={set('endTime')} />
+                </Field>
+              </div>
+            )}
+            <div className="sn-when-foot">
+              <span className="sn-dur" aria-live="polite">
+                {duration ? `Runs ${duration}` : endsEarly && !errors.end ? 'It ends before it starts. Check the times.' : ''}
+              </span>
+              {!following && (showEndDate
+                ? <button type="button" className="sn-act" onClick={oneDay}>Make it one day</button>
+                : <button type="button" className="sn-act" onClick={manyDays}>Make it multi-day</button>)}
             </div>
-          </div>
-        </Field>
 
-        {failure && <p className="sn-failure" role="alert">{failure}</p>}
-        <div className="sn-editor-acts">
-          {following ? (
-            <button type="submit" className="btn forest" disabled={busy || uploading}>{busy ? 'Saving…' : 'Save every later date'}</button>
-          ) : isPublished ? (
-            <button type="submit" className="btn forest" disabled={busy || uploading}>{busy ? 'Saving…' : 'Save changes'}</button>
-          ) : (
-            <>
-              <button type="button" className="btn forest" disabled={busy || uploading} onClick={() => save('published')}>{busy ? 'Saving…' : weekly ? 'Publish all dates' : 'Publish'} <Arrow /></button>
-              <button type="submit" className="btn" disabled={busy || uploading}>Save as draft</button>
-            </>
-          )}
-          <Link className="sn-act" to="/sanctuary/host">Back</Link>
+            {!gid && (
+              <Group label="Repeats" id="sn-e-repeat-l" error={errors.repeat}>
+                <div className="sn-seg" role="radiogroup" aria-labelledby="sn-e-repeat-l">
+                  {[['once', 'Once'], ['weekly', 'Weekly']].map(([v, label]) => (
+                    <button type="button" key={v} role="radio" aria-checked={form.repeat === v}
+                      className={`sn-seg-opt${form.repeat === v ? ' on' : ''}`} onClick={() => setRepeat(v)}>{label}</button>
+                  ))}
+                </div>
+              </Group>
+            )}
+            {weekly && (
+              <div className="sn-repeatbox">
+                <Group label="On these days" id="sn-e-days-l">
+                  <div className="sn-days" role="group" aria-labelledby="sn-e-days-l">
+                    {WEEKDAYS.map((w) => (
+                      <button type="button" key={w.value} id={`sn-e-day-${w.value}`} aria-pressed={form.weekdays.includes(w.value)} aria-label={w.name}
+                        className={`sn-day${form.weekdays.includes(w.value) ? ' on' : ''}`} onClick={() => toggleDay(w.value)}>
+                        {w.short}
+                      </button>
+                    ))}
+                  </div>
+                </Group>
+                <Field label="Last date" htmlFor="sn-e-until">
+                  <input id="sn-e-until" type="date" value={form.untilDate} min={form.startDate || undefined} onChange={set('untilDate')} />
+                </Field>
+                <p className="sn-repeat-preview" aria-live="polite">
+                  {seriesOk
+                    ? <><strong>{repeatLabel(form.weekdays)}</strong>, {seriesSummary(repeatCheck.dates)}. Each date has its own places and guest list.</>
+                    : repeatCheck?.errors.repeat}
+                </p>
+                {seriesOk && (
+                  <ul className="sn-series-dates" aria-label="The dates">
+                    {repeatCheck.dates.map((d) => <li key={d}>{formatDay(istToIso(d, '12:00'))}</li>)}
+                  </ul>
+                )}
+              </div>
+            )}
+          </Step>
+
+          <Step title="Where, price and places">
+            <Field label="Where" error={errors.location} hint="Change this only if it’s somewhere else." htmlFor="sn-e-loc">
+              <input id="sn-e-loc" value={form.location} onChange={set('location')} maxLength={LIMITS.locationMax} />
+            </Field>
+            <div className="sn-grid2">
+              <Field label="Price per person" error={errors.price} hint="Blank if it’s free. Guests pay at the venue." htmlFor="sn-e-price">
+                <span className="sn-money">
+                  <span aria-hidden="true">₹</span>
+                  <input id="sn-e-price" type="number" min="0" step="1" inputMode="decimal" value={form.price} onChange={set('price')} />
+                </span>
+              </Field>
+              <Field label="Places" error={errors.capacity} hint="Blank for no limit." htmlFor="sn-e-cap">
+                <input id="sn-e-cap" type="number" min="1" max={LIMITS.capacityMax} step="1" inputMode="numeric" value={form.capacity} onChange={set('capacity')} />
+              </Field>
+            </div>
+          </Step>
+
+          <Step title="In your words">
+            <Field label="Description" error={errors.description} htmlFor="sn-e-desc"
+              hint={descLen > LIMITS.descriptionMax - 1000
+                ? `${descLen.toLocaleString('en-IN')} of ${LIMITS.descriptionMax.toLocaleString('en-IN')} characters`
+                : 'Who it’s for, what to bring, what to expect. A blank line starts a new paragraph.'}>
+              <textarea id="sn-e-desc" rows={9} value={form.description} onChange={set('description')} maxLength={LIMITS.descriptionMax} />
+            </Field>
+          </Step>
+
+          <Step title="Photo" note="Optional">
+            <div className={`sn-photo${dragging ? ' drag' : ''}`} {...drop}>
+              {form.imagePath ? (
+                <>
+                  <img src={imageUrl(form.imagePath)} alt="" />
+                  <div className="sn-photo-acts">
+                    <label className="sn-act">
+                      {uploading ? 'Uploading…' : 'Replace'}
+                      <input type="file" className="sr-only" accept={IMAGE_TYPES.join(',')} onChange={onPick} disabled={uploading} />
+                    </label>
+                    <button type="button" className="sn-act" disabled={uploading} onClick={() => update({ imagePath: null })}>Remove</button>
+                  </div>
+                </>
+              ) : (
+                <label className="sn-photo-drop">
+                  <input type="file" className="sr-only" accept={IMAGE_TYPES.join(',')} onChange={onPick} disabled={uploading} />
+                  <span className="sn-photo-drop-h">{uploading ? 'Uploading…' : 'Add a photo'}</span>
+                  <span className="sn-hint">Choose one<span className="sn-photo-dnd">, or drop it here</span>. JPG, PNG or WebP, up to 5 MB.</span>
+                </label>
+              )}
+            </div>
+            {photoFailure
+              ? <p className="sn-failure" role="alert">{photoFailure}</p>
+              : <p className="sn-hint">It leads your row on the calendar and the top of your page, shown whole and never cropped.</p>}
+          </Step>
         </div>
+
+        <aside className="sn-panel sn-editor-side" aria-label="Preview and save">
+          <div className="sn-side-top">
+            <h2 className="sn-side-h">How it will look</h2>
+            <Preview
+              value={value}
+              hostName={hostName}
+              repeat={seriesOk ? repeatLabel(form.weekdays) : ''}
+              more={seriesOk ? repeatCheck.dates.length - 1 : 0}
+              editing={Boolean(gid)}
+            />
+            <p className="sn-side-note">{sideNote}</p>
+          </div>
+          {errorCount > 0 ? (
+            <p className="sn-side-warn">{errorCount === 1 ? 'One field needs a look' : `${errorCount} fields need a look`} before this can be saved.</p>
+          ) : !isPublished && !following && missing.length > 0 ? (
+            <p className="sn-side-todo">Add {missing.join(' and ')} to publish.</p>
+          ) : null}
+          {failure && <p className="sn-failure" role="alert">{failure}</p>}
+          <div className="sn-editor-acts">
+            {following ? (
+              <button type="submit" className="btn forest" disabled={busy || uploading}>{busy ? 'Saving…' : 'Save every later date'}</button>
+            ) : isPublished ? (
+              <button type="submit" className="btn forest" disabled={busy || uploading}>{busy ? 'Saving…' : 'Save changes'}</button>
+            ) : (
+              <>
+                <button type="button" className="btn forest" disabled={busy || uploading} onClick={() => save('published')}>
+                  {busy ? 'Saving…' : weekly ? 'Publish all dates' : 'Publish'} {!busy && <Arrow />}
+                </button>
+                <button type="submit" className="btn" disabled={busy || uploading}>Save as draft</button>
+              </>
+            )}
+            <Link className="sn-act" to="/sanctuary/host">Leave without saving</Link>
+          </div>
+        </aside>
       </form>
     </div>
   );
@@ -718,8 +917,8 @@ const HostPage = () => {
     body = (
       <Routes>
         <Route index element={<Dashboard host={host} onSignOut={out} />} />
-        <Route path="new" element={<Editor userId={user.id} />} />
-        <Route path="edit/:gid" element={<Editor userId={user.id} />} />
+        <Route path="new" element={<Editor userId={user.id} hostName={host.display_name} />} />
+        <Route path="edit/:gid" element={<Editor userId={user.id} hostName={host.display_name} />} />
         <Route path="rsvps/:gid" element={<Guests />} />
         <Route path="profile" element={<Profile host={host} onSaved={setHost} />} />
         <Route path="*" element={<Dashboard host={host} onSignOut={out} />} />

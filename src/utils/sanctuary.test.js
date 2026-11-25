@@ -5,7 +5,7 @@ import {
   splitHostOfferings, seatsTaken, rsvpErrorMessage, googleCalendarUrl, isUuid, canPublish,
   cleanEmail, cleanCode, authErrorKind,
   weekdayOf, addDays, seriesDates, repeatLabel, weekdaysOf, validateRepeat, seriesRows, seriesSummary,
-  durationMinutes, collapseSeries, groupHostSeries, istToday, shiftMonth, monthTitle, monthGrid, byDay,
+  durationMinutes, durationLabel, collapseSeries, groupHostSeries, istToday, shiftMonth, monthTitle, monthGrid, byDay,
 } from './sanctuary';
 import { OFFERING_KINDS, RSVP_ERROR_COPY, HOST_AUTH_COPY } from '../constants/sanctuary';
 
@@ -178,9 +178,38 @@ describe('validateOffering', () => {
     expect(validateOffering({ ...good, capacity: '0' }).errors.capacity).toBeTruthy();
   });
 
+  test('a missing date is one error, not two', () => {
+    expect(validateOffering({ ...good, startDate: '' }).errors).toEqual({ start: 'Pick a date and start time.' });
+    expect(validateOffering({ ...good, startDate: '', endTime: '' }).errors.end).toBe('Pick an end time.');
+    expect(validateOffering({ ...good, endTime: '' }).errors.end).toBe('Pick an end time.');
+  });
+
   test('kind and title', () => {
     expect(validateOffering({ ...good, kind: 'retreat' }).errors.kind).toBeTruthy();
     expect(validateOffering({ ...good, title: 'Yo' }).errors.title).toBeTruthy();
+  });
+});
+
+describe('durationLabel', () => {
+  test('minutes, hours, hours and minutes', () => {
+    expect(durationLabel(SEVEN_IST, '2026-11-10T02:15:00.000Z')).toBe('45 min');
+    expect(durationLabel(SEVEN_IST, '2026-11-10T02:30:00.000Z')).toBe('1 hour');
+    expect(durationLabel(SEVEN_IST, '2026-11-10T03:30:00.000Z')).toBe('2 hours');
+    expect(durationLabel(SEVEN_IST, '2026-11-10T02:45:00.000Z')).toBe('1 h 15 min');
+  });
+
+  test('an overnight evening is still hours; a day or more counts IST days', () => {
+    // 8 pm Tue → 2 am Wed IST
+    expect(durationLabel('2026-11-10T14:30:00.000Z', '2026-11-10T20:30:00.000Z')).toBe('6 hours');
+    // 10 am Sat → 4 pm Sun IST
+    expect(durationLabel('2026-11-14T04:30:00.000Z', '2026-11-15T10:30:00.000Z')).toBe('2 days');
+  });
+
+  test('blank unless it ends after it starts', () => {
+    expect(durationLabel(SEVEN_IST, SEVEN_IST)).toBe('');
+    expect(durationLabel(SEVEN_IST, '2026-11-10T01:00:00.000Z')).toBe('');
+    expect(durationLabel(null, SEVEN_IST)).toBe('');
+    expect(durationLabel(SEVEN_IST, null)).toBe('');
   });
 });
 
