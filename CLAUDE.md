@@ -103,7 +103,7 @@ Run **`npm run check:menu`** after touching any of this, or when a dish is missi
 - Product detail pages: `/product/:productSlug`
 - Menu pages: `/menu` (food), `/drinks` (beverages)
 - Static pages: `/about`, `/visit` (`/contact` redirects), `/delivery`
-- Sanctuary: `/sanctuary` (`?view=calendar` for the month view), `/sanctuary/:id` (uuid), `/sanctuary/hosts/:hostId` (a host's public page), `/sanctuary/host/*` (the old `/dashboard`, `/facilitator-login`, `/register`, `/request-facilitator-access` redirect there)
+- Sanctuary: `/sanctuary` (`?view=calendar` for the month view — picking a day opens its gatherings in a pop-up beside the day, a bottom sheet at ≤600px; `CalendarView.js`, nothing opens on its own), `/sanctuary/:id` (uuid), `/sanctuary/hosts/:hostId` (a host's public page), `/sanctuary/host/*` (the old `/dashboard`, `/facilitator-login`, `/register`, `/request-facilitator-access` redirect there)
 
 ## SEO Implementation
 

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { dateBlock, kindLabel, formatWhen, priceLabel, seatsLabel, isFull, parseVideoLink, elsewhere } from '../../utils/sanctuary';
+import { dateBlock, kindLabel, formatWhen, formatTimes, priceLabel, seatsLabel, isFull, parseVideoLink, elsewhere } from '../../utils/sanctuary';
 import { imageUrl, videoFileUrl } from '../../services/sanctuaryService';
 
 
@@ -101,10 +101,12 @@ export function PageSkeleton({ kind = 'detail', label = 'Loading' }) {
 /**
  * Keep Tab inside `ref` while it's open, close on Escape, and put focus back
  * where it was when it closes. For dialogs and the photo viewer.
+ * `returnRef`: where focus goes back to, when that isn't where it was — Safari
+ * doesn't focus a button on click, so the calendar names its day.
  */
-export function useFocusTrap(ref, onEscape, firstRef) {
+export function useFocusTrap(ref, onEscape, firstRef, returnRef) {
   useEffect(() => {
-    const before = document.activeElement;
+    const before = returnRef?.current || document.activeElement;
     (firstRef?.current || ref.current?.querySelector('button, a[href], input, textarea, select'))?.focus();
     const key = (e) => {
       if (e.key === 'Escape') { e.stopPropagation(); onEscape(); return; }
@@ -117,8 +119,10 @@ export function useFocusTrap(ref, onEscape, firstRef) {
       else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
     };
     document.addEventListener('keydown', key, true);
-    return () => { document.removeEventListener('keydown', key, true); before?.focus?.(); };
-  }, [ref, onEscape, firstRef]);
+    // preventScroll: closing by a click further down the page mustn't jump back up
+    // to the trigger before that click lands
+    return () => { document.removeEventListener('keydown', key, true); (returnRef?.current || before)?.focus?.({ preventScroll: true }); };
+  }, [ref, onEscape, firstRef, returnRef]);
 }
 
 /**
@@ -212,7 +216,8 @@ export function useFieldErrors(validate, values, keyOf = (k) => k) {
  * One gathering in a list (calendar, host page, more dates). A collapsed weekly
  * series (collapseSeries) also carries `repeat` and `more`.
  */
-export const GatheringRow = ({ o, showHost = true, compact = false }) => {
+/** `timeOnly`: the list is already under its day (the calendar pop-up), so the meta shows just the time. */
+export const GatheringRow = ({ o, showHost = true, compact = false, timeOnly = false }) => {
   const img = !compact && imageUrl(o.image_path);
   const full = isFull(o);
   return (
@@ -226,7 +231,7 @@ export const GatheringRow = ({ o, showHost = true, compact = false }) => {
         </span>
         <span className="sn-row-title">{o.title}</span>
         <span className="sn-row-meta">
-          {formatWhen(o.starts_at, o.ends_at)}
+          {timeOnly ? formatTimes(o.starts_at, o.ends_at) : formatWhen(o.starts_at, o.ends_at)}
           {elsewhere(o.location) ? <> · <span className="sn-row-place">{elsewhere(o.location)}</span></> : null}
           {showHost && o.host_name ? <> · with {o.host_name}</> : null}
           {o.more ? <> · and {o.more} more {o.more === 1 ? 'date' : 'dates'}</> : null}

@@ -1,5 +1,5 @@
 import {
-  istToIso, isoToIstParts, formatDay, formatClock, formatWhen, dateBlock, monthLabel, groupByMonth,
+  istToIso, isoToIstParts, formatDay, formatClock, formatWhen, formatTimes, formatLongDay, dateBlock, monthLabel, groupByMonth,
   kindLabel, filterByKind, priceLabel, seatsLabel, isFull, rsvpState, normalisePhone,
   validateRsvp, validateOffering, emptyOfferingForm, offeringToForm, duplicateForm,
   splitHostOfferings, seatsTaken, rsvpErrorMessage, googleCalendarUrl, isUuid, canPublish,
@@ -45,6 +45,19 @@ describe('labels', () => {
     expect(formatWhen(SEVEN_IST, '2026-11-10T02:45:00Z')).toBe('Tue 10 Nov · 7 – 8:15 am');
     expect(formatWhen('2026-11-10T05:30:00Z', '2026-11-10T07:30:00Z')).toBe('Tue 10 Nov · 11 am – 1 pm');
     expect(formatWhen('2026-11-14T04:30:00Z', '2026-11-15T10:30:00Z')).toBe('Sat 14 Nov, 10 am – Sun 15 Nov, 4 pm');
+  });
+
+  test('formatTimes: just the time, for a list under its day', () => {
+    expect(formatTimes(SEVEN_IST, '2026-11-10T02:45:00Z')).toBe('7 – 8:15 am');
+    expect(formatTimes('2026-11-10T05:30:00Z', '2026-11-10T07:30:00Z')).toBe('11 am – 1 pm');
+    expect(formatTimes('2026-11-14T04:30:00Z', '2026-11-15T10:30:00Z')).toBe('10 am – Sun 15 Nov, 4 pm');
+    expect(formatTimes(SEVEN_IST, 'nonsense')).toBe('7 am');
+    expect(formatTimes('nonsense', SEVEN_IST)).toBe('');
+  });
+
+  test('formatLongDay: the picked day in full, in IST', () => {
+    expect(formatLongDay('2026-12-03T06:30:00Z')).toBe('Thursday 3 December');
+    expect(formatLongDay('2026-12-03T20:00:00Z')).toBe('Friday 4 December'); // 1:30 am IST
   });
 
   test('date tile and month heading use IST, not UTC', () => {

@@ -24,6 +24,7 @@ const clockFmt = new Intl.DateTimeFormat('en-US', {
   timeZone: TZ, hour: 'numeric', minute: '2-digit', hour12: true,
 });
 const monthFmt = new Intl.DateTimeFormat('en-GB', { timeZone: TZ, month: 'long', year: 'numeric' });
+const longDayFmt = new Intl.DateTimeFormat('en-GB', { timeZone: TZ, weekday: 'long', day: 'numeric', month: 'long' });
 
 const parts = (fmt, d) => Object.fromEntries(fmt.formatToParts(d).map((p) => [p.type, p.value]));
 const valid = (d) => d instanceof Date && !Number.isNaN(d.getTime());
@@ -70,11 +71,31 @@ export function formatWhen(startsIso, endsIso) {
   if (!valid(s)) return '';
   if (!valid(e)) return `${formatDay(startsIso)} · ${formatClock(startsIso)}`;
   if (isoToIstParts(startsIso).date === isoToIstParts(endsIso).date) {
-    const samePeriod = parts(clockFmt, s).dayPeriod === parts(clockFmt, e).dayPeriod;
-    const start = samePeriod ? formatClock(startsIso, false) : formatClock(startsIso);
-    return `${formatDay(startsIso)} · ${start} – ${formatClock(endsIso)}`;
+    return `${formatDay(startsIso)} · ${formatTimes(startsIso, endsIso)}`;
   }
   return `${formatDay(startsIso)}, ${formatClock(startsIso)} – ${formatDay(endsIso)}, ${formatClock(endsIso)}`;
+}
+
+/**
+ * Just the time, for a list already under its day (the calendar pop-up):
+ *   '7 – 8:15 am', '11 am – 1 pm', or '10 am – Sun 15 Nov, 4 pm' past midnight.
+ */
+export function formatTimes(startsIso, endsIso) {
+  const s = new Date(startsIso);
+  const e = new Date(endsIso);
+  if (!valid(s)) return '';
+  if (!valid(e)) return formatClock(startsIso);
+  if (isoToIstParts(startsIso).date === isoToIstParts(endsIso).date) {
+    const samePeriod = parts(clockFmt, s).dayPeriod === parts(clockFmt, e).dayPeriod;
+    return `${samePeriod ? formatClock(startsIso, false) : formatClock(startsIso)} – ${formatClock(endsIso)}`;
+  }
+  return `${formatClock(startsIso)} – ${formatDay(endsIso)}, ${formatClock(endsIso)}`;
+}
+
+/** 'Thursday 3 December' — the day picked on the calendar. */
+export function formatLongDay(iso) {
+  const p = parts(longDayFmt, new Date(iso));
+  return `${p.weekday} ${p.day} ${p.month}`;
 }
 
 /** Calendar-tile pieces: { weekday: 'Tue', day: '11', month: 'Nov' }. */
