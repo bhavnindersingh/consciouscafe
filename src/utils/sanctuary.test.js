@@ -1,5 +1,5 @@
 import {
-  istToIso, isoToIstParts, formatDay, formatClock, formatWhen, formatTimes, formatLongDay, dateBlock, monthLabel, groupByMonth,
+  istToIso, isoToIstParts, formatDay, formatClock, formatWhen, formatTimes, formatLongDay, formatWhenLong, dateBlock, monthLabel, groupByMonth,
   kindLabel, filterByKind, priceLabel, seatsLabel, isFull, rsvpState, normalisePhone,
   validateRsvp, validateOffering, emptyOfferingForm, offeringToForm, duplicateForm,
   splitHostOfferings, seatsTaken, rsvpErrorMessage, googleCalendarUrl, isUuid, canPublish,
@@ -58,6 +58,14 @@ describe('labels', () => {
   test('formatLongDay: the picked day in full, in IST', () => {
     expect(formatLongDay('2026-12-03T06:30:00Z')).toBe('Thursday 3 December');
     expect(formatLongDay('2026-12-03T20:00:00Z')).toBe('Friday 4 December'); // 1:30 am IST
+  });
+
+  test('formatWhenLong: the event page’s line, same day and multi-day', () => {
+    expect(formatWhenLong(SEVEN_IST, '2026-11-10T02:45:00Z')).toBe('Tuesday 10 November, 7 – 8:15 am');
+    expect(formatWhenLong('2026-11-10T05:30:00Z', '2026-11-10T07:30:00Z')).toBe('Tuesday 10 November, 11 am – 1 pm');
+    expect(formatWhenLong('2026-12-04T05:30:00Z', '2026-12-06T14:30:00Z')).toBe('Friday 4 December, 11 am – Sunday 6 December, 8 pm');
+    expect(formatWhenLong(SEVEN_IST, 'nonsense')).toBe('Tuesday 10 November, 7 am');
+    expect(formatWhenLong('nonsense', SEVEN_IST)).toBe('');
   });
 
   test('date tile and month heading use IST, not UTC', () => {

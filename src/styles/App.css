@@ -60,7 +60,7 @@ button { font-family: inherit; cursor: pointer; }
 .lede {
   font-family: var(--serif);
   font-weight: 400;
-  font-size: clamp(19px, 1.55vw, 23px);
+  font-size: var(--fs-read);
   line-height: 1.55;
   color: var(--ink-soft);
   text-wrap: pretty;
@@ -70,7 +70,7 @@ button { font-family: inherit; cursor: pointer; }
 /* ---- buttons ---- */
 .btn {
   font-family: var(--ui);
-  font-size: 16px;
+  font-size: var(--fs-ui);
   line-height: 1;
   font-weight: 500;
   min-height: 48px;
@@ -97,7 +97,7 @@ button { font-family: inherit; cursor: pointer; }
 
 .tlink {
   font-family: var(--ui);
-  font-size: 16px;
+  font-size: var(--fs-ui);
   font-weight: 500;
   color: var(--ink);
   background: none;

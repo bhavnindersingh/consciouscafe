@@ -35,6 +35,19 @@
   --ui: "Anek Tamil", "Segoe UI", system-ui, -apple-system, sans-serif;
   --logo: "Sakkal Majalla", "EB Garamond", Georgia, serif;
 
+  /* Type scale (2026-11-26): six sizes and nothing between them. The two small
+     steps are the operating face (--ui); the four larger are the serif. The
+     serif steps flex with the screen, so a phone gets the low end of each
+     without a media query; at any one width there are still six sizes.
+     --fs-ui stays 16px on phones: iOS zooms into an input set smaller.
+       1280px: 14 · 16 · 20 · 26 · 38 · 69      390px: 14 · 16 · 19 · 22 · 28 · 36 */
+  --fs-sm: 14px;                          /* labels, hints, meta, tags, fine print */
+  --fs-ui: 16px;                          /* buttons, inputs, links, facts */
+  --fs-read: clamp(19px, 1.55vw, 23px);   /* reading text, prices, dates in a list (= .lede) */
+  --fs-title: clamp(22px, 2vw, 28px);     /* an item's title; a heading inside a panel or section */
+  --fs-head: clamp(28px, 3vw, 40px);      /* a section heading; the date tile's day */
+  --fs-display: clamp(36px, 5.4vw, 80px); /* a page's title */
+
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --slow: 1.1s cubic-bezier(0.22, 1, 0.36, 1);
   --gutter: clamp(22px, 5vw, 96px);

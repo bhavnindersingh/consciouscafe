@@ -98,6 +98,22 @@ export function formatLongDay(iso) {
   return `${p.weekday} ${p.day} ${p.month}`;
 }
 
+/**
+ * The time in full, for the line under an event page's title:
+ *   same day:  'Tuesday 1 December, 7 – 8:15 am'
+ *   multi-day: 'Friday 4 December, 11 am – Sunday 6 December, 8 pm'
+ */
+export function formatWhenLong(startsIso, endsIso) {
+  const s = new Date(startsIso);
+  const e = new Date(endsIso);
+  if (!valid(s)) return '';
+  if (!valid(e)) return `${formatLongDay(startsIso)}, ${formatClock(startsIso)}`;
+  if (isoToIstParts(startsIso).date === isoToIstParts(endsIso).date) {
+    return `${formatLongDay(startsIso)}, ${formatTimes(startsIso, endsIso)}`;
+  }
+  return `${formatLongDay(startsIso)}, ${formatClock(startsIso)} – ${formatLongDay(endsIso)}, ${formatClock(endsIso)}`;
+}
+
 /** Calendar-tile pieces: { weekday: 'Tue', day: '11', month: 'Nov' }. */
 export function dateBlock(iso) {
   const p = parts(labelFmt, new Date(iso));

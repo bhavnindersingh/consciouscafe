@@ -59,7 +59,7 @@ export const Spinner = ({ label = 'Loading' }) => {
  * A page-shaped placeholder while a whole page loads (over a second on a slow
  * phone): the layout that is about to arrive, in quiet blocks — never a lone
  * spinner in the middle of the screen. Nothing for the first 100 ms.
- *   detail  — back link, date tile and title, photo, reserve panel
+ *   detail  — back link, kind, title, when and where, photo, words
  *   profile — cover, photo circle, name, a few lines
  *   list    — rows with a tile and two lines
  *   form    — a column of labelled fields
@@ -76,7 +76,7 @@ export function PageSkeleton({ kind = 'detail', label = 'Loading' }) {
       {show && kind === 'detail' && (
         <div className="sn-skel-page">
           <Bar w="120px" h={12} />
-          <div className="sn-skel-row"><span className="sn-skel sn-skel-tile" /><div><Bar w="30%" h={12} /><Bar w="70%" h={40} /></div></div>
+          <div className="sn-skel-head"><Bar w="20%" h={12} /><Bar w="70%" h={56} /><Bar w="45%" h={18} /><Bar w="35%" h={18} /></div>
           <span className="sn-skel sn-skel-img" />
           <Bar w="90%" /><Bar w="80%" /><Bar w="60%" />
         </div>

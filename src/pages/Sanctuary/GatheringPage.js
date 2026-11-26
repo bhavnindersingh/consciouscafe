@@ -5,10 +5,10 @@ import { breadcrumb } from '../../utils/seoData';
 import { getGathering, reservePlaces, imageUrl, listSeriesDates } from '../../services/sanctuaryService';
 import { LIMITS } from '../../constants/sanctuary';
 import {
-  formatWhen, priceLabel, isFree, seatsLabel, rsvpState, validateRsvp, rsvpErrorMessage,
-  googleCalendarUrl, isUuid, kindLabel, repeatLabel, weekdaysOf, inHouse, mapsUrl,
+  formatWhen, formatWhenLong, formatDay, formatTimes, priceLabel, isFree, isFull, seatsLabel, rsvpState, validateRsvp,
+  rsvpErrorMessage, googleCalendarUrl, isUuid, kindLabel, repeatLabel, weekdaysOf, inHouse, mapsUrl,
 } from '../../utils/sanctuary';
-import { Reveal, DateTile, KindTag, Field, GatheringRow, GatheringVideo, PinnedBar, scrollToEl, PageSkeleton, useFieldErrors } from './parts';
+import { KindTag, Field, GatheringVideo, PinnedBar, scrollToEl, PageSkeleton, useFieldErrors } from './parts';
 import './sanctuary.css';
 
 const WHATSAPP_URL = 'https://wa.me/918754561269';
@@ -68,10 +68,7 @@ function RsvpForm({ gathering, onDone }) {
       <button type="submit" className="btn forest sn-submit" disabled={busy}>
         {busy ? 'Reserving…' : 'Reserve my place'} 
       </button>
-      <p className="sn-fine">
-        {isFree(gathering.price_inr) ? 'Free to attend.' : `${priceLabel(gathering.price_inr)} per person, paid at the venue.`}
-        {' '}Your number is shared only with the host.
-      </p>
+      <p className="sn-fine">Your number is shared only with the organiser.</p>
     </form>
   );
 }
@@ -95,6 +92,25 @@ function ReserveBar({ g, target }) {
     </PinnedBar>
   );
 }
+
+/**
+ * The places as pulli — the dots a kolam is drawn round: one per place, the
+ * open ones solid. Small rooms only (a market for 300 is just words), and only
+ * while booking means something. The words beside it say the same thing.
+ */
+const PULLI_MAX = 40;
+function Pulli({ capacity, left }) {
+  if (capacity == null || capacity < 2 || capacity > PULLI_MAX) return null;
+  const open = Math.max(0, Math.min(capacity, left ?? 0));
+  return (
+    <span className="sn-pulli" aria-hidden="true">
+      {Array.from({ length: capacity }, (_, i) => <i key={i} className={i < open ? 'is-open' : undefined} />)}
+    </span>
+  );
+}
+
+/** The one-word state for the phone's summary line, where the panel is further down. */
+const STATE_WORD = { cancelled: 'Cancelled', past: 'This has passed', started: 'Under way' };
 
 /** The phone's own share sheet where there is one; elsewhere, the link copied. */
 function ShareButton({ title, url }) {
@@ -171,8 +187,22 @@ const GatheringPage = () => {
   const pageUrl = `${window.location.origin}/sanctuary/${g.id}`;
   const img = imageUrl(g.image_path);
   const when = formatWhen(g.starts_at, g.ends_at);
+  const whenLong = formatWhenLong(g.starts_at, g.ends_at);
+  const price = isFree(g.price_inr) ? 'Free' : `${priceLabel(g.price_inr)}, paid at the venue`;
   const repeat = series.length > 1 ? repeatLabel(weekdaysOf(series)) : '';
-  const otherDates = series.filter((o) => o.id !== g.id).slice(0, 6);
+  const others = series.filter((o) => o.id !== g.id);
+  const otherDates = others.slice(0, 6);
+  const moreDates = others.length - otherDates.length;
+  const host = (
+    <>
+      {g.host_avatar_path && <img className="sn-hostline-avatar" src={imageUrl(g.host_avatar_path)} alt="" />}
+      <span className="sn-byline-text">
+        <span className="sn-byline-by">Organised by</span>
+        <span className="sn-hostname">{g.host_name}</span>
+        {g.host_id && <span className="sn-hostline-go">Visit organiser profile</span>}
+      </span>
+    </>
+  );
 
   return (
     <main className="sn-view sn-detail-view">
@@ -209,30 +239,35 @@ const GatheringPage = () => {
       />
 
       {/* Grid areas (sanctuary.css): column one reads top to bottom (back, head,
-          photo, video, words, host, more dates); the reserve panel spans column two
-          and sticks. On one column this source order is the reading order: what it
-          is first, the form after — with the Reserve bar pinned meanwhile. */}
+          photo, video, words and organiser, other dates); the reserve panel spans
+          column two and sticks. On one column this source order is the reading
+          order: what it is first, the form after, with the Reserve bar pinned
+          meanwhile. */}
       <div className="sn-detail">
-        <Reveal className="sn-detail-back"><Link className="sn-back" to="/sanctuary">← All events</Link></Reveal>
-        <Reveal delay={1} className="sn-detail-head">
-          <DateTile iso={g.starts_at} />
-          <div>
-            <span className="sn-row-tags">
-              <KindTag kind={g.kind} />
-              {repeat && <span className="sn-repeat">{repeat}</span>}
-              {!inHouse(g) && <span className="sn-away-tag">Linda’s curation</span>}
-            </span>
-            <h1 className="display sn-detail-title">{g.title}</h1>
-            <p className="sn-detail-sum">
-              {when}<br />
-              {isFree(g.price_inr) ? 'Free' : priceLabel(g.price_inr)} · {seatsLabel(g.seats_left, g.capacity)}
-            </p>
-          </div>
-        </Reveal>
+        <div className="sn-detail-back"><Link className="sn-back" to="/sanctuary">← All events</Link></div>
+        <header className="sn-detail-head">
+          <p className="sn-row-tags">
+            <KindTag kind={g.kind} />
+            {repeat && <span className="sn-repeat">{repeat}</span>}
+            {!inHouse(g) && <span className="sn-away-tag">Linda’s curation</span>}
+          </p>
+          <h1 className="display sn-detail-title">{g.title}</h1>
+          <p className="sn-detail-when">{whenLong}</p>
+          <p className="sn-detail-where">
+            {inHouse(g) ? 'Conscious Sanctuary, Auroville Road' : (
+              <a href={mapsUrl(g.location)} target="_blank" rel="noopener noreferrer">{g.location} <span aria-hidden="true">↗</span><span className="sr-only"> (opens a map)</span></a>
+            )}
+          </p>
+          {/* one column only: the panel is a long way down, so price and places show here */}
+          <p className="sn-detail-sum">
+            <span>{price}</span>
+            <span className={`sn-seats${state === 'full' ? ' full' : ''}`}>{STATE_WORD[state] || seatsLabel(g.seats_left, g.capacity)}</span>
+          </p>
+        </header>
         {img && (
-          <Reveal delay={2} className="sn-detail-img">
+          <div className="sn-detail-img">
             <img src={img} alt="" loading="eager" />
-          </Reveal>
+          </div>
         )}
         {(g.video_url || g.video_path) && (
           <div className="sn-detail-video">
@@ -242,71 +277,91 @@ const GatheringPage = () => {
 
         <div className="sn-detail-body">
           {g.description && (
-            <Reveal delay={2} className="sn-prose">
+            <div className="sn-prose">
               {g.description.split(/\n{2,}/).map((para, i) => <p key={i}>{para}</p>)}
-            </Reveal>
+            </div>
           )}
           {g.host_name && (
-            <Reveal delay={3} className="sn-hostline">
-              <span className="sn-label">Organised by</span>
-              {g.host_avatar_path && <img className="sn-hostline-avatar" src={imageUrl(g.host_avatar_path)} alt="" />}
-              {g.host_id
-                ? <Link className="sn-hostname" to={`/sanctuary/hosts/${g.host_id}`}>{g.host_name}</Link>
-                : <span className="sn-hostname">{g.host_name}</span>}
-              {g.host_id && <Link className="sn-hostline-go" to={`/sanctuary/hosts/${g.host_id}`}>Visit organiser profile</Link>}
-            </Reveal>
+            <div className="sn-hostline">
+              {g.host_id ? (
+                <Link className="sn-byline is-link" to={`/sanctuary/hosts/${g.host_id}`}>{host}</Link>
+              ) : (
+                <div className="sn-byline">{host}</div>
+              )}
+            </div>
           )}
         </div>
 
         <aside className="sn-panel" aria-label="Reserve" id="reserve" ref={panel}>
-          <ShareButton title={g.title} url={pageUrl} />
-          <dl className="sn-facts">
-            <div><dt>When</dt><dd>{when}</dd></div>
-            <div>
-              <dt>Where</dt>
-              <dd>
-                {inHouse(g) ? 'Conscious Sanctuary, Auroville Road' : (
-                  <a href={mapsUrl(g.location)} target="_blank" rel="noopener noreferrer">{g.location} <span aria-hidden="true">↗</span><span className="sr-only"> (opens a map)</span></a>
-                )}
-              </dd>
-            </div>
-            <div><dt>Price</dt><dd>{isFree(g.price_inr) ? 'Free' : `${priceLabel(g.price_inr)} · pay at the venue`}</dd></div>
-            <div><dt>Places</dt><dd>{seatsLabel(g.seats_left, g.capacity)}</dd></div>
-          </dl>
-
-          {done ? (
-            <div className="sn-done" role="status">
-              <p className="sn-done-h">You’re in, {done.name.split(' ')[0]}.</p>
-              <p>{done.seats} {done.seats === 1 ? 'place is' : 'places are'} held for you — {when}.</p>
-              <a className="btn" href={googleCalendarUrl(g, pageUrl)} target="_blank" rel="noopener noreferrer">Add to Google Calendar</a>
-              <p className="sn-fine">Can’t make it after all? Message us on <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">WhatsApp</a> so someone else can have your place.</p>
-            </div>
-          ) : state === 'open' ? (
-            <RsvpForm
-              gathering={g}
-              onDone={(d) => {
-                setDone(d);
-                // the RPC returns what is left after this booking
-                if (d.seatsLeft !== null) setG((prev) => ({ ...prev, seats_left: d.seatsLeft }));
-              }}
-            />
-          ) : (
-            <div className="sn-closed">
-              <p className="sn-done-h">{CLOSED_COPY[state][0]}</p>
-              <p>{CLOSED_COPY[state][1]}</p>
-              {state === 'full'
-                ? <a className="btn" href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">WhatsApp us</a>
-                : <Link className="btn" to="/sanctuary">See what’s on</Link>}
+          {/* what is being booked, for whoever reaches the form without the header in view */}
+          <p className="sn-panel-when">{when}</p>
+          <div className="sn-panel-price">
+            <span className="sn-price">{isFree(g.price_inr) ? 'Free' : priceLabel(g.price_inr)}</span>
+            {!isFree(g.price_inr) && <span className="sn-panel-per">per person, paid at the venue</span>}
+          </div>
+          {(state === 'open' || state === 'full') && (
+            <div className="sn-panel-places">
+              <Pulli capacity={g.capacity} left={g.seats_left} />
+              <span className={`sn-seats${state === 'full' ? ' full' : ''}`}>{seatsLabel(g.seats_left, g.capacity)}</span>
             </div>
           )}
+          {otherDates.length > 0 && state === 'open' && !done && (
+            <p className="sn-panel-note">
+              Each date is reserved on its own.{' '}
+              <a className="sn-panel-jump" href="#sn-more" onClick={(e) => { e.preventDefault(); scrollToEl(document.getElementById('sn-more')); }}>See other dates</a>
+            </p>
+          )}
+
+          <div className="sn-panel-act">
+            {done ? (
+              <div className="sn-done" role="status">
+                <p className="sn-done-h">You’re in, {done.name.split(' ')[0]}.</p>
+                <p>{done.seats} {done.seats === 1 ? 'place is' : 'places are'} held for you: {when}.</p>
+                <a className="btn" href={googleCalendarUrl(g, pageUrl)} target="_blank" rel="noopener noreferrer">Add to Google Calendar</a>
+                <p className="sn-fine">Can’t make it after all? Message us on <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">WhatsApp</a> so someone else can have your place.</p>
+              </div>
+            ) : state === 'open' ? (
+              <RsvpForm
+                gathering={g}
+                onDone={(d) => {
+                  setDone(d);
+                  // the RPC returns what is left after this booking
+                  if (d.seatsLeft !== null) setG((prev) => ({ ...prev, seats_left: d.seatsLeft }));
+                }}
+              />
+            ) : (
+              <div className="sn-closed">
+                <p className="sn-done-h">{CLOSED_COPY[state][0]}</p>
+                <p>{CLOSED_COPY[state][1]}</p>
+                {state === 'full'
+                  ? <a className="btn" href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">WhatsApp us</a>
+                  : <Link className="btn" to="/sanctuary">See what’s on</Link>}
+              </div>
+            )}
+          </div>
+          <ShareButton title={g.title} url={pageUrl} />
         </aside>
 
         {otherDates.length > 0 && (
-          <section className="sn-more" aria-labelledby="sn-more-h">
-            <h2 id="sn-more-h" className="sn-more-h">More dates</h2>
-            <ul className="sn-list">
-              {otherDates.map((o) => <li key={o.id}><GatheringRow o={o} showHost={false} compact /></li>)}
+          <section className="sn-more" id="sn-more" aria-labelledby="sn-more-h">
+            <h2 id="sn-more-h" className="sn-more-h">Other dates</h2>
+            <ul className="sn-dates">
+              {otherDates.map((o) => (
+                <li key={o.id}>
+                  <Link className="sn-date" to={`/sanctuary/${o.id}`}>
+                    <span className="sn-date-day">{formatDay(o.starts_at)}</span>
+                    <span className="sn-date-time">{formatTimes(o.starts_at, o.ends_at)}</span>
+                    <span className={`sn-seats${isFull(o) ? ' full' : ''}`}>{seatsLabel(o.seats_left, o.capacity)}</span>
+                    <span className="sn-row-go">{isFull(o) ? 'See details' : 'Reserve'}</span>
+                  </Link>
+                </li>
+              ))}
             </ul>
+            {moreDates > 0 && (
+              <p className="sn-dates-more">
+                {moreDates} more {moreDates === 1 ? 'date' : 'dates'} on the <Link to="/sanctuary?view=calendar">calendar</Link>.
+              </p>
+            )}
           </section>
         )}
       </div>
