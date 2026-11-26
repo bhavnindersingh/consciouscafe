@@ -37,6 +37,8 @@ const HostProfilePage = lazy(() => import("./pages/Sanctuary/HostProfilePage"));
 // Ice bath & Ayurvedic sauna — paid slots (PhonePe); the return page is where PhonePe sends the guest back.
 const RestorePage = lazy(() => import("./pages/Wellness/RestorePage"));
 const BookedPage = lazy(() => import("./pages/Wellness/BookedPage"));
+// Your account — anyone who booked or ordered signs in to see it.
+const AccountPage = lazy(() => import("./pages/Account/AccountPage"));
 
 // Minimal, layout-stable fallback (avoids CLS while a chunk loads)
 const RouteFallback = () => <div style={{ minHeight: "60vh" }} aria-busy="true" />;
@@ -138,10 +140,15 @@ function AppContent() {
           <Route path="/facilitator-login" element={<Navigate to="/sanctuary/host" replace />} />
           <Route path="/register" element={<Navigate to="/sanctuary/host" replace />} />
           <Route path="/dashboard/*" element={<Navigate to="/sanctuary/host" replace />} />
+          {/* Your account; the addresses people try for it */}
+          <Route path="/account" element={<AccountPage products={products} />} />
+          <Route path="/login" element={<Navigate to="/account" replace />} />
+          <Route path="/signin" element={<Navigate to="/account" replace />} />
+          <Route path="/profile" element={<Navigate to="/account" replace />} />
+          <Route path="/my-account" element={<Navigate to="/account" replace />} />
           {/* Short addresses for organisers — easy to say on WhatsApp or print on a flyer */}
           <Route path="/organiser" element={<Navigate to="/sanctuary/host" replace />} />
           <Route path="/organizer" element={<Navigate to="/sanctuary/host" replace />} />
-          <Route path="/login" element={<Navigate to="/sanctuary/host" replace />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
         </Suspense>

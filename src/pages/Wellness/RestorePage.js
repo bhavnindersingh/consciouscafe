@@ -14,6 +14,9 @@ import {
 import { istToday } from '../../utils/sanctuary';
 import { Reveal, Field, Spinner, PinnedBar, scrollToEl, PageSkeleton, onRadioKeys, tabStop } from '../Sanctuary/parts';
 import SlotCalendar from './SlotCalendar';
+import { useAuth } from '../../context/AuthContext';
+import { accountPrefill } from '../../utils/account';
+import SignedInAs from '../../components/auth/SignedInAs';
 import '../Sanctuary/sanctuary.css';
 import './wellness.css';
 
@@ -75,7 +78,22 @@ const RestorePage = () => {
   const [weeks, setWeeks] = useState({}); // { 'YYYY-MM-DD' (chunk start): { rows, loading, error } }
   const [picked, setPicked] = useState(null); // one wellness_slots row
   const [seats, setSeats] = useState(1);
-  const [form, setForm] = useState({ name: '', phone: '', email: '' });
+  // Signed in: the account's email, fixed (the booking then shows under Your
+  // account, which matches sessions by email), and its name if the field is empty.
+  const { user } = useAuth();
+  const accountEmail = user?.email || null;
+  const accountName = accountPrefill(user).name;
+  const [form, setForm] = useState(() => ({ name: accountName, phone: '', email: accountEmail || '' }));
+  // keyed on the strings, not the user object, and a no-op when nothing changes
+  useEffect(() => {
+    if (!accountEmail && !accountName) return;
+    setForm((f) => {
+      const name = f.name || accountName;
+      const email = accountEmail || f.email;
+      return name === f.name && email === f.email ? f : { ...f, name, email };
+    });
+  }, [accountEmail, accountName]);
+  const withAccount = (f) => (accountEmail ? { ...f, email: accountEmail } : f);
   const [errors, setErrors] = useState({});
   const [failure, setFailure] = useState(null);
   const [busy, setBusy] = useState(false);
@@ -156,7 +174,7 @@ const RestorePage = () => {
   };
   /** Blur-first: a details field is checked when it's left. */
   const blurCheck = (k) => () => {
-    const msg = validateBooking({ ...form, seats }, cap).errors[k];
+    const msg = validateBooking(withAccount({ ...form, seats }), cap).errors[k];
     setErrors((er) => (er[k] === msg ? er : { ...er, [k]: msg }));
   };
 
@@ -169,7 +187,7 @@ const RestorePage = () => {
       document.getElementById(!chosen ? 'wl-h-svc' : 'wl-h-time')?.scrollIntoView({ block: 'center' });
       return;
     }
-    const { errors: errs, value } = validateBooking({ ...form, seats }, cap);
+    const { errors: errs, value } = validateBooking(withAccount({ ...form, seats }), cap);
     setErrors(errs);
     setFailure(null);
     if (Object.keys(errs).length) { document.getElementById({ name: 'wl-name', phone: 'wl-phone', email: 'wl-email' }[Object.keys(errs)[0]])?.focus(); return; }
@@ -319,9 +337,11 @@ const RestorePage = () => {
                     <Field label="Phone" error={errors.phone} hint="So we can reach you if anything changes." htmlFor="wl-phone">
                       <input id="wl-phone" onBlur={blurCheck('phone')} type="tel" inputMode="tel" autoComplete="tel" placeholder="+91" value={form.phone} onChange={set('phone')} />
                     </Field>
-                    <Field label="Email" error={errors.email} hint="Your receipt and the booking details go here." htmlFor="wl-email">
-                      <input id="wl-email" onBlur={blurCheck('email')} type="email" inputMode="email" autoComplete="email" value={form.email} onChange={set('email')} maxLength={LIMITS.emailMax} />
-                    </Field>
+                    {accountEmail ? <SignedInAs email={accountEmail} /> : (
+                      <Field label="Email" error={errors.email} hint="Your receipt and the booking details go here." htmlFor="wl-email">
+                        <input id="wl-email" onBlur={blurCheck('email')} type="email" inputMode="email" autoComplete="email" value={form.email} onChange={set('email')} maxLength={LIMITS.emailMax} />
+                      </Field>
+                    )}
                   </div>
                 </Step>
               </>

@@ -1,0 +1,59 @@
+/* Your account (/account). The page sits in the organisers' centred column
+   (.sn-host-view) and uses the Sanctuary's rows, tiles and sign-in card
+   (sanctuary.css); this adds the head, the sections and the small labels.
+   Tokens only: --fs-*, ink, forest, line. */
+
+.ac-page { max-width: 1100px; }
+
+/* signed out: what's inside, beside the sign-in card — not a sequence, so no numbers */
+.ac-what { grid-area: steps; list-style: none; margin: clamp(40px, 6vh, 64px) 0 0; padding: 0; max-width: 620px; border-top: 1px solid var(--line); }
+.ac-what li {
+  padding: 16px 0; border-bottom: 1px solid var(--line-soft);
+  font-family: var(--serif); font-size: var(--fs-read); line-height: 1.45; color: var(--ink-soft);
+}
+.ac-what strong { font-weight: 500; color: var(--ink); }
+@media (max-width: 860px) { .ac-what { margin-top: 40px; } }
+
+/* signed in */
+.ac-head { margin-bottom: clamp(32px, 6vh, 64px); }
+.ac-head h1 { font-size: var(--fs-display); margin: 0 0 16px; }
+.ac-who { display: flex; flex-wrap: wrap; align-items: center; gap: 0 16px; font-family: var(--ui); font-size: var(--fs-ui); color: var(--ink-soft); margin: 0; }
+.ac-who strong { font-weight: 500; color: var(--ink); overflow-wrap: anywhere; }
+
+.ac-sec + .ac-sec { margin-top: clamp(48px, 8vh, 88px); }
+.ac-h {
+  font-family: var(--display); font-weight: 400; font-size: var(--fs-head); line-height: 1.1; color: var(--ink);
+  margin: 0; padding-bottom: 12px; border-bottom: 1px solid var(--ink);
+}
+.ac-sub { font-family: var(--ui); font-size: var(--fs-sm); color: var(--ink-mute); line-height: 1.5; margin: 12px 0 0; }
+.ac-quiet { font-family: var(--serif); font-size: var(--fs-read); color: var(--ink-soft); line-height: 1.5; margin: 20px 0 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 12px; }
+.ac-aside { font-family: var(--ui); font-size: var(--fs-sm); color: var(--ink-mute); line-height: 1.5; margin: 16px 0 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 8px; }
+
+/* rows: the Sanctuary's, two columns of words beside the tile */
+.ac-row { color: var(--ink); }
+div.ac-row { cursor: default; }
+.ac-tag { font-family: var(--ui); font-size: var(--fs-sm); font-weight: 500; color: var(--sage); }
+.ac-ref { font-family: var(--ui); font-size: var(--fs-sm); color: var(--ink-mute); font-variant-numeric: tabular-nums; }
+.ac-state { font-family: var(--ui); font-size: var(--fs-sm); color: var(--clay); }
+.ac-qty { font-family: var(--ui); font-size: var(--fs-sm); color: var(--ink-soft); }
+.ac-items { overflow-wrap: anywhere; }
+.ac-note { font-family: var(--ui); font-size: var(--fs-sm); color: var(--forest); line-height: 1.5; margin: -8px 0 16px 116px; }
+
+/* nothing yet */
+.ac-empty { padding-top: 0; }
+.ac-empty strong { color: var(--ink); font-weight: 500; overflow-wrap: anywhere; }
+.ac-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 28px; }
+
+/* organisers */
+.ac-org {
+  margin-top: clamp(56px, 9vh, 96px); padding-top: clamp(20px, 3vh, 28px); border-top: 1px solid var(--ink);
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 32px;
+}
+.ac-org p { font-family: var(--display); font-size: var(--fs-title); color: var(--ink); margin: 0; }
+.ac-org-quiet { margin: clamp(56px, 9vh, 96px) 0 0; padding-top: 20px; border-top: 1px solid var(--line); font-family: var(--ui); font-size: var(--fs-ui); color: var(--ink-soft); display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 12px; }
+
+@media (max-width: 600px) {
+  .ac-note { margin-left: 0; }
+  .ac-org .btn { width: 100%; justify-content: center; }
+  .ac-row .sn-row-side .sn-act { min-height: 44px; }
+}

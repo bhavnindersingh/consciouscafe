@@ -19,7 +19,7 @@ let root; let el;
 beforeEach(() => { el = document.createElement('div'); document.body.appendChild(el); });
 afterEach(() => { act(() => root.unmount()); el.remove(); });
 
-function mount(products, auth = { user: null, loading: false }) {
+function mount(products, auth = { user: null, loading: false, isHost: false }) {
   useAuth.mockReturnValue(auth);
   root = createRoot(el);
   act(() => {
@@ -57,9 +57,15 @@ test('the closing invitation: sign-in for organisers coming back, their events o
   expect(host.querySelector('h2').textContent).toBe('Teach, make or gather people? Organise it with us.');
   expect(host.querySelector('.home-host-acts a').textContent).toBe('Already organising with us? Sign in');
   act(() => root.unmount());
-  mount([], { user: { id: 'u1' }, loading: false });
+  mount([], { user: { id: 'u1' }, loading: false, isHost: true });
   expect(el.querySelector('#host .home-host-acts a').textContent).toBe('Go to your events');
   act(() => root.unmount());
-  mount([], { user: null, loading: true });
+  mount([], { user: null, loading: true, isHost: null });
   expect(el.querySelector('#host .home-host-acts a')).toBeNull();
+});
+
+test('a signed-in customer who doesn’t organise is never shown “Go to your events”', () => {
+  mount([], { user: { id: 'c1' }, loading: false, isHost: false });
+  expect(el.querySelector('#host .home-host-acts a')).toBeNull();
+  expect(el.querySelector('#host .home-host-acts .btn').textContent).toBe('Become an organiser');
 });

@@ -1,7 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { sendToWhatsApp } from '../../utils/whatsapp';
 import { usePackagingRates } from '../../hooks/usePackagingRates';
 import { calcTotals } from '../../utils/totals';
+import { useAuth } from '../../context/AuthContext';
+import { saveWebsiteOrder } from '../../services/accountService';
+import { makeOrderRef, buildOrderPayload, accountPrefill } from '../../utils/account';
+import SignedInAs from '../../components/auth/SignedInAs';
 
 const money = (n) =>
   `₹${Number(n).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -24,6 +28,16 @@ const Checkout = ({ isOpen, onClose, cartItems = [], onOrderComplete }) => {
 
   const [errors, setErrors] = useState({});
   const [distanceError, setDistanceError] = useState('');
+
+  // Signed in: the account's email, fixed (so the order shows under Your
+  // account), and its name where the field is still empty.
+  const { user, session } = useAuth();
+  const accountEmail = user?.email || null;
+  const accountName = accountPrefill(user).name;
+  useEffect(() => {
+    if (accountName) setCustomerInfo((c) => (c.name ? c : { ...c, name: accountName }));
+  }, [accountName]);
+  const email = accountEmail || customerInfo.email;
 
   // Every order here is a delivery, so every dish is packed and carries its
   // category's packaging charge — the same rate card the POS bills from, read
@@ -64,9 +78,9 @@ const Checkout = ({ isOpen, onClose, cartItems = [], onOrderComplete }) => {
       newErrors.phone = 'Phone number is required';
     }
 
-    if (!customerInfo.email.trim()) {
+    if (!email.trim()) {
       newErrors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(customerInfo.email)) {
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
       newErrors.email = 'Email is invalid';
     }
 
@@ -97,8 +111,17 @@ const Checkout = ({ isOpen, onClose, cartItems = [], onOrderComplete }) => {
     e.preventDefault();
 
     if (validateForm()) {
-      // Send order to WhatsApp
-      sendToWhatsApp(cartItems, customerInfo, packagingRates);
+      const info = { ...customerInfo, email };
+      // A ref for the chat and for Your account. The record is saved first and
+      // never awaited: WhatsApp has to open inside this tap (a pop-up blocker
+      // refuses it after an await), and the order travels on WhatsApp whether
+      // or not the save lands.
+      const ref = makeOrderRef();
+      saveWebsiteOrder(
+        buildOrderPayload(ref, cartItems, info, calcTotals(cartItems, packagingRates)),
+        session?.access_token,
+      ).catch(() => {});
+      sendToWhatsApp(cartItems, info, packagingRates, ref);
 
       // Clear cart and close checkout
       onOrderComplete();
@@ -156,8 +179,10 @@ const Checkout = ({ isOpen, onClose, cartItems = [], onOrderComplete }) => {
                   type="text"
                   id="name"
                   name="name"
+                  autoComplete="name"
                   value={customerInfo.name}
                   onChange={handleInputChange}
+                  maxLength={80}
                   className={`co-input ${errors.name ? 'error' : ''}`}
                 />
                 {errors.name && <span className="co-error">{errors.name}</span>}
@@ -176,18 +201,22 @@ const Checkout = ({ isOpen, onClose, cartItems = [], onOrderComplete }) => {
                 {errors.phone && <span className="co-error">{errors.phone}</span>}
               </div>
 
-              <div className="co-group">
-                <label htmlFor="email">Email</label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={customerInfo.email}
-                  onChange={handleInputChange}
-                  className={`co-input ${errors.email ? 'error' : ''}`}
-                />
-                {errors.email && <span className="co-error">{errors.email}</span>}
-              </div>
+              {accountEmail ? <SignedInAs email={accountEmail} /> : (
+                <div className="co-group">
+                  <label htmlFor="email">Email</label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    autoComplete="email"
+                    value={customerInfo.email}
+                    onChange={handleInputChange}
+                    maxLength={200}
+                    className={`co-input ${errors.email ? 'error' : ''}`}
+                  />
+                  {errors.email && <span className="co-error">{errors.email}</span>}
+                </div>
+              )}
 
               <div className="co-group">
                 <label htmlFor="address">Delivery address</label>
@@ -196,6 +225,7 @@ const Checkout = ({ isOpen, onClose, cartItems = [], onOrderComplete }) => {
                   name="address"
                   value={customerInfo.address}
                   onChange={handleInputChange}
+                  maxLength={500}
                   rows="3"
                   className={`co-input co-textarea ${errors.address ? 'error' : ''}`}
                   placeholder="Enter your full delivery address with landmarks"
@@ -228,6 +258,7 @@ const Checkout = ({ isOpen, onClose, cartItems = [], onOrderComplete }) => {
                   name="notes"
                   value={customerInfo.notes}
                   onChange={handleInputChange}
+                  maxLength={1000}
                   rows="2"
                   className="co-input co-textarea"
                   placeholder="Special requests or delivery instructions"

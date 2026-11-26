@@ -9,6 +9,9 @@ import {
   rsvpErrorMessage, googleCalendarUrl, isUuid, kindLabel, repeatLabel, weekdaysOf, inHouse, mapsUrl,
 } from '../../utils/sanctuary';
 import { KindTag, Field, GatheringVideo, PinnedBar, scrollToEl, PageSkeleton, useFieldErrors } from './parts';
+import { useAuth } from '../../context/AuthContext';
+import { accountPrefill } from '../../utils/account';
+import SignedInAs from '../../components/auth/SignedInAs';
 import './sanctuary.css';
 
 const WHATSAPP_URL = 'https://wa.me/918754561269';
@@ -22,7 +25,22 @@ const CLOSED_COPY = {
 
 function RsvpForm({ gathering, onDone }) {
   const maxSeats = gathering.capacity == null ? LIMITS.seatsPerRsvp : Math.min(LIMITS.seatsPerRsvp, gathering.seats_left);
-  const [form, setForm] = useState({ name: '', phone: '', email: '', seats: 1 });
+  // Signed in: the account's email, fixed, so the place shows under Your
+  // account; its name where the field is still empty. (The booking also
+  // carries their user_id — sanctuary_rsvp() reads it from the session.)
+  const { user } = useAuth();
+  const accountEmail = user?.email || null;
+  const accountName = accountPrefill(user).name;
+  const [form, setForm] = useState(() => ({ name: accountName, phone: '', email: accountEmail || '', seats: 1 }));
+  // keyed on the strings, not the user object, and a no-op when nothing changes
+  useEffect(() => {
+    if (!accountEmail && !accountName) return;
+    setForm((f) => {
+      const name = f.name || accountName;
+      const email = accountEmail || f.email;
+      return name === f.name && email === f.email ? f : { ...f, name, email };
+    });
+  }, [accountEmail, accountName]);
   const [failure, setFailure] = useState(null);
   const [busy, setBusy] = useState(false);
   // blur-first: a field is checked when it's left, and its error goes as soon as it's edited
@@ -35,6 +53,7 @@ function RsvpForm({ gathering, onDone }) {
     const { errors: errs, value } = all();
     setFailure(null);
     if (Object.keys(errs).length) { document.getElementById(`sn-r-${Object.keys(errs)[0]}`)?.focus(); return; }
+    if (accountEmail) value.email = accountEmail;
     setBusy(true);
     try {
       const res = await reservePlaces({ offeringId: gathering.id, ...value });
@@ -54,9 +73,11 @@ function RsvpForm({ gathering, onDone }) {
       <Field label="Phone" error={errors.phone} hint="So the organiser can reach you if anything changes." htmlFor="sn-r-phone">
         <input id="sn-r-phone" onBlur={blur('phone')} type="tel" inputMode="tel" autoComplete="tel" placeholder="+91" value={form.phone} onChange={set('phone')} />
       </Field>
-      <Field label="Email (optional)" error={errors.email} htmlFor="sn-r-email">
-        <input id="sn-r-email" onBlur={blur('email')} type="email" autoComplete="email" value={form.email} onChange={set('email')} maxLength={LIMITS.emailMax} />
-      </Field>
+      {accountEmail ? <SignedInAs email={accountEmail} /> : (
+        <Field label="Email (optional)" error={errors.email} hint="Add it to find this booking later under Your account." htmlFor="sn-r-email">
+          <input id="sn-r-email" onBlur={blur('email')} type="email" autoComplete="email" value={form.email} onChange={set('email')} maxLength={LIMITS.emailMax} />
+        </Field>
+      )}
       <Field label="Places" error={errors.seats} htmlFor="sn-r-seats">
         <select id="sn-r-seats" value={form.seats} onChange={set('seats')} onBlur={blur('seats')}>
           {Array.from({ length: Math.max(1, maxSeats) }, (_, i) => i + 1).map((n) => (

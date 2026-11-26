@@ -16,7 +16,9 @@ const FILTERS = [{ value: 'all', plural: 'Everything' }, ...OFFERING_KINDS];
 
 const SanctuaryPage = () => {
   const navigate = useNavigate();
-  const { user, loading: authLoading } = useAuth(); // only organisers ever sign in
+  // An organiser is someone with a host profile — anyone may sign in (Your account).
+  const { user, loading: authLoading, isHost } = useAuth();
+  const orgLink = !user ? 'Organiser sign-in' : isHost ? 'Your events' : 'Organise with us';
   const seo = generatePageSEO('sanctuary');
   const [items, setItems] = useState(null);
   const [error, setError] = useState(null);
@@ -106,8 +108,8 @@ const SanctuaryPage = () => {
                 className={`sn-seg-opt${view === v ? ' on' : ''}`} onClick={() => setView(v)}>{label}</button>
             ))}
           </div>
-          {!authLoading && (
-            <Link className="sn-act sn-org-link" to="/sanctuary/host">{user ? 'Your events' : 'Organiser sign-in'}</Link>
+          {!authLoading && isHost !== null && (
+            <Link className="sn-act sn-org-link" to="/sanctuary/host">{orgLink}</Link>
           )}
         </div>
         </div>
@@ -157,7 +159,9 @@ const SanctuaryPage = () => {
           <Reveal delay={3}>
             <div className="sn-band-acts">
               <button className="btn on-dark" onClick={() => navigate('/sanctuary/host')}>Become an organiser</button>
-              <Link className="sn-org-again" to="/sanctuary/host">{user ? 'Go to your events' : 'Already organising with us? Sign in'}</Link>
+              {isHost ? <Link className="sn-org-again" to="/sanctuary/host">Go to your events</Link>
+                : isHost === false && !user ? <Link className="sn-org-again" to="/sanctuary/host">Already organising with us? Sign in</Link>
+                : null}
             </div>
           </Reveal>
         </div>

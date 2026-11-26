@@ -1,9 +1,12 @@
 import { calcTotals } from './totals';
 
-export const formatWhatsAppMessage = (cartItems, customerInfo, packagingRates = null) => {
+// `ref`: checkout's order ref (utils/account makeOrderRef) — the same one the
+// customer sees under Your account, so the chat and the record meet.
+export const formatWhatsAppMessage = (cartItems, customerInfo, packagingRates = null, ref = null) => {
   const businessPhone = "+918148132442"; // WhatsApp business number
   
-  let message = `🥗 New Order from Consciouscafe.in \n\n`;
+  let message = `🥗 New Order from Consciouscafe.in \n`;
+  message += ref ? `🧾 Ref: ${ref}\n\n` : `\n`;
   message += `👤 *Customer Details:*\n`;
   message += `Name: ${customerInfo.name}\n`;
   message += `Phone: ${customerInfo.phone}\n`;
@@ -57,8 +60,8 @@ export const formatWhatsAppMessage = (cartItems, customerInfo, packagingRates = 
   }
 };
 
-export const sendToWhatsApp = (cartItems, customerInfo, packagingRates = null) => {
-  const { phone, message } = formatWhatsAppMessage(cartItems, customerInfo, packagingRates);
+export const sendToWhatsApp = (cartItems, customerInfo, packagingRates = null, ref = null) => {
+  const { phone, message } = formatWhatsAppMessage(cartItems, customerInfo, packagingRates, ref);
   const whatsappUrl = `https://wa.me/${phone.replace('+', '')}?text=${message}`;
   window.open(whatsappUrl, '_blank');
 };

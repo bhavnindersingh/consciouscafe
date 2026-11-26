@@ -5,6 +5,7 @@ import { HelmetProvider } from 'react-helmet-async';
 import GatheringPage from './GatheringPage';
 import { getGathering, listSeriesDates, reservePlaces } from '../../services/sanctuaryService';
 import { formatWhen, formatWhenLong } from '../../utils/sanctuary';
+import { useAuth } from '../../context/AuthContext';
 
 jest.mock('../../services/sanctuaryService', () => ({
   getGathering: jest.fn(),
@@ -13,6 +14,9 @@ jest.mock('../../services/sanctuaryService', () => ({
   imageUrl: (p) => (p ? `https://img.test/${p}` : ''),
   videoFileUrl: () => '',
 }));
+
+// signed out unless a test says otherwise
+jest.mock('../../context/AuthContext', () => ({ useAuth: jest.fn(() => ({ user: null, loading: false })) }));
 
 global.IS_REACT_ACT_ENVIRONMENT = true;
 Element.prototype.scrollIntoView = jest.fn();
@@ -36,6 +40,7 @@ beforeEach(() => {
   el = document.createElement('div'); document.body.appendChild(el);
   getGathering.mockReset(); listSeriesDates.mockReset(); reservePlaces.mockReset();
   listSeriesDates.mockResolvedValue([]);
+  useAuth.mockImplementation(() => ({ user: null, loading: false }));
 });
 afterEach(() => { act(() => root.unmount()); el.remove(); });
 
@@ -173,4 +178,18 @@ test('a link to something that isn’t on the calendar says so', async () => {
   await open(null);
   expect(text('.sn-empty-h')).toBe('This gathering isn’t on the calendar.');
   expect($('a.btn').getAttribute('href')).toBe('/sanctuary');
+});
+
+test('signed in: the account’s name, and its email fixed — so the place shows under Your account', async () => {
+  useAuth.mockImplementation(() => ({
+    user: { id: 'u1', email: 'asha@example.com', user_metadata: { full_name: 'Asha Rao' } }, loading: false, signOut: jest.fn(),
+  }));
+  await open(base);
+  expect($('#sn-r-email')).toBeNull();
+  expect(text('.acct-email-value')).toBe('asha@example.com');
+  expect($('#sn-r-name').value).toBe('Asha Rao');
+  act(() => { type($('#sn-r-phone'), '98765 43210'); });
+  reservePlaces.mockResolvedValue({ seats_left: 12 });
+  await submit();
+  expect(reservePlaces).toHaveBeenCalledWith({ offeringId: ID, name: 'Asha Rao', phone: '+919876543210', email: 'asha@example.com', seats: 1 });
 });

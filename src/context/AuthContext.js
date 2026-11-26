@@ -1,20 +1,27 @@
 import React, { createContext, useState, useEffect, useContext, useMemo } from 'react';
 import { supabase } from '../services/supabase/supabaseClient';
+import { getMyHost } from '../services/sanctuaryService';
 
 /**
- * Who is signed in — only Sanctuary hosts ever are, through Supabase Auth:
- * Google, or a code emailed to them (sent via Resend as Supabase's SMTP).
- * Visitors never sign in.
+ * Who is signed in, through Supabase Auth: Google, or a code emailed to them
+ * (sent via Resend as Supabase's SMTP). Anyone may sign in — a customer to see
+ * their bookings and orders (/account), an organiser to run their events
+ * (/sanctuary/host). Nobody needs to, to book or order.
+ *
+ * `isHost` — an organiser is someone with a sanctuary_hosts row (any status),
+ * NOT anyone with a session. null while it isn't known yet (the session or
+ * the row is still loading), then true / false; false when signed out.
  *
  * Children always render: the menu and every public page must paint without
  * waiting on the auth round-trip (a Google redirect adds a code exchange).
  * Pages that need the session read `loading` and wait themselves.
  *
- * A signed-in host is `authenticated` to the database, which on this project
- * is NOT staff — the POS tables refuse them. Everything public they see goes
- * through RPCs (get_public_menu, sanctuary_listings, …), which answer both.
+ * A signed-in person is `authenticated` to the database, which on this project
+ * is NOT staff — the POS tables refuse them (stage 4). Everything public they
+ * see goes through RPCs (get_public_menu, sanctuary_listings, …), and their
+ * own bookings and orders through my_account() (POS migration 20261129000000).
  */
-const AuthContext = createContext({ user: null, session: null, loading: true });
+const AuthContext = createContext({ user: null, session: null, loading: true, isHost: null });
 
 export const AuthProvider = ({ children }) => {
   const [session, setSession] = useState(null);
@@ -37,19 +44,36 @@ export const AuthProvider = ({ children }) => {
     };
   }, []);
 
+  // Whether this person organises with us: their sanctuary_hosts row, read once
+  // per signed-in user (and again on refreshHost, after they ask to host).
+  const uid = session?.user?.id ?? null;
+  const [host, setHost] = useState({ uid: null, isHost: null });
+  const [hostCheck, setHostCheck] = useState(0);
+  useEffect(() => {
+    if (!uid) return undefined;
+    let alive = true;
+    getMyHost(uid)
+      .then((row) => alive && setHost({ uid, isHost: !!row }))
+      .catch(() => alive && setHost({ uid, isHost: false }));
+    return () => { alive = false; };
+  }, [uid, hostCheck]);
+  const isHost = loading ? null : !uid ? false : host.uid === uid ? host.isHost : null;
+
   const value = useMemo(() => ({
     session,
     user: session?.user ?? null,
     loading,
+    isHost,
+    refreshHost: () => setHostCheck((n) => n + 1),
     /** Leaves the site for Google; comes back to `returnPath` signed in. */
-    signInWithGoogle: (returnPath = '/sanctuary/host') =>
+    signInWithGoogle: (returnPath = '/account') =>
       supabase.auth.signInWithOAuth({
         provider: 'google',
         options: { redirectTo: `${window.location.origin}${returnPath}` },
       }),
     /**
      * Emails a one-time code (first time = creates the account). A code, not a
-     * link: a PKCE link only works in the browser that asked for it, and hosts
+     * link: a PKCE link only works in the browser that asked for it, and people
      * often read mail on their phone. The Supabase email templates must show
      * {{ .Token }}.
      */
@@ -59,7 +83,7 @@ export const AuthProvider = ({ children }) => {
     verifyEmailCode: (email, token) =>
       supabase.auth.verifyOtp({ email, token, type: 'email' }),
     signOut: () => supabase.auth.signOut(),
-  }), [session, loading]);
+  }), [session, loading, isHost]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

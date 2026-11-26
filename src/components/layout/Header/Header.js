@@ -13,10 +13,19 @@ const BagIcon = ({ s = 17 }) => (
   </svg>
 );
 
+// the way into Your account — drawn to sit beside the bag (same box, same stroke)
+const PersonIcon = ({ s = 17 }) => (
+  <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+    <circle cx="12" cy="8.5" r="3.5" />
+    <path d="M5 20c.8-3.6 3.6-5.5 7-5.5s6.2 1.9 7 5.5" strokeLinecap="round" />
+  </svg>
+);
+
 function viewFromPath(pathname) {
   if (pathname.startsWith('/menu')) return 'menu';
   if (pathname.startsWith('/about') || pathname.startsWith('/story')) return 'story';
   if (pathname.startsWith('/visit')) return 'visit';
+  if (pathname.startsWith('/account')) return 'account';
   // an organiser's own pages (not /sanctuary/hosts/:id, a public profile)
   if (/^\/sanctuary\/host(\/|$)/.test(pathname)) return 'organiser';
   // the ice bath and sauna live under /sanctuary but have a tab of their own
@@ -29,9 +38,9 @@ function viewFromPath(pathname) {
 const MM_ITEMS = [
   { id: 'home',   label: 'Home',      note: 'The kitchen, the ethos',  path: '/' },
   { id: 'menu',   label: 'Menu',      note: 'A season, plated',         path: '/menu' },
-  { id: 'story',  label: 'Story',     note: 'Why we cook this way',     path: '/about' },
   { id: 'sanctuary', label: 'Sanctuary', note: 'Classes · workshops · events', path: '/sanctuary' },
   { id: 'restore', label: 'Ice bath & sauna', note: 'Cold, heat or both', path: '/sanctuary/restore' },
+  { id: 'story',  label: 'Story',     note: 'Why we cook this way',     path: '/about' },
   { id: 'visit',  label: 'Visit',     note: 'Auroville Road',           path: '/visit' },
 ];
 
@@ -39,10 +48,12 @@ const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { count, setBagOpen } = useCart();
-  // Only organisers ever sign in on this site: a session means one is here.
-  // Nothing while the session is still being read, so the label doesn't flicker.
+  // Anyone may sign in — to see their bookings and orders (/account); organisers
+  // reach their events from there. Nothing while the session is still being
+  // read, so the phone menu's label doesn't flicker.
   const { user, loading } = useAuth();
-  const organiser = !loading && !!user;
+  const signedIn = !loading && !!user;
+  const accountLabel = signedIn ? 'Your account' : 'Sign in';
 
   const view = viewFromPath(location.pathname);
   const [scrolled, setScrolled] = useState(false);
@@ -69,7 +80,7 @@ const Header = () => {
     <>
       <a href="#main-content" className="skip-link">Skip to main content</a>
 
-      <nav className={`nav ${isSolid ? 'solid' : ''}${organiser ? ' has-organiser' : ''}`} role="banner">
+      <nav className={`nav ${isSolid ? 'solid' : ''}`} role="banner">
         <button
           className={`nav-burger ${mobileOpen ? 'is-open' : ''}`}
           onClick={() => setMobileOpen(o => !o)}
@@ -79,35 +90,45 @@ const Header = () => {
           <span /><span /><span />
         </button>
 
+        {/* What's here on the left — food, the Sanctuary, the ice bath and sauna;
+            about us and finding us on the right, with the bag and the way into
+            Your account. The wordmark is the way home. */}
         <div className="nav-links">
-          <button className={`nav-link ${view === 'home' ? 'active' : ''}`} onClick={() => { navigate('/'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>Home</button>
           <button className={`nav-link ${view === 'menu' ? 'active' : ''}`} onClick={() => navigate('/menu')}>Menu</button>
-          <button className={`nav-link ${view === 'story' ? 'active' : ''}`} onClick={() => navigate('/about')}>Story</button>
+          <button className={`nav-link ${view === 'sanctuary' ? 'active' : ''}`} onClick={() => navigate('/sanctuary')}>Sanctuary</button>
+          <button className={`nav-link ${view === 'restore' ? 'active' : ''}`} onClick={() => navigate('/sanctuary/restore')}>Ice bath &amp; sauna</button>
         </div>
 
-        <button className="brand" onClick={() => { navigate('/'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
+        <button className="brand" aria-label="Conscious Café Sanctuary, home" onClick={() => { navigate('/'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
           {/* one line where it fits, the two names parted by a dot; stacked, café over
-              sanctuary, where it doesn't (the dot then goes) — App.css */}
+              sanctuary, with the dot between, where it doesn't — App.css */}
           <span className="b1"><span className="b1-a">Conscious Café</span><span className="b1-dot" aria-hidden="true"> · </span><span className="b1-b">Sanctuary</span></span>
         </button>
 
         <div className="nav-right">
-          <button className={`nav-link ${view === 'sanctuary' ? 'active' : ''}`} onClick={() => navigate('/sanctuary')}>Sanctuary</button>
-          <button className={`nav-link ${view === 'restore' ? 'active' : ''}`} onClick={() => navigate('/sanctuary/restore')}>Ice bath &amp; sauna</button>
+          <button className={`nav-link ${view === 'story' ? 'active' : ''}`} onClick={() => navigate('/about')}>Story</button>
           <button className={`nav-link ${view === 'visit' ? 'active' : ''}`} onClick={() => navigate('/visit')}>Visit</button>
-          {organiser && (
-            <button className={`nav-link ${view === 'organiser' ? 'active' : ''}`} onClick={() => navigate('/sanctuary/host')}>Your events</button>
-          )}
           <button className="bag" onClick={() => setBagOpen(true)} aria-label={`Shopping bag, ${count} items`}>
             <BagIcon /> <span className="bag-label">Bag</span>
             {count > 0 && <span className="count">{count}</span>}
+          </button>
+          {/* Your account, for anyone who books or orders (organisers too). Always
+              drawn (no shift when the session arrives); a small dot once signed
+              in. Phones reach it from the menu instead. */}
+          <button
+            className={`nav-acct${view === 'account' || view === 'organiser' ? ' active' : ''}${signedIn ? ' is-in' : ''}`}
+            onClick={() => navigate('/account')}
+            aria-label={accountLabel}
+            title={accountLabel}
+          >
+            <PersonIcon />
           </button>
         </div>
       </nav>
 
       <div className={`mobile-menu ${mobileOpen ? 'open' : ''}`} aria-hidden={!mobileOpen}>
         <div className="mm-top">
-          <span className="mm-brand"><span>Conscious Café</span> <span>Sanctuary</span></span>
+          <span className="mm-brand"><span>Conscious Café</span> <span className="mm-dot" aria-hidden="true">·</span> <span>Sanctuary</span></span>
           <button className="mm-close" onClick={() => setMobileOpen(false)} aria-label="Close menu">×</button>
         </div>
         <nav className="mm-list">
@@ -125,8 +146,8 @@ const Header = () => {
             View bag{count > 0 ? ` · ${count}` : ''}
           </button>
           {!loading && (
-            <button className="mm-organiser" onClick={() => handleNav({ path: '/sanctuary/host' })}>
-              {organiser ? 'Your events' : 'Organiser sign-in'}
+            <button className="mm-account" onClick={() => handleNav({ path: '/account' })}>
+              {accountLabel}
             </button>
           )}
           <div className="mm-contact">

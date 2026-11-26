@@ -211,7 +211,8 @@ function Cafe({ products, onProductClick }) {
    invitation, and the same way back in for organisers, as on /sanctuary. */
 function Organise() {
   const navigate = useNavigate();
-  const { user, loading } = useAuth(); // only organisers ever sign in
+  // an organiser is someone with a host profile; anyone may sign in (Your account)
+  const { user, isHost } = useAuth();
   return (
     <section className="section tight home-host" id="host" aria-labelledby="host-h">
       <div className="col-head home-host-row">
@@ -224,9 +225,9 @@ function Organise() {
         </div>
         <div className="home-host-acts">
           <button className="btn" onClick={() => navigate('/sanctuary/host')}>Become an organiser</button>
-          {!loading && (
-            <Link className="tlink" to="/sanctuary/host">{user ? 'Go to your events' : 'Already organising with us? Sign in'}</Link>
-          )}
+          {isHost ? <Link className="tlink" to="/sanctuary/host">Go to your events</Link>
+            : isHost === false && !user ? <Link className="tlink" to="/sanctuary/host">Already organising with us? Sign in</Link>
+            : null}
         </div>
       </div>
     </section>

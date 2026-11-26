@@ -159,43 +159,27 @@ button { font-family: inherit; cursor: pointer; }
 }
 .brand .b1 { font-family: var(--logo); font-weight: 400; font-size: clamp(16px, 1.45vw, 21px); letter-spacing: 0.2em; text-transform: uppercase; white-space: nowrap; }
 /* The wordmark, CONSCIOUS CAFÉ · SANCTUARY: one line where it fits; where it
-   doesn't (≤960px, or a signed-in organiser's longer header up to 1160px) the
-   lockup stacks, café over sanctuary, centred, and the dot goes. */
+   doesn't (≤960px) the lockup stacks, café over sanctuary, centred, with the dot between them in a
+   short row of its own — drawn, not typed, so it sits exactly mid-gap. Each
+   word gives back its trailing tracking (−.2em) so it centres truly over the
+   dot. The phone menu's wordmark (.mm-brand) is stacked the same way. */
 .brand .b1-a, .brand .b1-b, .brand .b1-dot { white-space: pre; }
 @media (max-width: 960px) {
   .brand .b1 { display: flex; flex-direction: column; align-items: center; line-height: 1.15; }
-  .brand .b1-dot { display: none; }
-}
-@media (min-width: 961px) and (max-width: 1160px) {
-  .nav.has-organiser .brand .b1 { display: flex; flex-direction: column; align-items: center; line-height: 1.15; }
-  .nav.has-organiser .brand .b1-dot { display: none; }
+  .brand .b1-a, .brand .b1-b { margin-right: -.2em; }
+  .brand .b1-dot { font-size: 0; line-height: 0; height: 9px; display: flex; align-items: center; justify-content: center; }
+  .brand .b1-dot::before { content: ''; width: 3px; height: 3px; border-radius: 50%; background: currentColor; }
 }
 .brand .b2 { font-family: var(--ui); font-size: 9px; letter-spacing: 0.42em; text-transform: uppercase; opacity:.7; margin-top: 6px; white-space: nowrap; }
 
 .nav-right { display: flex; align-items: center; gap: clamp(16px,1.8vw,28px); }
-/* Three columns, so the brand stays in the true centre however much the two
-   sides hold (the right has more since the ice bath & sauna got a tab). Below
-   761px the links fold into the burger and the brand is placed absolutely. */
+/* Three columns, so the brand stays in the true centre whatever the two sides
+   hold: what's here on the left (Menu, Sanctuary, Ice bath & sauna), about us,
+   finding us, the bag and the account icon on the right. Below 761px the
+   links fold into the burger and the brand is placed absolutely. */
 @media (min-width: 761px) {
   .nav { display: grid; grid-template-columns: 1fr auto 1fr; column-gap: 24px; }
   .nav-right { justify-self: end; }
-}
-/* A signed-in organiser has one more link ("Your events"), which doesn't fit
-   beside the rest on a narrow laptop or tablet: there the header folds into
-   the burger a little sooner — the same fold as a phone's (≤760px below) —
-   and the menu carries "Your events". Visitors never sign in, so their
-   header is unchanged. */
-@media (min-width: 761px) and (max-width: 960px) {
-  .nav.has-organiser { display: flex; justify-content: space-between; }
-  .nav.has-organiser .nav-links, .nav.has-organiser .nav-right .nav-link, .nav.has-organiser .bag .bag-label { display: none; }
-  .nav.has-organiser .brand { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
-  .nav.has-organiser .nav-right { gap: 14px; }
-  .nav.has-organiser .bag { gap: 5px; }
-  .nav.has-organiser .nav-burger { display: flex; position: relative; z-index: 260; width: 26px; }
-  .nav.has-organiser .nav-burger.is-open span { background: var(--ink); }
-  .nav.has-organiser .nav-burger.is-open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
-  .nav.has-organiser .nav-burger.is-open span:nth-child(2) { opacity: 0; }
-  .nav.has-organiser .nav-burger.is-open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
 }
 .bag {
   font-family: var(--ui); font-size: 16px; font-weight: 500;
@@ -206,6 +190,19 @@ button { font-family: inherit; cursor: pointer; }
   font-size: 12px; min-width: 17px; height: 17px; padding: 0 4px; border-radius: 99px;
   background: var(--forest); color: #fff; display: grid; place-items: center; letter-spacing: 0;
 }
+/* Your account, after the bag: an icon, named by its tooltip and to screen
+   readers ("Sign in", or "Your account" once signed in, when a small forest dot
+   sits on it). Underlined on /account and the organiser pages, like a tab. */
+.nav-acct {
+  position: relative; display: grid; place-items: center; min-width: 24px; min-height: 44px; padding: 0;
+  color: var(--nav-fg); background: none; border: none;
+  transition: color .6s var(--ease), opacity .4s var(--ease);
+}
+.nav.solid .nav-acct { opacity: .92; }
+.nav-acct:hover, .nav-acct.active { opacity: 1; }
+.nav-acct::after { content: ""; position: absolute; left: 50%; bottom: 4px; height: 1px; width: 0; background: currentColor; transform: translateX(-50%); transition: width .45s var(--ease); }
+.nav-acct:hover::after, .nav-acct.active::after { width: 17px; }
+.nav-acct.is-in::before { content: ""; position: absolute; top: 10px; right: 5px; width: 6px; height: 6px; border-radius: 50%; background: var(--forest); border: 1.5px solid var(--paper); }
 
 .nav-burger { display: none; flex-direction: column; gap: 5px; background: none; border: none; padding: 4px; }
 .nav-burger span { width: 24px; height: 1.5px; background: var(--nav-fg); display: block; transition: transform .4s var(--ease), opacity .3s var(--ease), background .6s var(--ease); }
@@ -613,6 +610,19 @@ button { font-family: inherit; cursor: pointer; }
 .co-textarea { resize: vertical; line-height: 1.5; }
 .co-error { font-family: var(--ui); font-size: 13px; color: #b23b2e; margin-top: 6px; }
 .co-hint { font-family: var(--ui); font-size: 13px; color: var(--ink-mute); margin-top: 8px; line-height: 1.4; }
+.co-fields .acct-email { margin-top: 20px; }
+
+/* Signed in: the account's email, fixed, where the email field would be
+   (checkout, the event and ice bath forms — components/auth/SignedInAs). */
+.acct-email { display: flex; flex-direction: column; gap: 6px; padding: 12px 14px; border: 1px solid var(--line-soft); background: var(--paper-2); }
+.acct-email-label { font-family: var(--ui); font-size: var(--fs-sm); color: var(--ink-mute); font-weight: 500; }
+.acct-email-value { font-family: var(--ui); font-size: var(--fs-ui); color: var(--ink); overflow-wrap: anywhere; }
+.acct-email-note { font-family: var(--ui); font-size: var(--fs-sm); color: var(--ink-mute); line-height: 1.5; }
+.acct-email-out {
+  font: inherit; color: var(--ink-soft); background: none; border: 0; padding: 0; cursor: pointer;
+  text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--line);
+}
+.acct-email-out:hover { color: var(--ink); text-decoration-color: currentColor; }
 
 /* Footer submit */
 .co-submit { gap: 10px; }
@@ -638,7 +648,10 @@ button { font-family: inherit; cursor: pointer; }
 }
 .mobile-menu.open { transform: none; }
 .mm-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: clamp(28px,7vh,56px); }
-.mm-brand { font-family: var(--logo); font-weight: 400; font-size: 17px; letter-spacing: .2em; text-transform: uppercase; color: var(--ink); display: flex; flex-direction: column; line-height: 1.15; }
+.mm-brand { font-family: var(--logo); font-weight: 400; font-size: 17px; letter-spacing: .2em; text-transform: uppercase; color: var(--ink); display: flex; flex-direction: column; align-items: center; line-height: 1.15; }
+.mm-brand > span { margin-right: -.2em; }
+.mm-brand .mm-dot { margin-right: 0; font-size: 0; line-height: 0; height: 9px; display: flex; align-items: center; justify-content: center; }
+.mm-brand .mm-dot::before { content: ''; width: 3px; height: 3px; border-radius: 50%; background: currentColor; }
 .mm-close { background: none; border: none; font-size: 38px; line-height: 1; color: var(--ink); display: flex; align-items: center; justify-content: center; width: 46px; height: 46px; margin-right: -8px; }
 .mm-list { display: flex; flex-direction: column; position: relative; z-index: 2; }
 .mm-item {
@@ -657,8 +670,8 @@ button { font-family: inherit; cursor: pointer; }
   font-family: var(--ui); font-size: 14px; letter-spacing: 0;
   background: var(--forest); color: var(--paper); border: none; padding: 17px; margin-bottom: 20px;
 }
-/* the way in for organisers: quieter than the bag, above the contact lines */
-.mm-organiser {
+/* the way into Your account: quieter than the bag, above the contact lines */
+.mm-account {
   width: 100%; display: flex; align-items: center; justify-content: center; min-height: 48px; margin: -8px 0 20px;
   font-family: var(--ui); font-size: var(--fs-sm); background: transparent; color: var(--ink); border: 1px solid var(--line);
 }
@@ -1127,6 +1140,7 @@ button { font-family: inherit; cursor: pointer; }
   .nav-right { gap: 14px; }
   .bag .bag-label { display: none; }
   .bag { gap: 5px; }
+  .nav-acct { display: none; } /* the phone menu carries it */
   .nav-burger { display: flex; position: relative; z-index: 260; width: 26px; }
   .nav-burger span { transition: transform .4s var(--ease), opacity .3s var(--ease); }
   .nav-burger.is-open span { background: var(--ink); }
