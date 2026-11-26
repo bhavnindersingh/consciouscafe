@@ -16,6 +16,8 @@ function viewFromPath(pathname) {
   if (pathname.startsWith('/menu')) return 'menu';
   if (pathname.startsWith('/about') || pathname.startsWith('/story')) return 'story';
   if (pathname.startsWith('/visit')) return 'visit';
+  // the ice bath and sauna live under /sanctuary but have a tab of their own
+  if (pathname.startsWith('/sanctuary/restore')) return 'restore';
   if (pathname.startsWith('/sanctuary')) return 'sanctuary';
   if (pathname.startsWith('/privacy') || pathname.startsWith('/terms')) return 'legal';
   return 'home';
@@ -26,6 +28,7 @@ const MM_ITEMS = [
   { id: 'menu',   label: 'Menu',      note: 'A season, plated',         path: '/menu' },
   { id: 'story',  label: 'Story',     note: 'Why we cook this way',     path: '/about' },
   { id: 'sanctuary', label: 'Sanctuary', note: 'Classes · workshops · events', path: '/sanctuary' },
+  { id: 'restore', label: 'Ice bath & sauna', note: 'Cold, heat or both', path: '/sanctuary/restore' },
   { id: 'visit',  label: 'Visit',     note: 'Auroville Road',           path: '/visit' },
 ];
 
@@ -81,6 +84,7 @@ const Header = () => {
 
         <div className="nav-right">
           <button className={`nav-link ${view === 'sanctuary' ? 'active' : ''}`} onClick={() => navigate('/sanctuary')}>Sanctuary</button>
+          <button className={`nav-link ${view === 'restore' ? 'active' : ''}`} onClick={() => navigate('/sanctuary/restore')}>Ice bath &amp; sauna</button>
           <button className={`nav-link ${view === 'visit' ? 'active' : ''}`} onClick={() => navigate('/visit')}>Visit</button>
           <button className="bag" onClick={() => setBagOpen(true)} aria-label={`Shopping bag, ${count} items`}>
             <BagIcon /> <span className="bag-label">Bag</span>
