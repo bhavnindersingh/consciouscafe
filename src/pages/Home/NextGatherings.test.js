@@ -35,7 +35,7 @@ test('empty calendar: a quiet note and the host link, no rows', async () => {
   listGatherings.mockResolvedValue([]);
   await mount();
   expect(el.querySelectorAll('.home-next-row')).toHaveLength(0);
-  expect(el.querySelector('.home-next-empty').textContent).toContain('Nothing on the calendar just yet');
+  expect(el.querySelector('.home-next-empty').textContent).toContain('Nothing on the Sanctuary’s calendar just yet');
   expect(el.querySelector('.home-next-empty a').getAttribute('href')).toBe('/sanctuary/host');
   expect(el.querySelector('.home-next-all').getAttribute('href')).toBe('/sanctuary');
 });
@@ -73,4 +73,41 @@ test('error: a short line and the calendar link, nothing thrown', async () => {
   expect(el.querySelectorAll('.home-next-row')).toHaveLength(0);
   expect(el.querySelector('.home-next-error').textContent).toContain('didn’t load');
   expect(el.querySelector('.home-next-error a').getAttribute('href')).toBe('/sanctuary');
+});
+
+test('only the Sanctuary’s own events, capped after filtering; the rest counted under Linda’s curation', async () => {
+  const away = (id, extra = {}) => row(id, { at_sanctuary: false, location: 'Pondy Bazaar', ...extra });
+  listGatherings.mockResolvedValue([
+    away('x1'),
+    row('a', { price_inr: 500, capacity: 12, seats_left: 3 }),
+    away('x2', { starts_at: '2026-11-11T01:30:00Z', ends_at: '2026-11-11T02:45:00Z' }),
+    row('b', { starts_at: '2026-11-12T01:30:00Z', ends_at: '2026-11-12T02:45:00Z', capacity: 10, seats_left: 0 }),
+    row('c', { starts_at: '2026-11-13T01:30:00Z', ends_at: '2026-11-13T02:45:00Z' }),
+    row('d', { starts_at: '2026-11-14T01:30:00Z', ends_at: '2026-11-14T02:45:00Z' }),
+  ]);
+  await mount();
+  const links = [...el.querySelectorAll('a.home-next-row')];
+  expect(links.map((a) => a.getAttribute('href'))).toEqual(['/sanctuary/a', '/sanctuary/b', '/sanctuary/c']);
+  expect(links[0].querySelector('.home-next-price').textContent).toBe('₹500');
+  expect(links[0].querySelector('.home-next-seats').textContent).toBe('Last 3 places');
+  expect(links[0].querySelector('.home-next-go').textContent).toBe('Reserve');
+  expect(links[1].querySelector('.home-next-seats').classList.contains('is-full')).toBe(true);
+  expect(links[1].querySelector('.home-next-go').textContent).toBe('See details');
+  const awayLine = el.querySelector('.home-next-away');
+  expect(awayLine.textContent).toContain('2 more events');
+  expect(awayLine.querySelector('a').getAttribute('href')).toBe('/sanctuary#curation');
+});
+
+test('nothing in the Sanctuary but some elsewhere: the empty note, and the way to them', async () => {
+  listGatherings.mockResolvedValue([row('x1', { at_sanctuary: false, location: 'Pondy Bazaar' })]);
+  await mount();
+  expect(el.querySelectorAll('.home-next-row')).toHaveLength(0);
+  expect(el.querySelector('.home-next-empty').textContent).toContain('Nothing on the Sanctuary’s calendar just yet');
+  expect(el.querySelector('.home-next-away').textContent).toContain('1 more event in');
+});
+
+test('no outside events, no line about them', async () => {
+  listGatherings.mockResolvedValue([row('a')]);
+  await mount();
+  expect(el.querySelector('.home-next-away')).toBeNull();
 });

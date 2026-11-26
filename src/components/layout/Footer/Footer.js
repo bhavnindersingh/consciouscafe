@@ -39,6 +39,7 @@ const Footer = () => {
           <Link className="ft-arrow" to="/visit">Contact us</Link>
           <a href="mailto:hello@consciouscafe.in">hello@consciouscafe.in</a>
           <a href="tel:+918754561269">+91 87545 61269</a>
+          <Link className="ft-arrow" to="/sanctuary/host">Organiser sign-in</Link>
         </div>
 
         <div className="ft-col">

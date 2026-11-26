@@ -138,6 +138,10 @@ function AppContent() {
           <Route path="/facilitator-login" element={<Navigate to="/sanctuary/host" replace />} />
           <Route path="/register" element={<Navigate to="/sanctuary/host" replace />} />
           <Route path="/dashboard/*" element={<Navigate to="/sanctuary/host" replace />} />
+          {/* Short addresses for organisers — easy to say on WhatsApp or print on a flyer */}
+          <Route path="/organiser" element={<Navigate to="/sanctuary/host" replace />} />
+          <Route path="/organizer" element={<Navigate to="/sanctuary/host" replace />} />
+          <Route path="/login" element={<Navigate to="/sanctuary/host" replace />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
         </Suspense>

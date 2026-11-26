@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '../../../context/CartContext';
+import { useAuth } from '../../../context/AuthContext';
 import { getGumletUrl } from '../../../utils/gumlet';
 
 const HIBISCUS = getGumletUrl('hibiscus.png', { width: 600, quality: 72, format: 'auto' });
@@ -16,6 +17,8 @@ function viewFromPath(pathname) {
   if (pathname.startsWith('/menu')) return 'menu';
   if (pathname.startsWith('/about') || pathname.startsWith('/story')) return 'story';
   if (pathname.startsWith('/visit')) return 'visit';
+  // an organiser's own pages (not /sanctuary/hosts/:id, a public profile)
+  if (/^\/sanctuary\/host(\/|$)/.test(pathname)) return 'organiser';
   // the ice bath and sauna live under /sanctuary but have a tab of their own
   if (pathname.startsWith('/sanctuary/restore')) return 'restore';
   if (pathname.startsWith('/sanctuary')) return 'sanctuary';
@@ -36,6 +39,10 @@ const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { count, setBagOpen } = useCart();
+  // Only organisers ever sign in on this site: a session means one is here.
+  // Nothing while the session is still being read, so the label doesn't flicker.
+  const { user, loading } = useAuth();
+  const organiser = !loading && !!user;
 
   const view = viewFromPath(location.pathname);
   const [scrolled, setScrolled] = useState(false);
@@ -62,7 +69,7 @@ const Header = () => {
     <>
       <a href="#main-content" className="skip-link">Skip to main content</a>
 
-      <nav className={`nav ${isSolid ? 'solid' : ''}`} role="banner">
+      <nav className={`nav ${isSolid ? 'solid' : ''}${organiser ? ' has-organiser' : ''}`} role="banner">
         <button
           className={`nav-burger ${mobileOpen ? 'is-open' : ''}`}
           onClick={() => setMobileOpen(o => !o)}
@@ -79,13 +86,18 @@ const Header = () => {
         </div>
 
         <button className="brand" onClick={() => { navigate('/'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
-          <span className="b1">Conscious Café</span>
+          {/* one line where it fits, the two names parted by a dot; stacked, café over
+              sanctuary, where it doesn't (the dot then goes) — App.css */}
+          <span className="b1"><span className="b1-a">Conscious Café</span><span className="b1-dot" aria-hidden="true"> · </span><span className="b1-b">Sanctuary</span></span>
         </button>
 
         <div className="nav-right">
           <button className={`nav-link ${view === 'sanctuary' ? 'active' : ''}`} onClick={() => navigate('/sanctuary')}>Sanctuary</button>
           <button className={`nav-link ${view === 'restore' ? 'active' : ''}`} onClick={() => navigate('/sanctuary/restore')}>Ice bath &amp; sauna</button>
           <button className={`nav-link ${view === 'visit' ? 'active' : ''}`} onClick={() => navigate('/visit')}>Visit</button>
+          {organiser && (
+            <button className={`nav-link ${view === 'organiser' ? 'active' : ''}`} onClick={() => navigate('/sanctuary/host')}>Your events</button>
+          )}
           <button className="bag" onClick={() => setBagOpen(true)} aria-label={`Shopping bag, ${count} items`}>
             <BagIcon /> <span className="bag-label">Bag</span>
             {count > 0 && <span className="count">{count}</span>}
@@ -95,7 +107,7 @@ const Header = () => {
 
       <div className={`mobile-menu ${mobileOpen ? 'open' : ''}`} aria-hidden={!mobileOpen}>
         <div className="mm-top">
-          <span className="mm-brand">Conscious Café</span>
+          <span className="mm-brand"><span>Conscious Café</span> <span>Sanctuary</span></span>
           <button className="mm-close" onClick={() => setMobileOpen(false)} aria-label="Close menu">×</button>
         </div>
         <nav className="mm-list">
@@ -112,6 +124,11 @@ const Header = () => {
           <button className="mm-bag" onClick={() => { setBagOpen(true); setMobileOpen(false); }}>
             View bag{count > 0 ? ` · ${count}` : ''}
           </button>
+          {!loading && (
+            <button className="mm-organiser" onClick={() => handleNav({ path: '/sanctuary/host' })}>
+              {organiser ? 'Your events' : 'Organiser sign-in'}
+            </button>
+          )}
           <div className="mm-contact">
             <a href="mailto:hello@consciouscafe.in">hello@consciouscafe.in</a>
             <a href="tel:+918754561269">+91 87545 61269</a>

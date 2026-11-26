@@ -158,6 +158,18 @@ button { font-family: inherit; cursor: pointer; }
   background: none; border: none;
 }
 .brand .b1 { font-family: var(--logo); font-weight: 400; font-size: clamp(16px, 1.45vw, 21px); letter-spacing: 0.2em; text-transform: uppercase; white-space: nowrap; }
+/* The wordmark, CONSCIOUS CAFÉ · SANCTUARY: one line where it fits; where it
+   doesn't (≤960px, or a signed-in organiser's longer header up to 1160px) the
+   lockup stacks, café over sanctuary, centred, and the dot goes. */
+.brand .b1-a, .brand .b1-b, .brand .b1-dot { white-space: pre; }
+@media (max-width: 960px) {
+  .brand .b1 { display: flex; flex-direction: column; align-items: center; line-height: 1.15; }
+  .brand .b1-dot { display: none; }
+}
+@media (min-width: 961px) and (max-width: 1160px) {
+  .nav.has-organiser .brand .b1 { display: flex; flex-direction: column; align-items: center; line-height: 1.15; }
+  .nav.has-organiser .brand .b1-dot { display: none; }
+}
 .brand .b2 { font-family: var(--ui); font-size: 9px; letter-spacing: 0.42em; text-transform: uppercase; opacity:.7; margin-top: 6px; white-space: nowrap; }
 
 .nav-right { display: flex; align-items: center; gap: clamp(16px,1.8vw,28px); }
@@ -167,6 +179,23 @@ button { font-family: inherit; cursor: pointer; }
 @media (min-width: 761px) {
   .nav { display: grid; grid-template-columns: 1fr auto 1fr; column-gap: 24px; }
   .nav-right { justify-self: end; }
+}
+/* A signed-in organiser has one more link ("Your events"), which doesn't fit
+   beside the rest on a narrow laptop or tablet: there the header folds into
+   the burger a little sooner — the same fold as a phone's (≤760px below) —
+   and the menu carries "Your events". Visitors never sign in, so their
+   header is unchanged. */
+@media (min-width: 761px) and (max-width: 960px) {
+  .nav.has-organiser { display: flex; justify-content: space-between; }
+  .nav.has-organiser .nav-links, .nav.has-organiser .nav-right .nav-link, .nav.has-organiser .bag .bag-label { display: none; }
+  .nav.has-organiser .brand { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
+  .nav.has-organiser .nav-right { gap: 14px; }
+  .nav.has-organiser .bag { gap: 5px; }
+  .nav.has-organiser .nav-burger { display: flex; position: relative; z-index: 260; width: 26px; }
+  .nav.has-organiser .nav-burger.is-open span { background: var(--ink); }
+  .nav.has-organiser .nav-burger.is-open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+  .nav.has-organiser .nav-burger.is-open span:nth-child(2) { opacity: 0; }
+  .nav.has-organiser .nav-burger.is-open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
 }
 .bag {
   font-family: var(--ui); font-size: 16px; font-weight: 500;
@@ -228,12 +257,6 @@ button { font-family: inherit; cursor: pointer; }
 
 .col-head { max-width: 1500px; margin: 0 auto; }
 
-/* ---- Manifesto ---- */
-.manifesto { max-width: 1400px; margin: 0 auto; }
-.manifesto .display { font-size: clamp(30px, 5vw, 78px); }
-.manifesto .display .mut { color: var(--ink-mute); }
-.manifesto-foot { margin-top: clamp(40px,6vh,72px); display: flex; gap: clamp(30px,5vw,90px); flex-wrap: wrap; align-items: flex-end; justify-content: space-between; }
-
 /* ---- Featured (full-bleed alternating) ---- */
 .feature { display: grid; grid-template-columns: 1fr 1fr; min-height: clamp(440px, 78vh, 760px); }
 .feature.flip .feature-media { order: 2; }
@@ -287,7 +310,7 @@ button { font-family: inherit; cursor: pointer; }
 .home-strand-side { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; text-align: right; }
 .home-strand-status { font-family: var(--ui); font-size: 14px; letter-spacing: 0; color: var(--forest); }
 
-.home-place-live { margin-top: clamp(40px, 7vh, 88px); max-width: 960px; }
+.home-place-live { margin-top: clamp(40px, 7vh, 88px); }
 .home-next { min-height: 200px; border-top: 1px solid var(--ink); padding-top: clamp(20px, 3vh, 28px); }
 .home-next-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px 32px; flex-wrap: wrap; margin-bottom: 10px; }
 .home-next-h { font-family: var(--display); font-weight: 400; font-size: clamp(26px, 2.6vw, 38px); line-height: 1.1; }
@@ -305,19 +328,33 @@ button { font-family: inherit; cursor: pointer; }
 .home-next-kind { font-family: var(--ui); font-size: 14px; letter-spacing: 0; font-weight: 500; color: var(--sage); }
 .home-next-kind.is-class { color: var(--forest); }
 .home-next-kind.is-workshop { color: var(--clay); }
-.home-next-repeat { font-family: var(--serif); font-style: italic; font-size: 16px; color: var(--ink-soft); }
+.home-next-repeat { font-family: var(--ui); font-size: var(--fs-sm); color: var(--ink-soft); }
 .home-next-title { font-family: var(--display); font-size: clamp(22px, 2.2vw, 30px); line-height: 1.1; text-wrap: balance; }
 .home-next-meta { font-family: var(--ui); font-size: 14px; color: var(--ink-mute); line-height: 1.5; }
 .home-next-go { font-family: var(--ui); font-size: 14px; letter-spacing: 0; display: inline-flex; gap: 8px; align-items: center; color: var(--ink-soft); white-space: nowrap; transition: color .3s var(--ease); }
 .home-next-row:hover .home-next-go { color: var(--forest); }
+/* price, places and the way in — as on the Sanctuary's own rows */
+.home-next-side { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; text-align: right; min-width: 120px; }
+.home-next-price { font-family: var(--display); font-size: var(--fs-read); color: var(--ink); line-height: 1.1; }
+.home-next-seats { font-family: var(--ui); font-size: var(--fs-sm); color: var(--sage); }
+.home-next-seats.is-full { color: var(--clay); }
+/* events elsewhere: counted, and a link to them */
+.home-next-away { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 6px; margin: 16px 0 0; font-family: var(--ui); font-size: var(--fs-ui); color: var(--ink-soft); }
 .home-next-note { border-top: 1px solid var(--ink); padding: clamp(20px, 3vh, 30px) 0; font-family: var(--serif); font-size: clamp(17px, 1.3vw, 20px); color: var(--ink-mute); line-height: 1.5; max-width: 44ch; }
 .home-next-note p { margin-bottom: 12px; }
 
 
-/* The café (home, #cafe) — the kitchen as one strand: a heading, then the ethos as a lede. */
-.manifesto .home-cafe-h { font-size: clamp(34px, 5vw, 76px); max-width: 14ch; margin-bottom: clamp(22px, 3vh, 32px); }
-.home-cafe-lede { max-width: 42ch; }
-.home-host .host-banner { margin-top: 0; }
+/* The café (home, #cafe) — one section: what the kitchen believes (the same
+   heading-and-lede head as the place above), what the regulars order, then the
+   way to the menu. The dishes may be missing (menu not loaded): the rest stands. */
+.home-cafe .home-cafe-h { font-size: clamp(34px, 5vw, 76px); max-width: 14ch; }
+.home-sig-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px 32px; flex-wrap: wrap; border-top: 1px solid var(--ink); padding-top: clamp(20px, 3vh, 28px); }
+.home-sig-h { font-family: var(--display); font-weight: 400; font-size: var(--fs-head); line-height: 1.1; color: var(--ink); }
+.home-sig .sig-sub { margin-top: 0; }
+.home-sig .sig { max-width: none; }
+.home-cafe-foot { display: flex; align-items: center; justify-content: space-between; gap: 20px 40px; flex-wrap: wrap; margin-top: clamp(44px, 7vh, 88px); padding-top: clamp(20px, 3vh, 28px); border-top: 1px solid var(--line); }
+.home-cafe-note { font-family: var(--serif); font-size: var(--fs-read); line-height: 1.45; color: var(--ink-soft); max-width: 40ch; margin: 0; }
+.home-cafe-acts { display: flex; align-items: center; gap: 12px 28px; flex-wrap: wrap; }
 
 /* ============================================================
    FOOTER
@@ -601,7 +638,7 @@ button { font-family: inherit; cursor: pointer; }
 }
 .mobile-menu.open { transform: none; }
 .mm-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: clamp(28px,7vh,56px); }
-.mm-brand { font-family: var(--logo); font-weight: 400; font-size: 18px; letter-spacing: .2em; text-transform: uppercase; color: var(--ink); }
+.mm-brand { font-family: var(--logo); font-weight: 400; font-size: 17px; letter-spacing: .2em; text-transform: uppercase; color: var(--ink); display: flex; flex-direction: column; line-height: 1.15; }
 .mm-close { background: none; border: none; font-size: 38px; line-height: 1; color: var(--ink); display: flex; align-items: center; justify-content: center; width: 46px; height: 46px; margin-right: -8px; }
 .mm-list { display: flex; flex-direction: column; position: relative; z-index: 2; }
 .mm-item {
@@ -619,6 +656,11 @@ button { font-family: inherit; cursor: pointer; }
   width: 100%; justify-content: center; display: flex; align-items: center; gap: 10px;
   font-family: var(--ui); font-size: 14px; letter-spacing: 0;
   background: var(--forest); color: var(--paper); border: none; padding: 17px; margin-bottom: 20px;
+}
+/* the way in for organisers: quieter than the bag, above the contact lines */
+.mm-organiser {
+  width: 100%; display: flex; align-items: center; justify-content: center; min-height: 48px; margin: -8px 0 20px;
+  font-family: var(--ui); font-size: var(--fs-sm); background: transparent; color: var(--ink); border: 1px solid var(--line);
 }
 .mm-contact { display: flex; flex-direction: column; gap: 6px; font-family: var(--ui); font-size: 13px; letter-spacing: 0; color: var(--ink-mute); }
 .mm-contact a { color: var(--ink-soft); text-decoration: none; }
@@ -642,7 +684,7 @@ button { font-family: inherit; cursor: pointer; }
   position: absolute; top: 20px; left: 20px; font-family: var(--ui); font-size: 14px; letter-spacing: 0; color: #fff; background: rgba(0,0,0,.32); backdrop-filter: blur(6px); padding: 8px 14px; white-space: nowrap;
 }
 .sig-leadbody { display: flex; flex-direction: column; justify-content: center; }
-.sig-leadbody h3 { font-family: var(--display); font-weight: 400; font-size: clamp(34px, 4.2vw, 60px); line-height: 1.02; margin: 16px 0 18px; letter-spacing: -.01em; }
+.sig-leadbody .sig-lead-name { font-family: var(--display); font-weight: 400; font-size: clamp(34px, 4.2vw, 60px); line-height: 1.02; margin: 16px 0 18px; letter-spacing: -.01em; }
 .sig-leadbody p { font-size: clamp(18px, 1.4vw, 22px); line-height: 1.5; color: var(--ink-soft); max-width: 42ch; margin-bottom: 26px; }
 .sig-meta { display: flex; gap: 24px; align-items: center; margin-bottom: 30px; font-family: var(--ui); font-size: 14px; letter-spacing: 0; color: var(--ink-mute); }
 .sig-meta .price { font-family: var(--display); font-size: 24px; letter-spacing: 0; color: var(--ink); text-transform: none; }
@@ -660,19 +702,13 @@ button { font-family: inherit; cursor: pointer; }
 .sig-card .sc-price { font-family: var(--display); font-size: 21px; color: var(--ink); white-space: nowrap; }
 
 /* ============================================================
-   HOST BANNER
+   ORGANISE (home, #host) — the closing invitation to organisers,
+   in the same words as /sanctuary's band
    ============================================================ */
-.host-banner {
-  grid-column: 1 / -1; margin-top: clamp(20px,3vw,32px);
-  display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;
-  border: 1px solid var(--line); padding: clamp(22px,2.4vw,30px) clamp(24px,2.8vw,38px);
-  transition: border-color .4s var(--ease), background .4s var(--ease); background: transparent;
-}
-.host-banner:hover { border-color: var(--forest); background: rgba(35,63,44,.03); }
-.host-banner .hb-copy { display: flex; flex-direction: column; gap: 4px; }
-.host-banner .hb-copy .eyebrow { color: var(--sage); }
-.host-banner .hb-copy h4 { font-family: var(--display); font-weight: 400; font-size: clamp(22px,2vw,30px); line-height: 1.05; }
-.host-banner > button { flex-shrink: 0; }
+.home-host-row { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 24px clamp(24px, 4vw, 72px); align-items: end; border-top: 1px solid var(--ink); padding-top: clamp(24px, 4vh, 40px); }
+.home-host-h { font-family: var(--display); font-weight: 400; font-size: var(--fs-head); line-height: 1.1; color: var(--ink); max-width: 22ch; margin: 0 0 12px; }
+.home-host-line { font-family: var(--serif); font-size: var(--fs-read); line-height: 1.5; color: var(--ink-soft); max-width: 52ch; margin: 0; }
+.home-host-acts { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; justify-self: end; }
 
 /* ============================================================
    SANCTUARY MODAL
@@ -1063,8 +1099,8 @@ button { font-family: inherit; cursor: pointer; }
   .sm-aside { flex-direction: row; align-items: center; gap: 16px; padding-top: 0; }
   .sm-aside .sm-rule { width: 48px; }
   .home-strand { grid-template-columns: minmax(120px, .8fr) minmax(0, 2fr) auto; }
-  .host-banner { flex-direction: column; align-items: flex-start; gap: 18px; }
-  .host-banner > button { width: 100%; justify-content: center; }
+  .home-host-row { grid-template-columns: minmax(0, 1fr); }
+  .home-host-acts { justify-self: start; }
   .sa-grid2 { grid-template-columns: 1fr; }
   .footer-top { grid-template-columns: repeat(3, 1fr); gap: 36px 30px; }
   .ft-brand { grid-column: 1 / -1; }
@@ -1110,7 +1146,9 @@ button { font-family: inherit; cursor: pointer; }
 
   /* sections */
   .section { padding: clamp(56px, 9vh, 96px) var(--gutter); }
-  .manifesto-foot { flex-direction: column; align-items: flex-start; gap: 24px; }
+  .home-cafe-foot { flex-direction: column; align-items: flex-start; gap: 20px; }
+  .home-host-acts { width: 100%; }
+  .home-host-acts .btn { width: 100%; justify-content: center; }
   .btn { padding: 15px 24px; }
 
   /* signatures / story */
@@ -1130,13 +1168,13 @@ button { font-family: inherit; cursor: pointer; }
   .home-strand { grid-template-columns: 1fr; gap: 8px; padding: 18px 0 20px; }
   .home-strand-verb { font-size: 30px; }
   .home-strand-side { flex-direction: row; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px 18px; text-align: left; margin-top: 2px; }
-  .home-place .tlink, .manifesto .tlink, .sig-leadbody .tlink { min-height: 44px; }
+  .home-place .tlink, .home-cafe .tlink, .home-host .tlink { min-height: 44px; }
   .home-next { min-height: 160px; }
   .home-next-row { grid-template-columns: 62px minmax(0, 1fr); gap: 10px 14px; }
-  .home-next-go { grid-column: 2; min-height: 24px; }
+  .home-next-side { grid-column: 2; flex-direction: row; flex-wrap: wrap; align-items: baseline; justify-content: flex-start; gap: 4px 14px; text-align: left; min-width: 0; }
+  .home-next-side .home-next-go { margin-left: auto; }
   .home-tile { width: 62px; }
   .home-tile-day { font-size: 28px; }
-    .host-banner { padding: 22px 20px; }
 
   /* menu */
   .menu-hero { padding: clamp(96px,16vh,140px) var(--gutter) 18px; }

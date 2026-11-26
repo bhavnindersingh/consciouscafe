@@ -1,11 +1,12 @@
 import React, { useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Hero from '../../../pages/Home/Hero';
 import NextGatherings from '../../../pages/Home/NextGatherings';
 import SEO from '../../seo/SEO/SEO';
 import { pageData, generateStructuredData, siteConfig } from '../../../utils/seoData';
 import PhotoPending from '../../common/PhotoPending/PhotoPending';
 import Kolam from '../../common/Kolam/Kolam';
+import { useAuth } from '../../../context/AuthContext';
 
 const Reveal = ({ children, className = '', delay = 0, as: Tag = 'div', style }) => (
   <Tag style={style} className={`reveal${delay ? ` d${delay}` : ''} ${className}`}>{children}</Tag>
@@ -14,7 +15,9 @@ const Reveal = ({ children, className = '', delay = 0, as: Tag = 'div', style })
 const catName = (slug = '') =>
   slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 
-/* SIGNATURES — editorial product gallery */
+/* SIGNATURES — what the regulars order, inside the café's section: a lead dish
+   and three more. Nothing until the menu has loaded (or if it can't): the
+   café's heading, words and links stand without it. */
 function Signatures({ products, onProductClick }) {
   // Lead: first bestseller, or first product with an image
   const lead = useMemo(() => {
@@ -22,7 +25,7 @@ function Signatures({ products, onProductClick }) {
     return products.find(p => p.bestseller && p.image) || products.find(p => p.image) || products[0];
   }, [products]);
 
-  // Trio: next 3 products from different categories than the lead
+  // Trio: the next three with a photo
   const trio = useMemo(() => {
     if (!lead || products.length < 2) return [];
     const picks = [];
@@ -39,14 +42,10 @@ function Signatures({ products, onProductClick }) {
   if (!lead) return null;
 
   return (
-    <section className="section" id="signatures">
-      <div className="col-head">
-        <Reveal>
-          <h2 className="display" style={{ fontSize: 'clamp(36px,5vw,76px)', maxWidth: '15ch', marginBottom: 0 }}>
-            Plates worth the trip to Auroville Road
-          </h2>
-          <p className="sig-sub">What the regulars order.</p>
-        </Reveal>
+    <div className="home-sig" id="signatures">
+      <div className="home-sig-head">
+        <h3 className="home-sig-h">Plates worth the trip to Auroville Road</h3>
+        <p className="sig-sub">What the regulars order.</p>
       </div>
 
       <div className="sig">
@@ -62,7 +61,7 @@ function Signatures({ products, onProductClick }) {
         <div className="sig-leadbody">
           <Reveal delay={1}>
             <span className="eyebrow">{catName(lead.category)}</span>
-            <h3>{lead.name}</h3>
+            <h4 className="sig-lead-name">{lead.name}</h4>
             <p>{lead.description}</p>
             <div className="sig-meta">
               <span className="price">₹{lead.price}</span>
@@ -91,7 +90,7 @@ function Signatures({ products, onProductClick }) {
           ))}
         </div>
       )}
-    </section>
+    </div>
   );
 }
 
@@ -129,12 +128,13 @@ function Practice() {
 
 /* THE PLACE — the spine of the page: one place, five ways to be well.
    The café is one strand; the rooms are open (owner, 2026-11-06); the
-   Sanctuary's calendar is live. */
+   Sanctuary's calendar is live. A strand links to its own page where it has
+   one; the temple has none yet, so it says it's open and no more. */
 const STRANDS = [
   { verb: 'Nourish', name: 'The café', desc: 'Whole foods and plant-led plates, wood-fired and made by hand, from a kitchen that cooks the season.', status: 'Since 2021', link: { to: '/menu', label: 'View the menu' } },
-  { verb: 'Move', name: 'Yoga shala & gym', desc: 'Mat practice, breath and meditation; strength, mobility and conditioning.', status: 'Open' },
+  { verb: 'Move', name: 'Yoga shala & gym', desc: 'Mat practice, breath and meditation; strength, mobility and conditioning.', status: 'Open', link: { to: '/yoga-auroville', label: 'See the yoga shala' } },
   { verb: 'Be still', name: 'The temple', desc: 'A quiet room for stillness, sound and sitting.', status: 'Open' },
-  { verb: 'Restore', name: 'Ice bath & Ayurvedic sauna', desc: 'Cold plunge, Ayurvedic sauna and the contrast between them.', status: 'Open', link: { to: '/sanctuary/restore', label: 'Book a slot' } },
+  { verb: 'Restore', name: 'Ice bath & Ayurvedic sauna', desc: 'Cold plunge, Ayurvedic sauna and the contrast between them.', status: 'Open', link: { to: '/sanctuary/restore', label: 'Book a session' } },
   { verb: 'Gather', name: 'Classes, workshops & evenings', desc: 'Led by teachers and makers we trust. Reserve a place; pay at the door.', status: 'On the calendar', link: { to: '/sanctuary', label: 'See what’s on' } },
 ];
 
@@ -178,38 +178,55 @@ function Place() {
   );
 }
 
-/* THE CAFÉ — the kitchen's own section, one strand of the place. */
-function Cafe() {
+/* THE CAFÉ — the kitchen's own section: what it believes, then what the
+   regulars order, then the way to the menu. One section, so the page doesn't
+   say "the café" twice with an empty half between. */
+function Cafe({ products, onProductClick }) {
   const navigate = useNavigate();
   return (
-    <section className="section" id="cafe">
-      <div className="manifesto">
-        <Reveal as="h2" className="display home-cafe-h">
-          Eat like the earth is watching
-        </Reveal>
-        <Reveal delay={2} as="p" className="lede home-cafe-lede">
-          We cook with what the season offers — grains, roots, leaf and ferment — and let restraint do the seasoning. Nothing rushed, nothing wasted, everything considered.
-        </Reveal>
-        <div className="manifesto-foot">
-          <Reveal delay={3}><p className="lede" style={{ maxWidth: '30ch' }}>Sourced within reach of our doors, prepared by hands that know the difference.</p></Reveal>
-          <Reveal delay={4}><button className="tlink" onClick={() => navigate('/about')}>Read our story</button></Reveal>
+    <section className="section home-cafe" id="cafe" aria-labelledby="cafe-h">
+      <div className="col-head">
+        <div className="home-place-head home-cafe-head">
+          <Reveal as="h2" className="display home-cafe-h"><span id="cafe-h">Eat like the earth is watching</span></Reveal>
+          <Reveal delay={2} as="p" className="lede home-place-lede">
+            We cook with what the season offers — grains, roots, leaf and ferment — and let restraint do the seasoning. Nothing rushed, nothing wasted, everything considered.
+          </Reveal>
+        </div>
+
+        <Signatures products={products} onProductClick={onProductClick} />
+
+        <div className="home-cafe-foot">
+          <p className="home-cafe-note">Sourced within reach of our doors, prepared by hands that know the difference.</p>
+          <div className="home-cafe-acts">
+            <button className="btn" onClick={() => navigate('/menu')}>View the menu</button>
+            <button className="tlink" onClick={() => navigate('/about')}>Read our story</button>
+          </div>
         </div>
       </div>
     </section>
   );
 }
 
-/* Closing: the Sanctuary's open door for teachers and makers. */
-function HostBanner() {
+/* Closing: the Sanctuary's open door for teachers and makers — the same
+   invitation, and the same way back in for organisers, as on /sanctuary. */
+function Organise() {
   const navigate = useNavigate();
+  const { user, loading } = useAuth(); // only organisers ever sign in
   return (
-    <section className="section tight home-host" id="host">
-      <div className="col-head">
-        <div className="host-banner">
-          <div className="hb-copy">
-            <h4>Planning a workshop or retreat? Host it at the Sanctuary.</h4>
-          </div>
-          <button className="btn" onClick={() => navigate('/sanctuary/host')}>Host at the Sanctuary</button>
+    <section className="section tight home-host" id="host" aria-labelledby="host-h">
+      <div className="col-head home-host-row">
+        <div className="home-host-copy">
+          <h2 id="host-h" className="home-host-h">Teach, make or gather people? Organise it with us.</h2>
+          <p className="home-host-line">
+            A class, a workshop or an evening — in the Sanctuary, or at your own space around Auroville.
+            Our team looks at each event before it goes live.
+          </p>
+        </div>
+        <div className="home-host-acts">
+          <button className="btn" onClick={() => navigate('/sanctuary/host')}>Become an organiser</button>
+          {!loading && (
+            <Link className="tlink" to="/sanctuary/host">{user ? 'Go to your events' : 'Already organising with us? Sign in'}</Link>
+          )}
         </div>
       </div>
     </section>
@@ -217,7 +234,7 @@ function HostBanner() {
 }
 
 const ProductGrid = ({ products = [], onAddToCart, onProductClick }) => {
-  /* Food products only for the signature section */
+  /* Food products only for the signature dishes */
   const foodProducts = useMemo(() =>
     products.filter(p => !p.mainCategory || p.mainCategory === 'food'),
     [products]
@@ -241,13 +258,9 @@ const ProductGrid = ({ products = [], onAddToCart, onProductClick }) => {
       {/* The pivot: the practice that runs through all of it, then the kitchen */}
       <Practice />
 
-      <Cafe />
+      <Cafe products={foodProducts} onProductClick={onProductClick} />
 
-      <section style={{ background: 'var(--paper)' }}>
-        <Signatures products={foodProducts} onProductClick={onProductClick} />
-      </section>
-
-      <HostBanner />
+      <Organise />
     </>
   );
 };

@@ -1,8 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import SEO from '../../components/seo/SEO/SEO';
 import { generatePageSEO, breadcrumb } from '../../utils/seoData';
 import { listGatherings } from '../../services/sanctuaryService';
+import { useAuth } from '../../context/AuthContext';
 import { OFFERING_KINDS } from '../../constants/sanctuary';
 import { filterByKind, groupByMonth, collapseSeries, inHouse } from '../../utils/sanctuary';
 import { Reveal, GatheringRow, PageSkeleton, onRadioKeys, tabStop } from './parts';
@@ -15,6 +16,7 @@ const FILTERS = [{ value: 'all', plural: 'Everything' }, ...OFFERING_KINDS];
 
 const SanctuaryPage = () => {
   const navigate = useNavigate();
+  const { user, loading: authLoading } = useAuth(); // only organisers ever sign in
   const seo = generatePageSEO('sanctuary');
   const [items, setItems] = useState(null);
   const [error, setError] = useState(null);
@@ -32,6 +34,21 @@ const SanctuaryPage = () => {
       .catch((e) => alive && setError(e));
     return () => { alive = false; };
   }, [attempt]);
+
+  // /sanctuary#curation (the home page links here): the curation section exists
+  // only once the listings have arrived, and the app has just scrolled to the
+  // top for the new page — so go to it after both, once.
+  const { hash } = useLocation();
+  useEffect(() => {
+    if (!items || hash !== '#curation') return undefined;
+    const t = setTimeout(() => {
+      const el = document.getElementById('curation');
+      if (!el) return;
+      const still = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+      el.scrollIntoView({ block: 'start', behavior: still ? 'auto' : 'smooth' });
+    }, 350);
+    return () => clearTimeout(t);
+  }, [items, hash]);
 
   // The Sanctuary is one room with one calendar: in-house events only. Events
   // elsewhere around Auroville are Linda's curation, further down.
@@ -82,11 +99,16 @@ const SanctuaryPage = () => {
             </button>
           ))}
         </div>
-        <div className="sn-seg sn-view-switch" role="radiogroup" aria-label="Show as" onKeyDown={onRadioKeys}>
-          {[['list', 'List'], ['calendar', 'Calendar']].map(([v, label], i) => (
-            <button key={v} type="button" role="radio" aria-checked={view === v} tabIndex={tabStop(view === v, i === 0, true)}
-              className={`sn-seg-opt${view === v ? ' on' : ''}`} onClick={() => setView(v)}>{label}</button>
-          ))}
+        <div className="sn-toolbar-end">
+          <div className="sn-seg sn-view-switch" role="radiogroup" aria-label="Show as" onKeyDown={onRadioKeys}>
+            {[['list', 'List'], ['calendar', 'Calendar']].map(([v, label], i) => (
+              <button key={v} type="button" role="radio" aria-checked={view === v} tabIndex={tabStop(view === v, i === 0, true)}
+                className={`sn-seg-opt${view === v ? ' on' : ''}`} onClick={() => setView(v)}>{label}</button>
+            ))}
+          </div>
+          {!authLoading && (
+            <Link className="sn-act sn-org-link" to="/sanctuary/host">{user ? 'Your events' : 'Organiser sign-in'}</Link>
+          )}
         </div>
         </div>
 
@@ -133,7 +155,10 @@ const SanctuaryPage = () => {
             our team looks at each one before it goes live.
           </Reveal>
           <Reveal delay={3}>
-            <button className="btn on-dark" onClick={() => navigate('/sanctuary/host')}>Become an organiser</button>
+            <div className="sn-band-acts">
+              <button className="btn on-dark" onClick={() => navigate('/sanctuary/host')}>Become an organiser</button>
+              <Link className="sn-org-again" to="/sanctuary/host">{user ? 'Go to your events' : 'Already organising with us? Sign in'}</Link>
+            </div>
           </Reveal>
         </div>
       </section>
