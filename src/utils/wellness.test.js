@@ -2,7 +2,7 @@ import {
   toPaise, quote, rupees, priceLine, gstLabel, orderServices, usesLabel, dayStrip, daysBetween, weekChunkStart,
   groupSlotsByDay, slotsFor, dayHasPlaces, seatCap, placesLabel, slotRange, slotLine, dayTile, dayCaption,
   stillBookable, validateBooking, bookErrorMessage, shouldRefetch, cleanOrderId, isBookingState, keepPolling, stateCopy,
-  isNotDeployed,
+  isNotDeployed, calendarDays, calendarWeeks,
 } from './wellness';
 import { SERVICE_KEYS, BOOKING_STATES, BOOK_ERROR_COPY, BOOK_ERROR_FALLBACK, STATUS_POLL_LIMIT_MS } from '../constants/wellness';
 
@@ -236,5 +236,37 @@ describe('refusals and states', () => {
     expect(stateCopy('confirmed', { name: 'Asha Rao' }).heading).toBe('You’re booked, Asha.');
     expect(stateCopy('confirmed').heading).toBe('You’re booked.');
     expect(stateCopy('waiting').body).toMatch(/87545 61269/);
+  });
+});
+
+describe('the slot calendar', () => {
+  const cal = (start, end, state) => ({ slot_start: start, slot_end: end, state });
+  // Thu 26 Nov 2026: 9:30 and 10:30 am IST; Tue 1 Dec has no hours
+  const rows = [
+    cal('2026-11-26T04:00:00+00:00', '2026-11-26T05:00:00+00:00', 'unavailable'),
+    cal('2026-11-26T05:00:00+00:00', '2026-11-26T06:00:00+00:00', 'open'),
+    cal('2026-11-27T04:00:00+00:00', '2026-11-27T05:00:00+00:00', 'full'),
+    cal('2026-11-27T05:00:00+00:00', '2026-11-27T06:00:00+00:00', 'something new'),
+  ];
+
+  test('a day per date, in order, closed days empty, unknown states unavailable', () => {
+    const days = calendarDays(rows, '2026-11-26', 7, Date.parse('2026-11-26T00:00:00Z'));
+    expect(days.map((d) => d.date)).toEqual(['2026-11-26', '2026-11-27', '2026-11-28', '2026-11-29', '2026-11-30', '2026-12-01', '2026-12-02']);
+    expect(days[0].slots.map((s) => s.state)).toEqual(['unavailable', 'open']);
+    expect(days[1].slots.map((s) => s.state)).toEqual(['full', 'unavailable']);
+    expect(days[5].slots).toEqual([]);
+  });
+
+  test('a slot already over is past, whatever its state', () => {
+    const days = calendarDays(rows, '2026-11-26', 1, Date.parse('2026-11-26T05:30:00Z')); // 11 am IST
+    expect(days[0].slots.map((s) => s.past)).toEqual([true, false]);
+  });
+
+  test('weeks cover the booking window from today', () => {
+    expect(calendarWeeks(14, '2026-11-26')).toEqual([
+      { start: '2026-11-26', days: 7 }, { start: '2026-12-03', days: 7 }, { start: '2026-12-10', days: 1 },
+    ]);
+    expect(calendarWeeks(6, '2026-11-26')).toEqual([{ start: '2026-11-26', days: 7 }]);
+    expect(calendarWeeks(0, '2026-11-26')).toEqual([{ start: '2026-11-26', days: 1 }]);
   });
 });

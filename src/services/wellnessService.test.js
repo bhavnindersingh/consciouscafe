@@ -3,7 +3,7 @@
 jest.mock('./supabase/supabaseClient', () => ({ supabase: { rpc: jest.fn() } }));
 
 import { supabase } from './supabase/supabaseClient';
-import { getMenu, getSlots } from './wellnessService';
+import { getMenu, getSlots, getCalendar } from './wellnessService';
 
 const NOT_IN_CACHE = {
   code: 'PGRST202',
@@ -41,5 +41,19 @@ describe('once it is live', () => {
     await expect(getMenu()).rejects.toMatchObject({ code: '42501' });
     supabase.rpc.mockRejectedValue(new TypeError('Failed to fetch'));
     await expect(getSlots('2026-11-10')).rejects.toThrow('Failed to fetch');
+  });
+});
+
+describe('the calendar', () => {
+  test('reads wellness_calendar for a week from a date', async () => {
+    const rows = [{ slot_start: '2026-11-26T04:00:00+00:00', slot_end: '2026-11-26T05:00:00+00:00', state: 'unavailable' }];
+    supabase.rpc.mockResolvedValue({ data: rows, error: null });
+    await expect(getCalendar('2026-11-26')).resolves.toEqual(rows);
+    expect(supabase.rpc).toHaveBeenCalledWith('wellness_calendar', { p_from: '2026-11-26', p_days: 7 });
+  });
+
+  test('before its migration, null (no calendar), not an error', async () => {
+    supabase.rpc.mockResolvedValue({ data: null, error: { ...NOT_IN_CACHE, message: 'Could not find the function public.wellness_calendar(p_days, p_from) in the schema cache' } });
+    await expect(getCalendar('2026-11-26')).resolves.toBeNull();
   });
 });

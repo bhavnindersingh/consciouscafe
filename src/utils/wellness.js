@@ -16,7 +16,7 @@
 import { isoToIstParts, formatClock, formatDay, dateBlock, normalisePhone, istToday, addDays } from './sanctuary';
 import {
   SERVICE_KEYS, BOOKING_STATES, LIMITS, BOOK_ERROR_COPY, BOOK_ERROR_FALLBACK, REFETCH_AFTER,
-  CAFE_PHONE, STATUS_POLL_LIMIT_MS,
+  CAFE_PHONE, STATUS_POLL_LIMIT_MS, WELLNESS_SLOT_STATES,
 } from '../constants/wellness';
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
@@ -130,6 +130,42 @@ export function slotsFor(rows, service, date) {
 
 /** Does this service have anything bookable (a place left) on this day? */
 export const dayHasPlaces = (rows, service, date) => slotsFor(rows, service, date).some((s) => s.places_left > 0);
+
+// ── The slot calendar (wellness_calendar) ──────────────────────────────────
+
+/**
+ * wellness_calendar rows → one entry per day from `from` for `days` days:
+ *   { date: 'YYYY-MM-DD', slots: [{ start, end, state, past }] }
+ * in time order. A day with no slots is closed (no hours that weekday). A
+ * state the page doesn't know reads as unavailable; a slot already over is
+ * `past` whatever its state.
+ */
+export function calendarDays(rows, from, days, now = Date.now()) {
+  const byDay = groupSlotsByDay(rows);
+  const n = Math.max(0, Math.floor(Number(days) || 0));
+  return Array.from({ length: n }, (_, i) => {
+    const date = addDays(from, i);
+    const slots = (byDay[date] || []).map((r) => ({
+      start: r.slot_start,
+      end: r.slot_end,
+      state: WELLNESS_SLOT_STATES.includes(r.state) ? r.state : 'unavailable',
+      past: new Date(r.slot_end).getTime() <= now,
+    }));
+    return { date, slots };
+  });
+}
+
+/**
+ * The calendar's weeks over the booking window (today … today + bookAheadDays):
+ * [{ start, days }] — 7 days each, the last one only the days still bookable.
+ */
+export function calendarWeeks(bookAheadDays, today = istToday()) {
+  const total = Math.max(0, Math.min(90, Number(bookAheadDays) || 0)) + 1;
+  return Array.from({ length: Math.ceil(total / 7) }, (_, i) => ({
+    start: addDays(today, i * 7),
+    days: Math.min(7, total - i * 7),
+  }));
+}
 
 /** 1..min(maxSeats, placesLeft); 0 when the slot is full. */
 export function seatCap(maxSeats, placesLeft) {

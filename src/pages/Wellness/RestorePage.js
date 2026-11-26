@@ -13,10 +13,12 @@ import {
 } from '../../utils/wellness';
 import { istToday } from '../../utils/sanctuary';
 import { Reveal, Field, Spinner, PinnedBar, scrollToEl, PageSkeleton, onRadioKeys, tabStop } from '../Sanctuary/parts';
+import SlotCalendar from './SlotCalendar';
 import '../Sanctuary/sanctuary.css';
 import './wellness.css';
 
-/* The page: the two rooms (hero), then booking, how it works, questions.
+/* The page: the two rooms (hero), then booking, the week's session times
+   (SlotCalendar), how it works, questions.
    While the POS has no session switched on, booking is one tap to WhatsApp
    with the session named; once it has, it's the flow below.
 
@@ -139,6 +141,8 @@ const RestorePage = () => {
 
   const pickService = (key) => { setService(key); setPicked(null); setFailure(null); };
   const pickDay = (d) => { setDay(d); setPicked(null); setFailure(null); };
+  // an open time on the calendar below: its day, picked in the steps above
+  const pickFromCalendar = (d) => { pickDay(d); scrollToEl(document.getElementById('wl-h-day')); };
   const pickSlot = (s) => {
     setPicked(s); setFailure(null); setErrors((e) => ({ ...e, seats: undefined }));
     // On one column the bill is below the form — bring it into view once a time is chosen.
@@ -383,6 +387,10 @@ const RestorePage = () => {
       <section className="section tight wl-book" id="book" ref={bookRef} aria-labelledby={loaded ? 'wl-book-h' : undefined}>
         {booking}
       </section>
+
+      {loaded && (
+        <SlotCalendar bookAheadDays={settings.book_ahead_days} slotMinutes={settings.slot_minutes} open={open} onPick={pickFromCalendar} />
+      )}
 
       <section className="section tight wl-more" aria-labelledby="wl-how-h">
         <h2 className="wl-sec-h" id="wl-how-h">How it works</h2>

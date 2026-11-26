@@ -33,6 +33,10 @@ export const BOOKING_STATUSES = ['held', 'confirmed', 'cancelled', 'expired'];
 // wellness-status's `state` — what the return page is told.
 export const BOOKING_STATES = ['confirmed', 'pending', 'failed', 'refund', 'cancelled'];
 
+// wellness_calendar()'s `state` (POS 20261128000000_wellness_calendar.sql):
+// each time on the opening-hours grid. `unavailable` covers booking switched
+// off, a closure, too soon and past — the guest isn't told which.
+export const WELLNESS_SLOT_STATES = ['open', 'full', 'unavailable'];
 // Where PhonePe sends the guest back (the function builds this URL from the
 // site origin; the route here has to match it).
 export const BOOKING_PATH = '/sanctuary/restore';

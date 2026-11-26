@@ -4,6 +4,7 @@
  * Reads are the POS database's public functions (anon, no PII):
  *   wellness_menu()                 → { settings, services }
  *   wellness_slots(p_from, p_days)  → [{ service, slot_start, slot_end, places_left }]
+ *   wellness_calendar(p_from, p_days) → [{ slot_start, slot_end, state }] (20261128000000)
  * (Manager Conscious Cafe, migration 20261106100000_wellness_slots.sql).
  *
  * Money moves through the Mise OS site's Netlify functions, which hold the
@@ -36,6 +37,15 @@ export async function getMenu() {
 /** Every bookable slot from an IST date ('YYYY-MM-DD') for `days` days, per service. */
 export async function getSlots(from, days = LIMITS.slotsPerFetchDays) {
   return unwrap(await supabase.rpc('wellness_slots', { p_from: from, p_days: days }), []) || [];
+}
+
+/**
+ * Every time on the opening-hours grid from an IST date for `days` days, each
+ * open / full / unavailable — the calendar, drawn even while booking is off.
+ * null while the function isn't deployed (the page then shows no calendar).
+ */
+export async function getCalendar(from, days = LIMITS.slotsPerFetchDays) {
+  return unwrap(await supabase.rpc('wellness_calendar', { p_from: from, p_days: days }), null);
 }
 
 /**

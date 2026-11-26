@@ -237,3 +237,49 @@
   .wl-result-acts { flex-direction: column; align-items: stretch; }
   .wl-result-acts .btn { width: 100%; justify-content: center; }
 }
+
+/* ── session times (SlotCalendar): a column a day on a wide screen, a row a day
+   on a phone. Only a start time on each slot — the hint says how long they are.
+   Sizes from the type scale (variables.css). ── */
+.wl-cal-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px 24px; flex-wrap: wrap; margin: 0 0 16px; padding-bottom: 12px; border-bottom: 1px solid var(--ink); }
+.wl-cal-head .wl-sec-h { margin: 0; padding: 0; border: 0; }
+.wl-cal-nav { display: flex; align-items: center; gap: 8px; }
+.wl-cal-step { width: 44px; height: 44px; border: 1px solid var(--line); background: transparent; color: var(--ink); font-family: var(--display); font-size: var(--fs-title); line-height: 1; cursor: pointer; }
+.wl-cal-step:disabled { color: var(--line); cursor: default; }
+.wl-cal-step:focus-visible, .wl-cal-slot:focus-visible { outline: 2px solid var(--forest); outline-offset: 2px; }
+.wl-cal-range { font-family: var(--ui); font-size: var(--fs-ui); color: var(--ink-soft); min-width: 12em; text-align: center; font-variant-numeric: tabular-nums; }
+.wl-cal .wl-step-hint { font-size: var(--fs-ui); }
+.wl-cal-days { list-style: none; margin: 8px 0 0; padding: 0; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; }
+.wl-cal-day { min-width: 0; }
+.wl-cal-dayh { margin: 0 0 8px; padding-bottom: 8px; border-bottom: 1px solid var(--line-soft); font-weight: 400; display: flex; flex-direction: column; }
+.wl-cal-dow { font-family: var(--ui); font-size: var(--fs-sm); color: var(--ink-mute); }
+.wl-cal-date { font-family: var(--display); font-size: var(--fs-read); color: var(--ink); line-height: 1.2; }
+.wl-cal-times { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.wl-cal-slot {
+  display: flex; align-items: center; justify-content: space-between; gap: 4px; width: 100%; min-height: 36px; padding: 4px 8px;
+  font-family: var(--ui); font-size: var(--fs-sm); font-variant-numeric: tabular-nums; text-align: left;
+  border: 1px solid var(--line-soft); background: transparent; color: var(--ink-mute);
+}
+/* unavailable and past: the time is there, plainly not on offer */
+.wl-cal-slot.is-unavailable, .wl-cal-slot.is-past { background: var(--paper-2); border-color: transparent; color: var(--ink-mute); }
+.wl-cal-slot.is-unavailable { text-decoration: line-through; text-decoration-color: var(--line); }
+.wl-cal-slot.is-past { opacity: .55; }
+.wl-cal-slot.is-full { color: var(--ink-mute); border-style: dashed; }
+.wl-cal-full { font-size: var(--fs-sm); color: var(--clay); }
+.wl-cal-slot.is-open { color: var(--forest); border-color: var(--forest); background: var(--paper); }
+button.wl-cal-slot.is-open { cursor: pointer; min-height: 44px; }
+.wl-cal-shut { font-family: var(--ui); font-size: var(--fs-sm); color: var(--ink-mute); margin: 8px 0 0; }
+.wl-cal-key { display: flex; flex-wrap: wrap; gap: 8px 16px; margin: 16px 0 0; }
+.wl-cal-key .wl-cal-slot { width: auto; min-height: 0; }
+@media (hover: hover) { button.wl-cal-slot.is-open:hover { background: var(--forest); color: var(--paper); } }
+
+/* a phone (and a narrow tablet): a row a day, the day on the left, its times wrapping */
+@media (max-width: 700px) {
+  .wl-cal-days { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .wl-cal-day { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line-soft); }
+  .wl-cal-dayh { border: 0; padding: 0; margin: 0; }
+  .wl-cal-times { flex-direction: row; flex-wrap: wrap; }
+  .wl-cal-slot { width: auto; }
+  .wl-cal-shut { margin: 4px 0 0; }
+  .wl-cal-range { min-width: 0; }
+}
