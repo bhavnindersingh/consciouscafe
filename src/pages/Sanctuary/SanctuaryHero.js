@@ -4,7 +4,6 @@ import { getGumletUrl } from '../../utils/gumlet';
 import { imageUrl } from '../../services/sanctuaryService';
 import { SANCTUARY_HERO_BRAND, SANCTUARY_HERO_EVENTS, SANCTUARY_HERO_EVENT_SECONDS } from '../../data/sanctuaryHero';
 import { formatWhen, priceLabel, isFree, isFull, kindLabel, elsewhere } from '../../utils/sanctuary';
-import { Arrow } from './parts';
 
 const prefersStill = () => typeof window !== 'undefined'
   && Boolean(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches);
@@ -33,11 +32,10 @@ function BrandSlide({ still, onSeeWhatsOn }) {
         )}
       </div>
       <div className="sn-hero-inner">
-        <span className="eyebrow on-dark">Auroville Road</span>
-        <p className="display sn-hero-h">Come to Conscious Sanctuary.<br /><em>Meet the divine within.</em></p>
+        <p className="display sn-hero-h">Come to Conscious Sanctuary.<br />Meet the divine within.</p>
         <div className="sn-hero-cta">
-          <button type="button" className="btn on-dark" onClick={onSeeWhatsOn}>See what’s on <Arrow /></button>
-          <Link className="sn-hero-link" to="/sanctuary/restore">Book the ice bath &amp; sauna <Arrow s={14} /></Link>
+          <button type="button" className="btn on-dark" onClick={onSeeWhatsOn}>See what’s on</button>
+          <Link className="sn-hero-link" to="/sanctuary/restore">Book the ice bath &amp; sauna</Link>
         </div>
       </div>
     </>
@@ -66,8 +64,8 @@ function EventSlide({ o, first, onSeeWhatsOn }) {
           {[place || 'At the Sanctuary', o.host_name && `with ${o.host_name}`, isFree(o.price_inr) ? 'Free' : priceLabel(o.price_inr)].filter(Boolean).join(' · ')}
         </p>
         <div className="sn-hero-cta">
-          <Link className="btn on-dark" to={`/sanctuary/${o.id}`}>{full ? 'See details' : 'Reserve a place'} <Arrow /></Link>
-          <button type="button" className="sn-hero-link" onClick={onSeeWhatsOn}>See everything that’s on <Arrow s={14} /></button>
+          <Link className="btn on-dark" to={`/sanctuary/${o.id}`}>{full ? 'See details' : 'Reserve a place'}</Link>
+          <button type="button" className="sn-hero-link" onClick={onSeeWhatsOn}>See everything that’s on</button>
         </div>
       </div>
     </>

@@ -8,11 +8,6 @@ import { useVariationPicker } from '../../components/products/VariationPicker/Va
 import LANDING_PAGES from '../../data/landingPages.json';
 import PhotoPending from '../../components/common/PhotoPending/PhotoPending';
 
-const Arrow = ({ s = 16 }) => (
-  <svg className="arr" width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
-    <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
 
 const Reveal = ({ children, className = '', delay = 0, style }) => (
   <div style={style} className={`reveal${delay ? ` d${delay}` : ''} ${className}`}>{children}</div>
@@ -77,7 +72,6 @@ const LandingPage = ({ page, products = [], onAddToCart, onProductClick }) => {
         <img src={heroSrc} alt={page.h1} loading="eager" />
         <div className="visit-hero-inner">
           <div style={{ maxWidth: 1500, margin: '0 auto', width: '100%' }}>
-            <span className="eyebrow on-dark reveal">{page.eyebrow}</span>
             <h1 className="display reveal">{page.h1}</h1>
             <p className="hero-sub reveal">{page.intro}</p>
           </div>
@@ -99,11 +93,11 @@ const LandingPage = ({ page, products = [], onAddToCart, onProductClick }) => {
             {/* menuCta.to is usually an internal route, but may be a mailto:/https: link */}
             {isExternal(page.menuCta.to) ? (
               <a className="btn forest" href={page.menuCta.to}>
-                {page.menuCta.label} <Arrow />
+                {page.menuCta.label}
               </a>
             ) : (
               <button className="btn forest" onClick={() => navigate(page.menuCta.to)}>
-                {page.menuCta.label} <Arrow />
+                {page.menuCta.label}
               </button>
             )}
           </div>
@@ -112,10 +106,7 @@ const LandingPage = ({ page, products = [], onAddToCart, onProductClick }) => {
 
       {picks.length > 0 && (
         <section className="section paper2">
-          <div className="kicker-row">
-            <span className="idx">From the menu</span>
-            <span className="eyebrow">Try these</span>
-          </div>
+          <h2 className="sec-h">From the menu</h2>
           <div
             style={{
               display: 'grid',
@@ -152,13 +143,10 @@ const LandingPage = ({ page, products = [], onAddToCart, onProductClick }) => {
 
       {faqSchema && (
         <section className="section faq-section">
-          <div className="kicker-row">
-            <span className="idx">Good to know</span>
-            <span className="eyebrow">Questions</span>
-          </div>
+          <h2 className="sec-h">Questions</h2>
           <div style={{ maxWidth: 820, margin: '0 auto' }}>
             {page.faqs.map((f, i) => (
-              <Reveal className="faq-item" delay={i + 1} key={f.q} style={{ padding: '22px 0', borderTop: i === 0 ? 'none' : '1px solid rgba(27,26,22,0.12)' }}>
+              <Reveal className="faq-item" delay={i + 1} key={f.q} style={{ padding: '22px 0', borderTop: i === 0 ? 'none' : '1px solid var(--line-soft)' }}>
                 <h3 style={{ fontFamily: 'var(--display)', fontSize: 'clamp(20px,2.4vw,28px)', marginBottom: 8 }}>{f.q}</h3>
                 <p style={{ fontFamily: 'var(--ui)', lineHeight: 1.6, color: 'var(--ink-mute)' }}>{f.a}</p>
               </Reveal>
@@ -174,7 +162,7 @@ const LandingPage = ({ page, products = [], onAddToCart, onProductClick }) => {
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, marginTop: 18 }}>
               {related.map(r => (
                 <button key={r.slug} className="btn" onClick={() => navigate(`/${r.slug}`)}>
-                  {r.h1} <Arrow />
+                  {r.h1}
                 </button>
               ))}
             </div>

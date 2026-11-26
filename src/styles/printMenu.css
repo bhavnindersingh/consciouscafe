@@ -1,3 +1,6 @@
+/* The printed menu is fitted to paper, so it keeps the fonts and tones it was
+   laid out in (the site moved to EB Garamond + Anek Tamil on limewash, 2026-11-26). */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700;1,800&display=swap');
 /* ════════════════════════════════════════
    Print Menu — A4 layout + screen preview
    All classes prefixed pm- to avoid conflicts
@@ -5,6 +8,13 @@
 
 /* ── Root wrapper (screen only) ── */
 .pm-root {
+  --serif: "Cormorant Garamond", Georgia, serif;
+  --display: "EB Garamond", Georgia, serif;
+  --ui: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  --paper: #f3f0ea; --paper-2: #ece7df;
+  --ink: #1b1a16; --ink-soft: #3c3a33; --ink-mute: #807c70;
+  --line: rgba(27, 26, 22, 0.16);
+  --sage: #6f7d63; --clay: #b08358;
   background: #d8d2c4;
   min-height: 100vh;
   padding: 6mm 0 40mm;

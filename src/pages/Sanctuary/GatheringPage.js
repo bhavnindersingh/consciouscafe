@@ -8,7 +8,7 @@ import {
   formatWhen, priceLabel, isFree, seatsLabel, rsvpState, validateRsvp, rsvpErrorMessage,
   googleCalendarUrl, isUuid, kindLabel, repeatLabel, weekdaysOf, inHouse, mapsUrl,
 } from '../../utils/sanctuary';
-import { Arrow, Reveal, DateTile, KindTag, Field, GatheringRow, GatheringVideo, PinnedBar, scrollToEl, PageSkeleton, useFieldErrors } from './parts';
+import { Reveal, DateTile, KindTag, Field, GatheringRow, GatheringVideo, PinnedBar, scrollToEl, PageSkeleton, useFieldErrors } from './parts';
 import './sanctuary.css';
 
 const WHATSAPP_URL = 'https://wa.me/918754561269';
@@ -66,7 +66,7 @@ function RsvpForm({ gathering, onDone }) {
       </Field>
       {failure && <p className="sn-failure" role="alert">{failure}</p>}
       <button type="submit" className="btn forest sn-submit" disabled={busy}>
-        {busy ? 'Reserving…' : 'Reserve my place'} {!busy && <Arrow />}
+        {busy ? 'Reserving…' : 'Reserve my place'} 
       </button>
       <p className="sn-fine">
         {isFree(gathering.price_inr) ? 'Free to attend.' : `${priceLabel(gathering.price_inr)} per person, paid at the venue.`}
@@ -89,7 +89,7 @@ function ReserveBar({ g, target }) {
             <span className="sn-price">{isFree(g.price_inr) ? 'Free' : priceLabel(g.price_inr)}</span>
             <span className="sn-seats">{seatsLabel(g.seats_left, g.capacity)}</span>
           </div>
-          <button type="button" className="btn forest" onClick={() => scrollToEl(target.current)} tabIndex={away ? -1 : undefined}>Reserve <Arrow /></button>
+          <button type="button" className="btn forest" onClick={() => scrollToEl(target.current)} tabIndex={away ? -1 : undefined}>Reserve</button>
         </>
       )}
     </PinnedBar>
@@ -148,7 +148,7 @@ const GatheringPage = () => {
         <div className="sn-empty sn-pad">
           <p className="sn-empty-h">We couldn’t load this gathering.</p>
           <p>Check your connection and try again.</p>
-          <button className="btn" onClick={() => window.location.reload()}>Reload <Arrow /></button>
+          <button className="btn" onClick={() => window.location.reload()}>Reload</button>
         </div>
       </main>
     );
@@ -161,7 +161,7 @@ const GatheringPage = () => {
         <div className="sn-empty sn-pad">
           <p className="sn-empty-h">This gathering isn’t on the calendar.</p>
           <p>It may have been taken down, or the link is incomplete.</p>
-          <Link className="btn" to="/sanctuary">See what’s on <Arrow /></Link>
+          <Link className="btn" to="/sanctuary">See what’s on</Link>
         </div>
       </main>
     );
@@ -253,7 +253,7 @@ const GatheringPage = () => {
               {g.host_id
                 ? <Link className="sn-hostname" to={`/sanctuary/hosts/${g.host_id}`}>{g.host_name}</Link>
                 : <span className="sn-hostname">{g.host_name}</span>}
-              {g.host_id && <Link className="sn-hostline-go" to={`/sanctuary/hosts/${g.host_id}`}>Visit organiser profile <Arrow s={14} /></Link>}
+              {g.host_id && <Link className="sn-hostline-go" to={`/sanctuary/hosts/${g.host_id}`}>Visit organiser profile</Link>}
             </Reveal>
           )}
         </div>
@@ -278,7 +278,7 @@ const GatheringPage = () => {
             <div className="sn-done" role="status">
               <p className="sn-done-h">You’re in, {done.name.split(' ')[0]}.</p>
               <p>{done.seats} {done.seats === 1 ? 'place is' : 'places are'} held for you — {when}.</p>
-              <a className="btn" href={googleCalendarUrl(g, pageUrl)} target="_blank" rel="noopener noreferrer">Add to Google Calendar <Arrow /></a>
+              <a className="btn" href={googleCalendarUrl(g, pageUrl)} target="_blank" rel="noopener noreferrer">Add to Google Calendar</a>
               <p className="sn-fine">Can’t make it after all? Message us on <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">WhatsApp</a> so someone else can have your place.</p>
             </div>
           ) : state === 'open' ? (
@@ -295,8 +295,8 @@ const GatheringPage = () => {
               <p className="sn-done-h">{CLOSED_COPY[state][0]}</p>
               <p>{CLOSED_COPY[state][1]}</p>
               {state === 'full'
-                ? <a className="btn" href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">WhatsApp us <Arrow /></a>
-                : <Link className="btn" to="/sanctuary">See what’s on <Arrow /></Link>}
+                ? <a className="btn" href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">WhatsApp us</a>
+                : <Link className="btn" to="/sanctuary">See what’s on</Link>}
             </div>
           )}
         </aside>

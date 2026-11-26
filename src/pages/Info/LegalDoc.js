@@ -43,7 +43,7 @@ const LegalDoc = ({ eyebrow, title, updated, intro, disclaimer, sections }) => {
       <header className="legal-head">
         {eyebrow && <p className="eyebrow legal-eyebrow">{eyebrow}</p>}
         <h1 className="display legal-title">{title}</h1>
-        {updated && <p className="legal-updated">Last updated · {updated}</p>}
+        {updated && <p className="legal-updated">Last updated {updated}</p>}
         {intro && <div className="legal-lede">{intro}</div>}
         {disclaimer && <aside className="legal-note">{disclaimer}</aside>}
       </header>

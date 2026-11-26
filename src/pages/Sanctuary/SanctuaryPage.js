@@ -5,7 +5,7 @@ import { generatePageSEO, breadcrumb } from '../../utils/seoData';
 import { listGatherings } from '../../services/sanctuaryService';
 import { OFFERING_KINDS } from '../../constants/sanctuary';
 import { filterByKind, groupByMonth, collapseSeries, inHouse } from '../../utils/sanctuary';
-import { Arrow, Reveal, GatheringRow, PageSkeleton, onRadioKeys, tabStop } from './parts';
+import { Reveal, GatheringRow, PageSkeleton, onRadioKeys, tabStop } from './parts';
 import CalendarView from './CalendarView';
 import SanctuaryHero from './SanctuaryHero';
 import Curation from './Curation';
@@ -94,7 +94,7 @@ const SanctuaryPage = () => {
           <div className="sn-empty">
             <p className="sn-empty-h">We couldn’t load the calendar.</p>
             <p>Check your connection and try again.</p>
-            <button className="btn" onClick={() => setAttempt((n) => n + 1)}>Try again <Arrow /></button>
+            <button className="btn" onClick={() => setAttempt((n) => n + 1)}>Try again</button>
           </div>
         ) : !items ? (
           <PageSkeleton kind="list" label="Loading what’s on" />
@@ -105,8 +105,8 @@ const SanctuaryPage = () => {
             </p>
             <p>New events appear here as organisers add them{away.length && kind === 'all' ? ' — meanwhile, see what’s on around Auroville below' : ' — or bring one of your own'}.</p>
             {kind !== 'all'
-              ? <button className="btn" onClick={() => setKind('all')}>See everything <Arrow /></button>
-              : <button className="btn" onClick={() => navigate('/sanctuary/host')}>Become an organiser <Arrow /></button>}
+              ? <button className="btn" onClick={() => setKind('all')}>See everything</button>
+              : <button className="btn" onClick={() => navigate('/sanctuary/host')}>Become an organiser</button>}
           </div>
         ) : view === 'calendar' ? (
           <CalendarView items={dated} />
@@ -126,15 +126,14 @@ const SanctuaryPage = () => {
 
       <section className="section forest sn-host-band">
         <div className="sn-band-inner">
-          <Reveal><span className="eyebrow">For teachers, makers &amp; guides</span></Reveal>
-          <Reveal delay={1} as="h2" className="display">Organise something <em>— here or anywhere.</em></Reveal>
+          <Reveal as="h2" className="display">Teach, make or gather people? Organise it with us.</Reveal>
           <Reveal delay={2} as="p" className="lede">
             A class, a weekend workshop, a sound circle — in the Sanctuary, or at your own space around
             Auroville for Linda’s curation. Sign in, make your organiser profile, and send us your events;
             our team looks at each one before it goes live.
           </Reveal>
           <Reveal delay={3}>
-            <button className="btn on-dark" onClick={() => navigate('/sanctuary/host')}>Become an organiser <Arrow /></button>
+            <button className="btn on-dark" onClick={() => navigate('/sanctuary/host')}>Become an organiser</button>
           </Reveal>
         </div>
       </section>

@@ -1,31 +1,38 @@
 /* CSS Custom Properties / Design Tokens */
 :root {
-  /* Paper & ink */
-  --paper: #f3f0ea;
-  --paper-deep: #e9e7df;
-  --paper-2: #ece7df;
-  --ink: #1b1a16;
-  --ink-soft: #3c3a33;
-  --ink-mute: #807c70;
-  --line: rgba(27, 26, 22, 0.16);
-  --line-soft: rgba(27, 26, 22, 0.09);
+  /* Limewash & ink (2026-11-26): the page is the café's whitewashed wall, the
+     ink a green-black drawn from the forest. --ink-mute passes AA (5.4:1). */
+  --paper: #f5f5f0;
+  --paper-deep: #e8e9e2;
+  --paper-2: #ecede6;
+  --ink: #1f2620;
+  --ink-soft: #3b4339;
+  --ink-mute: #5e665a;
+  --line: rgba(31, 38, 32, 0.16);
+  --line-soft: rgba(31, 38, 32, 0.09);
 
   /* Brand greens */
   --forest: #26532b;
   --forest-deep: #1a3d20;
-  --sage: #6f7d63;
+  --sage: #5e6b55;
   --blush: #f4e3e0;
   --clay: #b08358;
+  /* Red oxide — the floor of a Tamil house, under the kolam. Used once: the home
+     page's practice band (Kolam.js). Not an accent; don't spread it. */
+  --oxide: #8e3a22;
+  --oxide-deep: #6f2c19;
   /* the ice bath and the sauna (/sanctuary/restore): a cold slate, an ember */
   --cold: #2c4148;
   --cold-deep: #142126;
   --heat: #9a5432;
   --heat-deep: #4c2516;
 
-  /* Type */
+  /* Type: one serif for headlines and reading, one sans for everything you
+     operate (Anek Tamil — Ek Type, an Indian foundry; Latin and Tamil, real ₹,
+     tabular figures). Labels are sentence case, never tracked capitals. */
   --display: "EB Garamond", Georgia, serif;
-  --serif: "Cormorant Garamond", Georgia, serif;
-  --ui: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  --serif: "EB Garamond", Georgia, serif;
+  --ui: "Anek Tamil", "Segoe UI", system-ui, -apple-system, sans-serif;
   --logo: "Sakkal Majalla", "EB Garamond", Georgia, serif;
 
   --ease: cubic-bezier(0.22, 1, 0.36, 1);

@@ -12,7 +12,7 @@ import {
   placesLabel, slotRange, slotLine, dayTile, dayCaption, stillBookable, validateBooking, bookErrorMessage, shouldRefetch,
 } from '../../utils/wellness';
 import { istToday } from '../../utils/sanctuary';
-import { Arrow, Reveal, Field, Spinner, PinnedBar, scrollToEl, PageSkeleton, onRadioKeys, tabStop } from '../Sanctuary/parts';
+import { Reveal, Field, Spinner, PinnedBar, scrollToEl, PageSkeleton, onRadioKeys, tabStop } from '../Sanctuary/parts';
 import '../Sanctuary/sanctuary.css';
 import './wellness.css';
 
@@ -201,7 +201,7 @@ const RestorePage = () => {
       <div className="wl-closed">
         <p className="wl-closed-h">We couldn’t load the booking desk.</p>
         <p>Check your connection and try again, or <a href={waLink()} target="_blank" rel="noopener noreferrer">book on WhatsApp</a>.</p>
-        <button className="btn" onClick={() => setAttempt((n) => n + 1)}>Try again <Arrow /></button>
+        <button className="btn" onClick={() => setAttempt((n) => n + 1)}>Try again</button>
       </div>
     );
   } else if (closed) {
@@ -214,7 +214,7 @@ const RestorePage = () => {
             <a key={k} className="wl-ask-opt" href={waLink(SERVICE_COPY[k].ask)} target="_blank" rel="noopener noreferrer">
               <span className="wl-svc-name">{SERVICE_COPY[k].name}</span>
               <span className="wl-svc-desc">{SERVICE_COPY[k].line}</span>
-              <span className="wl-ask-go">WhatsApp us <Arrow s={14} /></span>
+              <span className="wl-ask-go">WhatsApp us</span>
             </a>
           ))}
         </div>
@@ -340,7 +340,7 @@ const RestorePage = () => {
             ) : null}
             {failure ? <p className="sn-failure" role="alert">{failure}</p> : null}
             <button type="submit" className="btn forest wl-pay" disabled={busy}>
-              {busy ? 'Taking you to PhonePe…' : bill ? `Pay ${rupees(bill.totalPaise)} with PhonePe` : 'Pay with PhonePe'} {!busy && <Arrow />}
+              {busy ? 'Taking you to PhonePe…' : bill ? `Pay ${rupees(bill.totalPaise)} with PhonePe` : 'Pay with PhonePe'} 
             </button>
             <CancelLine />
             <p className="sn-fine">Your place is held for {settings.hold_minutes || 10} minutes while you pay. Questions? <a href={CAFE_PHONE_TEL}>Call us</a>.</p>
@@ -362,16 +362,15 @@ const RestorePage = () => {
 
       <header className="wl-hero">
         <div className="wl-hero-text">
-          <Reveal><span className="eyebrow">Conscious Sanctuary · Auroville Road</span></Reveal>
-          <Reveal delay={1} as="h1" className="display">Ice bath &amp;<br /><em>Ayurvedic sauna.</em></Reveal>
+          <Reveal as="h1" className="display">Ice bath &amp;<br />Ayurvedic sauna</Reveal>
           <Reveal delay={2} as="p" className="lede">
             Heat, cold, or both in turn.
             {open ? ' Book your time and pay online.' : closed ? ' Message us and we’ll find you a time.' : ''}
           </Reveal>
           <Reveal delay={3} className="wl-hero-cta">
             {closed
-              ? <a className="btn forest" href={waLink()} target="_blank" rel="noopener noreferrer">Book on WhatsApp <Arrow /></a>
-              : <button type="button" className="btn forest" onClick={toBook}>Book a session <Arrow /></button>}
+              ? <a className="btn forest" href={waLink()} target="_blank" rel="noopener noreferrer">Book on WhatsApp</a>
+              : <button type="button" className="btn forest" onClick={toBook}>Book a session</button>}
             <a className="sn-act" href={CAFE_PHONE_TEL}>Call {CAFE_PHONE}</a>
             {from > 0 ? <span className="wl-from">From {rupees(toPaise(from))} per person + GST</span> : null}
           </Reveal>
@@ -420,8 +419,8 @@ const RestorePage = () => {
         <h2 className="wl-sec-h" id="wl-end-h">Ready for the cold, the heat, or both?</h2>
         <div className="wl-hero-cta">
           {closed
-            ? <a className="btn forest" href={waLink()} target="_blank" rel="noopener noreferrer">Book on WhatsApp <Arrow /></a>
-            : <button type="button" className="btn forest" onClick={toBook}>Book a session <Arrow /></button>}
+            ? <a className="btn forest" href={waLink()} target="_blank" rel="noopener noreferrer">Book on WhatsApp</a>
+            : <button type="button" className="btn forest" onClick={toBook}>Book a session</button>}
           <a className="sn-act" href={CAFE_PHONE_TEL}>Call {CAFE_PHONE}</a>
         </div>
       </section>
@@ -435,8 +434,8 @@ const RestorePage = () => {
                 <span className="sn-seats">{from > 0 ? `From ${rupees(toPaise(from))} + GST` : 'Auroville Road'}</span>
               </div>
               {closed
-                ? <a className="btn forest" href={waLink()} target="_blank" rel="noopener noreferrer" tabIndex={away ? -1 : undefined}>WhatsApp <Arrow /></a>
-                : <button type="button" className="btn forest" onClick={toBook} tabIndex={away ? -1 : undefined}>Book <Arrow /></button>}
+                ? <a className="btn forest" href={waLink()} target="_blank" rel="noopener noreferrer" tabIndex={away ? -1 : undefined}>WhatsApp</a>
+                : <button type="button" className="btn forest" onClick={toBook} tabIndex={away ? -1 : undefined}>Book</button>}
             </>
           )}
         </PinnedBar>

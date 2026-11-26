@@ -45,7 +45,10 @@ const Header = () => {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const isSolid = scrolled || view !== 'home';
+  // Clear over a full-bleed photo (home, the landing pages); solid wherever the
+  // page starts on limewash — a dish's page puts its photo on one side only.
+  const onPaper = /^\/(product|category)\//.test(location.pathname);
+  const isSolid = scrolled || view !== 'home' || onPaper;
 
   const handleNav = (item) => {
     setMobileOpen(false);
@@ -67,9 +70,9 @@ const Header = () => {
         </button>
 
         <div className="nav-links">
-          <button className={`nav-link ${view === 'home' ? 'active' : ''}`} onClick={() => { navigate('/'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>home</button>
-          <button className={`nav-link ${view === 'menu' ? 'active' : ''}`} onClick={() => navigate('/menu')}>menu</button>
-          <button className={`nav-link ${view === 'story' ? 'active' : ''}`} onClick={() => navigate('/about')}>story</button>
+          <button className={`nav-link ${view === 'home' ? 'active' : ''}`} onClick={() => { navigate('/'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>Home</button>
+          <button className={`nav-link ${view === 'menu' ? 'active' : ''}`} onClick={() => navigate('/menu')}>Menu</button>
+          <button className={`nav-link ${view === 'story' ? 'active' : ''}`} onClick={() => navigate('/about')}>Story</button>
         </div>
 
         <button className="brand" onClick={() => { navigate('/'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
@@ -77,10 +80,10 @@ const Header = () => {
         </button>
 
         <div className="nav-right">
-          <button className={`nav-link ${view === 'sanctuary' ? 'active' : ''}`} onClick={() => navigate('/sanctuary')}>sanctuary</button>
-          <button className={`nav-link ${view === 'visit' ? 'active' : ''}`} onClick={() => navigate('/visit')}>visit</button>
+          <button className={`nav-link ${view === 'sanctuary' ? 'active' : ''}`} onClick={() => navigate('/sanctuary')}>Sanctuary</button>
+          <button className={`nav-link ${view === 'visit' ? 'active' : ''}`} onClick={() => navigate('/visit')}>Visit</button>
           <button className="bag" onClick={() => setBagOpen(true)} aria-label={`Shopping bag, ${count} items`}>
-            <BagIcon /> <span className="bag-label">bag</span>
+            <BagIcon /> <span className="bag-label">Bag</span>
             {count > 0 && <span className="count">{count}</span>}
           </button>
         </div>
@@ -92,14 +95,12 @@ const Header = () => {
           <button className="mm-close" onClick={() => setMobileOpen(false)} aria-label="Close menu">×</button>
         </div>
         <nav className="mm-list">
-          {MM_ITEMS.map((n, i) => (
+          {MM_ITEMS.map((n) => (
             <button key={n.id} className="mm-item" onClick={() => handleNav(n)}>
-              <span className="mm-idx">0{i + 1}</span>
               <span className="mm-text">
                 <span className="mm-label">{n.label}</span>
                 <span className="mm-note">{n.note}</span>
               </span>
-              <span className="mm-arr">→</span>
             </button>
           ))}
         </nav>

@@ -16,11 +16,6 @@ const Reveal = ({ children, className = '', delay = 0, as: Tag = 'div', style })
   <Tag style={style} className={`reveal${delay ? ` d${delay}` : ''} ${className}`}>{children}</Tag>
 );
 
-const Arrow = ({ s = 16 }) => (
-  <svg className="arr" width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
-    <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
 
 
 const catName = (slug = '') =>
@@ -181,7 +176,7 @@ const ProductDetailPage = ({ products = [], onAddToCart, loading = false }) => {
                 {nutri.map((n, i) => (
                   <div className="n" key={i}>
                     <span className="nv" style={{ textTransform: 'capitalize' }}>{n.v}</span>
-                    <span className="nl">{n.l}</span>
+                    <span className="nl">{n.l.charAt(0).toUpperCase() + n.l.slice(1)}</span>
                   </div>
                 ))}
               </div>
@@ -194,7 +189,7 @@ const ProductDetailPage = ({ products = [], onAddToCart, loading = false }) => {
                 <button onClick={() => setQty(q => q + 1)}>+</button>
               </div>
               <button className="btn forest" onClick={addSelected}>
-                Add to Bag · {inr(unitPrice * qty)}
+                Add to bag · {inr(unitPrice * qty)}
               </button>
             </div>
           </Reveal>
@@ -203,12 +198,7 @@ const ProductDetailPage = ({ products = [], onAddToCart, loading = false }) => {
 
       {related.length > 0 && (
         <section className="section paper2">
-          <Reveal>
-            <div className="kicker-row">
-              <span className="idx">More from</span>
-              <span className="eyebrow">{catName(product.category)}</span>
-            </div>
-          </Reveal>
+          <Reveal><h2 className="sec-h">More {catName(product.category).toLowerCase()}</h2></Reveal>
           <div className="menu-items" style={{ padding: 0, gridTemplateColumns: 'repeat(3,1fr)' }}>
             {related.map(r => (
               <DishCard key={r.id} product={r} onProductClick={handleProductClick} onAddToCart={requestAdd} />

@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { updateMyHost, uploadImage, removeImage, imageUrl } from '../../services/sanctuaryService';
 import { LIMITS, IMAGE_TYPES } from '../../constants/sanctuary';
-import { Arrow, Field, useFieldErrors, useKeyboardOpen } from './parts';
+import { Field, useFieldErrors, useKeyboardOpen } from './parts';
 
 const ACCEPT = IMAGE_TYPES.join(',');
 
@@ -180,7 +180,7 @@ export default function OrganiserPageEditor({ host, onSaved }) {
       )}
       <p className="sn-hint sn-pageed-lede">
         Your organiser profile — what people see when they tap your name: who you are, where you hold things, and photos of your space and work.{' '}
-        <Link to={`/sanctuary/hosts/${host.user_id}`}>Visit your profile ↗</Link>
+        <Link to={`/sanctuary/hosts/${host.user_id}`}>Visit your profile</Link>
       </p>
 
       <form className="sn-pageed-form" onSubmit={submit} noValidate>
@@ -262,8 +262,8 @@ export default function OrganiserPageEditor({ host, onSaved }) {
         {failure && <p className="sn-failure" role="alert">{failure}</p>}
         {/* On a phone this row is pinned to the bottom of the screen, out of the keyboard's way. */}
         <div className={`sn-pageed-save${typing ? ' kb-open' : ''}`}>
-          <button type="submit" className="btn forest" disabled={busy}>{busy ? 'Saving…' : 'Save your profile'} {!busy && <Arrow />}</button>
-          {saved && <span className="sn-pageed-saved" role="status">Saved. <Link to={`/sanctuary/hosts/${host.user_id}`}>Visit your profile ↗</Link></span>}
+          <button type="submit" className="btn forest" disabled={busy}>{busy ? 'Saving…' : 'Save your profile'} </button>
+          {saved && <span className="sn-pageed-saved" role="status">Saved. <Link to={`/sanctuary/hosts/${host.user_id}`}>Visit your profile</Link></span>}
         </div>
       </form>
     </div>

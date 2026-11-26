@@ -3,11 +3,6 @@ import { Link } from 'react-router-dom';
 import { dateBlock, kindLabel, formatWhen, priceLabel, seatsLabel, isFull, parseVideoLink, elsewhere } from '../../utils/sanctuary';
 import { imageUrl, videoFileUrl } from '../../services/sanctuaryService';
 
-export const Arrow = ({ s = 16 }) => (
-  <svg className="arr" width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden="true">
-    <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
 
 export const Reveal = ({ children, className = '', delay = 0, as: Tag = 'div', style }) => (
   <Tag style={style} className={`reveal${delay ? ` d${delay}` : ''} ${className}`}>{children}</Tag>
@@ -241,7 +236,7 @@ export const GatheringRow = ({ o, showHost = true, compact = false }) => {
       <div className="sn-row-side">
         <span className="sn-price">{priceLabel(o.price_inr)}</span>
         <span className={`sn-seats${full ? ' full' : ''}`}>{seatsLabel(o.seats_left, o.capacity)}</span>
-        <span className="sn-row-go">{full ? 'See details' : 'Reserve'} <Arrow s={14} /></span>
+        <span className="sn-row-go">{full ? 'See details' : 'Reserve'}</span>
       </div>
     </Link>
   );

@@ -155,8 +155,7 @@ const FoodMenuPage = ({ products = [], onAddToCart, onProductClick, loading, err
       />
 
       <div className="menu-hero">
-        <span className="eyebrow">The Menu · Auroville Road</span>
-        <h1 className="display">A season,<br /><em>plated.</em></h1>
+        <h1 className="display">A season,<br />plated.</h1>
         <p className="lede">Everything is plant-forward and made in-house. Start with what you're after — a plate, a pour, or something sweet.</p>
       </div>
 
@@ -192,7 +191,6 @@ const FoodMenuPage = ({ products = [], onAddToCart, onProductClick, loading, err
                   className={`group-tab ${activeGroup === g ? 'active' : ''}`}
                   onClick={() => setActiveGroup(g)}
                 >
-                  <span className="gt-idx">{String(i + 1).padStart(2, '0')}</span>
                   <span className="gt-name">{meta.name}</span>
                   <span className="gt-note">{meta.note}</span>
                   <span className="gt-count">{groupCount(g)} items</span>

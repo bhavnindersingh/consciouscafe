@@ -17,7 +17,7 @@ import {
   withWhere, looksLikeSanctuary, roomWindow, roomClashes, busyLabel, roomTakenMessage, isoToIstParts, inHouse,
 } from '../../utils/sanctuary';
 import {
-  Arrow, DateTile, KindTag, Field, Spinner, GatheringVideo, VideoTag, useKeyboardOpen,
+  DateTile, KindTag, Field, Spinner, GatheringVideo, VideoTag, useKeyboardOpen,
   ConfirmButton, PageSkeleton, onRadioKeys, tabStop, useFieldErrors,
 } from './parts';
 import OrganiserPageEditor from './OrganiserPageEditor';
@@ -112,7 +112,7 @@ function EmailSignIn() {
             value={code} onChange={(e) => { setCode(e.target.value); setCodeErr(null); }} autoFocus
             onBlur={() => setCodeErr(code.trim() && !cleanCode(code) ? 'Just the numbers from the email.' : null)} />
         </Field>
-        <button type="submit" className="btn forest" disabled={busy}>{busy ? 'Checking…' : 'Sign in'} {!busy && <Arrow />}</button>
+        <button type="submit" className="btn forest" disabled={busy}>{busy ? 'Checking…' : 'Sign in'} </button>
       </div>
       {failure && <p className="sn-failure" role="alert">{failure}</p>}
       <div className="sn-gate-actions">
@@ -143,8 +143,7 @@ function SignIn() {
   };
   return (
     <div className="sn-gate">
-      <span className="eyebrow">Conscious Sanctuary</span>
-      <h1 className="display">Organise with <em>the Sanctuary.</em></h1>
+      <h1 className="display">Organise with the Sanctuary</h1>
       <p className="lede">
         Teach a class, run a workshop, gather people for an evening — here, or at your own space.
         Sign in and tell us about your work. Once we’ve said hello, you build your own profile and send
@@ -204,7 +203,7 @@ function HostDetailsForm({ initial, submitLabel, onSubmit }) {
         <textarea id="sn-h-bio" rows={5} value={form.bio} onChange={set('bio')} maxLength={LIMITS.bioMax} />
       </Field>
       {failure && <p className="sn-failure" role="alert">{failure}</p>}
-      <button type="submit" className="btn forest sn-submit" disabled={busy}>{busy ? 'Saving…' : submitLabel} {!busy && <Arrow />}</button>
+      <button type="submit" className="btn forest sn-submit" disabled={busy}>{busy ? 'Saving…' : submitLabel} </button>
     </form>
   );
 }
@@ -217,7 +216,6 @@ function StatusPanel({ host, onSignOut }) {
   }[host.status];
   return (
     <div className="sn-gate">
-      <span className="eyebrow">Organiser</span>
       <h1 className="display sn-gate-h">{copy[0]}</h1>
       <p className="lede">{copy[1]}</p>
       {host.decision_note && <blockquote className="sn-note">{host.decision_note}</blockquote>}
@@ -227,7 +225,7 @@ function StatusPanel({ host, onSignOut }) {
         {host.link && <div><dt>Link</dt><dd>{host.link}</dd></div>}
       </dl>
       <div className="sn-gate-actions">
-        <a className="btn" href="https://wa.me/918754561269" target="_blank" rel="noopener noreferrer">WhatsApp us <Arrow /></a>
+        <a className="btn" href="https://wa.me/918754561269" target="_blank" rel="noopener noreferrer">WhatsApp us</a>
         <button className="sn-act" onClick={onSignOut}>Sign out</button>
       </div>
     </div>
@@ -447,11 +445,10 @@ function Dashboard({ host, onSignOut }) {
     <div className="sn-dash">
       <div className="sn-dash-head">
         <div>
-          <span className="eyebrow">Organiser</span>
-          <h1 className="display sn-dash-h">Welcome, <em>{host.display_name.split(' ')[0]}.</em></h1>
+          <h1 className="display sn-dash-h">Welcome, {host.display_name.split(' ')[0]}</h1>
         </div>
         <div className="sn-dash-tools">
-          <button className="btn forest" onClick={() => navigate('/sanctuary/host/new')}>Create an event <Arrow /></button>
+          <button className="btn forest" onClick={() => navigate('/sanctuary/host/new')}>Create an event</button>
           <div className="sn-dash-links">
             <Link className="sn-act" to="/sanctuary/host/profile">Edit your profile</Link>
             <Link className="sn-act" to={`/sanctuary/hosts/${host.user_id}`}>Visit your profile</Link>
@@ -469,7 +466,7 @@ function Dashboard({ host, onSignOut }) {
       {thinProfile && (
         <div className="sn-nudge">
           <p><strong>Finish your profile.</strong> Add a photo and a few lines about your work — people book people they can picture.</p>
-          <Link className="btn" to="/sanctuary/host/profile">Edit your profile <Arrow /></Link>
+          <Link className="btn" to="/sanctuary/host/profile">Edit your profile</Link>
         </div>
       )}
 
@@ -496,13 +493,13 @@ function Dashboard({ host, onSignOut }) {
             <div className="sn-empty sn-empty-in">
               <p className="sn-empty-h">No events match “{query.trim()}”.</p>
               <p>Search looks at titles and places.</p>
-              <button className="btn" onClick={() => setQuery('')}>Clear search <Arrow /></button>
+              <button className="btn" onClick={() => setQuery('')}>Clear search</button>
             </div>
           ) : (
             <div className="sn-empty sn-empty-in">
               <p className="sn-empty-h">{{ upcoming: 'Nothing coming up yet.', drafts: 'No drafts or events in review.', past: 'Nothing in the past yet.' }[tab]}</p>
               <p>{tab === 'past' ? 'Events you’ve held land here once they’re over.' : 'Create an event and send it for review — once it’s approved it goes on the calendar.'}</p>
-              {tab !== 'past' && <button className="btn" onClick={() => navigate('/sanctuary/host/new')}>Create an event <Arrow /></button>}
+              {tab !== 'past' && <button className="btn" onClick={() => navigate('/sanctuary/host/new')}>Create an event</button>}
             </div>
           )
         ) : (
@@ -1245,7 +1242,7 @@ function Editor({ userId, hostName, place = '' }) {
             ) : (
               <>
                 <button type="button" className="btn forest" disabled={busy} onClick={() => save('in_review')}>
-                  {busy ? 'Sending…' : weekly ? 'Send all for review' : 'Send for review'} {!busy && <Arrow />}
+                  {busy ? 'Sending…' : weekly ? 'Send all for review' : 'Send for review'} 
                 </button>
                 <button type="submit" className="btn" disabled={busy}>Save draft</button>
               </>
@@ -1279,7 +1276,7 @@ function Guests() {
   useEffect(() => { if (isUuid(gid)) load(); else setRows([]); }, [gid, load]);
 
   if (!rows) return <PageSkeleton kind="list" label="Loading the guest list" />;
-  if (!g) return <div className="sn-empty"><p className="sn-empty-h">This isn’t one of your events.</p><Link className="btn" to="/sanctuary/host">Go to your events <Arrow /></Link></div>;
+  if (!g) return <div className="sn-empty"><p className="sn-empty-h">This isn’t one of your events.</p><Link className="btn" to="/sanctuary/host">Go to your events</Link></div>;
 
   const confirmed = rows.filter((r) => r.status === 'confirmed');
   const q = query.trim().toLowerCase();
@@ -1316,7 +1313,7 @@ function Guests() {
             <div className="sn-empty sn-empty-in">
               <p className="sn-empty-h">No guest matches “{query.trim()}”.</p>
               <p>Search looks at names, phone numbers and emails.</p>
-              <button className="btn" onClick={() => setQuery('')}>Clear search <Arrow /></button>
+              <button className="btn" onClick={() => setQuery('')}>Clear search</button>
             </div>
           ) : (
           <table className="sn-table">
@@ -1386,7 +1383,7 @@ const HostPage = () => {
     body = (
       <div className="sn-gate">
         <span className="eyebrow">Signed in as {user.email}</span>
-        <h1 className="display sn-gate-h">Tell us about <em>your work.</em></h1>
+        <h1 className="display sn-gate-h">Tell us about your work</h1>
         <p className="lede">A few lines is plenty. We read every request and reply personally.</p>
         <HostDetailsForm
           initial={{ display_name: meta.full_name || meta.name || '' }}

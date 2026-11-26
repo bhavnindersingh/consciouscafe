@@ -6,7 +6,7 @@ import { BOOKING_PATH, CAFE_PHONE, CAFE_PHONE_TEL, CAFE_WHATSAPP_URL, STATUS_POL
 import { cleanOrderId, isBookingState, keepPolling, stateCopy, rupees, slotLine } from '../../utils/wellness';
 import { googleCalendarUrl } from '../../utils/sanctuary';
 import { DEFAULT_LOCATION } from '../../constants/sanctuary';
-import { Arrow, Reveal, Spinner } from '../Sanctuary/parts';
+import { Reveal, Spinner } from '../Sanctuary/parts';
 import '../Sanctuary/sanctuary.css';
 import './wellness.css';
 
@@ -87,11 +87,11 @@ const BookedPage = () => {
           <Reveal delay={3} className="wl-result-acts">
             {view === 'confirmed' && known && (
               <a className="btn" href={googleCalendarUrl({ title: `${info.serviceName || 'Ice bath & sauna'} — Conscious Sanctuary`, starts_at: info.slotStart, ends_at: info.slotEnd, location: DEFAULT_LOCATION }, pageUrl)} target="_blank" rel="noopener noreferrer">
-                Add to Google Calendar <Arrow />
+                Add to Google Calendar
               </a>
             )}
-            {(view === 'failed' || view === 'refund') && <Link className="btn forest" to={BOOKING_PATH}>{view === 'failed' ? 'Try again' : 'Pick another time'} <Arrow /></Link>}
-            {(view === 'waiting' || view === 'cancelled' || view === 'missing') && <a className="btn" href={CAFE_PHONE_TEL}>Call {CAFE_PHONE} <Arrow /></a>}
+            {(view === 'failed' || view === 'refund') && <Link className="btn forest" to={BOOKING_PATH}>{view === 'failed' ? 'Try again' : 'Pick another time'}</Link>}
+            {(view === 'waiting' || view === 'cancelled' || view === 'missing') && <a className="btn" href={CAFE_PHONE_TEL}>Call {CAFE_PHONE}</a>}
             {view !== 'pending' && <Link className="sn-act" to="/sanctuary">See what else is on</Link>}
           </Reveal>
 

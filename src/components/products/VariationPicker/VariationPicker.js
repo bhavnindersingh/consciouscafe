@@ -3,11 +3,6 @@ import { variationCartItem } from '../../../utils/cartItem';
 
 const inr = n => `₹${(n || 0).toLocaleString('en-IN')}`;
 
-const Arrow = ({ s = 16 }) => (
-  <svg className="arr" width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
-    <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
 
 /**
  * Pop-up chooser for a dish with variations. Mirrors the detail page exactly:
@@ -100,7 +95,7 @@ function VariationPicker({ product, onAddToCart, onClose }) {
             <button onClick={() => setQty(q => q + 1)} aria-label="Increase quantity">+</button>
           </div>
           <button className="btn forest vp-add" onClick={add}>
-            Add to Bag · {inr(unitPrice * qty)} <Arrow />
+            Add to bag · {inr(unitPrice * qty)}
           </button>
         </div>
       </div>

@@ -5,12 +5,7 @@ import NextGatherings from '../../../pages/Home/NextGatherings';
 import SEO from '../../seo/SEO/SEO';
 import { pageData, generateStructuredData, siteConfig } from '../../../utils/seoData';
 import PhotoPending from '../../common/PhotoPending/PhotoPending';
-
-const Arrow = ({ s = 16 }) => (
-  <svg className="arr" width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
-    <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
+import Kolam from '../../common/Kolam/Kolam';
 
 const Reveal = ({ children, className = '', delay = 0, as: Tag = 'div', style }) => (
   <Tag style={style} className={`reveal${delay ? ` d${delay}` : ''} ${className}`}>{children}</Tag>
@@ -47,15 +42,10 @@ function Signatures({ products, onProductClick }) {
     <section className="section" id="signatures">
       <div className="col-head">
         <Reveal>
-          <div className="kicker-row">
-            <span className="idx">Signatures</span>
-            <span className="eyebrow">What the regulars order</span>
-          </div>
-        </Reveal>
-        <Reveal delay={1}>
-          <h2 className="display" style={{ fontSize: 'clamp(32px,5vw,76px)', maxWidth: '15ch', marginBottom: 0 }}>
-            Plates worth the trip to <em>Auroville Road.</em>
+          <h2 className="display" style={{ fontSize: 'clamp(36px,5vw,76px)', maxWidth: '15ch', marginBottom: 0 }}>
+            Plates worth the trip to Auroville Road
           </h2>
+          <p className="sig-sub">What the regulars order.</p>
         </Reveal>
       </div>
 
@@ -67,7 +57,6 @@ function Signatures({ products, onProductClick }) {
                 The smaller trio/menu cards stay on `image` to avoid bloat. */}
             <img src={lead.imageDetail || lead.image} alt={lead.name} loading="lazy" />
             <PhotoPending hasPhoto={lead.hasLocalImage} className="photo-pending--lg" />
-            <span className="tag">{catName(lead.category)}</span>
           </div>
         </Reveal>
         <div className="sig-leadbody">
@@ -78,7 +67,7 @@ function Signatures({ products, onProductClick }) {
             <div className="sig-meta">
               <span className="price">₹{lead.price}</span>
             </div>
-            <button className="tlink" onClick={() => onProductClick(lead)}>View dish <Arrow /></button>
+            <button className="tlink" onClick={() => onProductClick(lead)}>See the dish</button>
           </Reveal>
         </div>
       </div>
@@ -106,43 +95,34 @@ function Signatures({ products, onProductClick }) {
   );
 }
 
-function Strip() {
-  const words = ['Whole foods', 'Slow mornings', 'Wood-fired', 'Garden greens', 'House ferments', 'Made by hand', 'Zero rush'];
-  const row = [...words, ...words];
-  return (
-    <div className="strip" aria-hidden="true">
-      <div className="strip-track">
-        {row.map((w, i) => <span className="strip-item" key={i}>{w}</span>)}
-      </div>
-    </div>
-  );
-}
-
-function Pillars() {
+/* THE PRACTICE — the page's one bold moment: a sikku kolam on red oxide, the
+   way it is drawn at a Tamil doorstep each morning — one line round every dot,
+   closing where it began. The kitchen's three habits sit under it. */
+function Practice() {
   const items = [
-    { n: 'Plant-forward', h: 'Plates that begin with the garden', p: 'Vegetables lead, proteins follow. Vegan by default, never by compromise — flavour first, always.' },
-    { n: 'Local sourcing', h: 'Grown within reach of our doors', p: 'Millets, roots and greens from farms from around Auroville. We cook the season, so the menu breathes with the year.' },
-    { n: 'Nothing wasted', h: 'A kitchen that closes its loops', p: 'Peels become stock, stems become pesto, ferments carry nothing to the bin. Restraint is the recipe.' },
+    { h: 'Plates that begin with the garden', p: 'Vegetables lead, proteins follow. Vegan by default, never by compromise — flavour first, always.' },
+    { h: 'Grown within reach of our doors', p: 'Millets, roots and greens from farms around Auroville. We cook the season, so the menu changes with the year.' },
+    { h: 'A kitchen that closes its loops', p: 'Peels become stock, stems become pesto, ferments carry nothing to the bin. Restraint is the recipe.' },
   ];
   return (
-    <section className="section forest" id="story">
-      <div className="col-head">
-        <Reveal><div className="kicker-row"><span className="idx" style={{ color: 'rgba(255,255,255,.55)' }}>Why we exist</span></div></Reveal>
-        <Reveal delay={1}>
-          <h2 className="display" style={{ fontSize: 'clamp(32px,5vw,76px)', maxWidth: '16ch', marginBottom: 'clamp(40px,7vh,84px)' }}>
-            Conscious is not a <em>flavour.</em> It is a practice.
-          </h2>
-        </Reveal>
+    <section className="section practice" id="story" aria-labelledby="practice-h">
+      <div className="col-head practice-grid">
+        <div className="practice-copy">
+          <Reveal as="h2" className="display practice-h"><span id="practice-h">Conscious is not a flavour. It is a practice.</span></Reveal>
+          <p className="practice-note">
+            Like the kolam drawn at a Tamil doorstep each morning: one line, round every dot, closing where it began.
+          </p>
+        </div>
+        <Kolam className="practice-kolam" cols={5} rows={3} />
       </div>
-      <div className="pillars">
-        {items.map((it, i) => (
-          <Reveal className="pillar" delay={i + 1} key={it.n}>
-            <div className="pn">0{i + 1}</div>
-            <h4>{it.h}</h4>
+      <ul className="col-head practice-list">
+        {items.map((it) => (
+          <li key={it.h}>
+            <h3>{it.h}</h3>
             <p>{it.p}</p>
-          </Reveal>
+          </li>
         ))}
-      </div>
+      </ul>
     </section>
   );
 }
@@ -163,10 +143,9 @@ function Place() {
   return (
     <section className="section home-place" id="place">
       <div className="col-head">
-        <Reveal><div className="kicker-row"><span className="idx">Conscious Café &amp; Conscious Sanctuary</span><span className="eyebrow">Auroville Road</span></div></Reveal>
         <div className="home-place-head">
-          <Reveal delay={1} as="h2" className="display home-place-h">
-            One place, several <em>ways to be well.</em>
+          <Reveal as="h2" className="display home-place-h">
+            One place, several ways to be well
           </Reveal>
           <Reveal delay={2} as="p" className="lede home-place-lede">
             Food is one of them. Beside the kitchen are a yoga shala and gym, a temple, an ice bath and an Ayurvedic sauna — and classes, workshops and evenings gather here.
@@ -184,7 +163,7 @@ function Place() {
               <span className="home-strand-side">
                 <span className="home-strand-status">{st.status}</span>
                 {st.link && (
-                  <button className="tlink home-strand-link" onClick={() => navigate(st.link.to)}>{st.link.label} <Arrow /></button>
+                  <button className="tlink home-strand-link" onClick={() => navigate(st.link.to)}>{st.link.label}</button>
                 )}
               </span>
             </Reveal>
@@ -205,18 +184,15 @@ function Cafe() {
   return (
     <section className="section" id="cafe">
       <div className="manifesto">
-        <Reveal>
-          <div className="kicker-row"><span className="idx">The café</span><span className="eyebrow">A way of cooking</span></div>
-        </Reveal>
-        <Reveal delay={1} as="h2" className="display home-cafe-h">
-          Eat like the <em>earth is watching.</em>
+        <Reveal as="h2" className="display home-cafe-h">
+          Eat like the earth is watching
         </Reveal>
         <Reveal delay={2} as="p" className="lede home-cafe-lede">
           We cook with what the season offers — grains, roots, leaf and ferment — and let restraint do the seasoning. Nothing rushed, nothing wasted, everything considered.
         </Reveal>
         <div className="manifesto-foot">
           <Reveal delay={3}><p className="lede" style={{ maxWidth: '30ch' }}>Sourced within reach of our doors, prepared by hands that know the difference.</p></Reveal>
-          <Reveal delay={4}><button className="tlink" onClick={() => navigate('/about')}>Read our story <Arrow /></button></Reveal>
+          <Reveal delay={4}><button className="tlink" onClick={() => navigate('/about')}>Read our story</button></Reveal>
         </div>
       </div>
     </section>
@@ -231,10 +207,9 @@ function HostBanner() {
       <div className="col-head">
         <div className="host-banner">
           <div className="hb-copy">
-            <span className="eyebrow">Private &amp; group bookings</span>
             <h4>Planning a workshop or retreat? Host it at the Sanctuary.</h4>
           </div>
-          <button className="btn" onClick={() => navigate('/sanctuary/host')}>Host at the Sanctuary <Arrow /></button>
+          <button className="btn" onClick={() => navigate('/sanctuary/host')}>Host at the Sanctuary</button>
         </div>
       </div>
     </section>
@@ -264,11 +239,9 @@ const ProductGrid = ({ products = [], onAddToCart, onProductClick }) => {
       <Place />
 
       {/* The pivot: the practice that runs through all of it, then the kitchen */}
-      <Pillars />
+      <Practice />
 
       <Cafe />
-
-      <Strip />
 
       <section style={{ background: 'var(--paper)' }}>
         <Signatures products={foodProducts} onProductClick={onProductClick} />

@@ -7,11 +7,6 @@ import { generatePageSEO, generateStructuredData, breadcrumb } from '../../utils
 const GUMLET_BASE = 'https://consciouscafe.gumlet.io/';
 const gumletImg = (path, opts = {}) => getGumletUrl(path, opts);
 
-const Arrow = ({ s = 16 }) => (
-  <svg className="arr" width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
-    <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
 
 const Reveal = ({ children, className = '', delay = 0, as: Tag = 'div', style }) => (
   <Tag style={style} className={`reveal${delay ? ` d${delay}` : ''} ${className}`}>{children}</Tag>
@@ -60,15 +55,9 @@ const AboutUs = () => {
       {/* Editorial hero */}
       <header className="story-hero">
         <div className="story-hero-head">
-          <Reveal>
-            <div className="kicker-row">
-              <span className="idx">Our Story</span>
-              <span className="eyebrow">Est. Auroville Road</span>
-            </div>
-          </Reveal>
           <Reveal delay={1}>
             <h1 className="display">
-              A love of food, yoga &amp; <em>community</em> — set one table.
+              A love of food, yoga &amp; community — set one table.
             </h1>
           </Reveal>
           <Reveal delay={2}>
@@ -94,7 +83,7 @@ const AboutUs = () => {
           <div className="sm-body">
             <Reveal>
               <p className="sm-lead">
-                A shared love for food, yoga, and community brought our founders — <em>Kirtana, Zulfi, Bhavninder</em> and <em>Pallavi</em> — together, around a single idea: a vibrant, healthy community built on wellness, sustainable food, and a place to belong.
+                A shared love for food, yoga, and community brought our founders — Kirtana, Zulfi, Bhavninder and Pallavi — together, around a single idea: a vibrant, healthy community built on wellness, sustainable food, and a place to belong.
               </p>
             </Reveal>
             <Reveal delay={1}>
@@ -109,16 +98,11 @@ const AboutUs = () => {
       {/* Founders */}
       <section className="section paper2">
         <div className="col-head">
-          <Reveal>
-            <div className="kicker-row">
-              <span className="idx">The founders</span>
-              <span className="eyebrow">Four people, one table</span>
-            </div>
-          </Reveal>
           <Reveal delay={1}>
             <h2 className="display" style={{ fontSize: 'clamp(32px,5vw,72px)', maxWidth: '15ch', marginBottom: 'clamp(36px,6vh,68px)' }}>
-              The hands behind the <em>practice.</em>
+              The hands behind the practice
             </h2>
+            <p className="sec-sub">Four people, one table.</p>
           </Reveal>
         </div>
         <div className="founders">
@@ -137,22 +121,16 @@ const AboutUs = () => {
       {/* Values (forest) */}
       <section className="section forest">
         <div className="col-head">
-          <Reveal>
-            <div className="kicker-row">
-              <span className="idx" style={{ color: 'rgba(255,255,255,.55)' }}>What guides us</span>
-            </div>
-          </Reveal>
           <Reveal delay={1}>
             <h2 className="display" style={{ fontSize: 'clamp(32px,5vw,72px)', maxWidth: '16ch', marginBottom: 'clamp(40px,7vh,80px)' }}>
-              Four principles we keep <em>returning to.</em>
+              Four principles we keep returning to.
             </h2>
           </Reveal>
         </div>
         <div className="pillars val-grid">
           {VALUES.map((v, i) => (
             <Reveal className="pillar" delay={i + 1} key={v.n}>
-              <div className="pn">0{i + 1}</div>
-              <h4>{v.n}</h4>
+                            <h4>{v.n}</h4>
               <p>{v.p}</p>
             </Reveal>
           ))}
@@ -162,14 +140,13 @@ const AboutUs = () => {
       {/* Closing invitation */}
       <section className="section story-close">
         <Reveal>
-          <span className="eyebrow">More than a meal</span>
           <h2 className="display" style={{ fontSize: 'clamp(34px,6vw,88px)', maxWidth: '16ch', margin: '20px auto 34px' }}>
-            Come sit with us on <em>Auroville Road.</em>
+            Come sit with us on Auroville Road.
           </h2>
         </Reveal>
         <Reveal delay={1} className="story-close-actions">
-          <button className="btn forest" onClick={() => navigate('/menu')}>See the menu <Arrow /></button>
-          <button className="tlink" onClick={() => navigate('/visit')}>Plan a visit <Arrow /></button>
+          <button className="btn forest" onClick={() => navigate('/menu')}>See the menu</button>
+          <button className="tlink" onClick={() => navigate('/visit')}>Plan a visit</button>
         </Reveal>
       </section>
     </main>

@@ -12,12 +12,6 @@ import { collapseSeries, dateBlock, formatWhen, kindLabel } from '../../utils/sa
 
 const MAX_ROWS = 3;
 
-const Arrow = ({ s = 14 }) => (
-  <svg className="arr" width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden="true">
-    <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-
 const Tile = ({ iso }) => {
   const d = dateBlock(iso);
   return (
@@ -45,7 +39,7 @@ const Row = ({ o }) => (
           {o.more ? <> · and {o.more} more {o.more === 1 ? 'date' : 'dates'}</> : null}
         </span>
       </span>
-      <span className="home-next-go">Details <Arrow /></span>
+      <span className="home-next-go">Details</span>
     </Link>
   </li>
 );
@@ -84,7 +78,7 @@ export default function NextGatherings() {
     <div className="home-next" ref={ref} aria-busy={status === 'loading'}>
       <div className="home-next-head">
         <h3 className="home-next-h">{one ? 'Next at the Sanctuary' : 'What’s on at the Sanctuary'}</h3>
-        <Link className="tlink home-next-all" to="/sanctuary">Full calendar <Arrow s={16} /></Link>
+        <Link className="tlink home-next-all" to="/sanctuary">Full calendar</Link>
       </div>
 
       {status === 'loading' && (
@@ -94,14 +88,14 @@ export default function NextGatherings() {
       {status === 'error' && (
         <div className="home-next-note home-next-error">
           <p>The calendar didn’t load just now.</p>
-          <Link className="tlink" to="/sanctuary">Open the calendar <Arrow s={16} /></Link>
+          <Link className="tlink" to="/sanctuary">Open the calendar</Link>
         </div>
       )}
 
       {status === 'ready' && items.length === 0 && (
         <div className="home-next-note home-next-empty">
           <p>Nothing on the calendar just yet. Classes, workshops and evenings appear here as hosts publish them.</p>
-          <Link className="tlink" to="/sanctuary/host">Host at the Sanctuary <Arrow s={16} /></Link>
+          <Link className="tlink" to="/sanctuary/host">Host at the Sanctuary</Link>
         </div>
       )}
 

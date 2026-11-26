@@ -4,7 +4,7 @@ import SEO from '../../components/seo/SEO/SEO';
 import { breadcrumb } from '../../utils/seoData';
 import { getHost, listHostGatherings, imageUrl } from '../../services/sanctuaryService';
 import { isUuid, collapseSeries, mapsUrl, safeHttpsLink } from '../../utils/sanctuary';
-import { Arrow, Reveal, GatheringRow, PageSkeleton, useFocusTrap } from './parts';
+import { Reveal, GatheringRow, PageSkeleton, useFocusTrap } from './parts';
 import './sanctuary.css';
 
 /** Full-screen photo viewer: previous / next buttons, arrow keys, Esc to close; focus returns where it was. */
@@ -65,7 +65,7 @@ const HostProfilePage = () => {
         <div className="sn-empty sn-pad">
           <p className="sn-empty-h">We couldn’t load this page.</p>
           <p>Check your connection and try again.</p>
-          <button className="btn" onClick={() => window.location.reload()}>Reload <Arrow /></button>
+          <button className="btn" onClick={() => window.location.reload()}>Reload</button>
         </div>
       </main>
     );
@@ -78,7 +78,7 @@ const HostProfilePage = () => {
         <div className="sn-empty sn-pad">
           <p className="sn-empty-h">This organiser isn’t on the calendar.</p>
           <p>The link may be incomplete, or they’re taking a break.</p>
-          <Link className="btn" to="/sanctuary">See what’s on <Arrow /></Link>
+          <Link className="btn" to="/sanctuary">See what’s on</Link>
         </div>
       </main>
     );
@@ -156,7 +156,7 @@ const HostProfilePage = () => {
             <div className="sn-empty">
               <p className="sn-empty-h">Nothing on the calendar right now.</p>
               <p>New dates appear here as soon as {first} adds them.</p>
-              <Link className="btn" to="/sanctuary">See what else is on <Arrow /></Link>
+              <Link className="btn" to="/sanctuary">See what else is on</Link>
             </div>
           )}
         </section>

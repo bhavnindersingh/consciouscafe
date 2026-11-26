@@ -1,10 +1,5 @@
 import React from 'react';
 
-const Arrow = ({ s = 16 }) => (
-  <svg className="arr" width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
-    <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
 
 // Resize params are Gumlet's. Dishes with no curated photo fall back to a raw
 // Supabase Storage URL, which ignores them — appending there just makes the URL
@@ -30,7 +25,7 @@ const Cart = ({ isOpen, onClose, cartItems = [], onUpdateQuantity, onRemoveItem,
       <div className={`scrim ${isOpen ? 'open' : ''}`} onClick={onClose} />
       <aside className={`drawer ${isOpen ? 'open' : ''}`} aria-hidden={!isOpen}>
         <div className="drawer-head">
-          <h3>Your Bag</h3>
+          <h3>Your bag</h3>
           <button className="x" onClick={onClose} aria-label="Close">×</button>
         </div>
 
@@ -52,7 +47,7 @@ const Cart = ({ isOpen, onClose, cartItems = [], onUpdateQuantity, onRemoveItem,
                     <button onClick={() => onUpdateQuantity(item.id, (item.quantity || 1) - 1)}>−</button>
                     <span>{item.quantity || 1}</span>
                     <button onClick={() => onUpdateQuantity(item.id, (item.quantity || 1) + 1)}>+</button>
-                    <button onClick={() => onRemoveItem(item.id)} style={{ marginLeft: 6 }}>remove</button>
+                    <button onClick={() => onRemoveItem(item.id)} style={{ marginLeft: 6 }} aria-label={`Remove ${item.name}`}>Remove</button>
                   </div>
                 </div>
                 <div className="cr-price">₹{(item.price * (item.quantity || 1)).toLocaleString('en-IN')}</div>
@@ -68,7 +63,7 @@ const Cart = ({ isOpen, onClose, cartItems = [], onUpdateQuantity, onRemoveItem,
               <span className="v">₹{subtotal.toLocaleString('en-IN')}</span>
             </div>
             <p className="co-note" style={{ margin: '0 0 12px' }}>Packaging and GST are added at checkout.</p>
-            <button className="btn solid" onClick={onCheckout}>Proceed to Checkout <Arrow /></button>
+            <button className="btn solid" onClick={onCheckout}>Go to checkout</button>
           </div>
         )}
       </aside>

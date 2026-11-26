@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { imageUrl } from '../../services/sanctuaryService';
 import { formatWhen, priceLabel, isFree, seatsLabel } from '../../utils/sanctuary';
-import { Arrow, DateTile, KindTag } from './parts';
+import { DateTile, KindTag } from './parts';
 
 // Show this many on a wide screen before "Show all"; a phone scrolls sideways through all.
 const FIRST = 6;
@@ -46,7 +46,7 @@ export function OutsideCard({ o }) {
         )}
         <span className="sn-cur-price">{isFree(o.price_inr) ? 'Free' : priceLabel(o.price_inr)} · {seatsLabel(o.seats_left, o.capacity)}</span>
       </div>
-      <span className="sn-cur-go">See details <Arrow s={14} /></span>
+      <span className="sn-cur-go">See details</span>
     </Link>
   );
 }
@@ -63,8 +63,7 @@ export default function Curation({ events }) {
   return (
     <section className="section tight sn-cur" id="curation" aria-labelledby="sn-cur-h">
       <div className="sn-cur-head">
-        <span className="eyebrow">Around Auroville</span>
-        <h2 id="sn-cur-h" className="sn-cur-h">Linda’s <em>curation.</em></h2>
+        <h2 id="sn-cur-h" className="sn-cur-h">Linda’s curation</h2>
         <p className="sn-cur-lede">Classes, workshops and evenings outside the Sanctuary, chosen by Linda. Reserve a place here, the same way.</p>
       </div>
       <ul className={`sn-cur-list${all ? ' is-open' : ''}`}>

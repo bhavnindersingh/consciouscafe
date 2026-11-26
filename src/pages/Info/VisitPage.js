@@ -7,11 +7,6 @@ import { generatePageSEO, generateStructuredData, breadcrumb, FAQS, maps } from 
 const WHATSAPP_URL = 'https://wa.me/918754561269';
 const INSTAGRAM_URL = 'https://www.instagram.com/consciouscafe.sanctuary/';
 
-const Arrow = ({ s = 16 }) => (
-  <svg className="arr" width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
-    <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
 
 const Reveal = ({ children, className = '', delay = 0, as: Tag = 'div', style }) => (
   <Tag style={style} className={`reveal${delay ? ` d${delay}` : ''} ${className}`}>{children}</Tag>
@@ -55,8 +50,7 @@ const VisitPage = () => {
         />
         <div className="visit-hero-inner">
           <div style={{ maxWidth: 1500, margin: '0 auto', width: '100%' }}>
-            <span className="eyebrow on-dark reveal">Visit · Auroville Road</span>
-            <h1 className="display reveal">Come sit<br /><em>a while.</em></h1>
+            <h1 className="display reveal">Come sit<br />a while.</h1>
             <p className="hero-sub reveal">An open courtyard under the trees — slow mornings, long lunches, and a kitchen that never rushes you out.</p>
           </div>
         </div>
@@ -64,7 +58,6 @@ const VisitPage = () => {
 
       <section className="section visit-shell">
         <Reveal className="visit-info">
-          <span className="eyebrow">The café</span>
           <h2 className="visit-name">Conscious Café</h2>
           <p className="visit-addr">
             Kuilapalayam Main Road<br />
@@ -92,9 +85,9 @@ const VisitPage = () => {
 
           <div className="visit-cta">
             <a className="btn forest" href={maps.directions} target="_blank" rel="noopener noreferrer">
-              Get directions <Arrow />
+              Get directions
             </a>
-            <button className="btn" onClick={() => navigate('/menu')}>View the menu <Arrow /></button>
+            <button className="btn" onClick={() => navigate('/menu')}>View the menu</button>
           </div>
         </Reveal>
 
@@ -112,17 +105,11 @@ const VisitPage = () => {
       </section>
 
       <section className="section paper2 here-section">
-        <Reveal>
-          <div className="kicker-row">
-            <span className="idx">Getting here</span>
-            <span className="eyebrow">A few notes</span>
-          </div>
-        </Reveal>
+        <Reveal><h2 className="sec-h">Getting here</h2></Reveal>
         <div className="here-grid">
           {NOTES.map((n, i) => (
             <Reveal className="here-card" delay={i + 1} key={n.k}>
-              <div className="pn">0{i + 1}</div>
-              <h4>{n.k}</h4>
+                            <h4>{n.k}</h4>
               <p>{n.t}</p>
             </Reveal>
           ))}
@@ -130,15 +117,10 @@ const VisitPage = () => {
       </section>
 
       <section className="section faq-section">
-        <Reveal>
-          <div className="kicker-row">
-            <span className="idx">Good to know</span>
-            <span className="eyebrow">Questions</span>
-          </div>
-        </Reveal>
+        <Reveal><h2 className="sec-h">Questions</h2></Reveal>
         <div style={{ maxWidth: 820, margin: '0 auto' }}>
           {FAQS.map((f, i) => (
-            <Reveal className="faq-item" delay={i + 1} key={f.q} style={{ padding: '22px 0', borderTop: i === 0 ? 'none' : '1px solid rgba(27,26,22,0.12)' }}>
+            <Reveal className="faq-item" delay={i + 1} key={f.q} style={{ padding: '22px 0', borderTop: i === 0 ? 'none' : '1px solid var(--line-soft)' }}>
               <h3 style={{ fontFamily: 'var(--display)', fontSize: 'clamp(20px,2.4vw,28px)', marginBottom: 8 }}>{f.q}</h3>
               <p style={{ fontFamily: 'var(--ui)', lineHeight: 1.6, color: 'var(--ink-mute)' }}>{f.a}</p>
             </Reveal>

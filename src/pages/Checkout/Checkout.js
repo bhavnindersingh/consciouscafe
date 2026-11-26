@@ -122,7 +122,7 @@ const Checkout = ({ isOpen, onClose, cartItems = [], onOrderComplete }) => {
           <div className="drawer-body">
             {/* Order Summary */}
             <section className="co-summary">
-              <div className="co-sec-label">Order Summary</div>
+              <div className="co-sec-label">Your order</div>
               {cartItems.map(item => (
                 <div className="co-sum-row" key={item.id}>
                   <span>{item.name} × {item.quantity}</span>
@@ -147,10 +147,11 @@ const Checkout = ({ isOpen, onClose, cartItems = [], onOrderComplete }) => {
 
             {/* Delivery Details */}
             <section className="co-fields">
-              <div className="co-sec-label">Delivery Details</div>
+              <div className="co-sec-label">Delivery details</div>
+              <p className="co-required">Everything is needed unless it says optional.</p>
 
               <div className="co-group">
-                <label htmlFor="name">Full Name *</label>
+                <label htmlFor="name">Your name</label>
                 <input
                   type="text"
                   id="name"
@@ -163,7 +164,7 @@ const Checkout = ({ isOpen, onClose, cartItems = [], onOrderComplete }) => {
               </div>
 
               <div className="co-group">
-                <label htmlFor="phone">Phone Number *</label>
+                <label htmlFor="phone">Phone number</label>
                 <input
                   type="tel"
                   id="phone"
@@ -176,7 +177,7 @@ const Checkout = ({ isOpen, onClose, cartItems = [], onOrderComplete }) => {
               </div>
 
               <div className="co-group">
-                <label htmlFor="email">Email Address *</label>
+                <label htmlFor="email">Email</label>
                 <input
                   type="email"
                   id="email"
@@ -189,7 +190,7 @@ const Checkout = ({ isOpen, onClose, cartItems = [], onOrderComplete }) => {
               </div>
 
               <div className="co-group">
-                <label htmlFor="address">Delivery Address *</label>
+                <label htmlFor="address">Delivery address</label>
                 <textarea
                   id="address"
                   name="address"
@@ -203,7 +204,7 @@ const Checkout = ({ isOpen, onClose, cartItems = [], onOrderComplete }) => {
               </div>
 
               <div className="co-group">
-                <label htmlFor="distance">Distance from Cafe (km) *</label>
+                <label htmlFor="distance">Distance from the café (km)</label>
                 <input
                   type="number"
                   id="distance"
@@ -221,7 +222,7 @@ const Checkout = ({ isOpen, onClose, cartItems = [], onOrderComplete }) => {
               </div>
 
               <div className="co-group">
-                <label htmlFor="notes">Special Instructions (Optional)</label>
+                <label htmlFor="notes">Anything we should know? (optional)</label>
                 <textarea
                   id="notes"
                   name="notes"
@@ -242,7 +243,7 @@ const Checkout = ({ isOpen, onClose, cartItems = [], onOrderComplete }) => {
             </div>
             <button type="submit" className="btn solid co-submit">
               <WhatsAppGlyph />
-              <span>Send Order via WhatsApp</span>
+              <span>Send the order on WhatsApp</span>
             </button>
             <p className="co-note">
               {packagingPending

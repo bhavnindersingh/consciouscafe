@@ -1,0 +1,6 @@
+.kolam { display: block; width: 100%; height: auto; overflow: visible; }
+.kolam-dot { fill: currentColor; opacity: .9; }
+.kolam-line { fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+/* only the drawing animates — hiding it first is instant */
+.kolam.is-drawn .kolam-line { transition: stroke-dashoffset 2.8s cubic-bezier(.45, 0, .25, 1) .25s; }
+@media (prefers-reduced-motion: reduce) { .kolam.is-drawn .kolam-line { transition: none; } }
