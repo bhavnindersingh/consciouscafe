@@ -6,7 +6,7 @@ import { useCart } from '../../context/CartContext';
 import { getMyAccount } from '../../services/accountService';
 import { formatWhen, formatDay, formatClock, elsewhere } from '../../utils/sanctuary';
 import {
-  firstName, timeline, eventState, sessionState, placesLabel, itemsSummary, reorderPlan, rupees, listAnd,
+  firstName, timeline, eventState, sessionState, placesLabel, itemsSummary, reorderPlan, rupees, listAnd, organiserLabel,
 } from '../../utils/account';
 import SignInCard from '../Sanctuary/SignInCard';
 import { DateTile, KindTag, PageSkeleton } from '../Sanctuary/parts';
@@ -119,11 +119,19 @@ function SignedOut() {
   );
 }
 
+// where they stand with us, said the way the header's menu says it (organiserLabel)
+const ORG_LINE = {
+  requested: 'Your introduction is with our team.',
+  paused: 'Your organising is paused for now.',
+  declined: 'We couldn’t take your request on this time.',
+};
+
 function Organiser({ isHost }) {
+  const { hostRow } = useAuth();
   return isHost ? (
     <section className="ac-org" aria-label="Organising">
-      <p>You organise with us.</p>
-      <Link className="btn" to="/sanctuary/host">Your events</Link>
+      <p>{ORG_LINE[hostRow?.status] || 'You organise with us.'}</p>
+      <Link className="btn" to="/sanctuary/host">{organiserLabel(hostRow) || 'Your events'}</Link>
     </section>
   ) : (
     <p className="ac-org-quiet">Teach a class or run a workshop? <Link className="tlink" to="/sanctuary/host">Organise with us</Link></p>
@@ -140,7 +148,10 @@ export default function AccountPage({ products = [] }) {
   const uid = user?.id;
 
   useEffect(() => {
-    if (!uid) { setAccount(null); return undefined; }
+    // a different person (or nobody): never show the last one's page meanwhile
+    setAccount(null);
+    setNotes({});
+    if (!uid) return undefined;
     let alive = true;
     setFailure(null);
     getMyAccount()
@@ -177,7 +188,16 @@ export default function AccountPage({ products = [] }) {
       </header>
     );
     let content;
-    if (failure) {
+    if (failure && /not_signed_in/.test(failure.message || '')) {
+      // a session the database doesn't take as a customer's (a staff login)
+      content = (
+        <div className="sn-empty">
+          <p className="sn-empty-h">This sign-in can’t show bookings.</p>
+          <p>Sign out, then sign in with the email you booked or ordered with.</p>
+          <button className="btn" onClick={() => signOut()}>Sign out</button>
+        </div>
+      );
+    } else if (failure) {
       content = (
         <div className="sn-empty">
           <p className="sn-empty-h">We couldn’t load your bookings.</p>

@@ -121,7 +121,7 @@ export default function NextGatherings() {
       {status === 'ready' && items.length === 0 && (
         <div className="home-next-note home-next-empty">
           <p>Nothing on the Sanctuary’s calendar just yet. Classes, workshops and evenings appear here as organisers publish them.</p>
-          <Link className="tlink" to="/sanctuary/host">Host at the Sanctuary</Link>
+          <Link className="tlink" to="/sanctuary/host">Organise with us</Link>
           <Away count={away} />
         </div>
       )}

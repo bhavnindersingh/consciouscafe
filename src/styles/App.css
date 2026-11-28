@@ -190,19 +190,63 @@ button { font-family: inherit; cursor: pointer; }
   font-size: 12px; min-width: 17px; height: 17px; padding: 0 4px; border-radius: 99px;
   background: var(--forest); color: #fff; display: grid; place-items: center; letter-spacing: 0;
 }
-/* Your account, after the bag: an icon, named by its tooltip and to screen
-   readers ("Sign in", or "Your account" once signed in, when a small forest dot
-   sits on it). Underlined on /account and the organiser pages, like a tab. */
+/* Your account, after the bag (AccountMenu.js). Signed out: a person icon,
+   "Sign in". Signed in: your initial in a ring — an organiser's own photo once
+   they have one — that opens the account menu. Underlined on /account and the
+   organiser pages, like a tab. */
+.nav-acct-wrap { position: relative; display: flex; }
 .nav-acct {
-  position: relative; display: grid; place-items: center; min-width: 24px; min-height: 44px; padding: 0;
-  color: var(--nav-fg); background: none; border: none;
+  position: relative; display: grid; place-items: center; min-width: 44px; min-height: 44px; margin: 0 -10px; padding: 0;
+  color: var(--nav-fg); background: none; border: none; cursor: pointer;
   transition: color .6s var(--ease), opacity .4s var(--ease);
 }
 .nav.solid .nav-acct { opacity: .92; }
-.nav-acct:hover, .nav-acct.active { opacity: 1; }
+.nav-acct:hover, .nav-acct.active, .nav-acct.open { opacity: 1; }
 .nav-acct::after { content: ""; position: absolute; left: 50%; bottom: 4px; height: 1px; width: 0; background: currentColor; transform: translateX(-50%); transition: width .45s var(--ease); }
 .nav-acct:hover::after, .nav-acct.active::after { width: 17px; }
-.nav-acct.is-in::before { content: ""; position: absolute; top: 10px; right: 5px; width: 6px; height: 6px; border-radius: 50%; background: var(--forest); border: 1.5px solid var(--paper); }
+.nav-acct.is-in::after { bottom: 2px; }
+.nav-acct-me {
+  width: 28px; height: 28px; border-radius: 50%; border: 1px solid currentColor; overflow: hidden;
+  display: grid; place-items: center; font-family: var(--ui); font-size: var(--fs-sm); font-weight: 500; line-height: 1;
+}
+.nav-acct-me img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.nav-acct:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+
+/* the menu: always ink on paper, whatever the header is drawn over */
+.nav-menu {
+  position: absolute; top: calc(100% + 8px); right: -12px; z-index: 210;
+  width: max-content; min-width: 248px; max-width: min(320px, calc(100vw - 2 * var(--gutter)));
+  background: var(--paper); color: var(--ink); border: 1px solid var(--line); box-shadow: 0 14px 32px rgba(20, 22, 15, .08);
+  text-align: left; animation: navMenuIn .16s ease-out;
+}
+@keyframes navMenuIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+.nav-menu-who { margin: 0; padding: 16px 20px 12px; display: flex; flex-direction: column; gap: 4px; border-bottom: 1px solid var(--line-soft); }
+.nav-menu-name { font-family: var(--ui); font-size: var(--fs-ui); font-weight: 500; color: var(--ink); overflow-wrap: anywhere; }
+.nav-menu-as { font-family: var(--ui); font-size: var(--fs-sm); color: var(--ink-mute); }
+.nav-menu-email { font-family: var(--ui); font-size: var(--fs-sm); color: var(--ink-mute); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nav-menu-list { list-style: none; margin: 0; padding: 8px 0; }
+.nav-menu-item {
+  display: flex; align-items: center; width: 100%; min-height: 44px; padding: 0 20px;
+  font-family: var(--ui); font-size: var(--fs-ui); color: var(--ink); text-decoration: none; text-align: left;
+  background: none; border: 0; cursor: pointer;
+}
+.nav-menu-item:hover, .nav-menu-item:focus-visible { background: var(--paper-2); outline: none; }
+.nav-menu-item:focus-visible { box-shadow: inset 2px 0 0 var(--forest); }
+.nav-menu-sep { height: 1px; margin: 8px 0; background: var(--line-soft); }
+.nav-menu-out { color: var(--ink-soft); }
+
+/* how signing out went: one line under the header's right edge, for a few seconds */
+.nav-note {
+  position: absolute; top: calc(100% + 8px); right: var(--gutter); z-index: 210; margin: 0;
+  padding: 8px 16px; background: var(--paper); color: var(--ink); border: 1px solid var(--line);
+  font-family: var(--ui); font-size: var(--fs-sm);
+  opacity: 0; visibility: hidden; transition: opacity .2s ease-in, visibility 0s linear .2s;
+}
+.nav-note.on { opacity: 1; visibility: visible; transition: opacity .2s ease-out; }
+@media (prefers-reduced-motion: reduce) {
+  .nav-menu { animation: none; }
+  .nav-note, .nav-note.on { transition: none; }
+}
 
 .nav-burger { display: none; flex-direction: column; gap: 5px; background: none; border: none; padding: 4px; }
 .nav-burger span { width: 24px; height: 1.5px; background: var(--nav-fg); display: block; transition: transform .4s var(--ease), opacity .3s var(--ease), background .6s var(--ease); }
@@ -640,13 +684,19 @@ button { font-family: inherit; cursor: pointer; }
 /* ============================================================
    MOBILE SLIDE MENU
    ============================================================ */
+/* Closed, the menu is slid away AND hidden — so Tab and screen readers skip
+   it (it sits after the header in the page, on desktop too). The hiding waits
+   for the slide to finish, so closing still animates. */
 .mobile-menu {
   position: fixed; inset: 0; z-index: 250; background: var(--paper);
-  transform: translateY(-100%); transition: transform .55s var(--ease);
+  transform: translateY(-100%); visibility: hidden;
+  transition: transform .55s var(--ease), visibility 0s linear .55s;
   display: flex; flex-direction: column; padding: 22px var(--gutter) 32px;
-  overflow: hidden;
+  /* taller than a short phone: it scrolls, so the bag, your account and Sign
+     out at its foot are always reachable (hidden across, for the hibiscus) */
+  overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain;
 }
-.mobile-menu.open { transform: none; }
+.mobile-menu.open { transform: none; visibility: visible; transition: transform .55s var(--ease), visibility 0s; }
 .mm-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: clamp(28px,7vh,56px); }
 .mm-brand { font-family: var(--logo); font-weight: 400; font-size: 17px; letter-spacing: .2em; text-transform: uppercase; color: var(--ink); display: flex; flex-direction: column; align-items: center; line-height: 1.15; }
 .mm-brand > span { margin-right: -.2em; }
@@ -670,14 +720,34 @@ button { font-family: inherit; cursor: pointer; }
   font-family: var(--ui); font-size: 14px; letter-spacing: 0;
   background: var(--forest); color: var(--paper); border: none; padding: 17px; margin-bottom: 20px;
 }
-/* the way into Your account: quieter than the bag, above the contact lines */
+/* the way into Your account: quieter than the bag, above the contact lines.
+   Signed in, it's a row (your account, and an organiser's events) and a line
+   saying who's signed in, with Sign out at its end. */
 .mm-account {
   width: 100%; display: flex; align-items: center; justify-content: center; min-height: 48px; margin: -8px 0 20px;
   font-family: var(--ui); font-size: var(--fs-sm); background: transparent; color: var(--ink); border: 1px solid var(--line);
 }
+.mm-acct { margin: -8px 0 20px; }
+.mm-acct-links { display: flex; gap: 8px; }
+.mm-acct-links .mm-account { margin: 0; flex: 1 1 0; padding: 0 8px; }
+.mm-acct-who {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 4px 0 0;
+  font-family: var(--ui); font-size: var(--fs-sm); color: var(--ink-mute); min-width: 0;
+}
+.mm-acct-who > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mm-acct-who strong { font-weight: 500; color: var(--ink-soft); }
+.mm-signout {
+  flex: none; min-height: 44px; padding: 0; background: none; border: 0; cursor: pointer;
+  font-family: var(--ui); font-size: var(--fs-sm); color: var(--ink); text-decoration: underline; text-underline-offset: 4px;
+}
 .mm-contact { display: flex; flex-direction: column; gap: 6px; font-family: var(--ui); font-size: 13px; letter-spacing: 0; color: var(--ink-mute); }
 .mm-contact a { color: var(--ink-soft); text-decoration: none; }
 .mm-flower { position: absolute; right: -22px; bottom: 10px; width: 132px; height: auto; opacity: .5; pointer-events: none; z-index: 1; }
+/* a short phone: the menu's rows sit closer, so less of it needs scrolling */
+@media (max-height: 760px) {
+  .mm-top { margin-bottom: 16px; }
+  .mm-item { padding: 12px 0; }
+}
 
 /* ============================================================
    SIGNATURES — editorial product gallery
@@ -1140,7 +1210,7 @@ button { font-family: inherit; cursor: pointer; }
   .nav-right { gap: 14px; }
   .bag .bag-label { display: none; }
   .bag { gap: 5px; }
-  .nav-acct { display: none; } /* the phone menu carries it */
+  .nav-acct-wrap { display: none; } /* the phone menu carries it */
   .nav-burger { display: flex; position: relative; z-index: 260; width: 26px; }
   .nav-burger span { transition: transform .4s var(--ease), opacity .3s var(--ease); }
   .nav-burger.is-open span { background: var(--ink); }

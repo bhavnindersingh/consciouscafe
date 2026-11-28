@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { sendToWhatsApp } from '../../utils/whatsapp';
 import { usePackagingRates } from '../../hooks/usePackagingRates';
 import { calcTotals } from '../../utils/totals';
 import { useAuth } from '../../context/AuthContext';
 import { saveWebsiteOrder } from '../../services/accountService';
-import { makeOrderRef, buildOrderPayload, accountPrefill } from '../../utils/account';
+import { makeOrderRef, buildOrderPayload, phoneDigitsOk } from '../../utils/account';
+import { useAccountPrefill } from '../../hooks/useAccountPrefill';
 import SignedInAs from '../../components/auth/SignedInAs';
 
 const money = (n) =>
@@ -30,13 +31,9 @@ const Checkout = ({ isOpen, onClose, cartItems = [], onOrderComplete }) => {
   const [distanceError, setDistanceError] = useState('');
 
   // Signed in: the account's email, fixed (so the order shows under Your
-  // account), and its name where the field is still empty.
-  const { user, session } = useAuth();
-  const accountEmail = user?.email || null;
-  const accountName = accountPrefill(user).name;
-  useEffect(() => {
-    if (accountName) setCustomerInfo((c) => (c.name ? c : { ...c, name: accountName }));
-  }, [accountName]);
+  // account), and its name; the name goes again on sign-out.
+  const { session } = useAuth();
+  const { accountEmail } = useAccountPrefill(setCustomerInfo, { email: false });
   const email = accountEmail || customerInfo.email;
 
   // Every order here is a delivery, so every dish is packed and carries its
@@ -71,32 +68,34 @@ const Checkout = ({ isOpen, onClose, cartItems = [], onOrderComplete }) => {
     const newErrors = {};
 
     if (!customerInfo.name.trim()) {
-      newErrors.name = 'Name is required';
+      newErrors.name = 'Your name, please.';
     }
 
     if (!customerInfo.phone.trim()) {
-      newErrors.phone = 'Phone number is required';
+      newErrors.phone = 'A phone number we can reach you on.';
+    } else if (!phoneDigitsOk(customerInfo.phone)) {
+      newErrors.phone = 'A mobile number, 10 digits (or with the country code)';
     }
 
     if (!email.trim()) {
-      newErrors.email = 'Email is required';
+      newErrors.email = 'An email, for your order.';
     } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = 'Email is invalid';
+      newErrors.email = 'That email doesn’t look right.';
     }
 
     // Delivery details validation
     if (!customerInfo.address.trim()) {
-      newErrors.address = 'Address is required';
+      newErrors.address = 'Where should we bring it?';
     }
 
     // Distance validation
     const distance = parseFloat(customerInfo.distance);
     if (!customerInfo.distance.trim() || isNaN(distance) || distance <= 0) {
-      setDistanceError('Please enter a valid distance');
+      setDistanceError('How far from the café, in km?');
       setErrors(newErrors);
       return false;
     } else if (distance > 6) {
-      setDistanceError('Delivery only available within 6 km');
+      setDistanceError('We deliver within 6 km of the café.');
       setErrors(newErrors);
       return false;
     } else {

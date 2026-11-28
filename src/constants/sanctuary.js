@@ -34,6 +34,8 @@ export const LIMITS = {
   hostNameMin: 2,
   hostNameMax: 80,
   bioMax: 2000,
+  introMin: 20,          // an introduction to our team: a sentence at least
+  introMax: 2000,        // sanctuary_hosts_intro_check (20261130000000)
   taglineMax: 120,       // an organiser's page (20261126100000)
   placeNameMax: 120,
   placeAddressMax: 200,

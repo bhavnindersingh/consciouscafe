@@ -14,8 +14,7 @@ import {
 import { istToday } from '../../utils/sanctuary';
 import { Reveal, Field, Spinner, PinnedBar, scrollToEl, PageSkeleton, onRadioKeys, tabStop } from '../Sanctuary/parts';
 import SlotCalendar from './SlotCalendar';
-import { useAuth } from '../../context/AuthContext';
-import { accountPrefill } from '../../utils/account';
+import { useAccountPrefill } from '../../hooks/useAccountPrefill';
 import SignedInAs from '../../components/auth/SignedInAs';
 import '../Sanctuary/sanctuary.css';
 import './wellness.css';
@@ -78,21 +77,10 @@ const RestorePage = () => {
   const [weeks, setWeeks] = useState({}); // { 'YYYY-MM-DD' (chunk start): { rows, loading, error } }
   const [picked, setPicked] = useState(null); // one wellness_slots row
   const [seats, setSeats] = useState(1);
+  const [form, setForm] = useState({ name: '', phone: '', email: '' });
   // Signed in: the account's email, fixed (the booking then shows under Your
-  // account, which matches sessions by email), and its name if the field is empty.
-  const { user } = useAuth();
-  const accountEmail = user?.email || null;
-  const accountName = accountPrefill(user).name;
-  const [form, setForm] = useState(() => ({ name: accountName, phone: '', email: accountEmail || '' }));
-  // keyed on the strings, not the user object, and a no-op when nothing changes
-  useEffect(() => {
-    if (!accountEmail && !accountName) return;
-    setForm((f) => {
-      const name = f.name || accountName;
-      const email = accountEmail || f.email;
-      return name === f.name && email === f.email ? f : { ...f, name, email };
-    });
-  }, [accountEmail, accountName]);
+  // account, which matches sessions by email), and its name; both go on sign-out.
+  const { accountEmail } = useAccountPrefill(setForm);
   const withAccount = (f) => (accountEmail ? { ...f, email: accountEmail } : f);
   const [errors, setErrors] = useState({});
   const [failure, setFailure] = useState(null);

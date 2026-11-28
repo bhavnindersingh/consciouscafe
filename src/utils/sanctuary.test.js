@@ -7,6 +7,7 @@ import {
   weekdayOf, addDays, seriesDates, repeatLabel, weekdaysOf, validateRepeat, seriesRows, seriesSummary,
   durationMinutes, durationLabel, parseVideoLink, safeHttpsLink, elsewhere, mapsUrl, collapseSeries, groupHostSeries, istToday, shiftMonth, monthTitle, monthGrid, byDay,
   inHouse, withWhere, looksLikeSanctuary, roomWindow, roomClashes, roomTakenMessage,
+  notYetPublic, profileGaps, listWords, hostEventState, hostStateCounts, seriesChange,
 } from './sanctuary';
 import { OFFERING_KINDS, RSVP_ERROR_COPY, HOST_AUTH_COPY } from '../constants/sanctuary';
 
@@ -419,6 +420,35 @@ describe('host dashboard', () => {
   });
 });
 
+describe('an organiser looking at their own profile', () => {
+  const now = new Date('2026-11-09T00:00:00Z').getTime();
+  const at = (day) => ({ starts_at: `2026-11-${day}T01:30:00Z`, ends_at: `2026-11-${day}T03:00:00Z` });
+  test('notYetPublic counts what visitors can’t see yet — a weekly class once, nothing already over', () => {
+    expect(notYetPublic([
+      { id: 'r1', status: 'in_review', series_id: 's', ...at(20) },
+      { id: 'r2', status: 'in_review', series_id: 's', ...at(27) },
+      { id: 'r3', status: 'in_review', ...at(21) },
+      { id: 'd1', status: 'draft', ...at(22) },
+      { id: 'old', status: 'draft', starts_at: '2026-11-01T01:30:00Z', ends_at: '2026-11-01T03:00:00Z' },
+      { id: 'p', status: 'published', ...at(23) },
+    ], now)).toEqual({ inReview: 2, drafts: 1 });
+    expect(notYetPublic([], now)).toEqual({ inReview: 0, drafts: 0 });
+  });
+
+  test('profileGaps names what is still empty; a blank bio counts as empty', () => {
+    expect(profileGaps({ avatar_path: null, bio: '  ', cover_path: null })).toEqual(['a profile photo', 'a few lines about your work', 'a cover photo']);
+    expect(profileGaps({ avatar_path: 'u/a.jpg', bio: 'Potter.', cover_path: 'u/c.jpg' })).toEqual([]);
+    expect(profileGaps(null)).toEqual([]);
+  });
+
+  test('listWords', () => {
+    expect(listWords([])).toBe('');
+    expect(listWords(['a'])).toBe('a');
+    expect(listWords(['a', 'b'])).toBe('a and b');
+    expect(listWords(['a', 'b', 'c'])).toBe('a, b and c');
+  });
+});
+
 describe('misc', () => {
   test('every database refusal has visitor copy', () => {
     for (const key of ['invalid', 'not_found', 'closed', 'too_many', 'already_booked', 'full']) {
@@ -609,5 +639,89 @@ describe('one room', () => {
 
   test('the message names what is on', () => {
     expect(roomTakenMessage(kirtan)).toBe('The Sanctuary is taken then: “Kirtan evening”, Fri 4 Dec · 7 – 9 pm. Pick another time, or choose somewhere else.');
+  });
+});
+
+describe('where an organiser’s event stands', () => {
+  const now = new Date('2026-11-09T06:00:00Z').getTime();
+  const on = (startH, endH) => ({ starts_at: new Date(now + startH * 36e5).toISOString(), ends_at: new Date(now + endH * 36e5).toISOString() });
+  const ahead = on(48, 50);
+
+  test('approved: still to come, under way, over — or cancelled', () => {
+    expect(hostEventState({ status: 'published', ...ahead }, now)).toBe('live');
+    expect(hostEventState({ status: 'published', ...on(-1, 1) }, now)).toBe('now');
+    expect(hostEventState({ status: 'published', ...on(-3, -1) }, now)).toBe('done');
+    expect(hostEventState({ status: 'cancelled', ...ahead }, now)).toBe('cancelled');
+  });
+
+  test('not live yet: a draft, waiting, or sent back — by a note, or by the review stamp alone', () => {
+    expect(hostEventState({ status: 'draft', ...ahead }, now)).toBe('draft');
+    expect(hostEventState({ status: 'in_review', ...ahead }, now)).toBe('in_review');
+    expect(hostEventState({ status: 'draft', review_note: 'Add the address.', ...ahead }, now)).toBe('sent_back');
+    expect(hostEventState({ status: 'draft', review_note: null, reviewed_at: '2026-11-08T10:00:00Z', ...ahead }, now)).toBe('sent_back');
+    // sent again after a send-back: the old note stays on the row, but it's waiting again
+    expect(hostEventState({ status: 'in_review', review_note: 'Add the address.', ...ahead }, now)).toBe('in_review');
+  });
+
+  test('never approved and its time has come: it can’t go live now, whatever it was', () => {
+    expect(hostEventState({ status: 'in_review', ...on(-1, 1) }, now)).toBe('expired');
+    expect(hostEventState({ status: 'draft', ...on(-3, -1) }, now)).toBe('expired');
+    expect(hostEventState({ status: 'draft', review_note: 'Add the address.', ...on(-3, -1) }, now)).toBe('expired');
+  });
+
+  test('hostStateCounts: most urgent first; a weekly class once per state, or each date with `dates`', () => {
+    const rows = [
+      { id: 'a', status: 'published', series_id: 's', ...ahead },
+      { id: 'b', status: 'published', series_id: 's', ...on(216, 218) },
+      { id: 'c', status: 'cancelled', series_id: 's', ...on(384, 386) },
+      { id: 'd', status: 'draft', review_note: 'Shorter title?', ...ahead },
+      { id: 'e', status: 'in_review', ...ahead },
+    ];
+    expect(hostStateCounts(rows, { now })).toEqual([['sent_back', 1], ['in_review', 1], ['live', 1], ['cancelled', 1]]);
+    expect(hostStateCounts(rows.slice(0, 3), { now, dates: true })).toEqual([['live', 2], ['cancelled', 1]]);
+    expect(hostStateCounts([], { now })).toEqual([]);
+  });
+});
+
+describe('changing a weekly class’s later dates', () => {
+  const now = new Date('2026-11-09T06:00:00Z').getTime();
+  // Mondays 16, 23, 30 Nov and 7 Dec, 6 pm IST
+  const mon = (date, over = {}) => ({ id: date, status: 'published', starts_at: istToIso(date, '18:00'), ends_at: istToIso(date, '19:30'), ...over });
+  const rows = [mon('2026-11-16'), mon('2026-11-23'), mon('2026-11-30', { status: 'cancelled' }), mon('2026-12-07', { status: 'in_review' })];
+  const from = rows[1].starts_at;
+
+  test('seriesChange: keeps what still falls on the days, adds the new days, takes off what’s past the last date', () => {
+    const c = seriesChange(rows, from, ['2026-11-23', '2026-11-26', '2026-12-03'], { now });
+    expect(c.keep.map((o) => o.id)).toEqual(['2026-11-23']);
+    expect(c.add).toEqual(['2026-11-26', '2026-12-03']);
+    expect(c.drop.map((o) => o.id)).toEqual(['2026-12-07']);
+  });
+
+  test('a cancelled week is never added back, a started date never added, and nothing moves when nothing changed', () => {
+    // opened on the 16th while it's under way (6 pm IST = 12:30 UTC)
+    const during = new Date('2026-11-16T13:00:00Z').getTime();
+    const mondays = ['2026-11-16', '2026-11-23', '2026-11-30', '2026-12-07'];
+    const c = seriesChange(rows, rows[0].starts_at, mondays, { now: during, startTime: '18:00', until: '2026-12-07', pattern: [1] });
+    expect(c.add).toEqual([]);
+    expect(c.drop).toEqual([]);
+    expect(c.keep.map((o) => o.id)).toEqual(['2026-11-23', '2026-12-07']);
+  });
+
+  test('a date moved off the pattern stays when a day is added; it goes only once it’s past the last date', () => {
+    const moved = [...rows, mon('2026-11-24', { id: 'moved' })]; // one week held on a Tuesday
+    const plus = seriesChange(moved, from, ['2026-11-23', '2026-11-26', '2026-12-03', '2026-12-07'], { now, until: '2026-12-07', pattern: [1] });
+    expect(plus.drop).toEqual([]);
+    expect(plus.add).toEqual(['2026-11-26', '2026-12-03']);
+    const shorter = seriesChange(moved, from, ['2026-11-23'], { now, until: '2026-11-23', pattern: [1] });
+    expect(shorter.drop.map((o) => o.id)).toEqual(['moved', '2026-12-07']);
+  });
+
+  test('validateRepeat for later dates: one date is enough; none is an error, never “take everything off”', () => {
+    const form = { repeat: 'weekly', startDate: '2026-11-23', weekdays: [1], untilDate: '2026-11-23' };
+    expect(validateRepeat(form, { min: 1 })).toEqual({ errors: {}, dates: ['2026-11-23'] });
+    expect(validateRepeat(form).errors.repeat).toBe('That gives only one date — choose “Once”, or more days.');
+    expect(validateRepeat({ ...form, weekdays: [] }, { min: 1 }).errors.repeat).toBe('Pick at least one day.');
+    expect(validateRepeat({ ...form, weekdays: [2] }, { min: 1 })).toEqual({ errors: { repeat: 'None of those days fall before the last date. Pick a later one.' }, dates: [] });
+    expect(seriesSummary(['2026-11-23'])).toBe('1 date · Mon 23 Nov');
   });
 });

@@ -5,7 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 import {
   getMyHost, requestToHost, updateMyHost, listMyGatherings, getMyGathering, saveGathering,
   setGatheringStatus, deleteDraft, listRsvps, setRsvpStatus, uploadImage, imageUrl,
-  createSeries, updateSeries, setSeriesStatus, deleteSeriesDrafts, uploadVideo, removeVideo, listRoomBusy,
+  createSeries, updateSeries, setSeriesStatus, deleteSeriesDrafts, uploadVideo, removeVideo, listRoomBusy, listSeries,
 } from '../../services/sanctuaryService';
 import { OFFERING_KINDS, LIMITS, IMAGE_TYPES, VIDEO_TYPES, WEEKDAYS } from '../../constants/sanctuary';
 import {
@@ -14,6 +14,7 @@ import {
   groupHostSeries, repeatLabel, weekdaysOf, weekdayOf, addDays, validateRepeat, seriesRows,
   seriesSummary, durationMinutes, durationLabel, priceLabel, seatsLabel, istToIso, parseVideoLink, elsewhere,
   withWhere, looksLikeSanctuary, roomWindow, roomClashes, busyLabel, roomTakenMessage, isoToIstParts, inHouse,
+  profileGaps, listWords, hostEventState, hostStateCounts, HOST_STATE_ORDER, seriesChange,
 } from '../../utils/sanctuary';
 import {
   DateTile, KindTag, Field, Spinner, GatheringVideo, VideoTag, useKeyboardOpen,
@@ -45,6 +46,29 @@ async function checkRoom(list) {
 
 // ── Before the dashboard ─────────────────────────────────────────────────────
 
+const WHATSAPP = 'https://wa.me/918754561269';
+
+/** The way in for a new organiser, named the same wherever it's shown. */
+const JOIN_STEPS = ['Sign in', 'Introduce yourself', 'Hear from us'];
+
+/** Where someone is on the way in: the steps behind them ticked, this one marked. `at` counts from 1. */
+function JoinSteps({ at }) {
+  return (
+    <ol className="sn-join" aria-label="Becoming an organiser">
+      {JOIN_STEPS.map((label, i) => {
+        const n = i + 1;
+        const state = n < at ? 'done' : n === at ? 'now' : 'next';
+        return (
+          <li key={label} className={`is-${state}`} aria-current={state === 'now' ? 'step' : undefined}>
+            <span className="sn-join-n" aria-hidden="true">{state === 'done' ? '✓' : n}</span>
+            <span>{label}{state === 'done' ? <span className="sr-only"> (done)</span> : null}</span>
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
+
 function SignIn() {
   // Grid areas (sanctuary.css): the invitation and its steps in column one, the
   // sign-in card in column two. On one column the card comes straight after the
@@ -61,86 +85,115 @@ function SignIn() {
 
       <ol className="sn-signin-steps" aria-label="How it works for a new organiser">
         <li><span><strong>Sign in</strong> with Google or your email.</span></li>
-        <li><span><strong>Tell us about your work.</strong> We read every request and reply personally.</span></li>
-        <li><span><strong>Send your events.</strong> Build your profile; our team looks at each event before it goes live.</span></li>
+        <li><span><strong>Introduce yourself</strong> to our team — who you are and what you’d like to hold. We read every introduction and reply personally.</span></li>
+        <li><span><strong>Hear from us.</strong> Then build your profile and send your events; our team looks at each event before it goes live.</span></li>
       </ol>
 
       <SignInCard
         sub="New, or already organising with us — it’s the same way in."
         returnPath="/sanctuary/host"
-        unavailable="Host sign-in opens very soon. Until then, message us on WhatsApp and we’ll set you up."
+        unavailable="Organiser sign-in opens very soon. Until then, message us on WhatsApp and we’ll set you up."
         fine="We only use your name and email to know who you are. You never need an account to book or order."
       />
     </div>
   );
 }
 
-/** The request form's rules: { errors, value }. */
-function validateHostDetails(form) {
-  const v = { displayName: form.displayName.trim(), phone: form.phone.trim(), link: form.link.trim(), bio: form.bio.trim() };
+/** The introduction's rules: { errors, value }. */
+export function validateIntro(form) {
+  const v = { displayName: form.displayName.trim(), intro: form.intro.trim(), link: form.link.trim(), phone: form.phone.trim() };
   const errors = {};
-  if (v.displayName.length < LIMITS.hostNameMin || v.displayName.length > LIMITS.hostNameMax) errors.displayName = 'The name people will see, 2–80 characters.';
-  if (v.phone.length > LIMITS.hostPhoneMax) errors.phone = 'That number is too long.';
+  if (v.displayName.length < LIMITS.hostNameMin || v.displayName.length > LIMITS.hostNameMax) errors.displayName = 'Your name as people will know it, 2–80 characters.';
+  if (!v.intro) errors.intro = 'Write a few lines about yourself and what you’d like to hold.';
+  else if (v.intro.length < LIMITS.introMin) errors.intro = 'A little more, please — a few lines, so we know who we’re saying yes to.';
   if (v.link && !/^https?:\/\/\S+\.\S+/i.test(v.link)) errors.link = 'A full link, starting with https://';
+  if (v.phone.length > LIMITS.hostPhoneMax) errors.phone = 'That number is too long.';
   return { errors, value: v };
 }
 
-function HostDetailsForm({ initial, submitLabel, onSubmit }) {
-  const [form, setForm] = useState({
-    displayName: initial.display_name || '', phone: initial.phone || '', link: initial.link || '', bio: initial.bio || '',
-  });
+const INTRO_FIELD_ID = { displayName: 'sn-h-name', intro: 'sn-h-intro', link: 'sn-h-link', phone: 'sn-h-phone' };
+
+/**
+ * Introduce yourself — a note to our team, not a profile. It goes to the
+ * owners (Mise OS → Sanctuary → Requests, and their inbox) and is never shown
+ * on the site; the profile is built after we've said yes.
+ */
+function IntroForm({ initialName, onSubmit }) {
+  const [form, setForm] = useState({ displayName: initialName || '', intro: '', link: '', phone: '' });
   const [failure, setFailure] = useState(null);
   const [busy, setBusy] = useState(false);
-  const { errors, blur, clear, all } = useFieldErrors(validateHostDetails, form);
+  const { errors, blur, clear, all } = useFieldErrors(validateIntro, form);
   const set = (k) => (e) => { setForm((f) => ({ ...f, [k]: e.target.value })); clear(k); };
 
   const submit = async (e) => {
     e.preventDefault();
     const { errors: errs, value: v } = all();
-    if (Object.keys(errs).length) { document.getElementById({ displayName: 'sn-h-name', phone: 'sn-h-phone', link: 'sn-h-link' }[Object.keys(errs)[0]])?.focus(); return; }
+    const first = Object.keys(INTRO_FIELD_ID).find((k) => errs[k]);
+    if (first) { document.getElementById(INTRO_FIELD_ID[first])?.focus(); return; }
     setBusy(true); setFailure(null);
-    try { await onSubmit(v); } catch (err) { setFailure(err.message || 'Could not save. Please try again.'); setBusy(false); }
+    try { await onSubmit(v); } catch (err) { setFailure(err.message || 'That didn’t send. Please try again.'); setBusy(false); }
   };
 
   return (
-    <form className="sn-form" onSubmit={submit} noValidate>
-      <Field label="Name visitors will see" error={errors.displayName} htmlFor="sn-h-name">
+    <form className="sn-form sn-intro-form" onSubmit={submit} noValidate>
+      <Field label="Your name" error={errors.displayName} hint="As people will know you on the calendar. You can change it later." htmlFor="sn-h-name">
         <input id="sn-h-name" value={form.displayName} onChange={set('displayName')} onBlur={blur('displayName')} maxLength={LIMITS.hostNameMax} autoComplete="name" />
       </Field>
-      <Field label="Phone (for us, not shown publicly)" error={errors.phone} htmlFor="sn-h-phone">
-        <input id="sn-h-phone" type="tel" value={form.phone} onChange={set('phone')} onBlur={blur('phone')} maxLength={LIMITS.hostPhoneMax} autoComplete="tel" />
+      <Field label="Your introduction" error={errors.intro} hint="Who you are, what you’d like to hold — a class, a workshop, an evening — and where you’ve held it before." htmlFor="sn-h-intro">
+        <textarea id="sn-h-intro" rows={7} value={form.intro} onChange={set('intro')} onBlur={blur('intro')} maxLength={LIMITS.introMax} />
       </Field>
-      <Field label="Website or Instagram (optional)" error={errors.link} hint="Shown on your events and profile." htmlFor="sn-h-link">
+      <Field label="Website or Instagram (optional)" error={errors.link} hint="So we can see your work." htmlFor="sn-h-link">
         <input id="sn-h-link" type="url" placeholder="https://" value={form.link} onChange={set('link')} onBlur={blur('link')} maxLength={LIMITS.linkMax} />
       </Field>
-      <Field label="About your work" hint="What you teach or hold, and how long you’ve been at it." htmlFor="sn-h-bio">
-        <textarea id="sn-h-bio" rows={5} value={form.bio} onChange={set('bio')} maxLength={LIMITS.bioMax} />
+      <Field label="Phone (optional)" error={errors.phone} hint="In case we’d like to call. Never shown on the site." htmlFor="sn-h-phone">
+        <input id="sn-h-phone" type="tel" value={form.phone} onChange={set('phone')} onBlur={blur('phone')} maxLength={LIMITS.hostPhoneMax} autoComplete="tel" />
       </Field>
       {failure && <p className="sn-failure" role="alert">{failure}</p>}
-      <button type="submit" className="btn forest sn-submit" disabled={busy}>{busy ? 'Saving…' : submitLabel} </button>
+      <button type="submit" className="btn forest sn-submit" disabled={busy}>{busy ? 'Sending…' : 'Send my introduction'}</button>
     </form>
   );
 }
 
-function StatusPanel({ host, onSignOut }) {
+/** Someone who has introduced themselves: waiting to hear, or told no / paused. */
+function StatusPanel({ host }) {
+  if (host.status === 'requested') {
+    // older requests wrote the introduction into bio (before POS 20261130000000)
+    const sent = String(host.intro || host.bio || '').trim();
+    return (
+      <div className="sn-gate">
+        <JoinSteps at={3} />
+        <h1 className="display sn-gate-h">Thank you, {host.display_name.split(' ')[0]}. Your introduction is with us.</h1>
+        <p className="lede">
+          We read every one and reply personally, usually within a few days, by email{host.phone ? ' or phone' : ''}.
+          Once we’ve said yes, this is where you build your profile and send your first event.
+        </p>
+        <section className="sn-yours" aria-labelledby="sn-yours-h">
+          <h2 id="sn-yours-h" className="sn-yours-h">What you sent</h2>
+          {sent && <p className="sn-yours-intro">{sent}</p>}
+          <dl className="sn-facts">
+            <div><dt>Name</dt><dd>{host.display_name}</dd></div>
+            {host.email && <div><dt>Email</dt><dd>{host.email}</dd></div>}
+            {host.phone && <div><dt>Phone</dt><dd>{host.phone}</dd></div>}
+            {host.link && <div><dt>Link</dt><dd>{host.link}</dd></div>}
+          </dl>
+        </section>
+        <div className="sn-gate-actions">
+          <a className="btn" href={WHATSAPP} target="_blank" rel="noopener noreferrer">Message us on WhatsApp ↗</a>
+        </div>
+      </div>
+    );
+  }
   const copy = {
-    requested: ['Thank you — we’ll be in touch.', 'Your request is with us. We usually reply within a few days, by phone or email. You’ll be able to send events to the calendar here as soon as we’ve said yes.'],
     declined: ['We can’t take this on right now.', 'Thank you for reaching out. If things change on either side, write to us.'],
-    paused: ['Your profile is paused.', 'Your events are hidden from the calendar for now. Message us to pick things back up.'],
-  }[host.status];
+    paused: ['Your organising is paused.', 'Your profile and events are hidden from the calendar for now. Message us to pick things back up.'],
+  }[host.status] || ['Something’s not right with your organiser account.', 'Message us and we’ll sort it out.'];
   return (
     <div className="sn-gate">
       <h1 className="display sn-gate-h">{copy[0]}</h1>
       <p className="lede">{copy[1]}</p>
       {host.decision_note && <blockquote className="sn-note">{host.decision_note}</blockquote>}
-      <dl className="sn-facts">
-        <div><dt>Name</dt><dd>{host.display_name}</dd></div>
-        {host.email && <div><dt>Email</dt><dd>{host.email}</dd></div>}
-        {host.link && <div><dt>Link</dt><dd>{host.link}</dd></div>}
-      </dl>
       <div className="sn-gate-actions">
-        <a className="btn" href="https://wa.me/918754561269" target="_blank" rel="noopener noreferrer">WhatsApp us</a>
-        <button className="sn-act" onClick={onSignOut}>Sign out</button>
+        <a className="btn" href={WHATSAPP} target="_blank" rel="noopener noreferrer">Message us on WhatsApp ↗</a>
       </div>
     </div>
   );
@@ -186,39 +239,82 @@ function RowActs({ main, more }) {
   );
 }
 
-const sentBack = (o) => o.status === 'draft' && Boolean(o.review_note);
-const statusWord = (o, past) => (sentBack(o) ? 'Sent back'
-  : { draft: 'Draft', in_review: 'In review', published: past ? 'Done' : 'Live', cancelled: 'Cancelled' }[o.status] || o.status);
+/**
+ * Where an event stands (hostEventState), in the organiser's words: the chip
+ * on its row; `n` words a count of a weekly class's dates; `group` and `hint`
+ * head its part of Upcoming. The words match the mails our team's review
+ * sends ("approved", "we'd like a change").
+ */
+const STATE = {
+  sent_back: { word: 'Sent back', n: (k) => `${k} sent back`, group: 'Sent back to you', hint: 'Make the change in our team’s note, then send it again.' },
+  now: { word: 'Happening now', n: (k) => `${k} happening now`, group: 'Happening now', hint: '' },
+  in_review: { word: 'In review', n: (k) => `${k} in review`, group: 'Waiting for our team', hint: 'You’ll hear by email.' },
+  live: { word: 'Approved', n: (k) => `${k} approved`, group: 'Approved', hint: 'On the calendar. Guests can book.' },
+  draft: { word: 'Draft', n: (k) => `${k} ${k === 1 ? 'draft' : 'drafts'}`, group: 'Drafts', hint: 'Only you can see these.' },
+  expired: { word: 'Date passed', n: (k) => `${k} past the date`, group: 'Date passed', hint: 'Never went live. Change the date to send it again.' },
+  cancelled: { word: 'Cancelled', n: (k) => `${k} cancelled`, group: 'Cancelled', hint: '' },
+  done: { word: 'Held', n: (k) => `${k} held`, group: 'Held', hint: '' },
+};
+
+/** The line under a row's time: when it was approved, sent, sent back — or why it can't go live. */
+function stateLine(o, s) {
+  if (s === 'live' || s === 'now') {
+    const since = o.reviewed_at ? `On the calendar since ${formatDay(o.reviewed_at)}` : '';
+    const line = [since, o.edited_after_review && 'changed since approval'].filter(Boolean).join(' · ');
+    return line ? line[0].toUpperCase() + line.slice(1) : null;
+  }
+  if (s === 'in_review') {
+    // a review_note left on an event in review means it was sent back once, and sent again
+    const sent = o.review_note ? 'Sent again' : 'Sent for review';
+    return `${sent}${o.submitted_at ? ` ${formatDay(o.submitted_at)}` : ''} · you’ll hear by email`;
+  }
+  if (s === 'sent_back') return o.reviewed_at ? `Sent back ${formatDay(o.reviewed_at)}` : null;
+  if (s === 'expired') return o.status === 'in_review' ? 'Its date came before our team could approve it.' : 'Its date has come, so it can’t go live.';
+  return null;
+}
 
 /** One event on the organiser's dashboard, with its actions. */
 function HostRow({ o, taken, copied, onCopy, act, nested = false }) {
   const t = taken[o.id] || 0;
   const past = isPast(o);
+  const s = hostEventState(o);
+  const editTo = `/sanctuary/host/edit/${o.id}`;
+  // the title opens what the row already offers: a published event's own page
+  // (its owner strip has Edit and guests), or the editor for one not live yet
+  const titleTo = o.status === 'published' ? `/sanctuary/${o.id}`
+    : o.status === 'draft' || o.status === 'in_review' ? editTo : null;
+  const line = stateLine(o, s);
   return (
-    <li className={`sn-hrow st-${o.status}${nested ? ' nested' : ''}`}>
+    <li className={`sn-hrow st-${s}${nested ? ' nested' : ''}`}>
       <DateTile iso={o.starts_at} small />
       <div className="sn-hrow-main">
         <div className="sn-hrow-tags">
           {!nested && <KindTag kind={o.kind} />}
-          <span className={`sn-status st-${sentBack(o) ? 'sent-back' : o.status}`}>{statusWord(o, past)}</span>
-          {o.status === 'published' && o.edited_after_review && <span className="sn-hrow-flag">Changed since approval</span>}
+          <span className={`sn-status st-${s}`}>{STATE[s].word}</span>
         </div>
-        {!nested && <span className="sn-row-title">{o.title}</span>}
+        {!nested && (titleTo
+          ? <Link className="sn-row-title sn-hrow-title" to={titleTo}>{o.title}</Link>
+          : <span className="sn-row-title">{o.title}</span>)}
         <span className="sn-row-meta">
           {formatWhen(o.starts_at, o.ends_at)}
           {elsewhere(o.location) ? <> · {elsewhere(o.location)}</> : null}
           {o.status === 'published' || o.status === 'cancelled' ? <> · {o.capacity ? `${t} of ${o.capacity} reserved` : `${t} reserved`}</> : null}
         </span>
-        {sentBack(o) && <span className="sn-hrow-note">Sent back: “{o.review_note}” Change what’s needed and submit again.</span>}
-        {o.status === 'in_review' && <span className="sn-hrow-note quiet">Waiting for our team to look at it. You’ll hear by email.</span>}
+        {line && <span className="sn-hrow-state">{line}</span>}
+        {s === 'sent_back' && (
+          <p className="sn-hrow-note">{o.review_note ? <>Our team’s note: “{o.review_note}”</> : 'Our team would like a change before it goes on the calendar.'}</p>
+        )}
       </div>
       <RowActs
         main={<>
-          {o.status === 'draft' && canPublish(o) && (
-            <button className="sn-act strong" onClick={() => act(async () => { await checkRoom([o]); await setGatheringStatus(o.id, 'in_review'); }, 'Sent for review. You’ll hear by email when it’s live.')}>Send for review</button>
+          {s === 'sent_back' && <Link className="sn-act strong" to={editTo}>Make changes</Link>}
+          {s === 'expired' && <Link className="sn-act strong" to={editTo}>Change the date</Link>}
+          {(s === 'draft' || s === 'sent_back') && canPublish(o) && (
+            // a sent-back event: changed (and saved as a draft), it goes back from here
+            <button className={`sn-act${s === 'draft' ? ' strong' : ''}`} onClick={() => act(async () => { await checkRoom([o]); await setGatheringStatus(o.id, 'in_review'); }, 'Sent for review. You’ll hear by email when it’s live.')}>{s === 'sent_back' ? 'Send again' : 'Send for review'}</button>
           )}
           {(o.status === 'published' || o.status === 'cancelled') && <Link className="sn-act" to={`/sanctuary/host/rsvps/${o.id}`}>See guests ({t})</Link>}
-          {!past && o.status !== 'cancelled' && <Link className="sn-act" to={`/sanctuary/host/edit/${o.id}`}>Edit</Link>}
+          {(s === 'draft' || s === 'in_review' || s === 'live' || s === 'now') && <Link className="sn-act" to={editTo}>Edit</Link>}
         </>}
         more={[
           o.status === 'in_review' && (
@@ -244,36 +340,46 @@ function HostRow({ o, taken, copied, onCopy, act, nested = false }) {
 }
 
 /** A weekly series as one entry; its dates open underneath. */
-function SeriesGroup({ rows, tab, taken, copied, onCopy, act }) {
+function SeriesGroup({ rows, taken, copied, onCopy, act }) {
   const [open, setOpen] = useState(false);
-  const first = rows[0];
+  // where its dates stand, most urgent first: one word when they agree, counts when they don't
+  const states = hostStateCounts(rows, { dates: true });
+  const lead = states[0][0];
+  // the next date that's still on, not a cancelled one
+  const first = rows.find((o) => o.status !== 'cancelled') || rows[0];
   const booked = rows.reduce((n, o) => n + (taken[o.id] || 0), 0);
   const live = rows.filter((o) => o.status === 'published' && !isPast(o));
+  const drafts = rows.filter((o) => o.status === 'draft');
+  const note = rows.find((o) => o.review_note && hostEventState(o) === 'sent_back')?.review_note;
   return (
     <li className="sn-hseries">
-      <div className={`sn-hrow st-${first.status}`}>
+      <div className={`sn-hrow st-${lead}`}>
         <DateTile iso={first.starts_at} small />
         <div className="sn-hrow-main">
           <div className="sn-hrow-tags">
             <KindTag kind={first.kind} />
             <span className="sn-repeat">{repeatLabel(weekdaysOf(rows))}</span>
+            {states.length === 1
+              ? <span className={`sn-status st-${lead}`}>{STATE[lead].word}</span>
+              : states.map(([s, k]) => <span key={s} className={`sn-status st-${s}`}>{STATE[s].n(k)}</span>)}
           </div>
           <span className="sn-row-title">{first.title}</span>
           <span className="sn-row-meta">
-            {rows.length} dates · next {formatWhen(first.starts_at, first.ends_at)} · {booked} reserved
+            {rows.length} dates · next {formatWhen(first.starts_at, first.ends_at)}{live.length ? ` · ${booked} reserved` : ''}
           </span>
+          {note && <p className="sn-hrow-note">Our team’s note: “{note}”</p>}
         </div>
         <div className="sn-hrow-acts">
           <button className="sn-act" aria-expanded={open} onClick={() => setOpen((v) => !v)}>{open ? 'Hide dates' : 'Show dates'}</button>
-          {tab !== 'past' && <Link className="sn-act" to={`/sanctuary/host/edit/${first.id}`} state={{ scope: 'following' }}>Edit all</Link>}
-          {tab === 'drafts' && (
-            <button className="sn-act strong" onClick={() => act(async () => { await checkRoom(rows.filter((r) => r.status === 'draft')); await setSeriesStatus(first.series_id, 'draft', 'in_review'); }, 'All dates sent for review. You’ll hear by email when they’re live.')}>Send all for review</button>
+          <Link className="sn-act" to={`/sanctuary/host/edit/${(rows.find((o) => o.status !== 'cancelled' && canPublish(o)) || first).id}`} state={{ scope: 'following' }}>Edit dates and details</Link>
+          {drafts.some(canPublish) && (
+            <button className="sn-act strong" onClick={() => act(async () => { await checkRoom(drafts); await setSeriesStatus(first.series_id, 'draft', 'in_review'); }, 'All dates sent for review. You’ll hear by email when they’re live.')}>Send all for review</button>
           )}
-          {tab === 'drafts' && (
+          {drafts.length > 0 && (
             <ConfirmButton title={`Delete every draft date of “${first.title}”?`} confirmLabel="Delete drafts" body="Dates already on the calendar stay. The drafts are gone for good."
-              onConfirm={() => act(() => deleteSeriesDrafts(first.series_id))}>Delete all</ConfirmButton>
+              onConfirm={() => act(() => deleteSeriesDrafts(first.series_id))}>Delete drafts</ConfirmButton>
           )}
-          {tab === 'upcoming' && live.length > 0 && (
+          {live.length > 0 && (
             <ConfirmButton title={`Cancel all ${live.length} dates of “${first.title}”?`} confirmLabel={`Cancel ${live.length} dates`} keepLabel="Keep them on"
               body={booked ? `${booked} ${booked === 1 ? 'place is' : 'places are'} booked across them; everyone who gave an email hears it’s off. This can’t be undone.` : 'They come off the calendar. This can’t be undone.'}
               onConfirm={() => act(() => setSeriesStatus(first.series_id, 'published', 'cancelled'))}>Cancel all</ConfirmButton>
@@ -303,14 +409,59 @@ function Pager({ page, size, total, onPage, label }) {
   );
 }
 
+/**
+ * A new organiser's first steps, until both are done: a profile people can
+ * picture (profileGaps — the same list their own profile page names), and a
+ * first event. The next step to take is the one primary button.
+ */
+function GetStarted({ gaps, hasEvents }) {
+  const profileDone = gaps.length === 0;
+  const steps = [
+    {
+      key: 'profile', done: profileDone, title: 'Build your profile',
+      text: profileDone ? 'Done — it’s what people see when they tap your name.' : `Add ${listWords(gaps)}. People book people they can picture.`,
+      to: '/sanctuary/host/profile', go: profileDone ? 'Edit your profile' : 'Build your profile',
+    },
+    {
+      key: 'event', done: hasEvents, title: 'Create your first event',
+      text: hasEvents ? 'Done — you’ll find it below.' : 'Our team looks at each event before it goes live; you’ll hear by email.',
+      to: '/sanctuary/host/new', go: 'Create an event',
+    },
+  ];
+  const next = steps.find((x) => !x.done)?.key;
+  return (
+    <section className="sn-setup" aria-labelledby="sn-setup-h">
+      <h2 id="sn-setup-h" className="sn-setup-h">{hasEvents ? 'Finish your profile' : 'Get ready for your first event'}</h2>
+      <ol className="sn-setup-list">
+        <li className="is-done">
+          <span className="sn-setup-mark" aria-hidden="true">✓</span>
+          <div className="sn-setup-text"><strong>You’re approved</strong><span>Welcome to the Sanctuary.</span></div>
+        </li>
+        {steps.map((x) => (
+          <li key={x.key} className={x.done ? 'is-done' : ''}>
+            <span className="sn-setup-mark" aria-hidden="true">{x.done ? '✓' : ''}</span>
+            <div className="sn-setup-text">
+              <strong>{x.title}{x.done ? <span className="sr-only"> (done)</span> : null}</strong>
+              <span>{x.text}</span>
+            </div>
+            {!x.done && <Link className={`btn${x.key === next ? ' forest' : ''}`} to={x.to}>{x.go}</Link>}
+          </li>
+        ))}
+      </ol>
+    </section>
+  );
+}
+
 const DASH_PAGE = 20;
 const GUEST_PAGE = 50;
 
-function Dashboard({ host, onSignOut }) {
+function Dashboard({ host }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [rows, setRows] = useState(null);
   const [taken, setTaken] = useState({});
+  // Upcoming holds everything not over yet — live, waiting, drafts, sent back —
+  // in parts by where it stands, so nothing hides behind another tab
   const [tab, setTab] = useState('upcoming');
   const [failure, setFailure] = useState(null);
   const [notice, setNotice] = useState(location.state?.notice || null);
@@ -335,7 +486,10 @@ function Dashboard({ host, onSignOut }) {
   useEffect(() => { load(); }, [load]);
   useEffect(() => { setPage(0); }, [tab, query]);
 
-  const split = useMemo(() => splitHostOfferings(rows || []), [rows]);
+  const split = useMemo(() => {
+    const { upcoming, drafts, past } = splitHostOfferings(rows || []);
+    return { upcoming: [...upcoming, ...drafts].sort((a, b) => new Date(a.starts_at) - new Date(b.starts_at)), past };
+  }, [rows]);
   const act = async (fn, done) => {
     setFailure(null); setNotice(null);
     try { await fn(); await load(); if (done) setNotice(done); } catch (e) { setFailure(e.message || 'That didn’t work. Please try again.'); }
@@ -345,15 +499,34 @@ function Dashboard({ host, onSignOut }) {
     try { await navigator.clipboard.writeText(url); setCopied(id); setTimeout(() => setCopied(null), 2000); } catch { window.prompt('Copy this link', url); }
   };
 
-  const TABS = [['upcoming', 'Upcoming'], ['drafts', 'Drafts'], ['past', 'Past']];
+  const TABS = [['upcoming', 'Upcoming'], ['past', 'Past']];
   const q = query.trim().toLowerCase();
   const list = useMemo(() => split[tab].filter((o) => !q || `${o.title} ${o.location}`.toLowerCase().includes(q)), [split, tab, q]);
-  // Past stays date by date; upcoming and drafts show a weekly class once.
-  const entries = useMemo(() => (tab === 'past' ? list.map((o) => ({ key: o.id, row: o })) : groupHostSeries(list)), [list, tab]);
+  // Past stays date by date. Upcoming shows a weekly class once, in parts by
+  // where each stands, most urgent first (a series by its most urgent date);
+  // within a part, soonest first.
+  const entries = useMemo(() => {
+    if (tab === 'past') return list.map((o) => ({ key: o.id, row: o }));
+    const rank = (e) => HOST_STATE_ORDER.indexOf(e.group);
+    return groupHostSeries(list)
+      .map((e) => ({ ...e, group: e.series ? hostStateCounts(e.series, { dates: true })[0][0] : hostEventState(e.row) }))
+      .sort((a, b) => rank(a) - rank(b));
+  }, [list, tab]);
   const shown = entries.slice(page * DASH_PAGE, (page + 1) * DASH_PAGE);
+  const parts = [];
+  for (const e of shown) {
+    const last = parts[parts.length - 1];
+    if (last && last.group === e.group) last.entries.push(e);
+    else parts.push({ group: e.group, entries: [e] });
+  }
+  const partSize = (g) => entries.filter((e) => e.group === g).length;
   const shared = { taken, copied, onCopy: copyLink, act };
   const count = (k) => (rows ? (k === 'past' ? split[k].length : groupHostSeries(split[k]).length) : '–');
-  const thinProfile = !host.avatar_path || !String(host.bio || '').trim();
+  const gaps = profileGaps(host);
+  // a new organiser's checklist; before their first event, while it says "build your
+  // profile" next, that's the page's one primary button
+  const setup = Boolean(rows) && (gaps.length > 0 || rows.length === 0);
+  const profileFirst = setup && gaps.length > 0 && rows.length === 0;
 
   return (
     <div className="sn-dash">
@@ -362,11 +535,10 @@ function Dashboard({ host, onSignOut }) {
           <h1 className="display sn-dash-h">Welcome, {host.display_name.split(' ')[0]}</h1>
         </div>
         <div className="sn-dash-tools">
-          <button className="btn forest" onClick={() => navigate('/sanctuary/host/new')}>Create an event</button>
+          <button className={`btn${profileFirst ? '' : ' forest'}`} onClick={() => navigate('/sanctuary/host/new')}>Create an event</button>
           <div className="sn-dash-links">
             <Link className="sn-act" to="/sanctuary/host/profile">Edit your profile</Link>
             <Link className="sn-act" to={`/sanctuary/hosts/${host.user_id}`}>Visit your profile</Link>
-            <button className="sn-act" onClick={onSignOut}>Sign out</button>
           </div>
         </div>
       </div>
@@ -377,12 +549,7 @@ function Dashboard({ host, onSignOut }) {
           <button type="button" className="sn-act" onClick={() => setNotice(null)}>Dismiss</button>
         </p>
       )}
-      {thinProfile && (
-        <div className="sn-nudge">
-          <p><strong>Finish your profile.</strong> Add a photo and a few lines about your work — people book people they can picture.</p>
-          <Link className="btn" to="/sanctuary/host/profile">Edit your profile</Link>
-        </div>
-      )}
+      {setup && <GetStarted gaps={gaps} hasEvents={rows.length > 0} />}
 
       <div className="sn-dash-bar">
         <div className="sn-filters" role="tablist" aria-label="Your events" onKeyDown={onRadioKeys}>
@@ -411,18 +578,32 @@ function Dashboard({ host, onSignOut }) {
             </div>
           ) : (
             <div className="sn-empty sn-empty-in">
-              <p className="sn-empty-h">{{ upcoming: 'Nothing coming up yet.', drafts: 'No drafts or events in review.', past: 'Nothing in the past yet.' }[tab]}</p>
-              <p>{tab === 'past' ? 'Events you’ve held land here once they’re over.' : 'Create an event and send it for review — once it’s approved it goes on the calendar.'}</p>
-              {tab !== 'past' && <button className="btn" onClick={() => navigate('/sanctuary/host/new')}>Create an event</button>}
+              <p className="sn-empty-h">{tab === 'past' ? 'Nothing in the past yet.' : 'Nothing coming up yet.'}</p>
+              <p>{tab === 'past'
+                ? 'Events you’ve held land here once they’re over.'
+                : 'Create an event and send it for review. Drafts, events waiting for our team and approved ones all show here.'}</p>
+              {tab !== 'past' && !setup && <button className="btn" onClick={() => navigate('/sanctuary/host/new')}>Create an event</button>}
             </div>
           )
-        ) : (
+        ) : tab === 'past' ? (
           <ul className="sn-hlist">
-            {shown.map((e) => (e.series
-              ? <SeriesGroup key={e.key} rows={e.series} tab={tab} {...shared} />
-              : <HostRow key={e.key} o={e.row} {...shared} />))}
+            {shown.map((e) => <HostRow key={e.key} o={e.row} {...shared} />)}
           </ul>
-        )}
+        ) : parts.map(({ group, entries: part }) => (
+          <section key={group} className={`sn-part st-${group}`} aria-labelledby={`sn-part-${group}`}>
+            <div className="sn-part-head">
+              <h2 id={`sn-part-${group}`} className="sn-part-h">
+                {STATE[group].group}<span className="sn-part-n">{partSize(group)}</span>
+              </h2>
+              {STATE[group].hint && <p className="sn-part-hint">{STATE[group].hint}</p>}
+            </div>
+            <ul className="sn-hlist">
+              {part.map((e) => (e.series
+                ? <SeriesGroup key={e.key} rows={e.series} {...shared} />
+                : <HostRow key={e.key} o={e.row} {...shared} />))}
+            </ul>
+          </section>
+        ))}
         {rows && <Pager page={page} size={DASH_PAGE} total={entries.length} onPage={setPage} label="Pages of your events" />}
       </div>
     </div>
@@ -436,6 +617,36 @@ const placeLine = (h) => [h.place_name, h.place_address].filter(Boolean).join(',
 
 // A new gathering happens once unless the host says otherwise.
 const NO_REPEAT = { repeat: 'once', weekdays: [], untilDate: '' };
+
+/**
+ * A weekly class from `row` on, as the editor's days and last date. The days
+ * are its pattern — weekdays it meets on more than once, so one date moved to
+ * another day doesn't become a whole new weekday (every weekday when none repeats).
+ */
+function laterDays(dates, row) {
+  const later = dates.filter((o) => o.status !== 'cancelled' && new Date(o.starts_at) >= new Date(row.starts_at));
+  const list = later.length ? later : [row];
+  const days = list.map((o) => weekdayOf(isoToIstParts(o.starts_at).date));
+  const repeated = [...new Set(days.filter((d, i) => days.indexOf(d) !== i))];
+  return { weekdays: repeated.length ? repeated : [...new Set(days)], untilDate: isoToIstParts(list[list.length - 1].starts_at).date };
+}
+const sameDays = (a, b) => a.length === b.length && a.every((d) => b.includes(d));
+
+/** 'Mon 1 Dec, Mon 8 Dec and 3 more' — from 'YYYY-MM-DD' dates. */
+const daysWords = (dates, max = 4) => {
+  const days = dates.slice(0, max).map((d) => formatDay(istToIso(d, '12:00')));
+  return dates.length > max ? `${days.join(', ')} and ${dates.length - max} more` : listWords(days);
+};
+const dayOfRow = (o) => isoToIstParts(o.starts_at).date;
+const datesWord = (n) => (n === 1 ? '1 date' : `${n} dates`);
+
+/** A date taken off a weekly class: a live one is cancelled (its guests hear); the rest go. */
+async function takeOff(o) {
+  if (o.status === 'published') { await setGatheringStatus(o.id, 'cancelled'); return; }
+  // only a draft can be deleted: one waiting for review steps back to draft first
+  if (o.status === 'in_review') await setGatheringStatus(o.id, 'draft');
+  await deleteDraft(o.id);
+}
 
 // One line under each kind, so a host can tell them apart before choosing.
 const KIND_HINTS = {
@@ -577,6 +788,44 @@ function Preview({ value, hostName, repeat, more, editing }) {
   );
 }
 
+/**
+ * A weekly class's dates from here on, with what the new days or last date
+ * change: dates added (new ones go to our team first, unless it's all drafts)
+ * and dates taken off (anyone booked hears it's off).
+ */
+function LaterDates({ check, plan, weekdays, addStatus, booked, current }) {
+  // as it is, until the days or the last date change
+  if (!check) {
+    return (
+      <>
+        <div className="sn-repeat-preview" aria-live="polite">
+          <p><strong>{repeatLabel(weekdays)}</strong>, {seriesSummary(current)}.</p>
+          <p>The dates stay as they are.</p>
+        </div>
+        <ul className="sn-series-dates" aria-label="The dates">{current.map((d) => <li key={d}>{formatDay(istToIso(d, '12:00'))}</li>)}</ul>
+      </>
+    );
+  }
+  if (!plan) return <p className="sn-repeat-preview" aria-live="polite">{check.errors.repeat}</p>;
+  const added = new Set(plan.add);
+  const n = check.dates.length;
+  return (
+    <>
+      <div className="sn-repeat-preview" aria-live="polite">
+        <p><strong>{repeatLabel(weekdays)}</strong>, {seriesSummary(check.dates)}.</p>
+        {plan.add.length > 0 && <p>Adds {daysWords(plan.add)}{addStatus === 'draft' ? '.' : ' — new dates go to our team before they’re on the calendar.'}</p>}
+        {plan.drop.length > 0 && <p>Takes off {daysWords(plan.drop.map(dayOfRow))}{booked ? ` — ${booked} booked on ${plan.drop.length === 1 ? 'it' : 'them'} will hear it’s off` : ''}.</p>}
+        {!plan.add.length && !plan.drop.length && <p>The dates stay as they are.</p>}
+      </div>
+      <ul className="sn-series-dates" aria-label={`The ${n === 1 ? 'date' : 'dates'}`}>
+        {check.dates.map((d) => (
+          <li key={d}>{formatDay(istToIso(d, '12:00'))}{added.has(d) && <span className="sn-new"> new</span>}</li>
+        ))}
+      </ul>
+    </>
+  );
+}
+
 function Editor({ userId, hostName, place = '' }) {
   const { gid } = useParams();
   const location = useLocation();
@@ -588,6 +837,8 @@ function Editor({ userId, hostName, place = '' }) {
   // Editing one date of a weekly series: just it, or it and every later date.
   const [scope, setScope] = useState(location.state?.scope === 'following' ? 'following' : 'one');
   const [original, setOriginal] = useState(null);
+  // a weekly class's dates and who's booked on them — for changing its later dates
+  const [series, setSeries] = useState(null);
   const [errors, setErrors] = useState({});
   const [failure, setFailure] = useState(null);
   const [busy, setBusy] = useState(false);
@@ -610,10 +861,22 @@ function Editor({ userId, hostName, place = '' }) {
     const src = gid || duplicateOf;
     if (!src) return;
     if (!isUuid(src)) { navigate('/sanctuary/host', { replace: true }); return; }
-    getMyGathering(src).then((row) => {
+    getMyGathering(src).then(async (row) => {
       if (!row) { navigate('/sanctuary/host', { replace: true }); return; }
       // every form carries the repeat fields, so nothing that reads them (goToError) meets undefined
-      if (gid) { setOriginal(row); setForm({ ...offeringToForm(row), ...NO_REPEAT }); } else { setForm({ ...duplicateForm(row), ...NO_REPEAT }); }
+      if (!gid) { setForm({ ...duplicateForm(row), ...NO_REPEAT }); return; }
+      // A weekly class: its days and last date from this date on, in the same first
+      // form (so opening it never reads as unsaved changes). If they don't load,
+      // "This and later dates" still changes the details, just not the dates.
+      let later = {};
+      if (row.series_id) {
+        try {
+          const [dates, rsvps] = await Promise.all([listSeries(row.series_id), listRsvps()]);
+          later = laterDays(dates, row);
+          setSeries({ rows: dates, taken: seatsTaken(rsvps), opened: later });
+        } catch { /* details only */ }
+      }
+      setOriginal(row); setForm({ ...offeringToForm(row), ...NO_REPEAT, ...later });
     }).catch((e) => setFailure(e.message));
   }, [gid, duplicateOf, navigate]);
 
@@ -684,7 +947,7 @@ function Editor({ userId, hostName, place = '' }) {
   };
   /** Check one field when it's left (blur-first); typing clears it again (update). */
   const blurCheck = (k) => () => {
-    const errs = { ...validateOffering(form).errors, ...(form.repeat === 'weekly' && !gid ? validateRepeat(form).errors : {}) };
+    const errs = { ...validateOffering(form).errors, ...(form.repeat === 'weekly' && !gid ? validateRepeat(form).errors : {}), ...(laterCheck ? laterCheck.errors : {}) };
     setErrors((e) => (e[k] === errs[k] ? e : { ...e, [k]: errs[k] }));
   };
 
@@ -713,6 +976,18 @@ function Editor({ userId, hostName, place = '' }) {
   const duration = durationLabel(value.starts_at, value.ends_at);
   const endsEarly = Boolean(value.starts_at && value.ends_at && !duration);
   const mine = gid ? [gid] : [];
+  // "This and later dates" of a weekly class: its days and last date, and what they change
+  // Untouched days and last date mean details only: the dates are never re-worked
+  // just because the class was opened.
+  const fromDate = original ? isoToIstParts(original.starts_at).date : '';
+  const showLater = Boolean(following && series);
+  const datesChanged = showLater && (!sameDays(form.weekdays, series.opened.weekdays) || form.untilDate !== series.opened.untilDate);
+  const laterCheck = datesChanged ? validateRepeat({ ...form, repeat: 'weekly', startDate: fromDate }, { min: 1 }) : null;
+  const changeOf = (rows) => seriesChange(rows, original.starts_at, laterCheck.dates, { startTime: form.startTime, until: form.untilDate, pattern: series.opened.weekdays });
+  const plan = laterCheck && !laterCheck.errors.repeat ? changeOf(series.rows) : null;
+  const addStatus = original?.status === 'draft' ? 'draft' : 'in_review';
+  const dropping = plan ? plan.drop : [];
+  const dropBooked = dropping.reduce((n, o) => n + (series.taken[o.id] || 0), 0);
   const room = roomState.key === roomKey ? roomState : { rows: null, failed: false };
   const clashes = room.rows ? roomClashes(room.rows, wanted, mine) : { taken: [], held: [] };
 
@@ -724,6 +999,14 @@ function Editor({ userId, hostName, place = '' }) {
       weekdays: form.weekdays.length ? form.weekdays : (wd === null ? [] : [wd]),
       untilDate: form.untilDate || (form.startDate ? addDays(form.startDate, 49) : ''),
     });
+  };
+  // the later dates run from this date: undo a date moved under "This date only"
+  const pickScope = (v) => {
+    setScope(v);
+    if (v === 'following' && original) {
+      const o = offeringToForm(original);
+      update({ startDate: o.startDate, endDate: o.endDate });
+    }
   };
   const toggleDay = (v) => update({ weekdays: form.weekdays.includes(v) ? form.weekdays.filter((d) => d !== v) : [...form.weekdays, v] });
   const oneDay = () => { setMultiDay(false); update({ endDate: '' }); };
@@ -795,14 +1078,25 @@ function Editor({ userId, hostName, place = '' }) {
     const { errors: errs, value: row0 } = validateOffering(form);
     const rep = weekly ? validateRepeat(form) : { errors: {}, dates: [] };
     Object.assign(errs, rep.errors);
+    if (laterCheck) Object.assign(errs, laterCheck.errors);
     if (status === 'in_review' && row0.starts_at && !canPublish(row0)) errs.start = 'That time has already passed.';
     setFailure(null);
     if (Object.keys(errs).length) { setErrors(errs); goToError(errs); return; }
     setBusy(true);
+    // New days for a weekly class: what to add and take off, worked out from the
+    // dates as they are now — a retry after a half-finished save mustn't add twice.
+    const fromForm = { ...form, startDate: fromDate };
+    let change = null;
+    if (laterCheck) {
+      try { change = changeOf(await listSeries(original.series_id)); } catch (err) {
+        setFailure(err.message || 'Could not save. Please try again.'); setBusy(false); return;
+      }
+    }
     // One room: a time that's taken by a live event can't be approved, so say so now.
     // Asked fresh, not from what's on screen; the database checks again on approval.
-    if (row0.at_sanctuary && status !== 'draft' && !following) {
-      const times = weekly ? seriesRows(form, row0, rep.dates, null) : [row0];
+    const times = following ? (change && addStatus !== 'draft' ? seriesRows(fromForm, row0, change.add, null) : [])
+      : status === 'draft' ? [] : weekly ? seriesRows(form, row0, rep.dates, null) : [row0];
+    if (row0.at_sanctuary && times.length) {
       const w = roomWindow(times);
       try {
         const { taken } = roomClashes(await listRoomBusy(w.from, w.to), times, mine);
@@ -817,7 +1111,10 @@ function Editor({ userId, hostName, place = '' }) {
     const row = { ...row0, ...(status ? { status } : {}) };
     try {
       if (following) {
+        // new dates first, then every later date's details; taking dates off can't be undone, so last
+        if (change?.add.length) await createSeries(userId, seriesRows(fromForm, { ...row0, status: addStatus }, change.add, original.series_id));
         await updateSeries(original.series_id, original.starts_at, row0, form.startTime, durationMinutes(row0));
+        for (const o of change?.drop || []) await takeOff(o);
       } else if (weekly) {
         await createSeries(userId, seriesRows(form, row, rep.dates, crypto.randomUUID()));
       } else {
@@ -827,10 +1124,16 @@ function Editor({ userId, hostName, place = '' }) {
       if (form.videoPath && row0.video_path !== form.videoPath) dropClip(form.videoPath);
       savedOk.current = true;
       try { localStorage.removeItem(draftKey); } catch { /* fine */ }
-      const notice = following ? 'Every later date is updated.'
+      // where the event now stands: what was asked for, or (a save of a live or
+      // in-review event, or of its later dates) what it already was
+      const now = status || original?.status;
+      const added = change?.add.length ? `${datesWord(change.add.length)} added${addStatus === 'draft' ? '' : ' — new dates go live once our team approves them'}.` : '';
+      const dropped = change?.drop.length ? `${datesWord(change.drop.length)} taken off.` : '';
+      const notice = following ? ['Every later date is updated.', added, dropped].filter(Boolean).join(' ')
         : status === 'in_review' ? (weekly ? 'All dates sent for review. You’ll hear by email when they’re live.' : 'Sent for review. You’ll hear by email when it’s live.')
           : status === 'draft' ? 'Saved as a draft. Only you can see it.'
-            : 'Changes saved. They’re live now.';
+            : now === 'in_review' ? 'Changes saved. It goes live once our team approves it.'
+              : 'Changes saved. They’re live now.';
       navigate('/sanctuary/host', { state: { notice } });
     } catch (err) {
       // 23P01: two saves raced for the same time and the other one won
@@ -843,10 +1146,10 @@ function Editor({ userId, hostName, place = '' }) {
 
   const errorCount = Object.keys(errors).length;
   const missing = [!value.title && 'a title', !value.starts_at && 'a date'].filter(Boolean);
-  const heading = following ? 'Edit every later date' : gid ? 'Edit event' : duplicateOf ? 'Duplicate event' : 'New event';
+  const heading = following ? 'Edit this and later dates' : gid ? 'Edit event' : duplicateOf ? 'Duplicate event' : 'New event';
   const inReview = original?.status === 'in_review';
   const sideNote = following
-    ? 'Saving updates every later date in this series.'
+    ? 'Saving updates this date and every later one.'
     : isPublished
       ? 'This is live. Your changes show straight away; our team may take another look.'
       : inReview
@@ -875,7 +1178,7 @@ function Editor({ userId, hostName, place = '' }) {
           <div className="sn-sentback" role="note">
             <span className="sn-label">Sent back for changes</span>
             <p>“{original.review_note}”</p>
-            <span className="sn-hint">Change what’s needed, then submit it again.</span>
+            <span className="sn-hint">Change what’s needed, then send it for review again.</span>
           </div>
         )}
         {inSeries && (
@@ -883,19 +1186,26 @@ function Editor({ userId, hostName, place = '' }) {
             <div className="sn-seg" role="radiogroup" aria-label="Change" onKeyDown={onRadioKeys}>
               {[['one', 'This date only'], ['following', 'This and later dates']].map(([v, label], i) => (
                 <button type="button" key={v} role="radio" aria-checked={scope === v} tabIndex={tabStop(scope === v, i === 0, true)}
-                  className={`sn-seg-opt${scope === v ? ' on' : ''}`} onClick={() => setScope(v)}>{label}</button>
+                  className={`sn-seg-opt${scope === v ? ' on' : ''}`} onClick={() => pickScope(v)}>{label}</button>
               ))}
             </div>
             <p className="sn-hint">
               {following
-                ? 'Every later date keeps its own day and takes these details, start time and length. Cancelled dates are left alone.'
+                ? (series
+                  ? 'This date and every later one take these details and times. Change the days or the last date to add dates or take some off.'
+                  : 'Every later date keeps its own day and takes these details, start time and length. Cancelled dates are left alone.')
                 : 'Only this date changes. The rest of the series stays as it is.'}
             </p>
           </div>
         )}
       </div>
 
-      <form className={`sn-editor-grid${typing ? ' kb-open' : ''}`} onSubmit={(e) => { e.preventDefault(); save(isPublished || following || inReview ? undefined : 'draft'); }} noValidate>
+      <form className={`sn-editor-grid${typing ? ' kb-open' : ''}`} noValidate onSubmit={(e) => {
+        e.preventDefault();
+        // taking live dates off asks first, even from Enter in a field
+        if (following && dropping.length) { document.getElementById('sn-e-save')?.click(); return; }
+        save(isPublished || following || inReview ? undefined : 'draft');
+      }}>
         <div className="sn-steps">
           <Step title="What it is">
             <Group label="Kind" id="sn-e-kind-l" error={errors.kind}>
@@ -946,7 +1256,7 @@ function Editor({ userId, hostName, place = '' }) {
             )}
             {showEndDate ? (
               <div className="sn-grid2">
-                <Field label={weekly ? 'First date' : 'Starts on'} error={errors.start} htmlFor="sn-e-date">
+                <Field label={following ? 'From' : weekly ? 'First date' : 'Starts on'} error={errors.start} htmlFor="sn-e-date">
                   <input id="sn-e-date" type="date" value={form.startDate} onChange={set('startDate')} disabled={following} onBlur={blurCheck('start')} />
                 </Field>
                 <Field label="Start time" htmlFor="sn-e-start">
@@ -961,7 +1271,7 @@ function Editor({ userId, hostName, place = '' }) {
               </div>
             ) : (
               <div className="sn-grid3">
-                <Field label={weekly ? 'First date' : 'Date'} error={errors.start} htmlFor="sn-e-date">
+                <Field label={following ? 'From' : weekly ? 'First date' : 'Date'} error={errors.start} htmlFor="sn-e-date">
                   <input id="sn-e-date" type="date" value={form.startDate} onChange={set('startDate')} disabled={following} onBlur={blurCheck('start')} />
                 </Field>
                 <Field label="Starts" htmlFor="sn-e-start">
@@ -991,7 +1301,7 @@ function Editor({ userId, hostName, place = '' }) {
                 </div>
               </Group>
             )}
-            {weekly && (
+            {(weekly || showLater) && (
               <div className="sn-repeatbox">
                 <Group label="On these days" id="sn-e-days-l">
                   <div className="sn-days" role="group" aria-labelledby="sn-e-days-l">
@@ -1006,6 +1316,11 @@ function Editor({ userId, hostName, place = '' }) {
                 <Field label="Last date" htmlFor="sn-e-until">
                   <input id="sn-e-until" type="date" value={form.untilDate} min={form.startDate || undefined} onChange={set('untilDate')} onBlur={blurCheck('repeat')} />
                 </Field>
+                {showLater ? (
+                  <LaterDates check={laterCheck} plan={plan} weekdays={form.weekdays} addStatus={addStatus} booked={dropBooked}
+                    current={series.rows.filter((o) => o.status !== 'cancelled' && new Date(o.starts_at) >= new Date(original.starts_at)).map(dayOfRow)} />
+                ) : (
+                <>
                 <p className="sn-repeat-preview" aria-live="polite">
                   {seriesOk
                     ? <><strong>{repeatLabel(form.weekdays)}</strong>, {seriesSummary(repeatCheck.dates)}. Each date has its own places and guest list.</>
@@ -1015,6 +1330,8 @@ function Editor({ userId, hostName, place = '' }) {
                   <ul className="sn-series-dates" aria-label="The dates">
                     {repeatCheck.dates.map((d) => <li key={d}>{formatDay(istToIso(d, '12:00'))}</li>)}
                   </ul>
+                )}
+                </>
                 )}
               </div>
             )}
@@ -1149,7 +1466,12 @@ function Editor({ userId, hostName, place = '' }) {
           {failure && <p className="sn-failure" id="sn-e-failure" role="alert">{failure}</p>}
           {/* On a phone this row is pinned to the bottom of the screen (sanctuary.css). */}
           <div className="sn-editor-acts">
-            {following ? (
+            {following && dropping.length ? (
+              <ConfirmButton id="sn-e-save" className="btn forest" disabled={busy}
+                title={`Take ${datesWord(dropping.length)} off?`} confirmLabel="Take off and save" keepLabel="Keep them"
+                body={`${daysWords(dropping.map(dayOfRow))} ${dropping.length === 1 ? 'goes' : 'go'}.${dropBooked ? ` ${dropBooked} ${dropBooked === 1 ? 'person has' : 'people have'} a place; everyone who gave an email hears it’s off.` : ''} This can’t be undone.`}
+                onConfirm={() => save()}>{busy ? 'Saving…' : 'Save every later date'}</ConfirmButton>
+            ) : following ? (
               <button type="submit" className="btn forest" disabled={busy}>{busy ? 'Saving…' : 'Save every later date'}</button>
             ) : isPublished || inReview ? (
               <button type="submit" className="btn forest" disabled={busy}>{busy ? 'Saving…' : 'Save changes'}</button>
@@ -1265,7 +1587,6 @@ function Guests() {
 
 const HostPage = () => {
   const { user, loading, signOut, refreshHost } = useAuth();
-  const navigate = useNavigate();
   const [host, setHost] = useState(undefined); // undefined = loading, null = never asked
   const [failure, setFailure] = useState(null);
 
@@ -1278,7 +1599,8 @@ const HostPage = () => {
     return () => { alive = false; };
   }, [user]);
 
-  const out = async () => { await signOut(); navigate('/sanctuary'); };
+  // "Not you?": signed out, the page is the sign-in again — the way to try another account
+  const out = () => signOut();
 
   let body;
   if (loading) body = <Spinner />;
@@ -1286,7 +1608,7 @@ const HostPage = () => {
   else if (failure) {
     body = (
       <div className="sn-gate">
-        <h1 className="display sn-gate-h">{notOpenYet(failure) ? 'Hosting opens very soon.' : 'Something went wrong.'}</h1>
+        <h1 className="display sn-gate-h">{notOpenYet(failure) ? 'Organising opens very soon.' : 'Something went wrong.'}</h1>
         <p className="lede">{notOpenYet(failure) ? 'We’re putting the finishing touches on it. Message us on WhatsApp in the meantime.' : 'Please reload the page and try again.'}</p>
         <button className="sn-act" onClick={out}>Sign out</button>
       </div>
@@ -1296,37 +1618,42 @@ const HostPage = () => {
     const meta = user.user_metadata || {};
     body = (
       <div className="sn-gate">
-        <span className="eyebrow">Signed in as {user.email}</span>
-        <h1 className="display sn-gate-h">Tell us about your work</h1>
-        <p className="lede">A few lines is plenty. We read every request and reply personally.</p>
-        <HostDetailsForm
-          initial={{ display_name: meta.full_name || meta.name || '' }}
-          submitLabel="Send my request"
+        <JoinSteps at={2} />
+        <h1 className="display sn-gate-h">Introduce yourself</h1>
+        <p className="lede">
+          A note to our team: who you are, and what you’d like to hold. Only we read it — your profile, the page
+          people see, comes after we’ve said yes.
+        </p>
+        <IntroForm
+          initialName={meta.full_name || meta.name || ''}
           onSubmit={async (v) => { setHost(await requestToHost(user.id, v)); refreshHost?.(); }}
         />
-        <div className="sn-gate-actions">
-          <Link className="sn-act" to="/account">Just here for your bookings? Your account</Link>
+        <p className="sn-gate-who">
+          Signed in as <strong>{user.email}</strong>
           <button className="sn-act" onClick={out}>Not you? Sign out</button>
-        </div>
+        </p>
+        <p className="sn-gate-who">
+          Only here for your bookings? <Link className="sn-act" to="/account">Your account</Link>
+        </p>
       </div>
     );
-  } else if (host.status !== 'approved') body = <StatusPanel host={host} onSignOut={out} />;
+  } else if (host.status !== 'approved') body = <StatusPanel host={host} />;
   else {
     body = (
       <Routes>
-        <Route index element={<Dashboard host={host} onSignOut={out} />} />
+        <Route index element={<Dashboard host={host} />} />
         <Route path="new" element={<Editor userId={user.id} hostName={host.display_name} place={placeLine(host)} />} />
         <Route path="edit/:gid" element={<Editor userId={user.id} hostName={host.display_name} place={placeLine(host)} />} />
         <Route path="rsvps/:gid" element={<Guests />} />
-        <Route path="profile" element={<OrganiserPageEditor host={host} onSaved={setHost} />} />
-        <Route path="*" element={<Dashboard host={host} onSignOut={out} />} />
+        <Route path="profile" element={<OrganiserPageEditor host={host} onSaved={(row) => { setHost(row); refreshHost?.(); }} />} />
+        <Route path="*" element={<Dashboard host={host} />} />
       </Routes>
     );
   }
 
   return (
     <main className="sn-view sn-host-view">
-      <SEO title="Host at the Sanctuary | Conscious Sanctuary" url="/sanctuary/host" noIndex />
+      <SEO title="Organise with us | Conscious Sanctuary" url="/sanctuary/host" noIndex />
       {body}
     </main>
   );

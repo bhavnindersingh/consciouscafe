@@ -88,8 +88,10 @@ const ProductDetailPage = ({ products = [], onAddToCart, loading = false }) => {
     return (
       <>
         <SEO title="Dish not found — Conscious Cafe Auroville" url={`/product/${productId}`} noIndex />
-        <div style={{ padding: 'clamp(120px,18vh,200px) var(--gutter)', fontFamily: 'var(--display)', fontSize: 'clamp(30px,4vw,56px)' }}>
-          Dish not found.
+        <div style={{ padding: 'clamp(120px,18vh,200px) var(--gutter) 80px', maxWidth: 760 }}>
+          <h1 className="display" style={{ fontSize: 'var(--fs-display)', margin: '0 0 16px' }}>This dish isn’t on the menu.</h1>
+          <p className="lede" style={{ margin: '0 0 28px' }}>It may have gone with the season, or the link is incomplete.</p>
+          <button className="btn" onClick={() => navigate('/menu')}>See today’s menu</button>
         </div>
       </>
     );

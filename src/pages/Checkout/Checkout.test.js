@@ -100,3 +100,13 @@ test('an incomplete form saves nothing and opens nothing', () => {
   expect(saveWebsiteOrder).not.toHaveBeenCalled();
   expect(window.open).not.toHaveBeenCalled();
 });
+
+test('a phone the café can’t call back on is caught before anything is sent', () => {
+  mount();
+  fill();
+  type('phone', '98400 0000');
+  submit();
+  expect(el.querySelector('.co-error').textContent).toBe('A mobile number, 10 digits (or with the country code)');
+  expect(saveWebsiteOrder).not.toHaveBeenCalled();
+  expect(window.open).not.toHaveBeenCalled();
+});

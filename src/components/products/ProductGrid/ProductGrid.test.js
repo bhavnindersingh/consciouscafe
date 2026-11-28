@@ -57,8 +57,10 @@ test('the closing invitation: sign-in for organisers coming back, their events o
   expect(host.querySelector('h2').textContent).toBe('Teach, make or gather people? Organise it with us.');
   expect(host.querySelector('.home-host-acts a').textContent).toBe('Already organising with us? Sign in');
   act(() => root.unmount());
-  mount([], { user: { id: 'u1' }, loading: false, isHost: true });
+  mount([], { user: { id: 'u1' }, loading: false, isHost: true, hostRow: { user_id: 'u1', status: 'approved' } });
   expect(el.querySelector('#host .home-host-acts a').textContent).toBe('Go to your events');
+  // an organiser isn't invited to become one
+  expect(el.querySelector('#host .home-host-acts button')).toBeNull();
   act(() => root.unmount());
   mount([], { user: null, loading: true, isHost: null });
   expect(el.querySelector('#host .home-host-acts a')).toBeNull();

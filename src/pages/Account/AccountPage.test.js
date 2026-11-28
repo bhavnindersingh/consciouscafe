@@ -140,3 +140,10 @@ test('order again waits for the menu', async () => {
   const button = [...el.querySelectorAll('button')].find((b) => b.textContent === 'Order again');
   expect(button.disabled).toBe(true);
 });
+
+test('a sign-in the database won’t take as a customer’s says so, and offers to sign out', async () => {
+  getMyAccount.mockRejectedValue(Object.assign(new Error('not_signed_in'), { code: 'P0001' }));
+  await mount(ASHA);
+  expect(el.querySelector('.sn-empty-h').textContent).toBe('This sign-in can’t show bookings.');
+  expect(el.querySelector('.sn-empty .btn').textContent).toBe('Sign out');
+});

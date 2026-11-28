@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { updateMyHost, uploadImage, removeImage, imageUrl } from '../../services/sanctuaryService';
 import { LIMITS, IMAGE_TYPES } from '../../constants/sanctuary';
+import { profileGaps } from '../../utils/sanctuary';
 import { Field, useFieldErrors, useKeyboardOpen } from './parts';
 
 const ACCEPT = IMAGE_TYPES.join(',');
@@ -20,6 +21,14 @@ function validateProfile(form) {
   if (v.placeAddress && !v.placeName) errors.placeName = 'Name the place, too.';
   return { errors, value: v };
 }
+
+// The profile's checklist: profileGaps' three parts (the same list the organiser's
+// own profile page and dashboard name), each with where to go to fill it.
+const CHECKLIST = [
+  { gap: 'a profile photo', label: 'Profile photo', go: 'sn-p-photo' },
+  { gap: 'a few lines about your work', label: 'About your work', go: 'sn-p-bio' },
+  { gap: 'a cover photo', label: 'Cover photo', go: 'sn-p-cover' },
+];
 
 // What's kept on this device as you type — everything but the phone number.
 const KEEP = ['displayName', 'tagline', 'bio', 'link', 'placeName', 'placeAddress', 'avatarPath', 'coverPath', 'galleryPaths'];
@@ -80,7 +89,7 @@ export default function OrganiserPageEditor({ host, onSaved }) {
     setForm((f) => ({ ...f, ...JSON.parse(initial.current) })); setRestored(false);
   };
   const [uploading, setUploading] = useState(null); // 'cover' | 'avatar' | 'gallery'
-  const [photoFailure, setPhotoFailure] = useState(null);
+  const [photoFailure, setPhotoFailure] = useState(null); // { where: 'avatar' | 'cover' | 'gallery', message }
   const [busy, setBusy] = useState(false);
   const uploadedHere = useRef(new Set());
   const savedPaths = useRef(new Set([host.avatar_path, host.cover_path, ...(host.gallery_paths || [])].filter(Boolean)));
@@ -112,7 +121,7 @@ export default function OrganiserPageEditor({ host, onSaved }) {
     try {
       const path = await upload(file);
       setForm((f) => { drop(f[key]); return { ...f, [key]: path }; });
-    } catch (err) { setPhotoFailure(err.message || 'That photo didn’t upload. Try another one.'); }
+    } catch (err) { setPhotoFailure({ where: which, message: err.message || 'That photo didn’t upload. Try another one.' }); }
     setUploading(null);
   };
   const clearOne = (key) => setForm((f) => { drop(f[key]); return { ...f, [key]: null }; });
@@ -129,7 +138,7 @@ export default function OrganiserPageEditor({ host, onSaved }) {
         // eslint-disable-next-line no-await-in-loop
         const path = await upload(file);
         setForm((f) => ({ ...f, galleryPaths: [...f.galleryPaths, path].slice(0, LIMITS.galleryMax) }));
-      } catch (err) { setPhotoFailure(err.message || 'A photo didn’t upload. Try it again.'); }
+      } catch (err) { setPhotoFailure({ where: 'gallery', message: err.message || 'A photo didn’t upload. Try it again.' }); }
     }
     setUploading(null);
   };
@@ -167,11 +176,23 @@ export default function OrganiserPageEditor({ host, onSaved }) {
   const cover = imageUrl(form.coverPath);
   const avatar = imageUrl(form.avatarPath);
   const initials = (form.displayName || '?').trim().split(/\s+/).map((w) => w[0]).slice(0, 2).join('').toUpperCase();
+  // a first visit builds it; after that it's edited
+  const isNew = !host.avatar_path && !String(host.bio || '').trim() && !host.cover_path && !host.tagline;
+  const gaps = profileGaps({ avatar_path: form.avatarPath, bio: form.bio, cover_path: form.coverPath });
+  const checks = CHECKLIST.map((c) => ({ ...c, done: !gaps.includes(c.gap) }));
+  const doneCount = checks.filter((c) => c.done).length;
+  // to the field, mid-screen (clear of the fixed header) and at once — no smooth scroll
+  const jump = (id) => {
+    const el = document.getElementById(id);
+    el?.scrollIntoView({ block: 'center' });
+    el?.focus({ preventScroll: true });
+  };
+  const photoError = (where) => (photoFailure?.where === where ? <p className="sn-failure" role="alert">{photoFailure.message}</p> : null);
 
   return (
     <div className="sn-editor sn-pageed">
       <Link className="sn-back" to="/sanctuary/host">← Your events</Link>
-      <h1 className="display sn-dash-h">Your profile</h1>
+      <h1 className="display sn-dash-h">{isNew ? 'Build your profile' : 'Edit your profile'}</h1>
       {restored && (
         <p className="sn-notice" role="status">
           Your unsaved changes from last time are back.
@@ -179,53 +200,83 @@ export default function OrganiserPageEditor({ host, onSaved }) {
         </p>
       )}
       <p className="sn-hint sn-pageed-lede">
-        Your organiser profile — what people see when they tap your name: who you are, where you hold things, and photos of your space and work.{' '}
+        The page people see when they tap your name on an event: a photo of you, a few lines about your work,
+        and a cover photo across the top.{' '}
         <Link to={`/sanctuary/hosts/${host.user_id}`}>Visit your profile</Link>
       </p>
 
+      {/* what people look for, ticked as it's filled in; each one goes to its place */}
+      <div className="sn-pageed-progress" role="region" aria-label="Your profile so far">
+        <p className="sn-pageed-progress-h">{doneCount === checks.length ? 'Everything people look for is there.' : `${doneCount} of ${checks.length} done`}</p>
+        <ul>
+          {checks.map((c) => (
+            <li key={c.go} className={c.done ? 'is-done' : ''}>
+              <button type="button" onClick={() => jump(c.go)}>
+                <span className="sn-pageed-tick" aria-hidden="true">{c.done ? '✓' : ''}</span>
+                {c.label}{c.done ? <span className="sr-only"> (done)</span> : null}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+
       <form className="sn-pageed-form" onSubmit={submit} noValidate>
         <section className="sn-step">
-          <h2 className="sn-step-h">Photos</h2>
-          <div className={`sn-pageed-cover${cover ? ' has' : ''}`}>
-            {cover ? <img src={cover} alt="" /> : <span className="sn-hint">A wide photo across the top of your profile — your space, your work.</span>}
-            <div className="sn-pageed-avatar">
+          <h2 className="sn-step-h">You</h2>
+          <div className="sn-pageed-me">
+            {/* the photo itself is the way to add or change it */}
+            <label className={`sn-pageed-avatar${avatar ? ' has' : ''}`}>
               {avatar ? <img src={avatar} alt="" /> : <span aria-hidden="true">{initials}</span>}
+              <input id="sn-p-photo" type="file" className="sr-only" accept={ACCEPT} onChange={pickOne('avatarPath', 'avatar')} disabled={Boolean(uploading)} />
+              <span className="sr-only">{avatar ? 'Change your profile photo' : 'Add a profile photo'}</span>
+            </label>
+            <div className="sn-pageed-me-text">
+              <div className="sn-pageed-photoacts">
+                <label className="btn" htmlFor="sn-p-photo" aria-hidden="true">{uploading === 'avatar' ? 'Uploading…' : avatar ? 'Change photo' : 'Add your photo'}</label>
+                {avatar && <button type="button" className="sn-act" aria-label="Remove profile photo" onClick={() => clearOne('avatarPath')}>Remove</button>}
+              </div>
+              <p className="sn-hint">A clear photo of you — people book people they can picture. JPG, PNG or WebP, up to 5 MB.</p>
             </div>
           </div>
-          <div className="sn-pageed-photoacts">
-            <span className="sn-label">Cover</span>
-            <label className="sn-act">
-              {uploading === 'cover' ? 'Uploading…' : cover ? 'Replace' : 'Add a cover'}
-              <input type="file" className="sr-only" accept={ACCEPT} onChange={pickOne('coverPath', 'cover')} disabled={Boolean(uploading)} />
-            </label>
-            {cover && <button type="button" className="sn-act" aria-label="Remove cover" onClick={() => clearOne('coverPath')}>Remove</button>}
-            <span className="sn-label">Profile photo</span>
-            <label className="sn-act">
-              {uploading === 'avatar' ? 'Uploading…' : avatar ? 'Replace' : 'Add a photo'}
-              <input type="file" className="sr-only" accept={ACCEPT} onChange={pickOne('avatarPath', 'avatar')} disabled={Boolean(uploading)} />
-            </label>
-            {avatar && <button type="button" className="sn-act" aria-label="Remove profile photo" onClick={() => clearOne('avatarPath')}>Remove</button>}
-          </div>
-          <p className="sn-hint">JPG, PNG or WebP, up to 5 MB each.</p>
+          {photoError('avatar')}
+          <Field label="Your name" error={errors.displayName} hint="As it shows on your events and your profile." htmlFor="sn-p-name">
+            <input id="sn-p-name" onBlur={blur('displayName')} value={form.displayName} onChange={set('displayName')} maxLength={LIMITS.hostNameMax} autoComplete="name" />
+          </Field>
+          <Field label="What you do, in a few words (optional)" error={errors.tagline} hint="Under your name: “Hatha and breathwork”, “Potter and teacher”." htmlFor="sn-p-tag">
+            <input id="sn-p-tag" onBlur={blur('tagline')} value={form.tagline} onChange={set('tagline')} maxLength={LIMITS.taglineMax} />
+          </Field>
         </section>
 
         <section className="sn-step">
-          <h2 className="sn-step-h">About you</h2>
-          <Field label="Name people will see" error={errors.displayName} htmlFor="sn-p-name">
-            <input id="sn-p-name" onBlur={blur('displayName')} value={form.displayName} onChange={set('displayName')} maxLength={LIMITS.hostNameMax} autoComplete="name" />
+          <h2 className="sn-step-h">Your work</h2>
+          <Field label="A few lines about your work" hint="What you teach or hold, how long you’ve been at it, and what someone takes home from it. A blank line starts a new paragraph." htmlFor="sn-p-bio">
+            <textarea id="sn-p-bio" rows={7} value={form.bio} onChange={set('bio')} maxLength={LIMITS.bioMax} />
           </Field>
-          <Field label="In a line (optional)" error={errors.tagline} hint="Under your name: “Hatha and breathwork”, “Potter and teacher”." htmlFor="sn-p-tag">
-            <input id="sn-p-tag" onBlur={blur('tagline')} value={form.tagline} onChange={set('tagline')} maxLength={LIMITS.taglineMax} />
-          </Field>
-          <Field label="About your work (optional)" hint="What you teach or hold, and how long you’ve been at it. A blank line starts a new paragraph." htmlFor="sn-p-bio">
-            <textarea id="sn-p-bio" rows={6} value={form.bio} onChange={set('bio')} maxLength={LIMITS.bioMax} />
-          </Field>
-          <Field label="Website or Instagram (optional)" error={errors.link} htmlFor="sn-p-link">
+          <Field label="Website or Instagram (optional)" error={errors.link} hint="Shown on your profile." htmlFor="sn-p-link">
             <input id="sn-p-link" onBlur={blur('link')} type="url" placeholder="https://" value={form.link} onChange={set('link')} maxLength={LIMITS.linkMax} />
           </Field>
-          <Field label="Phone (optional — for us, never shown)" error={errors.phone} htmlFor="sn-p-phone">
-            <input id="sn-p-phone" onBlur={blur('phone')} type="tel" value={form.phone} onChange={set('phone')} maxLength={LIMITS.hostPhoneMax} autoComplete="tel" />
-          </Field>
+        </section>
+
+        <section className="sn-step">
+          <h2 className="sn-step-h">Cover photo</h2>
+          {/* the whole band is the way to add one */}
+          <label className={`sn-pageed-cover${cover ? ' has' : ''}`}>
+            {cover ? <img src={cover} alt="" /> : (
+              <span className="sn-pageed-cover-add">
+                <strong>{uploading === 'cover' ? 'Uploading…' : 'Add a cover photo'}</strong>
+                <span>A wide photo across the top of your profile — your space, or your work.</span>
+              </span>
+            )}
+            <input id="sn-p-cover" type="file" className="sr-only" accept={ACCEPT} onChange={pickOne('coverPath', 'cover')} disabled={Boolean(uploading)} />
+            {cover && <span className="sr-only">Change your cover photo</span>}
+          </label>
+          {cover && (
+            <div className="sn-pageed-photoacts">
+              <label className="sn-act" htmlFor="sn-p-cover" aria-hidden="true">{uploading === 'cover' ? 'Uploading…' : 'Change cover'}</label>
+              <button type="button" className="sn-act" aria-label="Remove cover" onClick={() => clearOne('coverPath')}>Remove</button>
+            </div>
+          )}
+          {photoError('cover')}
         </section>
 
         <section className="sn-step">
@@ -256,7 +307,14 @@ export default function OrganiserPageEditor({ host, onSaved }) {
               </li>
             )}
           </ul>
-          {photoFailure && <p className="sn-failure" role="alert">{photoFailure}</p>}
+          {photoError('gallery')}
+        </section>
+
+        <section className="sn-step">
+          <h2 className="sn-step-h">For our team <span className="sn-step-note">Never shown</span></h2>
+          <Field label="Phone (optional)" error={errors.phone} hint="In case we need to reach you about an event." htmlFor="sn-p-phone">
+            <input id="sn-p-phone" onBlur={blur('phone')} type="tel" value={form.phone} onChange={set('phone')} maxLength={LIMITS.hostPhoneMax} autoComplete="tel" />
+          </Field>
         </section>
 
         {failure && <p className="sn-failure" role="alert">{failure}</p>}

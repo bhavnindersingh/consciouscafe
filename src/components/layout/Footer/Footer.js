@@ -2,6 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import LANDING_PAGES from '../../../data/landingPages.json';
 import { maps } from '../../../utils/seoData';
+import { useAuth } from '../../../context/AuthContext';
+import { organiserLabel } from '../../../utils/account';
 
 const shortLabel = (slug) =>
   slug.replace(/-auroville$/, '').replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
@@ -15,6 +17,9 @@ const Printer = ({ s = 15 }) => (
 );
 
 const Footer = () => {
+  // the organisers' way in: for anyone who isn't one yet, new or coming back; an organiser's own words once known
+  const { isHost, hostRow } = useAuth();
+  const orgLabel = isHost ? organiserLabel(hostRow) || 'Your events' : 'For organisers';
   return (
     <footer className="footer" id="visit">
       <div className="footer-top">
@@ -40,7 +45,7 @@ const Footer = () => {
           <a href="mailto:hello@consciouscafe.in">hello@consciouscafe.in</a>
           <a href="tel:+918754561269">+91 87545 61269</a>
           <Link className="ft-arrow" to="/account">Your account</Link>
-          <Link className="ft-arrow" to="/sanctuary/host">Organiser sign-in</Link>
+          <Link className="ft-arrow" to="/sanctuary/host">{orgLabel}</Link>
         </div>
 
         <div className="ft-col">

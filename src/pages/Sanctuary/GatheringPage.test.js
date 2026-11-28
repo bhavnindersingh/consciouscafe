@@ -6,6 +6,9 @@ import GatheringPage from './GatheringPage';
 import { getGathering, listSeriesDates, reservePlaces } from '../../services/sanctuaryService';
 import { formatWhen, formatWhenLong } from '../../utils/sanctuary';
 import { useAuth } from '../../context/AuthContext';
+import { useLocation } from 'react-router-dom';
+
+const StateProbe = () => <pre id="probe">{JSON.stringify(useLocation().state)}</pre>;
 
 jest.mock('../../services/sanctuaryService', () => ({
   getGathering: jest.fn(),
@@ -52,7 +55,10 @@ async function open(row, series) {
     root.render(
       <HelmetProvider>
         <MemoryRouter initialEntries={[`/sanctuary/${ID}`]}>
-          <Routes><Route path="/sanctuary/:id" element={<GatheringPage />} /></Routes>
+          <Routes>
+            <Route path="/sanctuary/:id" element={<GatheringPage />} />
+            <Route path="/sanctuary/hosts/:hostId" element={<StateProbe />} />
+          </Routes>
         </MemoryRouter>
       </HelmetProvider>,
     );
@@ -172,6 +178,35 @@ test('an organiser without a page is named, not linked; no limit means open to a
   expect(text('.sn-byline')).toContain('Linda');
   expect(text('.sn-byline')).not.toContain('Visit organiser profile');
   expect(text('.sn-panel-places .sn-seats')).toBe('Open to all');
+});
+
+test('a visitor: the organiser’s name links to their profile', async () => {
+  await open(base);
+  expect($('.sn-owner-note')).toBeNull();
+  expect(text('a.sn-byline')).toContain('Visit organiser profile');
+  expect($('a.sn-byline').getAttribute('href')).toBe(`/sanctuary/hosts/${HOST}`);
+  // the profile is told where it was opened from, so its back link returns here
+  await act(async () => { $('a.sn-byline').dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, button: 0 })); });
+  expect(JSON.parse(text('#probe'))).toEqual({ from: { path: `/sanctuary/${ID}`, label: 'Morning Hatha' } });
+});
+
+test('the organiser on their own event: their own words for it, and where to manage it', async () => {
+  useAuth.mockImplementation(() => ({ user: { id: HOST, email: 'linda@example.com', user_metadata: {} }, loading: false }));
+  await open(base);
+  expect(text('.sn-owner-note')).toContain('You organise this — this is the page your guests see.');
+  expect($$('.sn-owner-note a').map((a) => [a.textContent, a.getAttribute('href')])).toEqual([
+    ['Edit this event', `/sanctuary/host/edit/${ID}`],
+    ['See your guests', `/sanctuary/host/rsvps/${ID}`],
+  ]);
+  expect(text('a.sn-byline')).toContain('Visit your profile');
+  expect(text('a.sn-byline')).not.toContain('Visit organiser profile');
+});
+
+test.each(['cancelled', 'past'])('the organiser on their own %s event: guests, but no Edit — as on the dashboard', async (kind) => {
+  useAuth.mockImplementation(() => ({ user: { id: HOST, email: 'linda@example.com', user_metadata: {} }, loading: false }));
+  const gone = Date.now() - 3 * DAY;
+  await open(kind === 'cancelled' ? { ...base, status: 'cancelled' } : { ...base, starts_at: iso(gone), ends_at: iso(gone + 75 * 60e3) });
+  expect($$('.sn-owner-note a').map((a) => a.textContent)).toEqual(['See your guests']);
 });
 
 test('a link to something that isn’t on the calendar says so', async () => {

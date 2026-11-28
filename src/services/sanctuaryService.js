@@ -89,15 +89,30 @@ export async function getMyHost(userId) {
   return unwrap(await supabase.from('sanctuary_hosts').select('*').eq('user_id', userId).maybeSingle());
 }
 
-/** Ask to host. The database forces status 'requested' and takes email from the sign-in. */
-export async function requestToHost(userId, { displayName, phone, link, bio }) {
-  return unwrap(await supabase.from('sanctuary_hosts').insert({
+// PostgREST hasn't got a column this site writes: its migration isn't applied yet.
+const missingColumn = (e) => /PGRST204|42703/.test(`${e?.code || ''}`) || /column .* (does not exist|of '.*' in the schema cache)/i.test(e?.message || '');
+
+/**
+ * Ask to organise. The database forces status 'requested' and takes the email
+ * from the sign-in. `intro` is their introduction to our team — private, its own
+ * column (POS 20261130000000), never the profile's public `bio`. Before that
+ * migration is applied the request is sent without it (it still reaches us,
+ * with their name, email, phone and link) — never written into bio instead.
+ */
+export async function requestToHost(userId, { displayName, phone, link, intro }) {
+  const row = {
     user_id: userId,
     display_name: displayName,
     phone: phone || null,
     link: link || null,
-    bio: bio || null,
-  }).select('*').single());
+    intro: intro || null,
+  };
+  const first = await supabase.from('sanctuary_hosts').insert(row).select('*').single();
+  if (first.error && missingColumn(first.error)) {
+    const { intro: _left, ...without } = row;
+    return unwrap(await supabase.from('sanctuary_hosts').insert(without).select('*').single());
+  }
+  return unwrap(first);
 }
 
 /**
@@ -134,6 +149,11 @@ export async function removeImage(path) {
 /** Every gathering this host owns (RLS returns only theirs). */
 export async function listMyGatherings() {
   return unwrap(await supabase.from('sanctuary_offerings').select('*').order('starts_at')) || [];
+}
+
+/** Every date of one of the organiser's weekly classes, soonest first. */
+export async function listSeries(seriesId) {
+  return unwrap(await supabase.from('sanctuary_offerings').select('*').eq('series_id', seriesId).order('starts_at')) || [];
 }
 
 export async function getMyGathering(id) {

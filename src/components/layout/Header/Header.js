@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '../../../context/CartContext';
 import { useAuth } from '../../../context/AuthContext';
 import { getGumletUrl } from '../../../utils/gumlet';
+import { accountMenu } from '../../../utils/account';
+import AccountMenu from './AccountMenu';
 
 const HIBISCUS = getGumletUrl('hibiscus.png', { width: 600, quality: 72, format: 'auto' });
 
@@ -10,14 +12,6 @@ const BagIcon = ({ s = 17 }) => (
   <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
     <path d="M6 8h12l-1 12H7L6 8Z" strokeLinejoin="round" />
     <path d="M9 8V6a3 3 0 0 1 6 0v2" strokeLinecap="round" />
-  </svg>
-);
-
-// the way into Your account — drawn to sit beside the bag (same box, same stroke)
-const PersonIcon = ({ s = 17 }) => (
-  <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
-    <circle cx="12" cy="8.5" r="3.5" />
-    <path d="M5 20c.8-3.6 3.6-5.5 7-5.5s6.2 1.9 7 5.5" strokeLinecap="round" />
   </svg>
 );
 
@@ -48,16 +42,29 @@ const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { count, setBagOpen } = useCart();
-  // Anyone may sign in — to see their bookings and orders (/account); organisers
-  // reach their events from there. Nothing while the session is still being
-  // read, so the phone menu's label doesn't flicker.
-  const { user, loading } = useAuth();
+  // Anyone may sign in — to see their bookings and orders (/account); an
+  // organiser's events are in the same menu. Nothing while the session is still
+  // being read, so the phone menu's label doesn't flicker.
+  const { user, loading, hostRow, signOut } = useAuth();
   const signedIn = !loading && !!user;
-  const accountLabel = signedIn ? 'Your account' : 'Sign in';
+  const me = signedIn ? accountMenu(user, hostRow) : null;
 
   const view = viewFromPath(location.pathname);
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  // How signing out went, said once under the header (and to screen readers).
+  const [note, setNote] = useState('');
+  useEffect(() => {
+    if (!note) return undefined;
+    const t = setTimeout(() => setNote(''), 4000);
+    return () => clearTimeout(t);
+  }, [note]);
+  const signOutPhone = async () => {
+    setMobileOpen(false);
+    const { error } = (await signOut()) || {};
+    setNote(error ? 'We couldn’t sign you out — check your connection and try again.' : 'You’re signed out.');
+  };
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > window.innerHeight * 0.7);
@@ -76,12 +83,33 @@ const Header = () => {
     if (item.path) navigate(item.path);
   };
 
+  // The open menu covers the page: focus goes in (to Close), Escape closes it,
+  // the page behind doesn't scroll, and focus comes back to ☰ when it closes.
+  const burgerRef = useRef(null);
+  const closeRef = useRef(null);
+  const wasOpen = useRef(false);
+  useEffect(() => {
+    if (!mobileOpen) {
+      if (wasOpen.current) burgerRef.current?.focus();
+      wasOpen.current = false;
+      return undefined;
+    }
+    wasOpen.current = true;
+    closeRef.current?.focus();
+    const onKey = (e) => { if (e.key === 'Escape') setMobileOpen(false); };
+    document.addEventListener('keydown', onKey);
+    const overflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.removeEventListener('keydown', onKey); document.body.style.overflow = overflow; };
+  }, [mobileOpen]);
+
   return (
     <>
       <a href="#main-content" className="skip-link">Skip to main content</a>
 
       <nav className={`nav ${isSolid ? 'solid' : ''}`} role="banner">
         <button
+          ref={burgerRef}
           className={`nav-burger ${mobileOpen ? 'is-open' : ''}`}
           onClick={() => setMobileOpen(o => !o)}
           aria-label="Toggle menu"
@@ -113,23 +141,18 @@ const Header = () => {
             {count > 0 && <span className="count">{count}</span>}
           </button>
           {/* Your account, for anyone who books or orders (organisers too). Always
-              drawn (no shift when the session arrives); a small dot once signed
-              in. Phones reach it from the menu instead. */}
-          <button
-            className={`nav-acct${view === 'account' || view === 'organiser' ? ' active' : ''}${signedIn ? ' is-in' : ''}`}
-            onClick={() => navigate('/account')}
-            aria-label={accountLabel}
-            title={accountLabel}
-          >
-            <PersonIcon />
-          </button>
+              drawn (no shift when the session arrives); signed in, it's your
+              initial and opens a menu with Sign out. Phones reach the same from
+              the ☰ menu. */}
+          <AccountMenu active={view === 'account' || view === 'organiser'} onSignedOut={setNote} />
         </div>
+        <p className={`nav-note${note ? ' on' : ''}`} role="status">{note}</p>
       </nav>
 
       <div className={`mobile-menu ${mobileOpen ? 'open' : ''}`} aria-hidden={!mobileOpen}>
         <div className="mm-top">
           <span className="mm-brand"><span>Conscious Café</span> <span className="mm-dot" aria-hidden="true">·</span> <span>Sanctuary</span></span>
-          <button className="mm-close" onClick={() => setMobileOpen(false)} aria-label="Close menu">×</button>
+          <button ref={closeRef} className="mm-close" onClick={() => setMobileOpen(false)} aria-label="Close menu">×</button>
         </div>
         <nav className="mm-list">
           {MM_ITEMS.map((n) => (
@@ -145,10 +168,22 @@ const Header = () => {
           <button className="mm-bag" onClick={() => { setBagOpen(true); setMobileOpen(false); }}>
             View bag{count > 0 ? ` · ${count}` : ''}
           </button>
-          {!loading && (
-            <button className="mm-account" onClick={() => handleNav({ path: '/account' })}>
-              {accountLabel}
-            </button>
+          {!loading && !signedIn && (
+            <button className="mm-account" onClick={() => handleNav({ path: '/account' })}>Sign in</button>
+          )}
+          {signedIn && (
+            <div className="mm-acct">
+              <div className="mm-acct-links">
+                <button className="mm-account" onClick={() => handleNav({ path: '/account' })}>Your account</button>
+                {me.items[1] && (
+                  <button className="mm-account" onClick={() => handleNav({ path: me.items[1].to })}>{me.items[1].label}</button>
+                )}
+              </div>
+              <p className="mm-acct-who">
+                <span>Signed in as <strong>{me.email}</strong></span>
+                <button type="button" className="mm-signout" onClick={signOutPhone}>Sign out</button>
+              </p>
+            </div>
           )}
           <div className="mm-contact">
             <a href="mailto:hello@consciouscafe.in">hello@consciouscafe.in</a>

@@ -475,6 +475,73 @@ export function splitHostOfferings(rows, now = Date.now()) {
   };
 }
 
+/**
+ * What an organiser has that visitors can't see yet, for their own profile:
+ * { inReview, drafts } — events not yet over, a weekly class counted once.
+ */
+export function notYetPublic(rows, now = Date.now()) {
+  const count = (status) => new Set(rows
+    .filter((o) => o.status === status && !isPast(o, now))
+    .map((o) => o.series_id || o.id)).size;
+  return { inReview: count('in_review'), drafts: count('draft') };
+}
+
+/**
+ * Where one of an organiser's events stands — the word their dashboard shows:
+ *   'sent_back'  a draft our team returned (with a note, or stamped reviewed_at —
+ *                only a send-back leaves that on a draft; POS 20261126200000)
+ *   'now'        approved and under way
+ *   'in_review'  waiting for our team
+ *   'live'       approved: on the calendar, still to come
+ *   'draft'      only they can see it
+ *   'expired'    never went live, and its time has come — now it can't
+ *   'cancelled'
+ *   'done'       approved and over
+ * HOST_STATE_ORDER is most urgent first: a tab's parts and the summary follow it.
+ */
+export const HOST_STATE_ORDER = ['sent_back', 'now', 'in_review', 'live', 'draft', 'expired', 'cancelled', 'done'];
+export function hostEventState(o, now = Date.now()) {
+  if (o.status === 'cancelled') return 'cancelled';
+  if (o.status === 'published') {
+    if (isPast(o, now)) return 'done';
+    return hasStarted(o, now) ? 'now' : 'live';
+  }
+  if (hasStarted(o, now)) return 'expired';
+  if (o.status === 'in_review') return 'in_review';
+  return o.review_note || o.reviewed_at ? 'sent_back' : 'draft';
+}
+
+/**
+ * [[state, n], …] for these events, most urgent first. A weekly class counts
+ * once per state; with `dates`, each date counts (a series' own breakdown).
+ */
+export function hostStateCounts(rows, { now = Date.now(), dates = false } = {}) {
+  const sets = new Map();
+  for (const o of rows) {
+    const s = hostEventState(o, now);
+    if (!sets.has(s)) sets.set(s, new Set());
+    sets.get(s).add(dates ? o.id : (o.series_id || o.id));
+  }
+  return HOST_STATE_ORDER.filter((s) => sets.has(s)).map((s) => [s, sets.get(s).size]);
+}
+
+/**
+ * The parts of an organiser's profile still empty, in the words their own view
+ * of it uses ('a profile photo', …). Tagline and photos of their space are
+ * extras, so they aren't asked for.
+ */
+export function profileGaps(host) {
+  if (!host) return [];
+  return [
+    !host.avatar_path && 'a profile photo',
+    !String(host.bio || '').trim() && 'a few lines about your work',
+    !host.cover_path && 'a cover photo',
+  ].filter(Boolean);
+}
+
+/** 'a', 'a and b', 'a, b and c'. */
+export const listWords = (words) => (words.length < 2 ? words.join('') : `${words.slice(0, -1).join(', ')} and ${words[words.length - 1]}`);
+
 /** { [offering_id]: confirmed seats } from the host's RSVP rows. */
 export function seatsTaken(rsvps) {
   const out = {};
@@ -584,9 +651,10 @@ export const weekdaysOf = (rows) => [...new Set(rows.map((o) => weekdayOf(isoToI
 
 /**
  * The repeat part of the editor → { errors, dates }. `form.repeat` is 'once' or
- * 'weekly'; weekly needs days and an end date, and gives 2..seriesMaxDates dates.
+ * 'weekly'; weekly needs days and an end date, and gives min..seriesMaxDates
+ * dates — 2 for a new series; 1 when changing an existing one's later dates.
  */
-export function validateRepeat(form) {
+export function validateRepeat(form, { min = 2 } = {}) {
   const errors = {};
   if (form.repeat !== 'weekly') return { errors, dates: [form.startDate] };
   if (!form.weekdays?.length) errors.repeat = 'Pick at least one day.';
@@ -597,9 +665,41 @@ export function validateRepeat(form) {
   }
   if (errors.repeat) return { errors, dates: [] };
   const dates = seriesDates(form.startDate, form.untilDate, form.weekdays);
-  if (dates.length < 2) errors.repeat = 'That gives only one date — choose “Once”, or more days.';
+  if (dates.length < min) {
+    errors.repeat = min > 1 ? 'That gives only one date — choose “Once”, or more days.' : 'None of those days fall before the last date. Pick a later one.';
+  }
   else if (dates.length > LIMITS.seriesMaxDates) errors.repeat = `That’s more than ${LIMITS.seriesMaxDates} dates — pick an earlier last date.`;
   return { errors, dates };
+}
+
+/**
+ * A weekly class's dates from `fromIso` on, after its days or last date
+ * change: { keep, drop } (rows) and { add } ('YYYY-MM-DD'), against `wanted`
+ * (validateRepeat's dates for the new days and last date). An empty `wanted`
+ * is the caller's error to refuse, never "take everything off".
+ *   - A day that already has a date (cancelled ones too) is never added again,
+ *     and a day whose start (`startTime`, IST) has come is never added.
+ *   - Only dates not cancelled and not started can be taken off: those after
+ *     the last date (`until`), and those on a weekday of the class's pattern
+ *     (`pattern`, the days it was opened with) that's no longer chosen. A date
+ *     moved off the pattern on its own stays unless it's past the last date.
+ */
+export function seriesChange(rows, fromIso, wanted, { now = Date.now(), startTime = '00:00', until = null, pattern = null } = {}) {
+  const from = new Date(fromIso).getTime();
+  const later = rows.filter((o) => new Date(o.starts_at).getTime() >= from)
+    .sort((a, b) => new Date(a.starts_at) - new Date(b.starts_at));
+  const open = later.filter((o) => o.status !== 'cancelled' && !hasStarted(o, now));
+  const want = new Set(wanted);
+  const last = until || wanted[wanted.length - 1] || '';
+  const onPattern = (d) => !pattern || pattern.includes(weekdayOf(d));
+  const dayOf = (o) => isoToIstParts(o.starts_at).date;
+  const taken = new Set(later.map(dayOf));
+  const goes = (d) => !want.has(d) && (d > last || onPattern(d));
+  return {
+    keep: open.filter((o) => !goes(dayOf(o))),
+    drop: open.filter((o) => goes(dayOf(o))),
+    add: wanted.filter((d) => !taken.has(d) && new Date(istToIso(d, startTime)).getTime() > now),
+  };
 }
 
 /** One saved row per date: same times, same span (a multi-day one stays multi-day). */
@@ -617,6 +717,7 @@ export function seriesRows(form, value, dates, seriesId) {
 export function seriesSummary(dates) {
   if (!dates.length) return '';
   const day = (d) => formatDay(istToIso(d, '12:00'));
+  if (dates.length === 1) return `1 date · ${day(dates[0])}`;
   return `${dates.length} dates · ${day(dates[0])} → ${day(dates[dates.length - 1])}`;
 }
 

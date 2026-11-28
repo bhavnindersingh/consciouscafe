@@ -151,7 +151,7 @@ export function ConfirmDialog({ title, body, confirmLabel, keepLabel = 'Keep it'
 }
 
 /** A quiet action button that opens ConfirmDialog; `onConfirm` may be async. */
-export function ConfirmButton({ children, className = 'sn-act', title, body, confirmLabel, keepLabel, onConfirm, disabled }) {
+export function ConfirmButton({ children, className = 'sn-act', title, body, confirmLabel, keepLabel, onConfirm, disabled, id }) {
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const go = async () => {
@@ -160,7 +160,7 @@ export function ConfirmButton({ children, className = 'sn-act', title, body, con
   };
   return (
     <>
-      <button type="button" className={className} onClick={() => setOpen(true)} disabled={disabled}>{children}</button>
+      <button type="button" id={id} className={className} onClick={() => setOpen(true)} disabled={disabled}>{children}</button>
       {open && <ConfirmDialog title={title} body={body} confirmLabel={confirmLabel} keepLabel={keepLabel} busy={busy} onConfirm={go} onClose={() => setOpen(false)} />}
     </>
   );

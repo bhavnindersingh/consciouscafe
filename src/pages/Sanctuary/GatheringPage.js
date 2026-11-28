@@ -9,8 +9,8 @@ import {
   rsvpErrorMessage, googleCalendarUrl, isUuid, kindLabel, repeatLabel, weekdaysOf, inHouse, mapsUrl,
 } from '../../utils/sanctuary';
 import { KindTag, Field, GatheringVideo, PinnedBar, scrollToEl, PageSkeleton, useFieldErrors } from './parts';
+import { useAccountPrefill } from '../../hooks/useAccountPrefill';
 import { useAuth } from '../../context/AuthContext';
-import { accountPrefill } from '../../utils/account';
 import SignedInAs from '../../components/auth/SignedInAs';
 import './sanctuary.css';
 
@@ -25,22 +25,11 @@ const CLOSED_COPY = {
 
 function RsvpForm({ gathering, onDone }) {
   const maxSeats = gathering.capacity == null ? LIMITS.seatsPerRsvp : Math.min(LIMITS.seatsPerRsvp, gathering.seats_left);
+  const [form, setForm] = useState({ name: '', phone: '', email: '', seats: 1 });
   // Signed in: the account's email, fixed, so the place shows under Your
-  // account; its name where the field is still empty. (The booking also
+  // account, and its name; both go again on sign-out. (The booking also
   // carries their user_id — sanctuary_rsvp() reads it from the session.)
-  const { user } = useAuth();
-  const accountEmail = user?.email || null;
-  const accountName = accountPrefill(user).name;
-  const [form, setForm] = useState(() => ({ name: accountName, phone: '', email: accountEmail || '', seats: 1 }));
-  // keyed on the strings, not the user object, and a no-op when nothing changes
-  useEffect(() => {
-    if (!accountEmail && !accountName) return;
-    setForm((f) => {
-      const name = f.name || accountName;
-      const email = accountEmail || f.email;
-      return name === f.name && email === f.email ? f : { ...f, name, email };
-    });
-  }, [accountEmail, accountName]);
+  const { accountEmail } = useAccountPrefill(setForm);
   const [failure, setFailure] = useState(null);
   const [busy, setBusy] = useState(false);
   // blur-first: a field is checked when it's left, and its error goes as soon as it's edited
@@ -159,6 +148,9 @@ function ShareButton({ title, url }) {
 
 const GatheringPage = () => {
   const { id } = useParams();
+  // The organiser looking at their own event (a host's id is their sign-in id)
+  // gets their own words for it; everyone else, the public page as it is.
+  const { user } = useAuth();
   const [g, setG] = useState(undefined); // undefined = loading, null = not found
   const [error, setError] = useState(null);
   const [done, setDone] = useState(null);
@@ -214,13 +206,14 @@ const GatheringPage = () => {
   const others = series.filter((o) => o.id !== g.id);
   const otherDates = others.slice(0, 6);
   const moreDates = others.length - otherDates.length;
+  const mine = Boolean(user?.id) && user.id === g.host_id;
   const host = (
     <>
       {g.host_avatar_path && <img className="sn-hostline-avatar" src={imageUrl(g.host_avatar_path)} alt="" />}
       <span className="sn-byline-text">
         <span className="sn-byline-by">Organised by</span>
         <span className="sn-hostname">{g.host_name}</span>
-        {g.host_id && <span className="sn-hostline-go">Visit organiser profile</span>}
+        {g.host_id && <span className="sn-hostline-go">{mine ? 'Visit your profile' : 'Visit organiser profile'}</span>}
       </span>
     </>
   );
@@ -265,7 +258,19 @@ const GatheringPage = () => {
           order: what it is first, the form after, with the Reserve bar pinned
           meanwhile. */}
       <div className="sn-detail">
-        <div className="sn-detail-back"><Link className="sn-back" to="/sanctuary">← All events</Link></div>
+        <div className="sn-detail-back">
+          <Link className="sn-back" to="/sanctuary">← All events</Link>
+          {mine && (
+            <div className="sn-notice sn-owner-note" role="region" aria-label="Your event">
+              <span>You organise this — this is the page your guests see.</span>
+              <span className="sn-owner-acts">
+                {/* as on the dashboard: an event that's over or called off can't be edited */}
+                {state !== 'past' && state !== 'cancelled' && <Link className="sn-act" to={`/sanctuary/host/edit/${g.id}`}>Edit this event</Link>}
+                <Link className="sn-act" to={`/sanctuary/host/rsvps/${g.id}`}>See your guests</Link>
+              </span>
+            </div>
+          )}
+        </div>
         <header className="sn-detail-head">
           <p className="sn-row-tags">
             <KindTag kind={g.kind} />
@@ -305,7 +310,14 @@ const GatheringPage = () => {
           {g.host_name && (
             <div className="sn-hostline">
               {g.host_id ? (
-                <Link className="sn-byline is-link" to={`/sanctuary/hosts/${g.host_id}`}>{host}</Link>
+                <Link
+                  className="sn-byline is-link"
+                  to={`/sanctuary/hosts/${g.host_id}`}
+                  // the profile's back link returns here, not to the calendar
+                  state={{ from: { path: `/sanctuary/${g.id}`, label: g.title } }}
+                >
+                  {host}
+                </Link>
               ) : (
                 <div className="sn-byline">{host}</div>
               )}

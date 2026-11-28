@@ -7,6 +7,7 @@ import { pageData, generateStructuredData, siteConfig } from '../../../utils/seo
 import PhotoPending from '../../common/PhotoPending/PhotoPending';
 import Kolam from '../../common/Kolam/Kolam';
 import { useAuth } from '../../../context/AuthContext';
+import { organiserLabel } from '../../../utils/account';
 
 const Reveal = ({ children, className = '', delay = 0, as: Tag = 'div', style }) => (
   <Tag style={style} className={`reveal${delay ? ` d${delay}` : ''} ${className}`}>{children}</Tag>
@@ -212,7 +213,8 @@ function Cafe({ products, onProductClick }) {
 function Organise() {
   const navigate = useNavigate();
   // an organiser is someone with a host profile; anyone may sign in (Your account)
-  const { user, isHost } = useAuth();
+  const { user, isHost, hostRow } = useAuth();
+  const mine = isHost ? organiserLabel(hostRow) || 'Your events' : null;
   return (
     <section className="section tight home-host" id="host" aria-labelledby="host-h">
       <div className="col-head home-host-row">
@@ -224,10 +226,15 @@ function Organise() {
           </p>
         </div>
         <div className="home-host-acts">
-          <button className="btn" onClick={() => navigate('/sanctuary/host')}>Become an organiser</button>
-          {isHost ? <Link className="tlink" to="/sanctuary/host">Go to your events</Link>
-            : isHost === false && !user ? <Link className="tlink" to="/sanctuary/host">Already organising with us? Sign in</Link>
-            : null}
+          {/* an organiser is sent to their own page, not invited to become one; nothing until it's known */}
+          {mine ? (
+            <Link className="btn home-host-go" to="/sanctuary/host">Go to {mine.toLowerCase()}</Link>
+          ) : isHost === false ? (
+            <>
+              <button className="btn" onClick={() => navigate('/sanctuary/host')}>Become an organiser</button>
+              {!user && <Link className="tlink" to="/sanctuary/host">Already organising with us? Sign in</Link>}
+            </>
+          ) : null}
         </div>
       </div>
     </section>

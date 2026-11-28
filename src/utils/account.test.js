@@ -1,6 +1,6 @@
 import {
   makeOrderRef, ORDER_REF_PATTERN, ORDER_REF_ALPHABET, buildOrderPayload, firstName, accountPrefill,
-  timeline, eventState, sessionState, itemsSummary, reorderPlan, rupees, listAnd,
+  timeline, eventState, sessionState, itemsSummary, reorderPlan, rupees, listAnd, phoneDigitsOk, accountMenu, organiserLabel,
 } from './account';
 
 test('the order ref: W- and six Crockford letters, never I, L, O or U', () => {
@@ -78,4 +78,59 @@ test('money and lists read as people say them', () => {
   expect(listAnd(['Dosa'])).toBe('Dosa');
   expect(listAnd(['Kombucha', 'Dosa'])).toBe('Kombucha and Dosa');
   expect(listAnd(['Ragi cookie', 'Kombucha', 'Dosa'])).toBe('Ragi cookie, Kombucha and Dosa');
+});
+
+test('order again brings a variation back as that variation, if the dish still offers it', () => {
+  const products = [{ id: 12, name: 'Cappuccino', price: 180, variations: [{ id: 'v-oat', name: 'Oat Milk', price: 220 }, { id: null, name: 'Coconut Milk', price: 230 }] }];
+  const plan = reorderPlan([
+    { id: '12::v-oat', name: 'Cappuccino · Oat Milk', qty: 2, price: 210 },
+    { id: '12::coconut-milk', name: 'Cappuccino · Coconut Milk', qty: 1, price: 230 },
+    { id: '12::v-gone', name: 'Cappuccino · Almond Milk', qty: 1, price: 240 },
+  ], products);
+  expect(plan.add.map((x) => [x.id, x.name, x.price, x.quantity])).toEqual([
+    ['12::v-oat', 'Cappuccino · Oat Milk', 220, 2],
+    ['12::coconut-milk', 'Cappuccino · Coconut Milk', 230, 1],
+  ]);
+  expect(plan.gone).toEqual(['Cappuccino · Almond Milk']);
+});
+
+test('a phone the café can call back on: 10 to 15 digits', () => {
+  expect(phoneDigitsOk('98400 00000')).toBe(true);
+  expect(phoneDigitsOk('+91 98400-00000')).toBe(true);
+  expect(phoneDigitsOk('984000000')).toBe(false);
+  expect(phoneDigitsOk('')).toBe(false);
+});
+
+test('what checkout saves always fits the record: tiny distances and long names', () => {
+  const p = buildOrderPayload('W-ABC123', [{ id: 1, name: 'x', price: 1, quantity: 1 }],
+    { name: 'A'.repeat(90), phone: '9840000000', email: 'a@b.in', address: 'x', distance: '0.04' },
+    { subtotal: 1, packaging: 0, gst: 0, total: 1, packagingKnown: true });
+  expect(p.p_distance_km).toBe(0.1);
+  expect(p.p_name).toHaveLength(80);
+  expect(accountPrefill({ user_metadata: { full_name: 'B'.repeat(100) } }).name).toHaveLength(80);
+});
+
+test('the account menu: everyone’s bookings; an organiser’s way in, worded by where they stand', () => {
+  const user = { id: 'u1', email: 'asha@example.com', user_metadata: {} };
+  // an emailed-code sign-in has no name: the email stands in, and gives the initial
+  expect(accountMenu(user, null)).toEqual({
+    name: '', email: 'asha@example.com', initial: 'A', items: [{ label: 'Your bookings and orders', to: '/account' }],
+  });
+  const row = (status) => ({ user_id: 'u1', status, display_name: 'Asha Rao' });
+  expect(accountMenu(user, row('approved')).items.map((i) => i.to)).toEqual(['/account', '/sanctuary/host', '/sanctuary/hosts/u1']);
+  expect(accountMenu(user, row('requested')).items[1]).toEqual({ label: 'Your organiser request', to: '/sanctuary/host' });
+  expect(accountMenu(user, row('paused')).items[1]).toEqual({ label: 'Your organiser account', to: '/sanctuary/host' });
+  expect(accountMenu(user, row('declined')).items).toHaveLength(2);
+  // the organiser's own name wins over Google's
+  expect(accountMenu({ ...user, user_metadata: { full_name: 'asha r' } }, row('approved')).name).toBe('Asha Rao');
+  expect(accountMenu({ ...user, user_metadata: { full_name: 'zoë m' } }, null).initial).toBe('Z');
+});
+
+test('the organiser link says where they stand; nothing for someone who doesn’t organise', () => {
+  expect(organiserLabel(null)).toBeNull();
+  expect(organiserLabel(undefined)).toBeNull();
+  expect(organiserLabel({ status: 'approved' })).toBe('Your events');
+  expect(organiserLabel({ status: 'requested' })).toBe('Your organiser request');
+  expect(organiserLabel({ status: 'paused' })).toBe('Your organiser account');
+  expect(organiserLabel({ status: 'declined' })).toBe('Your organiser account');
 });

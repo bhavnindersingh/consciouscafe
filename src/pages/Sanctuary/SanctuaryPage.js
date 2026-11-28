@@ -4,6 +4,7 @@ import SEO from '../../components/seo/SEO/SEO';
 import { generatePageSEO, breadcrumb } from '../../utils/seoData';
 import { listGatherings } from '../../services/sanctuaryService';
 import { useAuth } from '../../context/AuthContext';
+import { organiserLabel } from '../../utils/account';
 import { OFFERING_KINDS } from '../../constants/sanctuary';
 import { filterByKind, groupByMonth, collapseSeries, inHouse } from '../../utils/sanctuary';
 import { Reveal, GatheringRow, PageSkeleton, onRadioKeys, tabStop } from './parts';
@@ -17,8 +18,10 @@ const FILTERS = [{ value: 'all', plural: 'Everything' }, ...OFFERING_KINDS];
 const SanctuaryPage = () => {
   const navigate = useNavigate();
   // An organiser is someone with a host profile — anyone may sign in (Your account).
-  const { user, loading: authLoading, isHost } = useAuth();
-  const orgLink = !user ? 'Organiser sign-in' : isHost ? 'Your events' : 'Organise with us';
+  const { user, loading: authLoading, isHost, hostRow } = useAuth();
+  // one way in for organisers, new or coming back; an organiser's own words (organiserLabel) once known
+  const mine = isHost ? organiserLabel(hostRow) || 'Your events' : null;
+  const orgLink = mine || 'For organisers';
   const seo = generatePageSEO('sanctuary');
   const [items, setItems] = useState(null);
   const [error, setError] = useState(null);
@@ -158,10 +161,15 @@ const SanctuaryPage = () => {
           </Reveal>
           <Reveal delay={3}>
             <div className="sn-band-acts">
-              <button className="btn on-dark" onClick={() => navigate('/sanctuary/host')}>Become an organiser</button>
-              {isHost ? <Link className="sn-org-again" to="/sanctuary/host">Go to your events</Link>
-                : isHost === false && !user ? <Link className="sn-org-again" to="/sanctuary/host">Already organising with us? Sign in</Link>
-                : null}
+              {/* an organiser is sent to their own page, not invited to become one; nothing until it's known */}
+              {mine ? (
+                <Link className="btn on-dark sn-org-go" to="/sanctuary/host">Go to {mine.toLowerCase()}</Link>
+              ) : isHost === false ? (
+                <>
+                  <button className="btn on-dark" onClick={() => navigate('/sanctuary/host')}>Become an organiser</button>
+                  {!user && <Link className="sn-org-again" to="/sanctuary/host">Already organising with us? Sign in</Link>}
+                </>
+              ) : null}
             </div>
           </Reveal>
         </div>
